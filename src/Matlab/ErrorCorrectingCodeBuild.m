@@ -88,7 +88,7 @@ function ErrorCorrectingCodeBuild
     
     
     
-    oldpath = cd(strrep(which(fullfile('Matlab', '@ConvolutionalCode', 'ConvolutionalCode.m')), fullfile('@ConvolutionalCode', 'ConvolutionalCode.m'), ''));
+oldpath = cd(strrep(which(fullfile('src', 'Matlab', 'ErrorCorrectingCodeBuild.m')), fullfile('ErrorCorrectingCodeBuild.m'), ''));
     mkdir build
     mkdir product
     

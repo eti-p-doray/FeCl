@@ -81,6 +81,7 @@
       <file>/Users/etienne/Documents/INRS/ErrorCorrectingCode/ConvolutionalCode</file>
       <file>/Users/etienne/Documents/INRS/ErrorCorrectingCode/ErrorCorrectingCode.cpp</file>
       <file>/Users/etienne/Documents/INRS/ErrorCorrectingCode/ErrorCorrectingCode.h</file>
+      <file>/Users/etienne/Documents/INRS/ErrorCorrectingCode/LICENSE</file>
       <file>/Users/etienne/Documents/INRS/ErrorCorrectingCode/LdpcCode</file>
       <file>/Users/etienne/Documents/INRS/ErrorCorrectingCode/Matlab</file>
       <file>/Users/etienne/Documents/INRS/ErrorCorrectingCode/README.md</file>
@@ -88,7 +89,64 @@
       <file>/Users/etienne/Documents/INRS/ErrorCorrectingCode/boost</file>
       <file>/Users/etienne/Documents/INRS/ErrorCorrectingCode/libs</file>
     </fileset.rootfiles>
-    <fileset.depfun.included />
+    <fileset.depfun.included>
+      <file>${PROJECT_ROOT}/Archive.h</file>
+      <file>${PROJECT_ROOT}/ErrorCorrectingCode.cpp</file>
+      <file>${PROJECT_ROOT}/ErrorCorrectingCode.h</file>
+      <file>${PROJECT_ROOT}/ErrorCorrectingCode.mltbx</file>
+      <file>${PROJECT_ROOT}/Matlab/@ConvolutionalCode/ConvolutionalCode.m</file>
+      <file>${PROJECT_ROOT}/Matlab/@ErrorCorrectingCode/ErrorCorrectingCode.m</file>
+      <file>${PROJECT_ROOT}/Matlab/@LdpcCode/LdpcCode.m</file>
+      <file>${PROJECT_ROOT}/Matlab/@TurboCode/TurboCode.m</file>
+      <file>${PROJECT_ROOT}/Matlab/build/BpDecoder.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/CodeStructure.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/ConvolutionalCode.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/ConvolutionalCodeStructure.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/ErrorCorrectingCode.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/LdpcCode.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/LdpcCodeStructure.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/MapDecoder.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/TrellisStructure.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/TurboCodeStructure.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/ViterbiDecoder.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/archive_exception.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/basic_archive.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/basic_iarchive.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/basic_iserializer.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/basic_oarchive.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/basic_oserializer.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/basic_pointer_iserializer.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/basic_pointer_oserializer.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/basic_serializer_map.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/basic_text_iprimitive.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/basic_text_oprimitive.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/basic_text_wiprimitive.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/basic_text_woprimitive.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/basic_xml_archive.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/binary_iarchive.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/binary_oarchive.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/codecvt_null.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/extended_type_info.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/extended_type_info_no_rtti.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/extended_type_info_typeid.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/polymorphic_iarchive.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/polymorphic_oarchive.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/stl_port.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/text_iarchive.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/text_oarchive.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/text_wiarchive.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/text_woarchive.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/utf8_codecvt_facet.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/void_cast.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/xml_archive_exception.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/xml_grammar.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/xml_iarchive.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/xml_oarchive.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/xml_wgrammar.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/xml_wiarchive.o</file>
+      <file>${PROJECT_ROOT}/Matlab/build/xml_woarchive.o</file>
+      <file>${PROJECT_ROOT}/README.md</file>
+    </fileset.depfun.included>
     <fileset.depfun.excluded />
     <fileset.package />
     <build-deliverables>
