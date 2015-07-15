@@ -16,7 +16,7 @@
 
 #include <mex.h>
 
-#include "../CodeStructure/Interleaver.h"
+#include "CodeStructure/Interleaver.h"
 
 Interleaver toInterleaver(const mxArray* in)
 {

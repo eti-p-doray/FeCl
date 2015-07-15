@@ -12,8 +12,8 @@
 
 #include <mex.h>
 
-#include "../../TurboCode/TurboCode.h"
-#include "../../ErrorCorrectingCode.h"
+#include "TurboCode/TurboCode.h"
+#include "ErrorCorrectingCode.h"
 
 #include "../MexConversion.h"
 #include "../mxArrayToTrellis.h"

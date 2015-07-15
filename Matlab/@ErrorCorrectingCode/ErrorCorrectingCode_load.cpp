@@ -12,14 +12,11 @@
 
 #include <mex.h>
 
-#include "../../ErrorCorrectingCode.h"
-#include "../../ConvolutionalCode/ConvolutionalCode.h"
-#include "../../TurboCode/TurboCode.h"
-#include "../../LdpcCode/LdpcCode.h"
-
 #include <boost/serialization/export.hpp>
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
+
+#include "ErrorCorrectingCode.h"
 
 #include "../MexConversion.h"
 #include "../MexAllocator.h"

@@ -12,8 +12,9 @@
 
 #include <mex.h>
 
+#include "ErrorCorrectingCode.h"
+
 #include "../MexConversion.h"
-#include "../../ErrorCorrectingCode.h"
 
 const int inputCount = 1;
 const int outputCount = 1;
