@@ -9,8 +9,9 @@ classdef ErrorCorrectingCode < handle
     
     properties (Dependent = true)
         paritySize
-        messageSize
-        extrinsicSize
+        msgSize
+        extrinsicMsgSize
+        extrinsicParitySize
     end
     
     methods (Static)
@@ -21,14 +22,17 @@ classdef ErrorCorrectingCode < handle
     end
     
     methods
-        function size = get.messageSize(this)
-            size = ErrorCorrectingCode_get_messageSize(this);
+        function size = get.msgSize(this)
+            size = ErrorCorrectingCode_get_msgSize(this);
         end
         function size = get.paritySize(this)
             size = ErrorCorrectingCode_get_paritySize(this);
         end
-        function size = get.extrinsicSize(this)
-            size = ErrorCorrectingCode_get_extrinsicSize(this);
+        function size = get.extrinsicMsgSize(this)
+            size = ErrorCorrectingCode_get_extrinsicMsgSize(this);
+        end
+        function size = get.extrinsicParitySize(this)
+            size = ErrorCorrectingCode_get_extrinsicParitySize(this);
         end
         
         function a = saveobj(this)
@@ -112,7 +116,7 @@ classdef ErrorCorrectingCode < handle
             extrinsicOut = reshape(extrinsicOut, [], size(parityIn,2));
         end
         
-        function [parityOut, extrinsicOut] = parityAppDecode(this, parityIn, extrinsicIn)
+        function [msgOut, extrinsicOut] = parityAppDecode(this, parityIn, extrinsicIn)
         % Decode several blocs of soft data providing a posteriori information about the information and parity bits
         %
         % Inputs
@@ -124,8 +128,8 @@ classdef ErrorCorrectingCode < handle
         %   msgAPosteriori - A posteriori L-values associated with the parity bits
         %   msgAPosteriori - A posteriori L-values associated with the message bits
         %
-            [parityOut, extrinsicOut] = ErrorCorrectingCode_parityAppDecode(this, parityIn, extrinsicIn);
-            parityOut = reshape(parityOut, [], size(parityIn,2));
+            [msgOut, extrinsicOut] = ErrorCorrectingCode_parityAppDecode(this, parityIn, extrinsicIn);
+            msgOut = reshape(msgOut, [], size(parityIn,2));
             extrinsicOut = reshape(extrinsicOut, [], size(parityIn,2));
         end
     end

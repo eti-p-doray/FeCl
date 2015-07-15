@@ -45,7 +45,7 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
   std::unique_ptr<ErrorCorrectingCode> code;
   try {
     code = toObject<ErrorCorrectingCode>(prhs[0], "ErrorCorrectingCode");
-    plhs[0] = toMxArray(code->extrinsicSize());
+    plhs[0] = toMxArray(code->extrinsicMsgSize());
   }
   catch (std::exception& e) {
     mexPrintf(e.what());
