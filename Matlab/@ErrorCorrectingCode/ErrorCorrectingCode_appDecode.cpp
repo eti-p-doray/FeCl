@@ -1,10 +1,10 @@
 /*******************************************************************************
- *  \file ConvolutionalCode_softDecode.cpp
+ *  \file ErrorCorrectinCode_appDecode.cpp
  *  \author Etienne Pierre-Doray
  *  \since 2015-06-11
- *  \version Last update : 2015-06-11
+ *  \version Last update : 2015-07-15
  *
- *  Definition of MapCode_decode mex function
+ *  Definition of ErrorCorrectinCode_appDecode mex function
  ******************************************************************************/
 
 #include <memory>
@@ -21,25 +21,25 @@ const int inputCount = 3;
 const int outputCount = 2;
 
 /*******************************************************************************
- *  This is the implementation of the decode method in the MapCode class.
+ *  This is the implementation of the appDecode method in the ErrorCorrectinCode class.
  *
  *  \param  nlhs    [in]  Number of output
  *  \param  plhs    [out] Array of output mxArray
- *  \param  plhs[0] [out] parity a posteriori L-values
- *  \param  plhs[1] [out] msg a posteriori L-values
+ *  \param  plhs[0] [out] msg a posteriori L-values
+ *  \param  plhs[1] [out] msg extrinsic L-values
  *  \param  nrhs    [in]  Number of input
  *  \param  prhs    [in]  Array of output mxArray
- *  \param  prhs[0] [in]  MapCode object
- *  \param  prhs[1] [in]  parity extrinsic L-values
+ *  \param  prhs[0] [in]  ErrorCorrectinCode object
+ *  \param  prhs[1] [in]  parity L-values
  *  \param  prhs[2] [in]  msg extrinsic L-values
  ******************************************************************************/
 void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 {
   if (nrhs != inputCount) {
-    throw std::invalid_argument("Wrong argin count in ErrorCorrectingCode_decode");
+    throw std::invalid_argument("Wrong argin count in ErrorCorrectingCode_appDecode");
   }
   if (nlhs != outputCount) {
-    throw std::invalid_argument("Wrong argout count in ErrorCorrectingCode_decode");
+    throw std::invalid_argument("Wrong argout count in ErrorCorrectingCode_appDecode");
   }
   
   std::unique_ptr<ErrorCorrectingCode> code;

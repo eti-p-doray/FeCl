@@ -2,7 +2,7 @@
  *  \file MexConversion.h
  *  \author Etienne Pierre-Doray
  *  \since 2015-05-27
- *  \version Last update : 2015-05-27
+ *  \version Last update : 2015-07-15
  *
  *  Definition of general conversion to and from mxArray
  ******************************************************************************/

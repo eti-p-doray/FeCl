@@ -1,10 +1,10 @@
 /*******************************************************************************
- *  \file ConvolutionalCode_encode.cpp
+ *  \file ErrorCorrectingCode_encode.cpp
  *  \author Etienne Pierre-Doray
  *  \since 2015-05-12
- *  \version Last update : 2015-06-3
+ *  \version Last update : 2015-07-15
  *
- *  Declaration of ConvolutionalCode_encode mex function.
+ *  Declaration of ErrorCorrectingCode_encode mex function.
  ******************************************************************************/
 
 #include <memory>
@@ -28,7 +28,7 @@ const int outputCount = 1;
  *  \param  plhs[0] [out] parity bits array
  *  \param  nrhs    [in]  Number of input
  *  \param  prhs    [in]  Array of output mxArray
- *  \param  prhs[0] [in]  ConvolutionalCode object
+ *  \param  prhs[0] [in]  ErrorCorrectingCode object
  *  \param  prhs[1] [in]  msg bits array
  ******************************************************************************/
 void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )

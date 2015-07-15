@@ -1,7 +1,6 @@
 classdef ConvolutionalCode < ErrorCorrectingCode
-  % This class represents a Convolutional encoder / decoder
-  % Methods of this class are implemented in cpp using mex to provide good performances
-  % This class directly handles the allocated ressources in cpp
+    % This class is a specialization of the ErrorCorrectingCode.
+    % It represents a Convolutional code.
 
     methods (Static)
         function b = loadobj(a)

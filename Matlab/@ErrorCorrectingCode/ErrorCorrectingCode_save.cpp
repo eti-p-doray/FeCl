@@ -25,17 +25,14 @@ const int inputCount = 1;
 const int outputCount = 1;
 
 /*******************************************************************************
- *  This is the implementation of the decode method in the MapCode class.
+ *  This is the implementation of the load method in the ErrorCorrectingCode class.
  *
  *  \param  nlhs    [in]  Number of output
  *  \param  plhs    [out] Array of output mxArray
- *  \param  plhs[0] [out] parity a posteriori L-values
- *  \param  plhs[1] [out] msg a posteriori L-values
+ *  \param  plhs[0] [out] Serialized object
  *  \param  nrhs    [in]  Number of input
  *  \param  prhs    [in]  Array of output mxArray
- *  \param  prhs[0] [in]  MapCode object
- *  \param  prhs[1] [in]  parity extrinsic L-values
- *  \param  prhs[2] [in]  msg extrinsic L-values
+ *  \param  prhs[0] [in]  ErrorCorrectingCode object
  ******************************************************************************/
 void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 {

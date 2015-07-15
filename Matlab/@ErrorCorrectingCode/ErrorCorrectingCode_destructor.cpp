@@ -1,10 +1,10 @@
 /*******************************************************************************
- *  \file ConvolutionalCode_destructor.cpp
+ *  \file ErrorCorrectingCode_destructor.cpp
  *  \author Etienne Pierre-Doray
  *  \since 2015-05-12
  *  \version Last update : 2015-05-27
  *
- *  Definition of ConvolutionalCode_destructor mex function
+ *  Definition of ErrorCorrectingCode_destructor mex function
  ******************************************************************************/
 
 #include <memory>
@@ -27,7 +27,7 @@ const int outputCount = 1;
  *  \param  plhs[0] [out] null handle
  *  \param  nrhs    [in]  Number of input
  *  \param  prhs    [in]  Array of output mxArray
- *  \param  prhs[0] [in]  MapCode object to be deleted
+ *  \param  prhs[0] [in]  ErrorCorrectingCode object to be deleted
  ******************************************************************************/
 void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 {

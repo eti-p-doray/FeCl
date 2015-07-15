@@ -1,19 +1,32 @@
 classdef LdpcCode < ErrorCorrectingCode
-    % This class represents a Turbo encoder / decoder pair
+    % This class is a specialization of the ErrorCorrectingCode.
+    % It represents a Ldpc code.
+
+    methods (Static)
+        function b = loadobj(a)
+        % Overload of the loadobj
+        %   Allocate underlying ressources from saved configuration.
+        %
+            b = LdpcCode();
+            b.load(a);
+        end
+    end
 
     methods
 
         function this = LdpcCode(H, iterationCount, decoderType, workGroupSize)
-        % ConvolutionalCode constructore
+        % LdpcCode constructor
         %   Configures the object internally and allocate cpp ressources
         %
         % Inputs
-        %   trellis - Trellis structure used by the first encode / decoder in the matlab communication system toolox form
-        %   blocSize - Size of each message bloc
-        %   [endType] - trellis termination type. ZeroTail | Truncation default = Truncation
-        %   [mapDecoderType] - decoder algorithm type. LogMap | MaxLogMap default = MaxLogMap
-        %   [workGroupSize] - Number of thread used in decodage. default = 4
+        %   H - Parity check matrix given in sparse of full form.
+        %   [iterationCount] - Maximum number of iterations. default = 50
+        %   [decoderType] - decoder algorithm type. MinSumBp | TrueBp default = MinSumBp
+        %   [workGroupSize] - Number of thread used. default = 4
         %
+          if (nargin == 0)
+              return;
+          end
           if (nargin < 2)
               iterationCount = 50;
           end
