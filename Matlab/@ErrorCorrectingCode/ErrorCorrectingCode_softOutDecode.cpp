@@ -12,7 +12,7 @@
 
 #include <mex.h>
 
-#include "ErrorCorrectingCode.h"
+#include "ErrorCorrectingCode/ErrorCorrectingCode.h"
 
 #include "../MexConversion.h"
 #include "../MexAllocator.h"
@@ -33,6 +33,7 @@ const int outputCount = 1;
  ******************************************************************************/
 void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 {
+  mexPrintf("1");
   if (nrhs != inputCount) {
     throw std::invalid_argument("Wrong argin count in ErrorCorrectingCode_softOutDecode");
   }
@@ -40,12 +41,18 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
     throw std::invalid_argument("Wrong argout count in ErrorCorrectingCode_softOutDecode");
   }
   
+  mexPrintf("2");
   std::unique_ptr<ErrorCorrectingCode> code;
   try {
+    mexPrintf("3");
     code = toObject<ErrorCorrectingCode>(prhs[0], "ErrorCorrectingCode");
+    mexPrintf("4");
     std::vector<LlrType, MexAllocator<LlrType>> decodedMsg;
+    mexPrintf("5");
     code->softOutDecode(toMexVector<LlrType>(prhs[1]), decodedMsg);
+    mexPrintf("6");
     plhs[0] = toMxArray(decodedMsg);
+    mexPrintf("7");
   }
   catch (std::exception& e) {
     mexPrintf(e.what());

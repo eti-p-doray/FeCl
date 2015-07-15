@@ -42,9 +42,9 @@ void BpDecoder::appDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, st
   for (size_t i = 0; i < n; ++i) {
     appDecodeBloc(parityIn, extrinsicIn, messageOut, extrinsicOut);
     parityIn += codeStructure_.paritySize();
-    extrinsicIn += codeStructure_.parityCheck().size();
+    extrinsicIn += codeStructure_.msgSize();
     messageOut += codeStructure_.msgSize();
-    extrinsicOut += codeStructure_.parityCheck().size();
+    extrinsicOut += codeStructure_.msgSize();
   }
 }
 
@@ -65,23 +65,33 @@ void BpDecoder::parityAppDecodeBloc(std::vector<LlrType>::const_iterator parityI
     return;
   }
   
-  std::copy(extrinsicIn, extrinsicIn+codeStructure_.parityCheck().size(), checkMetrics_.begin());
+  std::copy(extrinsicIn, extrinsicIn+checkMetrics_.size(), checkMetrics_.begin());
   bitUpdate(parityIn);
   
-  for (size_t i = 0; i < codeStructure().iterationCount(); ++i) {
+  for (size_t i = 0; i < codeStructure().iterationCount() - 1; ++i) {
+    checkUpdate();
+    bitUpdate(parityIn);
+    
     for (size_t j = 0; j < codeStructure().paritySize(); ++j) {
       hardParity_[j] = (bitMetrics_[j] >= 0.0);
     }
     if (codeStructure().syndromeCheck(hardParity_.begin())) {
       break;
     }
-    
-    checkUpdate();
-    bitUpdate(parityIn);
+  }
+  checkUpdate();
+  
+  std::copy(parityIn, parityIn+codeStructure().msgSize(), messageOut);
+  auto check = codeStructure().parityCheck().cbegin();
+  for (auto checkMetric = checkMetrics_.begin(); checkMetric < checkMetrics_.end();  ++check) {
+    for (auto checkBit = check->begin(); checkBit < check->end(); ++checkMetric, ++checkBit) {
+      if (*checkBit < codeStructure().msgSize()) {
+        messageOut[*checkBit] += *checkMetric;
+      }
+    }
   }
   
   std::copy(checkMetrics_.begin(), checkMetrics_.end(), extrinsicOut);
-  std::copy(bitMetrics_.begin(), bitMetrics_.begin()+codeStructure_.msgSize(), messageOut);
 }
 
 void BpDecoder::appDecodeBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut)
@@ -102,20 +112,30 @@ void BpDecoder::appDecodeBloc(std::vector<LlrType>::const_iterator parityIn, std
     }
   }
   
-  for (int64_t i = 0; i < codeStructure().iterationCount(); ++i) {
-    for (size_t j = 0; i < codeStructure().paritySize(); ++j) {
+  for (int64_t i = 0; i < codeStructure().iterationCount() - 1; ++i) {
+    checkUpdate();
+    bitUpdate(parityIn);
+    
+    for (size_t j = 0; j < codeStructure().paritySize(); ++j) {
       hardParity_[j] = (bitMetrics_[j] >= 0.0);
     }
     if (codeStructure().syndromeCheck(hardParity_.begin())) {
       break;
     }
-    
-    checkUpdate();
-    bitUpdate(parityIn);
+  }
+  checkUpdate();
+  
+  std::copy(parityIn, parityIn+codeStructure().msgSize(), messageOut);
+  check = codeStructure().parityCheck().cbegin();
+  for (auto checkMetric = checkMetrics_.begin(); checkMetric < checkMetrics_.end();  ++check) {
+    for (auto checkBit = check->begin(); checkBit < check->end(); ++checkMetric, ++checkBit) {
+      if (*checkBit < codeStructure().msgSize()) {
+        messageOut[*checkBit] += *checkMetric;
+      }
+    }
   }
   
-  std::copy(bitMetrics_.begin(), bitMetrics_.begin()+codeStructure_.msgSize(), messageOut);
-  std::copy(bitMetrics_.begin(), bitMetrics_.begin()+codeStructure_.msgSize(), extrinsicOut);
+  std::copy(messageOut, messageOut+codeStructure_.msgSize(), extrinsicOut);
   for (size_t i = 0; i < codeStructure_.msgSize(); ++i) {
     extrinsicOut[i] -= extrinsicIn[i];
   }

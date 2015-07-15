@@ -12,7 +12,7 @@
 
 #include <mex.h>
 
-#include "ErrorCorrectingCode.h"
+#include "ErrorCorrectingCode/ErrorCorrectingCode.h"
 
 #include "../MexConversion.h"
 #include "../MexAllocator.h"

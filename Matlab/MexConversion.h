@@ -24,7 +24,7 @@
 
 #include "MexAllocator.h"
 
-template <typename T> mxClassID mexClassId() {return mxUNKNOWN_CLASS;}
+template <typename T> mxClassID mexClassId() {return mxDOUBLE_CLASS;}
 template <> mxClassID mexClassId<double>() {return mxDOUBLE_CLASS;}
 template <> mxClassID mexClassId<float>() {return mxSINGLE_CLASS;}
 template <> mxClassID mexClassId<bool>() {return mxLOGICAL_CLASS;}

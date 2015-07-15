@@ -16,7 +16,7 @@
 
 #include <mex.h>
 
-#include "CodeStructure/TrellisStructure.h"
+#include "ErrorCorrectingCode/CodeStructure/TrellisStructure.h"
 
 TrellisStructure toTrellisStructure(const mxArray* nextState, const mxArray* output, const mxArray* inputCount, const mxArray* outputCount, const mxArray* stateCount)
 {

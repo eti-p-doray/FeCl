@@ -12,7 +12,7 @@
 
 #include <mex.h>
 
-#include "ErrorCorrectingCode.h"
+#include "ErrorCorrectingCode/ErrorCorrectingCode.h"
 
 #include "../MexConversion.h"
 #include "../MexAllocator.h"
@@ -49,7 +49,7 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
     std::vector<LlrType, MexAllocator<LlrType>> extrinsicOut;
     code->appDecode(toMexVector<LlrType>(prhs[1]), toMexVector<LlrType>(prhs[2]), msgOut, extrinsicOut);
     plhs[0] = toMxArray(msgOut);
-    plhs[0] = toMxArray(extrinsicOut);
+    plhs[1] = toMxArray(extrinsicOut);
   }
   catch (std::exception& e) {
     mexPrintf(e.what());

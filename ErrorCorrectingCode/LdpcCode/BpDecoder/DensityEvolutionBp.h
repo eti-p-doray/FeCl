@@ -24,12 +24,12 @@ class DensityEvolutionBp
 {
 public:
   static std::unique_ptr<DensityEvolutionBp> create(const LdpcCodeStructure&);
-  virtual ~BpDecoder() = default;
+  virtual ~DensityEvolutionBp() = default;
   
   void predictNBloc(std::vector<LlrPdf>::const_iterator parityIn, std::vector<LlrPdf>::iterator parityOut, std::vector<LlrPdf>::iterator messageOut, size_t n);
   
 protected:
-  BpDecoder(const LdpcCodeStructure& codeStructure);
+  DensityEvolutionBp(const LdpcCodeStructure& codeStructure);
   
   void predictBloc(std::vector<LlrPdf>::const_iterator parityIn, std::vector<LlrPdf>::iterator parityOut, std::vector<LlrPdf>::iterator messageOut);
   

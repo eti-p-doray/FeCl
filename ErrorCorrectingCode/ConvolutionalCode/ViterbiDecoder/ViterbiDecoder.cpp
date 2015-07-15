@@ -13,10 +13,7 @@
 void ViterbiDecoder::decodeNBloc(std::vector<LlrType>::const_iterator codeIn, std::vector<uint8_t>::iterator messageOut, size_t n)
 {
   for (size_t i = 0; i < n; i++) {
-    decodeBloc(
-               codeIn,
-               messageOut
-               );
+    decodeBloc(codeIn, messageOut);
     codeIn += codeStructure_.trellis().outputSize() * (codeStructure_.blocSize() + codeStructure_.tailSize());
     messageOut += codeStructure_.trellis().inputSize() * codeStructure_.blocSize();
   }

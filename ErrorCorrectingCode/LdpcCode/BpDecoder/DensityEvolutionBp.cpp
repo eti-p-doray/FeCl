@@ -8,7 +8,6 @@
  ******************************************************************************/
 
 #include "DensityEvolutionBp.h"
-#include "ScoreBp.h"
 
 std::unique_ptr<DensityEvolutionBp> DensityEvolutionBp::create(const LdpcCodeStructure& codeStructure)
 {

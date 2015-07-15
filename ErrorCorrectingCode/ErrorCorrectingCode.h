@@ -136,23 +136,23 @@ void ErrorCorrectingCode::parityAppDecode(const T& parityIn, const T& extrinsicI
   auto extrinsicInIt = extrinsicIn.begin();
   auto parityInIt = parityIn.begin();
   auto extrinsicOutIt = extrinsicOut.begin();
-  auto parityOutIt = msgOut.begin();
+  auto msgOutIt = msgOut.begin();
   
   
   auto thread = threadGroup.begin();
   size_t step = (blocCount+workGroupSize()-1)/workGroupSize();
   for (int i = 0; i + step <= blocCount; i += step) {
     threadGroup.push_back( std::thread(&ErrorCorrectingCode::parityAppDecodeNBloc, this,
-                                       parityInIt,extrinsicInIt,parityOutIt,extrinsicOutIt, step) );
+                                       parityInIt,extrinsicInIt,msgOutIt,extrinsicOutIt, step) );
     parityInIt += paritySize() * step;
-    parityOutIt += paritySize() * step;
+    msgOutIt += msgSize() * step;
     extrinsicInIt += extrinsicParitySize() * step;
     extrinsicOutIt += extrinsicParitySize() * step;
     
     thread++;
   }
   if (parityInIt != parityIn.end()) {
-    parityAppDecodeNBloc(parityInIt, extrinsicInIt, parityOutIt, extrinsicOutIt, blocCount % step);
+    parityAppDecodeNBloc(parityInIt, extrinsicInIt, msgOutIt, extrinsicOutIt, blocCount % step);
   }
   for (auto & thread : threadGroup) {
     thread.join();

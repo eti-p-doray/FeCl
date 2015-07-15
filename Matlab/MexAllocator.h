@@ -34,7 +34,7 @@ public :
   inline T* allocate(size_t size) throw(std::bad_alloc())
   {
     if (ptr_ == nullptr) {
-      ptr_ = mxMalloc(size);
+      ptr_ = mxMalloc(size * sizeof(T) );
       if (ptr_ == nullptr) {
         throw std::bad_alloc();
       }

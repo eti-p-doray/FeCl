@@ -28,7 +28,7 @@ std::unique_ptr<MapDecoder> MapDecoder::create(const ConvolutionalCodeStructure&
 
 void MapDecoder::softOutDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::iterator messageOut, size_t n)
 {
-  for (size_t i = 0; i < n; i++) {
+  for (size_t i = 0; i < n; ++i) {
     softOutDecodeBloc(parityIn,messageOut);
     parityIn += codeStructure_.paritySize();
     messageOut += codeStructure_.msgSize();
@@ -37,7 +37,7 @@ void MapDecoder::softOutDecodeNBloc(std::vector<LlrType>::const_iterator parityI
 
 void MapDecoder::appDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n)
 {
-  for (size_t i = 0; i < n; i++) {
+  for (size_t i = 0; i < n; ++i) {
     appDecodeBloc(parityIn,extrinsicIn,messageOut,extrinsicOut);
     parityIn += codeStructure_.paritySize();
     extrinsicIn += codeStructure_.msgSize();
@@ -48,10 +48,10 @@ void MapDecoder::appDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, s
 
 void MapDecoder::parityAppDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n)
 {
-  for (size_t i = 0; i < n; i++) {
+  for (size_t i = 0; i < n; ++i) {
     parityAppDecodeBloc(parityIn,extrinsicIn,messageOut,extrinsicOut);
     parityIn += codeStructure_.paritySize();
-    extrinsicIn += codeStructure_.msgSize();
+    extrinsicIn += codeStructure_.paritySize();
     messageOut += codeStructure_.msgSize();
     extrinsicOut += codeStructure_.paritySize();
   }

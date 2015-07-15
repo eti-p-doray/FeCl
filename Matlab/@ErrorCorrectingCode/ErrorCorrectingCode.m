@@ -84,7 +84,7 @@ classdef ErrorCorrectingCode < handle
         %   this - Code object
         %   parityIn - Parity L-values correspondig to the received signal.
         %       Given a signal y and a parity bit x, we define the correspondig L-value as
-        $         L = ln[ p(x = 1 | y) / p(x = 0 | y) ] = ln[ p(y | x = 1) / p(y | x = 0) ]
+        %         L = ln[ p(x = 1 | y) / p(x = 0 | y) ] = ln[ p(y | x = 1) / p(y | x = 0) ]
         %       This array is expected to have its number of rows equals to the
         %       paritySize.
         %       Each column corresponds to one bloc of data.
@@ -104,7 +104,7 @@ classdef ErrorCorrectingCode < handle
         %   this - Code object
         %   parityIn - Parity L-values correspondig to the received signal.
         %       Given a signal y and a parity bit x, we define the correspondig L-value as
-        $         L = ln[ p(x = 1 | y) / p(x = 0 | y) ] = ln[ p(y | x = 1) / p(y | x = 0) ]
+        %         L = ln[ p(x = 1 | y) / p(x = 0 | y) ] = ln[ p(y | x = 1) / p(y | x = 0) ]
         %       This array is expected to have its number of rows equals to the
         %       paritySize.
         %       Each column corresponds to one bloc of data.
@@ -125,7 +125,7 @@ classdef ErrorCorrectingCode < handle
         %   this - Code object
         %   parityIn - Parity L-values correspondig to the received signal.
         %       Given a signal y and a parity bit x, we define the correspondig L-value as
-        $         L = ln[ p(x = 1 | y) / p(x = 0 | y) ] = ln[ p(y | x = 1) / p(y | x = 0) ]
+        %         L = ln[ p(x = 1 | y) / p(x = 0 | y) ] = ln[ p(y | x = 1) / p(y | x = 0) ]
         %       This array is expected to have its number of rows equals to the
         %       paritySize.
         %       Each column corresponds to one bloc of data.
@@ -154,7 +154,7 @@ classdef ErrorCorrectingCode < handle
         %   this - Code object
         %   parityIn - Parity L-values correspondig to the received signal.
         %       Given a signal y and a parity bit x, we define the correspondig L-value as
-        $         L = ln[ p(x = 1 | y) / p(x = 0 | y) ] = ln[ p(y | x = 1) / p(y | x = 0) ]
+        %         L = ln[ p(x = 1 | y) / p(x = 0 | y) ] = ln[ p(y | x = 1) / p(y | x = 0) ]
         %       This array is expected to have its number of rows equals to the
         %       paritySize.
         %       Each column corresponds to one bloc of data.

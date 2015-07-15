@@ -51,11 +51,6 @@ protected:
   virtual void softOutDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::iterator messageOut, size_t n) const;
   virtual void decodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<uint8_t>::iterator messageOut, size_t n) const;
   
-  template <typename T> void parityToMsgNBloc(typename std::vector<T>::const_iterator parity, typename std::vector<T>::iterator msg, size_t n) const;
-  template <typename T> void msgToParityNBloc(typename std::vector<T>::const_iterator msg, typename std::vector<T>::iterator parity, size_t n) const;
-  template <typename T> void parityToMsgBloc(typename std::vector<T>::const_iterator parity, typename std::vector<T>::iterator msg) const;
-  template <typename T> void msgToParityBloc(typename std::vector<T>::const_iterator msg, typename std::vector<T>::iterator parity) const;
-  
 private:
   template <typename Archive>
   void serialize(Archive & ar, const unsigned int version) {
@@ -67,52 +62,5 @@ private:
 
 BOOST_CLASS_TYPE_INFO(ConvolutionalCode,extended_type_info_no_rtti<ConvolutionalCode>);
 BOOST_CLASS_EXPORT_KEY(ConvolutionalCode);
-
-template <typename T>
-void ConvolutionalCode::parityToMsgNBloc(typename std::vector<T>::const_iterator parity, typename std::vector<T>::iterator msg, size_t n) const
-{
-  for (size_t i = 0; i < n; ++i) {
-    parityToMsgBloc<T>(parity, msg);
-    parity += codeStructure_.paritySize();
-    msg += codeStructure_.msgSize();
-  }
-}
-
-template <typename T>
-void ConvolutionalCode::msgToParityNBloc(typename std::vector<T>::const_iterator parity, typename std::vector<T>::iterator msg, size_t n) const
-{
-  for (size_t i = 0; i < n; ++i) {
-    msgToParityBloc<T>(parity, msg);
-    parity += codeStructure_.paritySize();
-    msg += codeStructure_.msgSize();
-  }
-}
-
-template <typename T>
-void ConvolutionalCode::parityToMsgBloc(typename std::vector<T>::const_iterator parity, typename std::vector<T>::iterator msg) const
-{
-  for (size_t i = 0; i < codeStructure_.blocSize(); ++i) {
-    for (size_t j = 0; j < codeStructure_.trellis().inputSize(); ++j) {
-      msg[j] = parity[j];
-    }
-    msg += codeStructure_.trellis().inputSize();
-    parity += codeStructure_.trellis().outputSize();
-  }
-}
-
-template <typename T>
-void ConvolutionalCode::msgToParityBloc(typename std::vector<T>::const_iterator msg, typename std::vector<T>::iterator parity) const
-{
-  for (size_t i = 0; i < codeStructure_.blocSize(); ++i) {
-    for (size_t j = 0; j < codeStructure_.trellis().inputSize(); ++j) {
-      parity[j] = msg[j];
-    }
-    for (size_t j = codeStructure_.trellis().inputSize(); j < codeStructure_.trellis().outputSize(); ++j) {
-      parity[j] = T(0);
-    }
-    msg += codeStructure_.trellis().inputSize();
-    parity += codeStructure_.trellis().outputSize();
-  }
-}
 
 #endif
