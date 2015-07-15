@@ -78,9 +78,9 @@ bool LdpcCodeStructure::syndromeCheck(std::vector<uint8_t>::const_iterator parit
 
 void LdpcCodeStructure::encode(std::vector<uint8_t>::const_iterator msg, std::vector<uint8_t>::iterator parity) const
 {
-  std::copy(msg, msg + messageSize(), parity);
-  std::fill(parity+messageSize(), parity+paritySize(), 0);
-  parity += messageSize();
+  std::copy(msg, msg + msgSize(), parity);
+  std::fill(parity+msgSize(), parity+paritySize(), 0);
+  parity += msgSize();
   auto parityIt = parity;
   for (auto row = DC_.begin(); row < DC_.end(); ++row, ++parityIt) {
     auto msgIt = msg;
@@ -164,10 +164,10 @@ void LdpcCodeStructure::computeGeneratorMatrix(SparseBitMatrix&& H)
     }
   }
   
-  for (size_t i = 0; i < CDE.cols()-tSize-messageSize(); ++i) {
+  for (size_t i = 0; i < CDE.cols()-tSize-msgSize(); ++i) {
     uint8_t found = false;
     for (auto row = CDE.begin()+i; row < CDE.end(); ++row) {
-      if (row->test(i+messageSize())) {
+      if (row->test(i+msgSize())) {
         std::swap(*row, CDE[i]);
         found = true;
         break;
@@ -177,8 +177,8 @@ void LdpcCodeStructure::computeGeneratorMatrix(SparseBitMatrix&& H)
       for (auto row = CDE.begin()+i; row < CDE.end(); ++row) {
         size_t k = row->first();
         if (k != -1) {
-          H.swapCols(k, i+messageSize());
-          CDE.swapCols(k, i+messageSize());
+          H.swapCols(k, i+msgSize());
+          CDE.swapCols(k, i+msgSize());
           std::swap(*row, CDE[i]);
           found = true;
           break;
@@ -186,14 +186,14 @@ void LdpcCodeStructure::computeGeneratorMatrix(SparseBitMatrix&& H)
       }
     }
     if (!found) {
-      H.moveCol(i+messageSize(), messageSize());
-      CDE.moveCol(i+messageSize(), messageSize());
+      H.moveCol(i+msgSize(), msgSize());
+      CDE.moveCol(i+msgSize(), msgSize());
       ++messageSize_;
       --i;
       continue;
     }
     for (auto row = CDE.begin()+i+1; row < CDE.end(); ++row) {
-      if (row->test(i+messageSize())) {
+      if (row->test(i+msgSize())) {
         *row += CDE[i];
       }
     }
@@ -201,15 +201,15 @@ void LdpcCodeStructure::computeGeneratorMatrix(SparseBitMatrix&& H)
   
   for (int64_t i = CDE.rows()-1; i >= 0; --i) {
     for (auto row = CDE.begin()+i-1; row >= CDE.begin(); --row) {
-      if (row->test(i+messageSize())) {
+      if (row->test(i+msgSize())) {
         *row += CDE[i];
       }
     }
   }
   
   H_ = H;
-  DC_ = CDE({0, CDE.cols()-messageSize()-tSize}, {0, messageSize()});
-  A_ = H_({0, tSize}, {0, messageSize()});
-  B_ = H_({0, tSize}, {messageSize(), messageSize()+DC_.rows()});
+  DC_ = CDE({0, CDE.cols()-msgSize()-tSize}, {0, msgSize()});
+  A_ = H_({0, tSize}, {0, msgSize()});
+  B_ = H_({0, tSize}, {msgSize(), msgSize()+DC_.rows()});
   T_ = H_({0, tSize}, {H.cols()-tSize, H.cols()}).transpose();
 }

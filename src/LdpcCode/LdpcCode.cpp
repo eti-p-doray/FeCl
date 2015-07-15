@@ -57,10 +57,10 @@ void LdpcCode::encodeBloc(std::vector<uint8_t>::const_iterator messageIt, std::v
  *  \param  messageIn  Vector containing extrinsic information L-values
  *  \param  messageOut[out] Vector containing a posteriori information L-values
  ******************************************************************************/
-void LdpcCode::parityAppDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator parityOut, std::vector<LlrType>::iterator extrinsicOut, size_t n) const
+void LdpcCode::parityAppDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n) const
 {
   auto worker = BpDecoder::create(codeStructure_);
-  worker->parityAppDecodeNBloc(parityIn, extrinsicIn, parityOut, extrinsicOut, n);
+  worker->parityAppDecodeNBloc(parityIn, extrinsicIn, messageOut, extrinsicOut, n);
 }
 
 /*******************************************************************************
@@ -96,7 +96,7 @@ void LdpcCode::softOutDecodeNBloc(std::vector<LlrType>::const_iterator parityIn,
 void LdpcCode::decodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<uint8_t>::iterator messageOut, size_t n) const
 {
   auto worker = BpDecoder::create(codeStructure_);
-  std::vector<LlrType> messageAPosteriori(n * codeStructure_.messageSize());
+  std::vector<LlrType> messageAPosteriori(n * codeStructure_.msgSize());
   worker->softOutDecodeNBloc(parityIn, messageAPosteriori.begin(), n);
   
   for (auto messageIt = messageAPosteriori.begin(); messageIt < messageAPosteriori.end(); ++messageIt, ++messageOut) {

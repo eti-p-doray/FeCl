@@ -28,7 +28,8 @@ public:
   ~MapDecoderImpl() = default;
   
 protected:
-  virtual void branchMetrics(std::vector<LlrType>::const_iterator code, std::vector<LlrType>::const_iterator extrinsic);
+  virtual void appBranchMetrics(std::vector<LlrType>::const_iterator code, std::vector<LlrType>::const_iterator extrinsic);
+  virtual void parityAppBranchMetrics(std::vector<LlrType>::const_iterator code, std::vector<LlrType>::const_iterator extrinsic);
   virtual void branchMetrics(std::vector<LlrType>::const_iterator code);
   virtual void forwardMetrics();
   virtual void backwardMetrics();
@@ -120,7 +121,7 @@ void MapDecoderImpl<A>::messageAPosteriori(std::vector<LlrType>::iterator messag
 }
 
 template <typename A>
-void MapDecoderImpl<A>::branchMetrics(std::vector<LlrType>::const_iterator parity, std::vector<LlrType>::const_iterator extrinsic)
+void MapDecoderImpl<A>::appBranchMetrics(std::vector<LlrType>::const_iterator parity, std::vector<LlrType>::const_iterator extrinsic)
 {
   int i = 0;
   for (auto branchMetricIt = branchMetrics_.begin(); branchMetricIt < branchMetrics_.end(); ++i) {
@@ -148,6 +149,34 @@ void MapDecoderImpl<A>::branchMetrics(std::vector<LlrType>::const_iterator parit
 }
 
 template <typename A>
+void MapDecoderImpl<A>::parityAppBranchMetrics(std::vector<LlrType>::const_iterator parity, std::vector<LlrType>::const_iterator extrinsic)
+{
+  int i = 0;
+  for (auto branchMetricIt = branchMetrics_.begin(); branchMetricIt < branchMetrics_.end(); ++i) {
+    for (BitField<uint16_t> j = 0; j < codeStructure().trellis().outputCount(); ++j) {
+      branchOutputMetrics_[j] = codeStructure().correlationProbability(j, parity, codeStructure().trellis().outputSize()) +
+      codeStructure().correlationProbability(j, extrinsic, codeStructure().trellis().outputSize());
+    }
+    if (i < codeStructure().blocSize()) {
+      for (BitField<uint16_t> j = 0; j < codeStructure().trellis().inputCount(); ++j) {
+        branchInputMetrics_[j] = codeStructure().correlationProbability(j, extrinsic, codeStructure().trellis().inputSize());
+      }
+    }
+    
+    for (auto outputIt = codeStructure().trellis().beginOutput(); outputIt < codeStructure().trellis().endOutput();) {
+      for (auto k : branchInputMetrics_) {
+        *branchMetricIt = branchOutputMetrics_[uint16_t(*outputIt)];
+        
+        ++branchMetricIt;
+        ++outputIt;
+      }
+    }
+    parity += codeStructure().trellis().outputSize();
+    extrinsic += codeStructure().trellis().inputSize();
+  }
+}
+
+template <typename A>
 void MapDecoderImpl<A>::branchMetrics(std::vector<LlrType>::const_iterator parity)
 {
   int i = 0;
@@ -159,7 +188,6 @@ void MapDecoderImpl<A>::branchMetrics(std::vector<LlrType>::const_iterator parit
     for (auto outputIt = codeStructure().trellis().beginOutput(); outputIt < codeStructure().trellis().endOutput();) {
       for (auto k : branchInputMetrics_) {
         *branchMetricIt = branchOutputMetrics_[uint16_t(*outputIt)];
-        *branchMetricIt += k;
         
         ++branchMetricIt;
         ++outputIt;

@@ -31,7 +31,7 @@ void MapDecoder::softOutDecodeNBloc(std::vector<LlrType>::const_iterator parityI
   for (size_t i = 0; i < n; i++) {
     softOutDecodeBloc(parityIn,messageOut);
     parityIn += codeStructure_.paritySize();
-    messageOut += codeStructure_.messageSize();
+    messageOut += codeStructure_.msgSize();
   }
 }
 
@@ -40,20 +40,20 @@ void MapDecoder::appDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, s
   for (size_t i = 0; i < n; i++) {
     appDecodeBloc(parityIn,extrinsicIn,messageOut,extrinsicOut);
     parityIn += codeStructure_.paritySize();
-    extrinsicIn += codeStructure_.messageSize();
-    messageOut += codeStructure_.messageSize();
-    extrinsicOut += codeStructure_.messageSize();
+    extrinsicIn += codeStructure_.msgSize();
+    messageOut += codeStructure_.msgSize();
+    extrinsicOut += codeStructure_.msgSize();
   }
 }
 
-void MapDecoder::parityAppDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator parityOut, std::vector<LlrType>::iterator extrinsicOut, size_t n)
+void MapDecoder::parityAppDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n)
 {
   for (size_t i = 0; i < n; i++) {
-    parityAppDecodeBloc(parityIn,extrinsicIn,parityOut,extrinsicOut);
+    parityAppDecodeBloc(parityIn,extrinsicIn,messageOut,extrinsicOut);
     parityIn += codeStructure_.paritySize();
-    extrinsicIn += codeStructure_.messageSize();
-    parityOut += codeStructure_.paritySize();
-    extrinsicOut += codeStructure_.messageSize();
+    extrinsicIn += codeStructure_.msgSize();
+    messageOut += codeStructure_.msgSize();
+    extrinsicOut += codeStructure_.paritySize();
   }
 }
 
@@ -68,28 +68,28 @@ void MapDecoder::softOutDecodeBloc(std::vector<LlrType>::const_iterator parityIn
 
 void MapDecoder::appDecodeBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut)
 {
-  branchMetrics(parityIn, extrinsicIn);
+  appBranchMetrics(parityIn, extrinsicIn);
   forwardMetrics();
   backwardMetrics();
   
   messageAPosteriori(messageOut);
   
-  std::copy(messageOut, messageOut+codeStructure().messageSize(), extrinsicOut);
-  for (size_t i = 0; i < codeStructure().messageSize(); ++i) {
+  std::copy(messageOut, messageOut+codeStructure().msgSize(), extrinsicOut);
+  for (size_t i = 0; i < codeStructure().msgSize(); ++i) {
     extrinsicOut[i] -= extrinsicIn[i];
   }
 }
 
-void MapDecoder::parityAppDecodeBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator parityOut, std::vector<LlrType>::iterator extrinsicOut)
-{
-  branchMetrics(parityIn, extrinsicIn);
+void MapDecoder::parityAppDecodeBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut)
+{  
+  parityAppBranchMetrics(parityIn, extrinsicIn);
   forwardMetrics();
   backwardMetrics();
   
-  parityAPosteriori(parityOut);
+  parityAPosteriori(extrinsicOut);
+  messageAPosteriori(messageOut);
   
-  std::copy(parityOut, parityOut+codeStructure().messageSize(), extrinsicOut);
-  for (size_t i = 0; i < codeStructure().messageSize(); ++i) {
+  for (size_t i = 0; i < codeStructure().paritySize(); ++i) {
     extrinsicOut[i] -= extrinsicIn[i];
   }
 }

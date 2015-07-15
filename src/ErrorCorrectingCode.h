@@ -37,9 +37,10 @@ public:
   
   virtual const char * get_key() const = 0;
   
-  virtual size_t messageSize() const = 0;
+  virtual size_t msgSize() const = 0;
   virtual size_t paritySize() const = 0;
-  virtual size_t extrinsicSize() const = 0;
+  virtual size_t extrinsicMsgSize() const = 0;
+  virtual size_t extrinsicParitySize() const = 0;
   virtual const CodeStructure& structure() const = 0;
   
   template <typename T> void encode(const T& message, T& parity) const;
@@ -47,7 +48,7 @@ public:
   template <typename T1, typename T2> void decode(const T1& parityIn, T2& msgOut) const;
   template <typename T> void softOutDecode(const T& parityIn, T& msgOut) const;
   template <typename T> void appDecode(const T& parityIn, const T& extrinsicIn, T& msgOut, T& extrinsicOut) const;
-  template <typename T> void parityAppDecode(const T& parityIn, const T& extrinsicIn, T& parityOut, T& extrinsicOut) const;
+  template <typename T> void parityAppDecode(const T& parityIn, const T& extrinsicIn, T& msgOut, T& extrinsicOut) const;
   
 protected:
   ErrorCorrectingCode(int workGroupdSize = 4);
@@ -57,7 +58,7 @@ protected:
   virtual void encodeNBloc(std::vector<uint8_t>::const_iterator messageIt, std::vector<uint8_t>::iterator parityIt, size_t n) const;
   virtual void encodeBloc(std::vector<uint8_t>::const_iterator messageIt, std::vector<uint8_t>::iterator parityIt) const = 0;
   
-  virtual void parityAppDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator parityOut, std::vector<LlrType>::iterator extrinsicOut, size_t n) const = 0;
+  virtual void parityAppDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n) const = 0;
   virtual void appDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n) const = 0;
   virtual void softOutDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::iterator messageOut, size_t n) const = 0;
   virtual void decodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<uint8_t>::iterator messageOut, size_t n) const = 0;
@@ -78,8 +79,8 @@ BOOST_CLASS_EXPORT_KEY(ErrorCorrectingCode);
 template <typename T>
 void ErrorCorrectingCode::encode(const T& message, T& parity) const
 {
-  uint64_t blocCount = message.size() / (messageSize());
-  if (message.size() != blocCount * messageSize()) {
+  uint64_t blocCount = message.size() / (msgSize());
+  if (message.size() != blocCount * msgSize()) {
     throw std::invalid_argument("Invalid size for message");
   }
   
@@ -96,7 +97,7 @@ void ErrorCorrectingCode::encode(const T& message, T& parity) const
   for (int i = 0; i + step <= blocCount; i += step) {
     threadGroup.push_back( std::thread(&ErrorCorrectingCode::encodeNBloc, this,
                                        messageIt, parityIt, step) );
-    messageIt += messageSize() * step;
+    messageIt += msgSize() * step;
     parityIt += paritySize() * step;
     
     thread++;
@@ -116,26 +117,26 @@ void ErrorCorrectingCode::encode(const T& message, T& parity) const
  *  \param  messageOut[out] Vector containing a posteriori information L-values
  ******************************************************************************/
 template <typename T>
-void ErrorCorrectingCode::parityAppDecode(const T& parityIn, const T& extrinsicIn, T& parityOut, T& extrinsicOut) const
+void ErrorCorrectingCode::parityAppDecode(const T& parityIn, const T& extrinsicIn, T& msgOut, T& extrinsicOut) const
 {
   size_t blocCount = parityIn.size() / paritySize();
   if (parityIn.size() != blocCount * paritySize()) {
     throw std::invalid_argument("Invalid size for parity");
   }
-  if (extrinsicIn.size() != blocCount *  extrinsicSize()) {
+  if (extrinsicIn.size() != blocCount *  extrinsicParitySize()) {
     throw std::invalid_argument("Invalid size for aPriori");
   }
   
   std::vector<std::thread> threadGroup;
   threadGroup.reserve(workGroupSize());
   
-  parityOut.resize(parityIn.size());
+  msgOut.resize(blocCount * msgSize());
   extrinsicOut.resize(extrinsicIn.size());
   
   auto extrinsicInIt = extrinsicIn.begin();
   auto parityInIt = parityIn.begin();
   auto extrinsicOutIt = extrinsicOut.begin();
-  auto parityOutIt = parityOut.begin();
+  auto parityOutIt = msgOut.begin();
   
   
   auto thread = threadGroup.begin();
@@ -145,8 +146,8 @@ void ErrorCorrectingCode::parityAppDecode(const T& parityIn, const T& extrinsicI
                                        parityInIt,extrinsicInIt,parityOutIt,extrinsicOutIt, step) );
     parityInIt += paritySize() * step;
     parityOutIt += paritySize() * step;
-    extrinsicInIt += extrinsicSize() * step;
-    extrinsicOutIt += extrinsicSize() * step;
+    extrinsicInIt += extrinsicParitySize() * step;
+    extrinsicOutIt += extrinsicParitySize() * step;
     
     thread++;
   }
@@ -171,14 +172,14 @@ void ErrorCorrectingCode::appDecode(const T& parityIn, const T& extrinsicIn, T& 
   if (parityIn.size() != blocCount * paritySize()) {
     throw std::invalid_argument("Invalid size for parity");
   }
-  if (extrinsicIn.size() != blocCount *  extrinsicSize()) {
+  if (extrinsicIn.size() != blocCount *  extrinsicMsgSize()) {
     throw std::invalid_argument("Invalid size for message extrinsic");
   }
   
   std::vector<std::thread> threadGroup;
   threadGroup.reserve(workGroupSize());
   
-  messageOut.resize(blocCount * messageSize());
+  messageOut.resize(blocCount * msgSize());
   extrinsicOut.resize(extrinsicIn.size());
   
   auto extrinsicInIt = extrinsicIn.begin();
@@ -193,9 +194,9 @@ void ErrorCorrectingCode::appDecode(const T& parityIn, const T& extrinsicIn, T& 
     threadGroup.push_back( std::thread(&ErrorCorrectingCode::appDecodeNBloc, this,
                                        parityInIt,extrinsicInIt,messageOutIt, extrinsicOutIt, step) );
     parityInIt += paritySize() * step;
-    extrinsicInIt += extrinsicSize() * step;
-    extrinsicOutIt += extrinsicSize() * step;
-    messageOutIt += messageSize() * step;
+    extrinsicInIt += extrinsicMsgSize() * step;
+    extrinsicOutIt += extrinsicMsgSize() * step;
+    messageOutIt += msgSize() * step;
     
     thread++;
   }
@@ -215,7 +216,7 @@ void ErrorCorrectingCode::softOutDecode(const T& parityIn, T& messageOut) const
     throw std::invalid_argument("Invalid size for parity");
   }
   
-  messageOut.resize(blocCount * messageSize());
+  messageOut.resize(blocCount * msgSize());
   
   auto parityInIt = parityIn.begin();
   auto messageOutIt = messageOut.begin();
@@ -231,7 +232,7 @@ void ErrorCorrectingCode::softOutDecode(const T& parityIn, T& messageOut) const
                                        messageOutIt, step
                                        ) );
     parityInIt += paritySize() * step;
-    messageOutIt += messageSize() * step;
+    messageOutIt += msgSize() * step;
     
     thread++;
   }
@@ -254,7 +255,7 @@ void ErrorCorrectingCode::decode(const T1& parityIn, T2& messageOut) const
   std::vector<std::thread> threadGroup;
   threadGroup.reserve(workGroupSize());
   
-  messageOut.resize(blocCount * messageSize());
+  messageOut.resize(blocCount * msgSize());
   
   auto parityInIt = parityIn.begin();
   auto messageOutIt = messageOut.begin();
@@ -265,7 +266,7 @@ void ErrorCorrectingCode::decode(const T1& parityIn, T2& messageOut) const
     threadGroup.push_back( std::thread(&ErrorCorrectingCode::decodeNBloc, this,
                                        parityInIt, messageOutIt, step) );
     parityInIt += paritySize() * step;
-    messageOutIt += messageSize() * step;
+    messageOutIt += msgSize() * step;
     
     thread++;
   }

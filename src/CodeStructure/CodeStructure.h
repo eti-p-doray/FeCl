@@ -42,7 +42,7 @@ public:
   
   virtual Type type() const = 0;
   
-  inline size_t messageSize() const {return messageSize_;}
+  inline size_t msgSize() const {return messageSize_;}
   inline size_t paritySize() const {return paritySize_;}
   
 protected:

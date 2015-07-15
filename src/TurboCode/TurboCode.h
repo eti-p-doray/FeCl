@@ -31,9 +31,10 @@ public:
   
   virtual const char * get_key() const;
   
-  virtual size_t messageSize() const {return codeStructure_.messageSize();}
+  virtual size_t msgSize() const {return codeStructure_.msgSize();}
   virtual size_t paritySize() const {return codeStructure_.paritySize();}
-  virtual size_t extrinsicSize() const {return codeStructure_.messageSize();}
+  virtual size_t extrinsicMsgSize() const {return codeStructure_.msgSize();}
+  virtual size_t extrinsicParitySize() const {return codeStructure_.msgSize();}
   virtual const CodeStructure& structure() const {return codeStructure_;}
   
 protected:
@@ -41,7 +42,7 @@ protected:
   
   virtual void encodeBloc(std::vector<uint8_t>::const_iterator messageIt, std::vector<uint8_t>::iterator parityIt) const;
   
-  virtual void parityAppDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator parityOut, std::vector<LlrType>::iterator extrinsicOut, size_t n) const;
+  virtual void parityAppDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n) const;
   virtual void appDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n) const;
   virtual void softOutDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::iterator messageOut, size_t n) const;
   virtual void decodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<uint8_t>::iterator messageOut, size_t n) const;

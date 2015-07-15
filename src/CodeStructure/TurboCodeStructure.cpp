@@ -17,5 +17,5 @@ TurboCodeStructure::TurboCodeStructure(TrellisStructure trellis1, TrellisStructu
 {
   iterationCount_ = iterationCount;
   
-  paritySize_ = structure1_.paritySize() + structure2_.paritySize() - messageSize();
+  paritySize_ = structure1_.paritySize() + structure2_.paritySize() - msgSize();
 }

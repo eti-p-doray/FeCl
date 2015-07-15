@@ -45,7 +45,7 @@ void ErrorCorrectingCode::encodeNBloc(std::vector<uint8_t>::const_iterator messa
 {
   for (size_t i = 0; i < n; ++i) {
     encodeBloc(messageIt, parityIt);
-    messageIt += messageSize();
+    messageIt += msgSize();
     parityIt += paritySize();
   }
 }

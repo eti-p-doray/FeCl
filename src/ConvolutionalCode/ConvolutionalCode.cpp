@@ -72,10 +72,10 @@ void ConvolutionalCode::encodeBloc(std::vector<uint8_t>::const_iterator messageI
   }
 }
 
-void ConvolutionalCode::parityAppDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator parityOut, std::vector<LlrType>::iterator extrinsicOut, size_t n) const
+void ConvolutionalCode::parityAppDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n) const
 {
   auto worker = MapDecoder::create(codeStructure_);
-  worker->parityAppDecodeNBloc(parityIn, extrinsicIn, parityOut, extrinsicOut, n);
+  worker->parityAppDecodeNBloc(parityIn, extrinsicIn, messageOut, extrinsicOut, n);
 }
 
 void ConvolutionalCode::appDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n) const
