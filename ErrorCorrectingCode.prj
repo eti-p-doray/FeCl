@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.toolbox" plugin-version="1.0">
-  <configuration build-checksum="2651685038" file="/Users/Etienne/Documents/INRS/ErrorCorrectingCode/ErrorCorrectingCode.prj" location="/Users/Etienne/Documents/INRS/ErrorCorrectingCode" name="ErrorCorrectingCode" target="target.toolbox" target-name="Package Toolbox">
+  <configuration file="/Users/etienne/Documents/INRS/ErrorCorrectingCode/ErrorCorrectingCode.prj" location="/Users/etienne/Documents/INRS/ErrorCorrectingCode" name="ErrorCorrectingCode" target="target.toolbox" target-name="Package Toolbox">
     <param.appname>ErrorCorrectingCode</param.appname>
     <param.authnamewatermark>Etienne Pierre-Doray</param.authnamewatermark>
     <param.email>etipdoray@gmail.com</param.email>
@@ -11,18 +11,15 @@
     <param.output>${PROJECT_ROOT}/ErrorCorrectingCode.mltbx</param.output>
     <param.products.name>
       <item>MATLAB</item>
-      <item>Communications System Toolbox</item>
     </param.products.name>
     <param.products.id>
       <item>1</item>
-      <item>36</item>
     </param.products.id>
     <param.products.version>
       <item>8.4</item>
-      <item>5.7</item>
     </param.products.version>
     <param.platforms />
-    <param.guid>bda92662-5499-4fe3-be7d-a0ec905ffe85</param.guid>
+    <param.guid>930a7e15-b16f-4ae7-bca8-36902b601fb9</param.guid>
     <param.exclude.filters>% List files contained in your toolbox folder that you would like to exclude
 % from packaging.  Excludes should be listed relative to the toolbox folder.
 % Some examples of how to specify excludes are provided below:
@@ -43,23 +40,11 @@
 % **/*.bak
 %
 
-*.DS_Store
-*.mexmaci64
-**/*.mexmaci64
-.git
-.gitignore
-*.prj
+**/*.o
+**/.DS_Store
 *.mltbx</param.exclude.filters>
     <param.examples>&lt;?xml version="1.0" encoding="utf-8"?&gt;
-&lt;examples&gt;
-   &lt;exampleCategory name="Matlab"&gt;
-      &lt;example name="MapCodeDemo" type="html"&gt;
-         &lt;file type="source"&gt;/Matlab/html/MapCodeDemo.html&lt;/file&gt;
-         &lt;file type="main"&gt;/Matlab/MapCodeDemo.m&lt;/file&gt;
-         &lt;file type="thumbnail"/&gt;
-      &lt;/example&gt;
-   &lt;/exampleCategory&gt;
-&lt;/examples&gt;</param.examples>
+&lt;examples/&gt;</param.examples>
     <param.demosxml />
     <param.apps />
     <param.docs />
@@ -76,81 +61,21 @@
       <file>/Users/etienne/Documents/INRS/ErrorCorrectingCode</file>
     </fileset.rootdir>
     <fileset.rootfiles>
-      <file>/Users/etienne/Documents/INRS/ErrorCorrectingCode/Archive.h</file>
-      <file>/Users/etienne/Documents/INRS/ErrorCorrectingCode/CodeStructure</file>
-      <file>/Users/etienne/Documents/INRS/ErrorCorrectingCode/ConvolutionalCode</file>
-      <file>/Users/etienne/Documents/INRS/ErrorCorrectingCode/ErrorCorrectingCode.cpp</file>
-      <file>/Users/etienne/Documents/INRS/ErrorCorrectingCode/ErrorCorrectingCode.h</file>
-      <file>/Users/etienne/Documents/INRS/ErrorCorrectingCode/LICENSE</file>
-      <file>/Users/etienne/Documents/INRS/ErrorCorrectingCode/LdpcCode</file>
-      <file>/Users/etienne/Documents/INRS/ErrorCorrectingCode/Matlab</file>
-      <file>/Users/etienne/Documents/INRS/ErrorCorrectingCode/README.md</file>
-      <file>/Users/etienne/Documents/INRS/ErrorCorrectingCode/TurboCode</file>
-      <file>/Users/etienne/Documents/INRS/ErrorCorrectingCode/boost</file>
-      <file>/Users/etienne/Documents/INRS/ErrorCorrectingCode/libs</file>
-    </fileset.rootfiles>
-    <fileset.depfun.included>
-      <file>${PROJECT_ROOT}/Archive.h</file>
-      <file>${PROJECT_ROOT}/ErrorCorrectingCode.cpp</file>
-      <file>${PROJECT_ROOT}/ErrorCorrectingCode.h</file>
-      <file>${PROJECT_ROOT}/ErrorCorrectingCode.mltbx</file>
-      <file>${PROJECT_ROOT}/Matlab/@ConvolutionalCode/ConvolutionalCode.m</file>
-      <file>${PROJECT_ROOT}/Matlab/@ErrorCorrectingCode/ErrorCorrectingCode.m</file>
-      <file>${PROJECT_ROOT}/Matlab/@LdpcCode/LdpcCode.m</file>
-      <file>${PROJECT_ROOT}/Matlab/@TurboCode/TurboCode.m</file>
-      <file>${PROJECT_ROOT}/Matlab/build/BpDecoder.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/CodeStructure.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/ConvolutionalCode.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/ConvolutionalCodeStructure.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/ErrorCorrectingCode.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/LdpcCode.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/LdpcCodeStructure.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/MapDecoder.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/TrellisStructure.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/TurboCodeStructure.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/ViterbiDecoder.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/archive_exception.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/basic_archive.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/basic_iarchive.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/basic_iserializer.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/basic_oarchive.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/basic_oserializer.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/basic_pointer_iserializer.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/basic_pointer_oserializer.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/basic_serializer_map.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/basic_text_iprimitive.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/basic_text_oprimitive.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/basic_text_wiprimitive.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/basic_text_woprimitive.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/basic_xml_archive.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/binary_iarchive.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/binary_oarchive.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/codecvt_null.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/extended_type_info.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/extended_type_info_no_rtti.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/extended_type_info_typeid.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/polymorphic_iarchive.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/polymorphic_oarchive.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/stl_port.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/text_iarchive.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/text_oarchive.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/text_wiarchive.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/text_woarchive.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/utf8_codecvt_facet.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/void_cast.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/xml_archive_exception.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/xml_grammar.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/xml_iarchive.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/xml_oarchive.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/xml_wgrammar.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/xml_wiarchive.o</file>
-      <file>${PROJECT_ROOT}/Matlab/build/xml_woarchive.o</file>
+      <file>${PROJECT_ROOT}/.git</file>
+      <file>${PROJECT_ROOT}/.gitignore</file>
+      <file>${PROJECT_ROOT}/ErrorCorrectingCode.prj</file>
+      <file>${PROJECT_ROOT}/LICENSE</file>
+      <file>${PROJECT_ROOT}/Matlab</file>
       <file>${PROJECT_ROOT}/README.md</file>
-    </fileset.depfun.included>
+      <file>${PROJECT_ROOT}/boost</file>
+      <file>${PROJECT_ROOT}/libs</file>
+      <file>${PROJECT_ROOT}/src</file>
+    </fileset.rootfiles>
+    <fileset.depfun.included />
     <fileset.depfun.excluded />
     <fileset.package />
     <build-deliverables>
-      <file location="/Users/Etienne/Documents/INRS/ErrorCorrectingCode" name="ErrorCorrectingCode.mltbx" optional="false">/Users/Etienne/Documents/INRS/ErrorCorrectingCode/ErrorCorrectingCode.mltbx</file>
+      <file location="/Users/etienne/Documents/INRS/ErrorCorrectingCode" name="ErrorCorrectingCode.mltbx" optional="false">/Users/etienne/Documents/INRS/ErrorCorrectingCode/ErrorCorrectingCode.mltbx</file>
     </build-deliverables>
     <workflow />
     <matlab>
@@ -185,7 +110,7 @@
       <vista>false</vista>
       <linux>false</linux>
       <solaris>false</solaris>
-      <osver>10.9.5</osver>
+      <osver>10.10.3</osver>
       <os32>false</os32>
       <os64>true</os64>
       <arch>maci64</arch>
