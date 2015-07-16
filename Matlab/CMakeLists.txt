@@ -9,9 +9,10 @@ find_package(Matlab REQUIRED)
 
 function (add_mex_function SRC_NAME)
 	get_filename_component(FUNCTION_NAME ${SRC_NAME} NAME_WE)
-	add_library(${FUNCTION_NAME} SHARED ${SRC_NAME} Matlabdef.def)
+	add_library(${FUNCTION_NAME} SHARED ${SRC_NAME} ${CMAKE_SOURCE_DIR}/Matlab/Matlabdef.def)
 	target_include_directories(${FUNCTION_NAME} PRIVATE ${MATLAB_INCLUDE_DIRS})
 	target_link_libraries(${FUNCTION_NAME} PRIVATE ErrorCorrectingCode)
+	target_link_libraries(${FUNCTION_NAME} PRIVATE ${Boost_LIBRARIES})
 	target_link_libraries(${FUNCTION_NAME} PRIVATE ${MATLAB_LIBRARIES})
 
 	if(WIN32)
@@ -52,6 +53,7 @@ add_mex_function(@ErrorCorrectingCode/ErrorCorrectingCode_softOutDecode.cpp)
 add_mex_function(@ConvolutionalCode/ConvolutionalCode_constructor.cpp)
 add_mex_function(@TurboCode/TurboCode_constructor.cpp)
 add_mex_function(@LdpcCode/LdpcCode_constructor.cpp)
+add_mex_function(nullHandle.cpp)
 
 
 	

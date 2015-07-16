@@ -21,8 +21,8 @@ const char * ConvolutionalCode::get_key() const {
  *  \param  type  Map decoder algorithm used for decoding
  *  \param  workGroupSize Number of thread used for decoding
  ******************************************************************************/
-ConvolutionalCode::ConvolutionalCode(const ConvolutionalCodeStructure& codeStructure, int workGroupdSize) :
-  ErrorCorrectingCode(workGroupdSize),
+ConvolutionalCode::ConvolutionalCode(const ConvolutionalCodeStructure& codeStructure, int workGroupSize) :
+  ErrorCorrectingCode(workGroupSize),
   codeStructure_(codeStructure)
 {
 }

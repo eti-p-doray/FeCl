@@ -5,7 +5,7 @@ set(Boost_USE_MULTITHREADED      ON)
 set(Boost_USE_STATIC_RUNTIME    OFF)
 find_package(Boost 1.36.0 REQUIRED COMPONENTS serialization)
 
-add_library(ErrorCorrectingCode SHARED
+add_library(ErrorCorrectingCode STATIC
 	ErrorCorrectingCode.cpp
 	CodeStructure/CodeStructure.cpp
 	CodeStructure/ConvolutionalCodeStructure.cpp
@@ -25,6 +25,7 @@ target_include_directories(ErrorCorrectingCode PUBLIC ${Boost_INCLUDE_DIRS})
 target_include_directories(ErrorCorrectingCode PUBLIC ${CMAKE_SOURCE_DIR})
 target_compile_features(ErrorCorrectingCode PUBLIC cxx_template_template_parameters)
 target_compile_features(ErrorCorrectingCode PUBLIC cxx_aggregate_default_initializers)
+install(TARGETS ErrorCorrectingCode DESTINATION ${CMAKE_SOURCE_DIR}/Matlab/bin)
 
 add_subdirectory(Matlab)
 
