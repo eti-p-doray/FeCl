@@ -140,6 +140,32 @@ void LdpcCodeStructure::computeGeneratorMatrix(SparseBitMatrix&& H)
       break;
     }
   }
+  /*H.colSizes({0, maxRow}, {0, i}, colSizes);
+  for (size_t i = H.cols(); i > 0; --i) {
+    size_t minValue = -1;
+    size_t minIdx = 0;
+    for (int64_t j = colSizes.size()-1; j >= 0; j--) {
+      if (colSizes[j] < minValue && colSizes[j] >= 1) {
+        minIdx = j;
+        minValue = colSizes[j];
+      }
+    }
+    H.swapCols(minIdx, i-1);
+    size_t j = maxRow;
+    for (auto row = H.begin(); row < H.begin()+j; ++row) {
+      if (row->test(i-1)) {
+        --j;
+        std::swap(H[j], *row);
+        --row;
+      }
+    }
+    maxRow -= std::max(minValue, size_t(1));
+    if (maxRow == 0) {
+      tSize = H.cols()-i+1;
+      break;
+    }
+  }*/
+  /*****/
   
   for (size_t i = 0; i < tSize; ++i) {
     auto row = H.begin()+i;

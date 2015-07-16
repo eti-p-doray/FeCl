@@ -12,8 +12,8 @@
 
 #include <mex.h>
 
-#include "ErrorCorrectingCode/ConvolutionalCode/ConvolutionalCode.h"
-#include "ErrorCorrectingCode/ErrorCorrectingCode.h"
+#include "ConvolutionalCode/ConvolutionalCode.h"
+#include "ErrorCorrectingCode.h"
 
 #include "../MexConversion.h"
 #include "../mxArrayToTrellis.h"

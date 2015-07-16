@@ -311,42 +311,42 @@ polymorphic_archive_test(test_polymorphic2 test_polymorphic2imp)
 
 file(GLOB x 
   RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" 
-  "${CMAKE_CURRENT_SOURCE_DIR}/../include/boost/archive/*.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/../../include/boost/archive/*.hpp"
 )
 add_custom_target(archive SOURCES ${x})
 set_property(TARGET archive PROPERTY FOLDER "serialization")
 
 file(GLOB x 
   RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" 
-  "${CMAKE_CURRENT_SOURCE_DIR}/../include/boost/archive/detail/*.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/../../include/boost/archive/detail/*.hpp"
 )
 add_custom_target(archive-detail SOURCES ${x})
 set_property(TARGET archive-detail PROPERTY FOLDER "serialization")
 
 file(GLOB x 
   RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" 
-  "${CMAKE_CURRENT_SOURCE_DIR}/../include/boost/archive/impl/*.ipp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/../../include/boost/archive/impl/*.ipp"
 )
 add_custom_target(archive-impl SOURCES ${x})
 set_property(TARGET archive-impl PROPERTY FOLDER "serialization")
 
 file(GLOB x
   RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" 
-  "${CMAKE_CURRENT_SOURCE_DIR}/../include/boost/archive/iterators/*.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/../../include/boost/archive/iterators/*.hpp"
 )
 add_custom_target(archive-iterators SOURCES ${x})
 set_property(TARGET archive-iterators PROPERTY FOLDER "serialization")
 
 file(GLOB x 
   RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" 
-  "${CMAKE_CURRENT_SOURCE_DIR}/../include/boost/serialization/*.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/../../include/boost/serialization/*.hpp"
 )
 add_custom_target(serialization-headers SOURCES ${x})
 set_property(TARGET serialization-headers PROPERTY FOLDER "serialization")
 
 file(GLOB x 
   RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" 
-  "${CMAKE_CURRENT_SOURCE_DIR}/../include/boost/serialization/detail/*.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/../../include/boost/serialization/detail/*.hpp"
 )
 add_custom_target(serialization-detail SOURCES ${x})
 set_property(TARGET serialization-detail PROPERTY FOLDER "serialization")
@@ -355,10 +355,10 @@ set_property(TARGET serialization-detail PROPERTY FOLDER "serialization")
 
 file(GLOB x 
   RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" 
-  "${CMAKE_CURRENT_SOURCE_DIR}/../include/boost/archive/*_w*.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/../../include/boost/archive/*_w*.hpp"
 )
 
-add_custom_target(wserialization_headers SOURCES ${x} "${CMAKE_CURRENT_SOURCE_DIR}/../include/boost/archive/codecvt_null.hpp")
+add_custom_target(wserialization_headers SOURCES ${x} "${CMAKE_CURRENT_SOURCE_DIR}/../../include/boost/archive/codecvt_null.hpp")
 set_property(TARGET wserialization_headers PROPERTY FOLDER "wserialization")
 
 # end headers in IDE
