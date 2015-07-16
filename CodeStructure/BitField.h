@@ -11,7 +11,7 @@
 #define BITFIELD_H
 
 #include <iostream>
-#include <assert.h>
+#include <stdint.h>
 
 #include <boost/serialization/utility.hpp>
 #include <boost/serialization/nvp.hpp>
@@ -82,8 +82,8 @@ public:
   void operator--(int) {value_--;}
   
   template <typename S = BlocType>
-  static constexpr uint8_t blocSize() {return sizeof(S)/sizeof(uint8_t) * 8;}
-  static constexpr uint8_t size() {return sizeof(T)/sizeof(uint8_t) * 8;}
+  static uint8_t blocSize() {return sizeof(S)/sizeof(uint8_t) * 8;}
+  static uint8_t size() {return sizeof(T)/sizeof(uint8_t) * 8;}
   
 private:
   template <typename Archive>

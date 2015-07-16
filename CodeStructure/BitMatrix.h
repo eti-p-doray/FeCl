@@ -370,7 +370,7 @@ public:
     private:
       ConstIterator(std::vector<BitField<size_t>>::const_iterator bloc) : bloc_(bloc) {}
       ConstIterator(std::vector<BitField<size_t>>::const_iterator bloc, size_t idx) : bloc_(bloc), idx_(idx) {}
-      static constexpr size_t blocSize() {return sizeof(size_t) * 8;}
+      static size_t blocSize() {return sizeof(size_t) * 8;}
       
       std::vector<BitField<size_t>>::const_iterator bloc_;
       size_t idx_ = 0;
@@ -407,7 +407,7 @@ public:
     }
     
     inline void resize(size_t cols) {elements_.resize((cols+blocSize()-1)/blocSize());}
-    static constexpr size_t blocSize() {return sizeof(size_t) * 8;}
+    static size_t blocSize() {return sizeof(size_t) * 8;}
     
     std::vector<BitField<size_t>> elements_;
   };
