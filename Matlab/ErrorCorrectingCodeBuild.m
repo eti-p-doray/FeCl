@@ -6,7 +6,7 @@ function ErrorCorrectingCodeBuild
     cxxFlags = ['-std=c++11'];
     iPath = {['-I' fullfile('../')]};
 
-    srcPath = '../ErrorCorrectingCode/';
+    srcPath = '../';
     libsPath = '../libs/';
     trgPath = '';
     

@@ -93,7 +93,7 @@ classdef ErrorCorrectingCode < handle
         % Outputs:
         %   msgOut - Decoded msg
         %
-            msgOut = reshape(ErrorCorrectingCode_decode(this, double(parityIn)), [], size(parityIn,2));
+            msgOut = reshape(int8(ErrorCorrectingCode_decode(this, double(parityIn))), [], size(parityIn,2));
         end
         
         function msgOut = softOutDecode(this, parityIn)

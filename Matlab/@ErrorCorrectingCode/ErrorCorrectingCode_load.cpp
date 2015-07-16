@@ -16,7 +16,7 @@
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 
-#include "ErrorCorrectingCode/ErrorCorrectingCode.h"
+#include "ErrorCorrectingCode.h"
 
 #include "../MexConversion.h"
 #include "../MexAllocator.h"

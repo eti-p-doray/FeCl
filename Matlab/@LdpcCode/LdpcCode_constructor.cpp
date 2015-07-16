@@ -14,8 +14,8 @@
 
 #include <mex.h>
 
-#include "ErrorCorrectingCode/LdpcCode/LdpcCode.h"
-#include "ErrorCorrectingCode/ErrorCorrectingCode.h"
+#include "LdpcCode/LdpcCode.h"
+#include "ErrorCorrectingCode.h"
 
 #include "../MexConversion.h"
 #include "../mxArrayToBitMatrix.h"

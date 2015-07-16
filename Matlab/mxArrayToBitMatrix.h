@@ -17,7 +17,7 @@
 #include <mex.h>
 #include <matrix.h>
 
-#include "ErrorCorrectingCode/CodeStructure/BitMatrix.h"
+#include "CodeStructure/BitMatrix.h"
 
 SparseBitMatrix toBitMatrix(const mxArray* in) throw(std::bad_cast)
 {

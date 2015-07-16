@@ -270,11 +270,13 @@ public:
   
   SparseBitMatrix() = default;
   SparseBitMatrix(const SparseBitMatrix& b) {*this = b;}
+  SparseBitMatrix(const BitMatrix& b) {*this = b;}
   SparseBitMatrix(SparseBitMatrix&& b) {cols_ = b.cols_; std::swap(elementIdx_, b.elementIdx_); std::swap(rowIdx_, b.rowIdx_);}
   inline SparseBitMatrix(size_t rows, size_t cols, size_t rowSizes) {resize(rows, cols, rowSizes);}
   inline SparseBitMatrix(const std::vector<size_t>& rowSizes, size_t cols) {resize(rowSizes, cols);}
   
   inline SparseBitMatrix& operator = (const SparseBitMatrix& b);
+  inline SparseBitMatrix& operator = (const BitMatrix& b);
   inline SparseBitMatrix& operator = (SparseBitMatrix&& b) {cols_ = b.cols_; std::swap(elementIdx_, b.elementIdx_); std::swap(rowIdx_, b.rowIdx_); return *this;}
   
   inline void resize(size_t rows, size_t cols, size_t rowSizes);
@@ -548,6 +550,23 @@ SparseBitMatrix& SparseBitMatrix::operator = (const SparseBitMatrix& b)
   auto row = begin();
   for (auto bRow = b.begin(); bRow < b.end(); ++bRow, ++row) {
     *row = *bRow;
+  }
+  return *this;
+}
+
+SparseBitMatrix& SparseBitMatrix::operator = (const BitMatrix& b)
+{
+  std::vector<size_t> rowSizes;
+  b.rowSizes(rowSizes);
+  
+  resize(rowSizes, b.cols());
+  auto row = begin();
+  for (auto bRow = b.begin(); bRow < b.end(); ++bRow, ++row) {
+    for (size_t j = 0; j < b.cols(); ++j) {
+      if (bRow->test(j)) {
+        row->set(j);
+      }
+    }
   }
   return *this;
 }
