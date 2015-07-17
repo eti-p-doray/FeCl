@@ -93,7 +93,7 @@ classdef ErrorCorrectingCode < handle
         % Outputs:
         %   msgOut - Decoded msg
         %
-            msgOut = reshape(ErrorCorrectingCode_decode(this, double(parityIn)), [], size(parityIn,2));
+            msgOut = reshape(int8(ErrorCorrectingCode_decode(this, double(parityIn))), [], size(parityIn,2));
         end
         
         function msgOut = softOutDecode(this, parityIn)
@@ -113,7 +113,7 @@ classdef ErrorCorrectingCode < handle
         % Outputs:
         %   msgOut - Msg a posteriori L-values associated with the parity L-values.
         %
-            msgOut = reshape(ErrorCorrectingCode_softOutDecode(this, parityIn), [], size(parityIn,2));
+            msgOut = reshape(ErrorCorrectingCode_softOutDecode(this, double(parityIn)), [], size(parityIn,2));
         end
 
         function [msgOut, extrinsicOut] = appDecode(this, parityIn, extrinsicIn)
@@ -136,7 +136,7 @@ classdef ErrorCorrectingCode < handle
         %   msgOut - Msg a posteriori L-values associated with the parity L-values.
         %   extrinsicOut - Extrinsic L-values associated with the msg.
         %
-            [msgOut, extrinsicOut] = ErrorCorrectingCode_appDecode(this, parityIn, extrinsicIn);
+            [msgOut, extrinsicOut] = ErrorCorrectingCode_appDecode(this, double(parityIn), double(extrinsicIn));
             msgOut = reshape(msgOut, [], size(parityIn,2));
             extrinsicOut = reshape(extrinsicOut, [], size(parityIn,2));
         end
@@ -165,7 +165,7 @@ classdef ErrorCorrectingCode < handle
         %   msgOut - Msg a posteriori L-values associated with the parity L-values.
         %   extrinsicOut - Extrinsic L-values associated with the parities.
         %
-            [msgOut, extrinsicOut] = ErrorCorrectingCode_parityAppDecode(this, parityIn, extrinsicIn);
+            [msgOut, extrinsicOut] = ErrorCorrectingCode_parityAppDecode(this, double(parityIn), double(extrinsicIn));
             msgOut = reshape(msgOut, [], size(parityIn,2));
             extrinsicOut = reshape(extrinsicOut, [], size(parityIn,2));
         end

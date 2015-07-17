@@ -83,11 +83,12 @@ void LdpcCodeStructure::encode(std::vector<uint8_t>::const_iterator msg, std::ve
   parity += msgSize();
   auto parityIt = parity;
   for (auto row = DC_.begin(); row < DC_.end(); ++row, ++parityIt) {
-    auto msgIt = msg;
-    for (auto elem = row->begin(); elem != row->end(); ++elem, ++msgIt) {
-      if (*elem) {
+    //auto msgIt = msg;
+    for (auto elem = row->begin(); elem != row->end(); ++elem) {
+      /*if (*elem) {
         *parityIt ^= *msgIt;
-      }
+      }*/
+      *parityIt ^= msg[*elem];
     }
   }
   for (auto row = B_.begin(); row < B_.end(); ++row, ++parityIt) {
@@ -115,17 +116,30 @@ void LdpcCodeStructure::computeGeneratorMatrix(SparseBitMatrix&& H)
   std::vector<size_t> colSizes;
   size_t maxRow = H.rows();
   size_t tSize = 0;
+  
+  H.colSizes(colSizes);
+  auto colSize = H.end()-1;
   for (size_t i = H.cols(); i > 0; --i) {
-    H.colSizes({0, maxRow}, {0, i}, colSizes);
+    for (; colSize >= H.begin() + maxRow; --colSize) {
+      for (auto elem = colSize->begin(); elem < colSize->end(); ++elem) {
+        colSizes[*elem]--;
+      }
+    }
     size_t minValue = -1;
     size_t minIdx = 0;
-    for (int64_t j = colSizes.size()-1; j >= 0; j--) {
-      if (colSizes[j] < minValue && colSizes[j] >= 1) {
+    for (int64_t j = i-1; j >= 0; j--) {
+      if (colSizes[j] == 1) {
+        minIdx = j;
+        minValue = colSizes[j];
+        break;
+      }
+      else if (colSizes[j] < minValue && colSizes[j] >= 1) {
         minIdx = j;
         minValue = colSizes[j];
       }
     }
     H.swapCols(minIdx, i-1);
+    std::swap(colSizes[minIdx], colSizes[i-1]);
     size_t j = maxRow;
     for (auto row = H.begin(); row < H.begin()+j; ++row) {
       if (row->test(i-1)) {
@@ -140,32 +154,6 @@ void LdpcCodeStructure::computeGeneratorMatrix(SparseBitMatrix&& H)
       break;
     }
   }
-  /*H.colSizes({0, maxRow}, {0, i}, colSizes);
-  for (size_t i = H.cols(); i > 0; --i) {
-    size_t minValue = -1;
-    size_t minIdx = 0;
-    for (int64_t j = colSizes.size()-1; j >= 0; j--) {
-      if (colSizes[j] < minValue && colSizes[j] >= 1) {
-        minIdx = j;
-        minValue = colSizes[j];
-      }
-    }
-    H.swapCols(minIdx, i-1);
-    size_t j = maxRow;
-    for (auto row = H.begin(); row < H.begin()+j; ++row) {
-      if (row->test(i-1)) {
-        --j;
-        std::swap(H[j], *row);
-        --row;
-      }
-    }
-    maxRow -= std::max(minValue, size_t(1));
-    if (maxRow == 0) {
-      tSize = H.cols()-i+1;
-      break;
-    }
-  }*/
-  /*****/
   
   for (size_t i = 0; i < tSize; ++i) {
     auto row = H.begin()+i;
@@ -179,6 +167,7 @@ void LdpcCodeStructure::computeGeneratorMatrix(SparseBitMatrix&& H)
       }
     }
   }
+  /****/
   
   BitMatrix CDE = H({tSize, H.rows()}, {0, H.cols()});
   

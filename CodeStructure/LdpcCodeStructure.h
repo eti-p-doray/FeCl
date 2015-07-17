@@ -46,7 +46,7 @@ public:
   
   inline const SparseBitMatrix& parityCheck() const {return H_;}
   
-  inline const BitMatrix& DC() const {return DC_;}
+  inline const SparseBitMatrix& DC() const {return DC_;}
   inline const SparseBitMatrix& A() const {return A_;}
   inline const SparseBitMatrix& B() const {return B_;}
   inline const SparseBitMatrix& T() const {return T_;}
@@ -74,7 +74,7 @@ private:
   void computeGeneratorMatrix(SparseBitMatrix&& H);
   
   SparseBitMatrix H_;
-  BitMatrix DC_;
+  SparseBitMatrix DC_;
   SparseBitMatrix T_;
   SparseBitMatrix A_;
   SparseBitMatrix B_;

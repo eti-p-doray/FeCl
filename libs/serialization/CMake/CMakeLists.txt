@@ -3,11 +3,6 @@
 cmake_minimum_required(VERSION 3.0)
 
 
-if(Boost_USE_STATIC_LIBS)
-  project("Serialization-Static")
-else()
-  project("Serialization-Shared")
-endif()
 
 #
 # Compiler settings
@@ -32,22 +27,7 @@ elseif( CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang" )
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++ -dead_strip")
 endif()
 
-#
-# IDE settings
-#
 
-if( CMAKE_HOST_APPLE )
-  # note: it seems that bjam builds both address models in any case
-  # so we can defer this decision to the IDE just as we do for debug/release
-  # so we'll not use this now
-  # set(Boost_ADDRESS_MODEL 64 CACHE INTEGER "32/64 bits")
-  set(Boost_USE_STATIC_LIBS ON CACHE BOOL "Link to Boost static libraries")
-  set(Boost_USE_MULTITHREADED ON)
-else()
-  set(Boost_ADDRESS_MODEL 64 CACHE INTEGER "32/64 bits")
-  set(Boost_USE_STATIC_LIBS ON CACHE BOOL "Link to Boost static libraries")
-  set(Boost_USE_MULTITHREADED ON)
-endif()
 
 #
 # Locate Project Prerequisites 
@@ -96,30 +76,11 @@ endif()
 # end special note for Xcode
 ############################
 
-find_package(Boost REQUIRED COMPONENTS system filesystem)
-
-if(Boost_FOUND)
-    message(STATUS "Boost is ${BOOST_ROOT}")
-    message(STATUS "Boost directories found at ${Boost_INCLUDE_DIRS}")
-    message(STATUS "Boost libraries found at ${Boost_LIBRARY_DIRS}")
-    message(STATUS "Boost component libraries to be linked are ${Boost_LIBRARIES}")
-    message(STATUS "Boost version found is ${Boost_VERSION}")
-    include_directories("../include" "${Boost_INCLUDE_DIRS}")
-    link_directories("${Boost_LIBRARY_DIRS}")
-elseif()
-    message("Boost NOT Found!")
-endif()
-
-if(Boost_USE_STATIC_LIBS)
-  set(BUILD_SHARED_LIBRARIES OFF)
-else()
-  set(BUILD_SHARED_LIBRARIES ON)
-endif()
 
 ###########################
 # library builds
 
-add_library(serialization
+add_library(serialization STATIC
   ../src/archive_exception.cpp
   ../src/basic_archive.cpp
   ../src/basic_iarchive.cpp
@@ -153,8 +114,9 @@ add_library(serialization
   ../src/xml_grammar.cpp
   # ../src/basic_xml_grammar.ipp # doesn't show up in "Source Files" in Xcode"'
 )
+target_include_directories(serialization PRIVATE ${CMAKE_SOURCE_DIR}/libs/include/)
 
-add_library(wserialization
+add_library(wserialization STATIC
   ../src/basic_text_wiprimitive.cpp
   ../src/basic_text_woprimitive.cpp
   ../src/text_wiarchive.cpp
@@ -165,210 +127,9 @@ add_library(wserialization
   ../src/codecvt_null.cpp
   ../src/xml_wgrammar.cpp
 )
+target_include_directories(wserialization PRIVATE ${CMAKE_SOURCE_DIR}/libs/include/)
 
 # end library build
 ###########################
 
-###########################
-# test targets
 
-function( serialization_test test_name)
-  set(arglist)
-  foreach(a IN ITEMS ${ARGN} )
-    set(arglist ${arglist} ../test/${a}.cpp)
-  endforeach()
-  message(STATUS ${test_name})
-  add_executable( ${test_name} ../test/${test_name}.cpp ${arglist} )
-  target_link_libraries(${test_name} serialization wserialization ${Boost_LIBRARIES})
-  add_test( ${test_name} ${test_name} )
-endfunction(serialization_test)
-
-function(archive_test test_name)
-  set(arglist)
-  foreach(a IN ITEMS ${ARGN} )
-    set(arglist ${arglist} ../test/${a}.cpp)
-  endforeach()
-  foreach(
-    archive-name
-    IN ITEMS text_archive text_warchive binary_archive xml_archive xml_warchive
-  )
-    set(amended_test_name ${test_name}_${archive-name})
-    message(STATUS ${amended_test_name})
-    add_executable(${amended_test_name} ../test/${test_name}.cpp ${arglist})
-    set_property(
-      TARGET ${amended_test_name}
-      PROPERTY COMPILE_DEFINITIONS BOOST_ARCHIVE_TEST=${archive-name}.hpp
-    )
-    target_link_libraries(${amended_test_name} serialization wserialization ${Boost_LIBRARIES})
-    add_test(${amended_test_name} ${amended_test_name})
-  endforeach()
-endfunction(archive_test)
-
-function(polymorphic_archive_test test_name)
-  set(arglist)
-  foreach(a IN ITEMS ${ARGN} )
-    set(arglist ${arglist} ../test/${a}.cpp)
-  endforeach()
-  foreach(
-    archive-name
-    IN ITEMS text_archive text_warchive binary_archive xml_archive xml_warchive
-  )
-    set(amended_test_name ${test_name}_polymorphic_${archive-name})
-    message(STATUS ${amended_test_name})
-    add_executable(${amended_test_name} ../test/${test_name}.cpp ${arglist})
-    set_property(
-      TARGET ${amended_test_name}
-      PROPERTY COMPILE_DEFINITIONS BOOST_ARCHIVE_TEST=polymorphic_${archive-name}.hpp
-    )
-    target_link_libraries(${amended_test_name} serialization wserialization ${Boost_LIBRARIES})
-    add_test(${amended_test_name} ${amended_test_name})
-  endforeach()
-endfunction(polymorphic_archive_test)
-
-enable_testing()
-
-# serialization(test_dll_exported dll_polymorphic_derived2_lib)
-# serialization(test_dll_simple dll_a_lib)
-# compile test_dll_plugin.cpp
-# Running the following test requires that the test know the directory 
-# in which the dll is stored. I don't know how to extract this from bjam
-# serialization(test_dll_plugin : : dll_polymorphic_derived2_lib)
-
-serialization_test(test_private_ctor)
-serialization_test(test_reset_object_address A)
-serialization_test(test_void_cast)
-serialization_test(test_mult_archive_types)
-serialization_test(test_iterators)
-serialization_test(test_iterators_base64)
-serialization_test(test_inclusion)
-serialization_test(test_smart_cast)
-serialization_test(test_utf8_codecvt ../src/utf8_codecvt_facet)
-serialization_test(test_codecvt_null ../src/codecvt_null)
-
-archive_test(test_array A)
-archive_test(test_binary)
-archive_test(test_bitset)
-archive_test(test_class_info_save)
-archive_test(test_class_info_load)
-archive_test(test_complex)
-archive_test(test_contained_class A)
-archive_test(test_cyclic_ptrs A)
-archive_test(test_delete_pointer)
-archive_test(test_deque A)
-archive_test(test_derived)
-archive_test(test_derived_class A)
-archive_test(test_diamond)
-archive_test(test_diamond_complex)
-archive_test(test_exported polymorphic_base)
-archive_test(test_helper_support)
-archive_test(test_interrupts)
-archive_test(test_list A)
-archive_test(test_list_ptrs A)
-archive_test(test_map A)
-archive_test(test_mi)
-archive_test(test_multiple_ptrs A)
-archive_test(test_multiple_inheritance)
-archive_test(test_no_rtti polymorphic_base polymorphic_derived1)
-archive_test(test_new_operator A)
-archive_test(test_non_intrusive)
-archive_test(test_non_default_ctor)
-archive_test(test_non_default_ctor2)
-archive_test(test_null_ptr)
-archive_test(test_nvp A)
-archive_test(test_object)
-archive_test(test_optional)
-archive_test(test_primitive)
-archive_test(test_priority_queue A)
-# archive_test(test_private_base)
-archive_test(test_queue A)
-archive_test(test_recursion A)
-archive_test(test_registered)
-archive_test(test_set A)
-archive_test(test_shared_ptr)
-archive_test(test_shared_ptr_multi_base)
-archive_test(test_shared_ptr_132)
-archive_test(test_simple_class A)
-archive_test(test_simple_class_ptr A)
-archive_test(test_stack A)
-archive_test(test_split)
-archive_test(test_tracking)
-archive_test(test_unregistered)
-archive_test(test_unique_ptr)
-archive_test(test_valarray)
-archive_test(test_variant A)
-archive_test(test_vector A)
-
-polymorphic_archive_test(test_polymorphic test_polymorphic_A A )
-polymorphic_archive_test(test_polymorphic2 test_polymorphic2imp)
-
-# end test targets
-####################
-
-####################
-# add headers in IDE
-
-# for serialisation
-
-file(GLOB x 
-  RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" 
-  "${CMAKE_CURRENT_SOURCE_DIR}/../../include/boost/archive/*.hpp"
-)
-add_custom_target(archive SOURCES ${x})
-set_property(TARGET archive PROPERTY FOLDER "serialization")
-
-file(GLOB x 
-  RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" 
-  "${CMAKE_CURRENT_SOURCE_DIR}/../../include/boost/archive/detail/*.hpp"
-)
-add_custom_target(archive-detail SOURCES ${x})
-set_property(TARGET archive-detail PROPERTY FOLDER "serialization")
-
-file(GLOB x 
-  RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" 
-  "${CMAKE_CURRENT_SOURCE_DIR}/../../include/boost/archive/impl/*.ipp"
-)
-add_custom_target(archive-impl SOURCES ${x})
-set_property(TARGET archive-impl PROPERTY FOLDER "serialization")
-
-file(GLOB x
-  RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" 
-  "${CMAKE_CURRENT_SOURCE_DIR}/../../include/boost/archive/iterators/*.hpp"
-)
-add_custom_target(archive-iterators SOURCES ${x})
-set_property(TARGET archive-iterators PROPERTY FOLDER "serialization")
-
-file(GLOB x 
-  RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" 
-  "${CMAKE_CURRENT_SOURCE_DIR}/../../include/boost/serialization/*.hpp"
-)
-add_custom_target(serialization-headers SOURCES ${x})
-set_property(TARGET serialization-headers PROPERTY FOLDER "serialization")
-
-file(GLOB x 
-  RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" 
-  "${CMAKE_CURRENT_SOURCE_DIR}/../../include/boost/serialization/detail/*.hpp"
-)
-add_custom_target(serialization-detail SOURCES ${x})
-set_property(TARGET serialization-detail PROPERTY FOLDER "serialization")
-
-# for wserialization
-
-file(GLOB x 
-  RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" 
-  "${CMAKE_CURRENT_SOURCE_DIR}/../../include/boost/archive/*_w*.hpp"
-)
-
-add_custom_target(wserialization_headers SOURCES ${x} "${CMAKE_CURRENT_SOURCE_DIR}/../../include/boost/archive/codecvt_null.hpp")
-set_property(TARGET wserialization_headers PROPERTY FOLDER "wserialization")
-
-# end headers in IDE
-####################
-
-#####################
-# add test project to run misc tests
-
-add_executable( test_z ../test/test_z.cpp)
-target_link_libraries(test_z serialization wserialization ${Boost_LIBRARIES})
-
-# end test project
-#####################
