@@ -15,6 +15,7 @@
 #include "TurboCode/TurboCode.h"
 #include "ErrorCorrectingCode.h"
 
+#include "../ecc_export.h"
 #include "../MexConversion.h"
 #include "../mxArrayToTrellis.h"
 #include "../mxArrayToInterleaver.h"
@@ -58,7 +59,7 @@ const char* const BlocEndTypeEnumeration[BlocEndTypeCount] = {
  *  \param  prhs[13] [in]  decoder algorithm type
  *  \param  prhs[14] [in]  work group size - for parralelisation
  ******************************************************************************/
-void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
+ECC_EXPORT void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 {
   if (nrhs != inputCount) {
     throw std::invalid_argument("Wrong argin count in TurboCode_constructor");

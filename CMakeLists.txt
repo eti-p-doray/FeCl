@@ -1,14 +1,19 @@
-cmake_minimum_required (VERSION 3.1.0)
+cmake_minimum_required (VERSION 3.0.0)
+project(ecc)
 
-set (CMAKE_CXX_FLAGS "--std=gnu++11 ${CMAKE_C_FLAGS}")
+include (GenerateExportHeader)
+set(CMAKE_BUILD_TYPE Release)
 
-#set(Boost_USE_STATIC_LIBS        ON) # only find static libs
-#set(Boost_USE_MULTITHREADED      ON)
-#set(Boost_USE_STATIC_RUNTIME    OFF)
-#find_package(Boost 1.36.0 REQUIRED COMPONENTS serialization)
-add_subdirectory(libs/serialization/CMake)
+set(Boost_USE_STATIC_LIBS       ON) # only find static libs
+set(Boost_USE_MULTITHREADED    	ON)
+set(Boost_USE_STATIC_RUNTIME   	OFF)
+find_package(Boost 1.40.0 REQUIRED COMPONENTS serialization)
 
-add_library(ErrorCorrectingCode STATIC
+set (CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_C_FLAGS}")
+set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
+
+add_library(ecc STATIC
 	ErrorCorrectingCode.cpp
 	CodeStructure/CodeStructure.cpp
 	CodeStructure/ConvolutionalCodeStructure.cpp
@@ -23,20 +28,16 @@ add_library(ErrorCorrectingCode STATIC
 	LdpcCode/BpDecoder/BpDecoder.cpp
 )
 
-#target_link_libraries(ErrorCorrectingCode ${Boost_LIBRARIES})
-target_link_libraries(ErrorCorrectingCode PRIVATE serialization)
-#target_include_directories(ErrorCorrectingCode PUBLIC ${Boost_INCLUDE_DIRS})
-target_include_directories(ErrorCorrectingCode PUBLIC ${CMAKE_SOURCE_DIR}/libs/include/)
-target_include_directories(ErrorCorrectingCode PUBLIC ${CMAKE_SOURCE_DIR})
-target_compile_features(ErrorCorrectingCode PUBLIC cxx_template_template_parameters)
-target_compile_features(ErrorCorrectingCode PUBLIC cxx_aggregate_default_initializers)
-install(TARGETS ErrorCorrectingCode DESTINATION ${CMAKE_SOURCE_DIR}/Matlab/bin)
+target_link_libraries(ecc PRIVATE ${Boost_LIBRARIES})
+target_include_directories(ecc PRIVATE ${Boost_INCLUDE_DIRS})
+target_include_directories(ecc PUBLIC ${CMAKE_SOURCE_DIR})
 
 add_subdirectory(Matlab)
 
 enable_testing()
 
-add_executable(test_ErrorCorrectingCode test/test_ErrorCorrectingCode.cpp)
-target_link_libraries(test_ErrorCorrectingCode ErrorCorrectingCode)
+add_executable(test_ecc test/test_ecc.cpp)
+target_link_libraries(test_ecc ecc)
 
-add_test( test_ErrorCorrectingCode test_ErrorCorrectingCode)
+add_test( test_ecc test_ecc)
+target_include_directories(test_ecc PRIVATE ${Boost_INCLUDE_DIRS})

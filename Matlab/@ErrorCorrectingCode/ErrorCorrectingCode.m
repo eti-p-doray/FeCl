@@ -7,7 +7,7 @@ classdef ErrorCorrectingCode < handle
   % This class directly handles the allocated ressources in cpp.
   
     properties (Hidden = true, SetAccess = protected)
-        mexHandle_ = nullHandle(); %handle to the underlying cpp ressources.
+        mexHandle_ = int64(0); %handle to the underlying cpp ressources.
     end
     
     properties (Dependent = true)

@@ -11,7 +11,7 @@ function ErrorCorrectingCodeBuild
     trgPath = '';
     
     objDst = 'build';
-    trgDst = 'product';
+    trgDst = 'bin';
     
     src = {...
         'ErrorCorrectingCode.cpp'; ...
@@ -89,8 +89,8 @@ function ErrorCorrectingCodeBuild
     
     
     oldpath = cd(strrep(which(fullfile('Matlab', 'ErrorCorrectingCodeBuild.m')), fullfile('ErrorCorrectingCodeBuild.m'), ''));
-    mkdir build
-    mkdir product
+    mkdir(objDst);
+    mkdir(trgDst);
     
     objs = '';
     for i = 1:length(src)
@@ -101,7 +101,7 @@ function ErrorCorrectingCodeBuild
         objInfo = dir(obj);
         srcInfo = dir([srcPath src{i}]);
         if (isempty(objInfo) || objInfo.datenum < srcInfo.datenum)
-            mex(['CXXFLAGS="\$CXXFLAGS ' cxxFlags '"'], iPath{:}, '-outdir', objDst, '-c', [srcPath src{length(objs)}]);
+            mex(['CXXFLAGS="\$CXXFLAGS ' cxxFlags '"'], iPath{:}, '-outdir', objDst,'-output',obj,  '-c', [srcPath src{length(objs)}]);
         else
             disp('skip');
         end
@@ -114,7 +114,7 @@ function ErrorCorrectingCodeBuild
         objInfo = dir(obj);
         srcInfo = dir([libsPath libs{i}]);
         if (isempty(objInfo) || objInfo.datenum < srcInfo.datenum)
-            mex(['CXXFLAGS="\$CXXFLAGS ' cxxFlags '"'], iPath{:}, '-outdir', objDst, '-c', [libsPath libs{i}]);
+            mex(['CXXFLAGS="\$CXXFLAGS ' cxxFlags '"'], iPath{:}, '-outdir', objDst,'-output',obj, '-c', [libsPath libs{i}]);
         else
         disp('skip');
         end
@@ -125,8 +125,6 @@ function ErrorCorrectingCodeBuild
     end
     
 
-    %delete build/*
-    %rmdir build
     cd(oldpath)
 end
     

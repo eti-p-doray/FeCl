@@ -17,6 +17,7 @@
 #include "LdpcCode/LdpcCode.h"
 #include "ErrorCorrectingCode.h"
 
+#include "../ecc_export.h"
 #include "../MexConversion.h"
 #include "../mxArrayToBitMatrix.h"
 
@@ -52,7 +53,7 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T>& a)
  *  \param  prhs[2] [in]  Decoder algorithm type
  *  \param  prhs[3] [in]  work group size - for parralelisation
  ******************************************************************************/
-void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
+ECC_EXPORT void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 {
   if (nrhs != inputCount) {
     throw std::invalid_argument("Wrong argin count in LdpcCode_constructor");

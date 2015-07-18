@@ -1,4 +1,5 @@
 # Compiled Object files
+build
 *.slo
 *.lo
 *.o
@@ -29,6 +30,4 @@
 
 # System files
 *.DS_Store
-
-#temp files
 *~

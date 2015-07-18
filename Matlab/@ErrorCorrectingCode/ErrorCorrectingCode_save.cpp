@@ -18,6 +18,7 @@
 
 #include "ErrorCorrectingCode.h"
 
+#include "../ecc_export.h"
 #include "../MexConversion.h"
 #include "../MexAllocator.h"
 
@@ -34,7 +35,7 @@ const int outputCount = 1;
  *  \param  prhs    [in]  Array of output mxArray
  *  \param  prhs[0] [in]  ErrorCorrectingCode object
  ******************************************************************************/
-void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
+ECC_EXPORT void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 {
   if (nrhs != inputCount) {
     throw std::invalid_argument("Wrong argin count in ErrorCorrectingCode_save");
