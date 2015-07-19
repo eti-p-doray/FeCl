@@ -17,7 +17,6 @@
 #include "LdpcCode/LdpcCode.h"
 #include "ErrorCorrectingCode.h"
 
-#include "../ecc_export.h"
 #include "../MexConversion.h"
 #include "../mxArrayToBitMatrix.h"
 

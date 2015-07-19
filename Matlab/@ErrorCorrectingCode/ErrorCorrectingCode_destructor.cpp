@@ -14,7 +14,6 @@
 
 #include "ErrorCorrectingCode.h"
 
-#include "../ecc_export.h"
 #include "../MexConversion.h"
 
 const int inputCount = 1;
