@@ -13,12 +13,6 @@ function ErrorCorrectingCodeBuild
     
     objDst = 'build';
     trgDst = 'bin';
-
-    if (isunix)
-        objEx = '.o'
-    else
-        objEx = '.obj'
-    end
     
     src = {...
         'ErrorCorrectingCode.cpp'; ...
@@ -101,29 +95,29 @@ function ErrorCorrectingCodeBuild
     objs = '';
     for i = 1:length(src)
         [pathstr,name,ext] = fileparts(src{i});
-        obj = ['build/' name objEx];
-        objs{length(objs)+1} = obj;
-        
-        objInfo = dir(obj);
+        objInfo = dir(['build/' name '.*']);
         srcInfo = dir([srcPath src{i}]);
         if (isempty(objInfo) || objInfo.datenum < srcInfo.datenum)
-            mex(['CXXFLAGS="\$CXXFLAGS ' cxxFlags '"'], iPath{:}, '-outdir', objDst, '-c', [srcPath src{length(objs)}]);
+            mex(['CXXFLAGS="\$CXXFLAGS ' cxxFlags '"'], iPath{:}, '-outdir', objDst, '-c', [srcPath src{i}]);
         else
             disp('skip');
         end
+        objInfo = dir(['build/' name '.*']);
+        obj = fullfile('build', objInfo.name);
+        objs{length(objs)+1} = obj;
     end
     for i = 1:length(libs)
         [pathstr,name,ext] = fileparts(libs{i});
-        obj = ['build/' name objEx];
-        objs{length(objs)+1} = obj;
-
-        objInfo = dir(obj);
+        objInfo = dir(['build/' name '.*']);
         srcInfo = dir([libsPath libs{i}]);
         if (isempty(objInfo) || objInfo.datenum < srcInfo.datenum)
             mex(['CXXFLAGS="\$CXXFLAGS ' cxxFlags '"'], iPath{:}, '-outdir', objDst, '-c', [libsPath libs{i}]);
         else
-        disp('skip');
+            disp('skip');
         end
+        objInfo = dir(['build/' name '.*']);
+        obj = fullfile('build', objInfo.name);
+        objs{length(objs)+1} = obj;
     end
 
     for i = 1:length(trg)
