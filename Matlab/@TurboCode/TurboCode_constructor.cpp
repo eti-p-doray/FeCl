@@ -59,7 +59,7 @@ const char* const BlocEndTypeEnumeration[BlocEndTypeCount] = {
  *  \param  prhs[13] [in]  decoder algorithm type
  *  \param  prhs[14] [in]  work group size - for parralelisation
  ******************************************************************************/
-ECC_EXPORT void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
+void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 {
   if (nrhs != inputCount) {
     throw std::invalid_argument("Wrong argin count in TurboCode_constructor");

@@ -5,6 +5,7 @@ function ErrorCorrectingCodeBuild
 %   
     cxxFlags = ['-std=c++11'];
     iPath = {['-I' fullfile('../')], ['-I' fullfile('../libs/include/')]};
+    lPath = {['-L' fullfile('../libs/')]};
 
     srcPath = '../';
     libsPath = '../libs/';
@@ -12,6 +13,12 @@ function ErrorCorrectingCodeBuild
     
     objDst = 'build';
     trgDst = 'bin';
+
+    if (isunix)
+        objEx = '.o'
+    else
+        objEx = '.obj'
+    end
     
     src = {...
         'ErrorCorrectingCode.cpp'; ...
@@ -68,7 +75,6 @@ function ErrorCorrectingCodeBuild
         };
     
     trg = {...
-        'nullHandle.cpp'; ...
         '@ErrorCorrectingCode/ErrorCorrectingCode_get_paritySize.cpp'; ...
         '@ErrorCorrectingCode/ErrorCorrectingCode_get_msgSize.cpp'; ...
         '@ErrorCorrectingCode/ErrorCorrectingCode_get_extrinsicMsgSize.cpp'; ...
@@ -95,33 +101,33 @@ function ErrorCorrectingCodeBuild
     objs = '';
     for i = 1:length(src)
         [pathstr,name,ext] = fileparts(src{i});
-        obj = ['build/' name '.o'];
+        obj = ['build/' name objEx];
         objs{length(objs)+1} = obj;
         
         objInfo = dir(obj);
         srcInfo = dir([srcPath src{i}]);
         if (isempty(objInfo) || objInfo.datenum < srcInfo.datenum)
-            mex(['CXXFLAGS="\$CXXFLAGS ' cxxFlags '"'], iPath{:}, '-outdir', objDst,'-output',obj,  '-c', [srcPath src{length(objs)}]);
+            mex(['CXXFLAGS="\$CXXFLAGS ' cxxFlags '"'], iPath{:}, '-outdir', objDst, '-c', [srcPath src{length(objs)}]);
         else
             disp('skip');
         end
     end
     for i = 1:length(libs)
         [pathstr,name,ext] = fileparts(libs{i});
-        obj = ['build/' name '.o'];
+        obj = ['build/' name objEx];
         objs{length(objs)+1} = obj;
 
         objInfo = dir(obj);
         srcInfo = dir([libsPath libs{i}]);
         if (isempty(objInfo) || objInfo.datenum < srcInfo.datenum)
-            mex(['CXXFLAGS="\$CXXFLAGS ' cxxFlags '"'], iPath{:}, '-outdir', objDst,'-output',obj, '-c', [libsPath libs{i}]);
+            mex(['CXXFLAGS="\$CXXFLAGS ' cxxFlags '"'], iPath{:}, '-outdir', objDst, '-c', [libsPath libs{i}]);
         else
         disp('skip');
         end
     end
 
     for i = 1:length(trg)
-        mex(['CXXFLAGS="\$CXXFLAGS ' cxxFlags '"'], iPath{:}, '-largeArrayDims', '-outdir', trgDst, [trgPath trg{i}], objs{:});
+        mex(['CXXFLAGS="\$CXXFLAGS ' cxxFlags '"'], iPath{:},lPath{:}, '-largeArrayDims', '-outdir', trgDst, [trgPath trg{i}], objs{:});
     end
     
 

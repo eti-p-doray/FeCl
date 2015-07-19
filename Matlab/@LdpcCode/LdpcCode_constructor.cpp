@@ -53,7 +53,7 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T>& a)
  *  \param  prhs[2] [in]  Decoder algorithm type
  *  \param  prhs[3] [in]  work group size - for parralelisation
  ******************************************************************************/
-ECC_EXPORT void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
+void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 {
   if (nrhs != inputCount) {
     throw std::invalid_argument("Wrong argin count in LdpcCode_constructor");

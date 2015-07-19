@@ -32,7 +32,7 @@ const int outputCount = 1;
  *  \param  prhs[0] [in]  ErrorCorrectinCode object
  *  \param  prhs[1] [in]  parity L-values
  ******************************************************************************/
-ECC_EXPORT void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
+void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 {
   if (nrhs != inputCount) {
     throw std::invalid_argument("Wrong argin count in ErrorCorrectingCode_decode");
