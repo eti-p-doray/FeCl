@@ -15,16 +15,18 @@
 #include <boost/serialization/export.hpp>
 #include "../Archive.h"
 
-#include "../ErrorCorrectingCode.h"
+#include "../Code.h"
 #include "../CodeStructure/LdpcCodeStructure.h"
 #include "BpDecoder/BpDecoder.h"
+
+namespace fec {
 
 /*******************************************************************************
  *  This class represents a map encode / decoder
  *  It offers methods encode and to decode data giving a posteriori informations 
  *  using a trellis.
  ******************************************************************************/
-class LdpcCode : public ErrorCorrectingCode
+class LdpcCode : public Code
 {
   friend class boost::serialization::access;
 public:
@@ -53,15 +55,17 @@ protected:
 private:
   template <typename Archive>
   void serialize(Archive & ar, const unsigned int version) {
-    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ErrorCorrectingCode);
-    ar & BOOST_SERIALIZATION_NVP(codeStructure_);
+    using namespace boost::serialization;
+    ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(Code);
+    ar & ::BOOST_SERIALIZATION_NVP(codeStructure_);
   }
   
   LdpcCodeStructure codeStructure_;
 };
+  
+}
 
-BOOST_CLASS_EXPORT_KEY(LdpcCode);
-BOOST_CLASS_TYPE_INFO(LdpcCode,extended_type_info_no_rtti<LdpcCode>);
-
+BOOST_CLASS_EXPORT_KEY(fec::LdpcCode);
+BOOST_CLASS_TYPE_INFO(fec::LdpcCode,extended_type_info_no_rtti<fec::LdpcCode>);
 
 #endif

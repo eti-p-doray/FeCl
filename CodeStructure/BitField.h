@@ -16,6 +16,8 @@
 #include <boost/serialization/utility.hpp>
 #include <boost/serialization/nvp.hpp>
 
+namespace fec {
+
 /*******************************************************************************
  *  This class emulates a reference to a single bit.
  ******************************************************************************/
@@ -88,7 +90,8 @@ public:
 private:
   template <typename Archive>
   void serialize(Archive & ar, const unsigned int version) {
-    ar & BOOST_SERIALIZATION_NVP(value_);
+    using namespace boost::serialization;
+    ar & ::BOOST_SERIALIZATION_NVP(value_);
   }
   
   template <typename S = BlocType>       S& at(uint64_t i) {return data<S>()[i];}
@@ -98,9 +101,11 @@ private:
   
   T value_;
 };
+  
+}
 
 template <typename T>
-bool parity(BitField<T> a) {
+bool parity(fec::BitField<T> a) {
   bool x = false;
   for (int i = 0; i < a.size(); ++i) {
     x ^= a[i];
@@ -109,7 +114,7 @@ bool parity(BitField<T> a) {
 }
 
 template <typename T>
-std::ostream& operator<<(std::ostream& os, const BitField<T>& a)
+std::ostream& operator<<(std::ostream& os, const fec::BitField<T>& a)
 {
   for (uint64_t i = 0; i < a.size(); ++i) {
     os << a.test(i);
@@ -117,16 +122,16 @@ std::ostream& operator<<(std::ostream& os, const BitField<T>& a)
   return os;
 }
 
-template <typename T, typename S> BitField<T> operator+(BitField<T> a, S b) {a += b; return a;}
-template <typename T, typename S> BitField<T> operator-(BitField<T> a, S b) {a -= b; return a;}
-template <typename T, typename S> BitField<T> operator*(BitField<T> a, S b) {a *= b; return a;}
-template <typename T, typename S> BitField<T> operator/(BitField<T> a, S b) {a /= b; return a;}
-template <typename T, typename S> BitField<T> operator%(BitField<T> a, S b) {a %= b; return a;}
-template <typename T, typename S> BitField<T> operator&(BitField<T> a, S b) {a &= b; return a;}
-template <typename T, typename S> BitField<T> operator|(BitField<T> a, S b) {a |= b; return a;}
-template <typename T, typename S> BitField<T> operator^(BitField<T> a, S b) {a ^= b; return a;}
-template <typename T, typename S> BitField<T> operator<<(BitField<T> a, S b) {a <<= b; return a;}
-template <typename T, typename S> BitField<T> operator>>(BitField<T> a, S b) {a >>= b; return a;}
+template <typename T, typename S> fec::BitField<T> operator+(fec::BitField<T> a, S b) {a += b; return a;}
+template <typename T, typename S> fec::BitField<T> operator-(fec::BitField<T> a, S b) {a -= b; return a;}
+template <typename T, typename S> fec::BitField<T> operator*(fec::BitField<T> a, S b) {a *= b; return a;}
+template <typename T, typename S> fec::BitField<T> operator/(fec::BitField<T> a, S b) {a /= b; return a;}
+template <typename T, typename S> fec::BitField<T> operator%(fec::BitField<T> a, S b) {a %= b; return a;}
+template <typename T, typename S> fec::BitField<T> operator&(fec::BitField<T> a, S b) {a &= b; return a;}
+template <typename T, typename S> fec::BitField<T> operator|(fec::BitField<T> a, S b) {a |= b; return a;}
+template <typename T, typename S> fec::BitField<T> operator^(fec::BitField<T> a, S b) {a ^= b; return a;}
+template <typename T, typename S> fec::BitField<T> operator<<(fec::BitField<T> a, S b) {a <<= b; return a;}
+template <typename T, typename S> fec::BitField<T> operator>>(fec::BitField<T> a, S b) {a >>= b; return a;}
 
 
 #endif

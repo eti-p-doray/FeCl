@@ -9,6 +9,8 @@
 
 #include "ConvolutionalCode.h"
 
+using namespace fec;
+
 BOOST_CLASS_EXPORT_IMPLEMENT(ConvolutionalCode);
 
 const char * ConvolutionalCode::get_key() const {
@@ -22,7 +24,7 @@ const char * ConvolutionalCode::get_key() const {
  *  \param  workGroupSize Number of thread used for decoding
  ******************************************************************************/
 ConvolutionalCode::ConvolutionalCode(const ConvolutionalCodeStructure& codeStructure, int workGroupSize) :
-  ErrorCorrectingCode(workGroupSize),
+  Code(workGroupSize),
   codeStructure_(codeStructure)
 {
 }

@@ -16,6 +16,7 @@
 #include "BpDecoderImpl.h"
 #include "../../CodeStructure/CodeStructure.h"
 
+namespace fec {
 
 /*******************************************************************************
  *  This class contains implementation specific functions of LogMap algorithm.
@@ -57,5 +58,7 @@ private:
     }
   }
 };
+  
+}
 
 #endif

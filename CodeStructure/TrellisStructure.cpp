@@ -9,6 +9,8 @@
 
 #include "TrellisStructure.h"
 
+using namespace fec;
+
 TrellisStructure::TrellisStructure(std::vector<int> nextState, std::vector<int> output, uint8_t inputSize, uint8_t outputSize, uint8_t stateSize)
 {
   stateSize_ = stateSize;

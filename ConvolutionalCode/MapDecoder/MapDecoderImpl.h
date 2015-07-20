@@ -15,6 +15,8 @@
 
 #include "MapDecoder.h"
 
+namespace fec {
+
 /*******************************************************************************
  *  This class represents a map decoder implementation.
  *  The reason for this class is to offer an common interface of map decoders 
@@ -285,6 +287,8 @@ void MapDecoderImpl<A>::backwardMetrics()
       }
     }
   }
+}
+  
 }
 
 #endif

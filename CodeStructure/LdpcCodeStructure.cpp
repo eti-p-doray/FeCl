@@ -9,6 +9,8 @@
 
 #include "LdpcCodeStructure.h"
 
+using namespace fec;
+
 SparseBitMatrix LdpcCodeStructure::gallagerConstruction(size_t n, size_t wc, size_t wr)
 {
   SparseBitMatrix H(n/wr * wc, n, wr);

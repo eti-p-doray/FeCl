@@ -16,6 +16,8 @@
 #include "MapDecoderImpl.h"
 #include "../../CodeStructure/CodeStructure.h"
 
+namespace fec {
+
 /*******************************************************************************
  *  This class contains implementation specific functions of MaxLogMap algorithm.
  ******************************************************************************/
@@ -26,5 +28,7 @@ public:
 private: 
   static inline LlrType logAdd(LlrType a, LlrType b) {return std::max(a,b);}
 };
+  
+}
 
 #endif

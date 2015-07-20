@@ -13,16 +13,18 @@
 #include <boost/serialization/export.hpp>
 #include "../Archive.h"
 
-#include "../ErrorCorrectingCode.h"
+#include "../Code.h"
 #include "../CodeStructure/TurboCodeStructure.h"
 #include "../ConvolutionalCode/ConvolutionalCode.h"
+
+namespace fec {
 
 /*******************************************************************************
  *  This class represents a map encode / decoder
  *  It offers methods encode and to decode data giving a posteriori informations 
  *  using a trellis.
  ******************************************************************************/
-class TurboCode : public ErrorCorrectingCode
+class TurboCode : public Code
 {
   friend class boost::serialization::access;
 public:
@@ -50,10 +52,11 @@ protected:
 private:
   template <typename Archive>
   void serialize(Archive & ar, const unsigned int version) {
-    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ErrorCorrectingCode);
-    ar & BOOST_SERIALIZATION_NVP(code1_);
-    ar & BOOST_SERIALIZATION_NVP(code2_);
-    ar & BOOST_SERIALIZATION_NVP(codeStructure_);
+    using namespace boost::serialization;
+    ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(Code);
+    ar & ::BOOST_SERIALIZATION_NVP(code1_);
+    ar & ::BOOST_SERIALIZATION_NVP(code2_);
+    ar & ::BOOST_SERIALIZATION_NVP(codeStructure_);
   }
   
   template <typename T> void packParity(const std::vector<T>& parity1, const std::vector<T>& parity2, std::vector<T>& codeOut) const;
@@ -68,9 +71,14 @@ private:
   ConvolutionalCode code2_;
   TurboCodeStructure codeStructure_;
 };
+  
+}
+
+BOOST_CLASS_EXPORT_KEY(fec::TurboCode);
+BOOST_CLASS_TYPE_INFO(fec::TurboCode,extended_type_info_no_rtti<fec::TurboCode>);
 
 template <typename T>
-void TurboCode::packParity(const std::vector<T>& parity1, const std::vector<T>& parity2, std::vector<T>& parityOut) const
+void fec::TurboCode::packParity(const std::vector<T>& parity1, const std::vector<T>& parity2, std::vector<T>& parityOut) const
 {
   auto parity1It = parity1.begin();
   auto parity2It = parity2.begin();
@@ -82,7 +90,7 @@ void TurboCode::packParity(const std::vector<T>& parity1, const std::vector<T>& 
 }
 
 template <typename T>
-void TurboCode::packParityNBloc(typename std::vector<T>::const_iterator parity1, typename std::vector<T>::const_iterator parity2, typename std::vector<T>::iterator parityOut, size_t n) const
+void fec::TurboCode::packParityNBloc(typename std::vector<T>::const_iterator parity1, typename std::vector<T>::const_iterator parity2, typename std::vector<T>::iterator parityOut, size_t n) const
 {
   for (size_t i = 0; i < n; ++i) {
     packParityBloc<T>(parity1, parity2, parityOut);
@@ -93,7 +101,7 @@ void TurboCode::packParityNBloc(typename std::vector<T>::const_iterator parity1,
 }
 
 template <typename T>
-void TurboCode::packParityBloc(typename std::vector<T>::const_iterator parity1, typename std::vector<T>::const_iterator parity2, typename std::vector<T>::iterator codeOut) const
+void fec::TurboCode::packParityBloc(typename std::vector<T>::const_iterator parity1, typename std::vector<T>::const_iterator parity2, typename std::vector<T>::iterator codeOut) const
 {
   for (size_t j = 0; j < codeStructure_.structure2().blocSize(); ++j) {
     for (size_t k = 0; k < codeStructure_.structure1().trellis().outputSize(); ++k) {
@@ -111,19 +119,5 @@ void TurboCode::packParityBloc(typename std::vector<T>::const_iterator parity1, 
     codeOut[j] = parity1[j];
   }
 }
-
-template <typename T>
-void operator -=(std::vector<T>& a, const std::vector<T>& b) {
-  if (a.size() != b.size()) {
-    return;
-  }
-  auto bIt = b.begin();
-  for (auto aIt = a.begin(); aIt < a.end(); ++aIt, ++bIt) {
-    *aIt -= *bIt;
-  }
-}
-
-BOOST_CLASS_EXPORT_KEY(TurboCode);
-BOOST_CLASS_TYPE_INFO(TurboCode,extended_type_info_no_rtti<TurboCode>);
 
 #endif

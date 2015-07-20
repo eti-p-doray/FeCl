@@ -9,6 +9,8 @@
 
 #include "LdpcCode.h"
 
+using namespace fec;
+
 BOOST_CLASS_EXPORT_IMPLEMENT(LdpcCode);
 
 const char * LdpcCode::get_key() const {
@@ -22,7 +24,7 @@ const char * LdpcCode::get_key() const {
  *  \param  workGroupSize Number of thread used for decoding
  ******************************************************************************/
 LdpcCode::LdpcCode(const LdpcCodeStructure& codeStructure, int workGroupdSize) :
-  ErrorCorrectingCode(workGroupdSize),
+  Code(workGroupdSize),
   codeStructure_(codeStructure)
 {
 }

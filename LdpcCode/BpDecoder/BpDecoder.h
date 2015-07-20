@@ -15,6 +15,8 @@
 
 #include "../../CodeStructure/LdpcCodeStructure.h"
 
+namespace fec {
+
 /*******************************************************************************
  *  This class represents a map decoder
  *  It offers methods to decode data giving a posteriori informations
@@ -52,5 +54,7 @@ private:
   
   const LdpcCodeStructure codeStructure_;
 };
+  
+}
 
 #endif

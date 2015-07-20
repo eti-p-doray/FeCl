@@ -16,6 +16,8 @@
 #include "MapDecoderImpl.h"
 #include "../../CodeStructure/CodeStructure.h"
 
+namespace fec {
+
 /*******************************************************************************
  *  This class contains implementation specific functions of LogMap algorithm.
  ******************************************************************************/
@@ -32,5 +34,7 @@ private:
     return sum + log(1.0 + exp(-fabs(a-b)));
   }
 };
+  
+}
 
 #endif

@@ -9,6 +9,8 @@
 
 #include "CodeStructure.h"
 
+using namespace fec;
+
 CodeStructure::CodeStructure(size_t messageSize, size_t paritySize)
 {
   messageSize_ = messageSize;

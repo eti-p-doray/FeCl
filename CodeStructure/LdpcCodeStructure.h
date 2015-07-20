@@ -22,12 +22,14 @@
 #include "CodeStructure.h"
 #include "BitMatrix.h"
 
+namespace fec {
+
 /*******************************************************************************
  *  This class represents a ldpc code structure.
  *  It provides a usefull interface to store and acces the structure information.
  ******************************************************************************/
 class LdpcCodeStructure : public CodeStructure {
-  friend class boost::serialization::access;
+  friend class ::boost::serialization::access;
 public:
   enum DecoderType {
     TrueBp,
@@ -61,14 +63,15 @@ public:
 private:
   template <typename Archive>
   void serialize(Archive & ar, const unsigned int version) {
-    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CodeStructure);
-    ar & BOOST_SERIALIZATION_NVP(H_);
-    ar & BOOST_SERIALIZATION_NVP(DC_);
-    ar & BOOST_SERIALIZATION_NVP(T_);
-    ar & BOOST_SERIALIZATION_NVP(A_);
-    ar & BOOST_SERIALIZATION_NVP(B_);
-    ar & BOOST_SERIALIZATION_NVP(decoderType_);
-    ar & BOOST_SERIALIZATION_NVP(iterationCount_);
+    using namespace boost::serialization;
+    ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(CodeStructure);
+    ar & ::BOOST_SERIALIZATION_NVP(H_);
+    ar & ::BOOST_SERIALIZATION_NVP(DC_);
+    ar & ::BOOST_SERIALIZATION_NVP(T_);
+    ar & ::BOOST_SERIALIZATION_NVP(A_);
+    ar & ::BOOST_SERIALIZATION_NVP(B_);
+    ar & ::BOOST_SERIALIZATION_NVP(decoderType_);
+    ar & ::BOOST_SERIALIZATION_NVP(iterationCount_);
   }
   
   void computeGeneratorMatrix(SparseBitMatrix&& H);
@@ -82,5 +85,7 @@ private:
   DecoderType decoderType_;
   size_t iterationCount_;
 };
+  
+}
 
 #endif

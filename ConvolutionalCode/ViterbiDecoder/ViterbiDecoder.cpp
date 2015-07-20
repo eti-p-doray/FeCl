@@ -9,6 +9,7 @@
 
 #include "ViterbiDecoder.h"
 
+using namespace fec;
 
 void ViterbiDecoder::decodeNBloc(std::vector<LlrType>::const_iterator codeIn, std::vector<uint8_t>::iterator messageOut, size_t n)
 {

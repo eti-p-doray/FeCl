@@ -15,6 +15,8 @@
 
 #include "BpDecoder.h"
 
+namespace fec {
+
 /*******************************************************************************
  *  This class represents a belief propagation decoder implementation.
  *  The reason for this class is to offer an common interface of map decoders 
@@ -75,6 +77,8 @@ void BpDecoderImpl<A>::bitUpdate(std::vector<LlrType>::const_iterator parity)
       bitMetrics_[*checkBit] += *checkMetricTmp;
     }
   }
+}
+  
 }
 
 #endif

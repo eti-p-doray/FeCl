@@ -15,17 +15,19 @@
 #include "../Archive.h"
 #include <boost/serialization/export.hpp>
 
-#include "../ErrorCorrectingCode.h"
+#include "../Code.h"
 #include "../CodeStructure/ConvolutionalCodeStructure.h"
 #include "MapDecoder/MapDecoder.h"
 #include "ViterbiDecoder/ViterbiDecoder.h"
+
+namespace fec {
 
 /*******************************************************************************
  *  This class represents a map encode / decoder
  *  It offers methods encode and to decode data giving a posteriori informations 
  *  using a trellis.
  ******************************************************************************/
-class ConvolutionalCode : public ErrorCorrectingCode
+class ConvolutionalCode : public Code
 {
   friend class TurboCode;
   friend class boost::serialization::access;
@@ -54,13 +56,16 @@ protected:
 private:
   template <typename Archive>
   void serialize(Archive & ar, const unsigned int version) {
-    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ErrorCorrectingCode);
-    ar & BOOST_SERIALIZATION_NVP(codeStructure_);
+    using namespace boost::serialization;
+    ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(Code);
+    ar & ::BOOST_SERIALIZATION_NVP(codeStructure_);
   }
   ConvolutionalCodeStructure codeStructure_;
 };
+  
+}
 
-BOOST_CLASS_TYPE_INFO(ConvolutionalCode,extended_type_info_no_rtti<ConvolutionalCode>);
-BOOST_CLASS_EXPORT_KEY(ConvolutionalCode);
+BOOST_CLASS_TYPE_INFO(fec::ConvolutionalCode,extended_type_info_no_rtti<fec::ConvolutionalCode>);
+BOOST_CLASS_EXPORT_KEY(fec::ConvolutionalCode);
 
 #endif

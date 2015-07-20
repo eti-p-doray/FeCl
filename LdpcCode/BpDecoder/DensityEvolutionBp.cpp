@@ -9,6 +9,8 @@
 
 #include "DensityEvolutionBp.h"
 
+using namespace fec;
+
 std::unique_ptr<DensityEvolutionBp> DensityEvolutionBp::create(const LdpcCodeStructure& codeStructure)
 {
   return std::unique_ptr<DensityEvolutionBp>(new DensityEvolutionBp(codeStructure));

@@ -16,6 +16,8 @@
 #include "BpDecoderImpl.h"
 #include "../../CodeStructure/CodeStructure.h"
 
+namespace fec {
+
 /*******************************************************************************
  *  This class contains implementation specific functions of TrueBp algorithm.
  ******************************************************************************/
@@ -86,5 +88,7 @@ private:
     }
   }
 };
+  
+}
 
 #endif

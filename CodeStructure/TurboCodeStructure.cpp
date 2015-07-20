@@ -9,6 +9,8 @@
 
 #include "TurboCodeStructure.h"
 
+using namespace fec;
+
 TurboCodeStructure::TurboCodeStructure(TrellisStructure trellis1, TrellisStructure trellis2, Interleaver interleaver, size_t iterationCount, ConvolutionalCodeStructure::BlocEndType endType, ConvolutionalCodeStructure::DecoderType type) :
   CodeStructure(interleaver.size(), 0),
   structure1_(trellis1, interleaver.size(), endType, type),

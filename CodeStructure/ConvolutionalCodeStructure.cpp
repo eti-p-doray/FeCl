@@ -9,6 +9,8 @@
 
 #include "ConvolutionalCodeStructure.h"
 
+using namespace fec;
+
 ConvolutionalCodeStructure::ConvolutionalCodeStructure(TrellisStructure trellis, size_t blocSize, BlocEndType endType, DecoderType type) : CodeStructure(blocSize * trellis.inputSize(), blocSize * trellis.outputSize()), trellis_(trellis)
 {
   blocSize_ = blocSize;

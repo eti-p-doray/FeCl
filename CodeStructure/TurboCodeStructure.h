@@ -18,12 +18,14 @@
 #include "ConvolutionalCodeStructure.h"
 #include "Interleaver.h"
 
+namespace fec {
+
 /*******************************************************************************
  *  This class represents a convolutional code structure.
  *  It provides a usefull interface to store and acces the structure information.
  ******************************************************************************/
 class TurboCodeStructure : public CodeStructure {
-  friend class boost::serialization::access;
+  friend class ::boost::serialization::access;
 public:
   TurboCodeStructure() = default;
   TurboCodeStructure(TrellisStructure trellis1, TrellisStructure trellis2, Interleaver interleaver, size_t iterationCount = 5, ConvolutionalCodeStructure::BlocEndType endType = ConvolutionalCodeStructure::Truncation, ConvolutionalCodeStructure::DecoderType type = ConvolutionalCodeStructure::MaxLogMap);
@@ -39,11 +41,12 @@ public:
 private:
   template <typename Archive>
   void serialize(Archive & ar, const unsigned int version) {
-    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CodeStructure);
-    ar & BOOST_SERIALIZATION_NVP(structure1_);
-    ar & BOOST_SERIALIZATION_NVP(structure2_);
-    ar & BOOST_SERIALIZATION_NVP(interleaver_);
-    ar & BOOST_SERIALIZATION_NVP(iterationCount_);
+    using namespace boost::serialization;
+    ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(CodeStructure);
+    ar & ::BOOST_SERIALIZATION_NVP(structure1_);
+    ar & ::BOOST_SERIALIZATION_NVP(structure2_);
+    ar & ::BOOST_SERIALIZATION_NVP(interleaver_);
+    ar & ::BOOST_SERIALIZATION_NVP(iterationCount_);
   }
   
   ConvolutionalCodeStructure structure1_;
@@ -51,5 +54,7 @@ private:
   Interleaver interleaver_;
   size_t iterationCount_;
 };
+  
+}
 
 #endif

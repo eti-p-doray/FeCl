@@ -17,12 +17,14 @@
 #include "CodeStructure.h"
 #include "TrellisStructure.h"
 
+namespace fec {
+
 /*******************************************************************************
  *  This class represents a convolutional code structure.
  *  It provides a usefull interface to store and acces the structure information.
  ******************************************************************************/
 class ConvolutionalCodeStructure : public CodeStructure {
-  friend class boost::serialization::access;
+  friend class ::boost::serialization::access;
 public:
   enum BlocEndType {
     ZeroTail,
@@ -58,12 +60,13 @@ public:
 private:
   template <typename Archive>
   void serialize(Archive & ar, const unsigned int version) {
-    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CodeStructure);
-    ar & BOOST_SERIALIZATION_NVP(trellis_);
-    ar & BOOST_SERIALIZATION_NVP(endType_);
-    ar & BOOST_SERIALIZATION_NVP(decoderType_);
-    ar & BOOST_SERIALIZATION_NVP(tailSize_);
-    ar & BOOST_SERIALIZATION_NVP(blocSize_);
+    using namespace boost::serialization;
+    ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(CodeStructure);
+    ar & ::BOOST_SERIALIZATION_NVP(trellis_);
+    ar & ::BOOST_SERIALIZATION_NVP(endType_);
+    ar & ::BOOST_SERIALIZATION_NVP(decoderType_);
+    ar & ::BOOST_SERIALIZATION_NVP(tailSize_);
+    ar & ::BOOST_SERIALIZATION_NVP(blocSize_);
   }
   
   TrellisStructure trellis_;
@@ -72,5 +75,7 @@ private:
   size_t tailSize_;
   size_t blocSize_;
 };
+  
+}
 
 #endif

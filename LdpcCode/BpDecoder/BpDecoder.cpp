@@ -12,6 +12,8 @@
 #include "MinSumBp.h"
 #include "BpDecoderImpl.h"
 
+using namespace fec;
+
 std::unique_ptr<BpDecoder> BpDecoder::create(const LdpcCodeStructure& codeStructure)
 {
   switch (codeStructure.decoderType()) {

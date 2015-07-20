@@ -18,6 +18,8 @@
 #include <boost/serialization/utility.hpp>
 #include <boost/serialization/assume_abstract.hpp>
 
+namespace fec {
+
 typedef double LlrType;
 const LlrType MAX_LLR = std::numeric_limits<LlrType>::infinity();
 const LlrType THRESHOLD_LLR = 10000.0;
@@ -48,6 +50,7 @@ public:
 protected:
   template <typename Archive>
   void serialize(Archive & ar, const unsigned int version) {
+    using namespace boost::serialization;
     ar & BOOST_SERIALIZATION_NVP(messageSize_);
     ar & BOOST_SERIALIZATION_NVP(paritySize_);
   }
@@ -55,7 +58,10 @@ protected:
   size_t messageSize_;
   size_t paritySize_;
 };
+  
+}
 
-BOOST_SERIALIZATION_ASSUME_ABSTRACT(CodeStructure);
+BOOST_SERIALIZATION_ASSUME_ABSTRACT(fec::CodeStructure);
+  
 
 #endif

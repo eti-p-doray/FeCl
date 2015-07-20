@@ -12,6 +12,8 @@
 #include "LogMap.h"
 #include "MapDecoderImpl.h"
 
+using namespace fec;
+
 std::unique_ptr<MapDecoder> MapDecoder::create(const ConvolutionalCodeStructure& codeStructure)
 {
   switch (codeStructure.decoderType()) {

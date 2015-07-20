@@ -9,6 +9,8 @@
 
 #include "TurboCode.h"
 
+using namespace fec;
+
 BOOST_CLASS_EXPORT_IMPLEMENT(TurboCode);
 
 const char * TurboCode::get_key() const {
@@ -22,7 +24,7 @@ const char * TurboCode::get_key() const {
  *  \param  workGroupSize Number of thread used for decoding
  ******************************************************************************/
 TurboCode::TurboCode(const TurboCodeStructure& codeStructure, int workGroupdSize) :
-  ErrorCorrectingCode(workGroupdSize),
+  Code(workGroupdSize),
   codeStructure_(codeStructure),
   code1_(codeStructure.structure1(), workGroupdSize),
   code2_(codeStructure.structure2(), workGroupdSize)

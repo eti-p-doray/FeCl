@@ -15,6 +15,8 @@
 
 #include "../../CodeStructure/ConvolutionalCodeStructure.h"
 
+namespace fec {
+
 /*******************************************************************************
  *  This class represents a map decoder
  *  It offers methods to decode data giving a posteriori informations
@@ -43,5 +45,7 @@ private:
   
   const ConvolutionalCodeStructure codeStructure_;
 };
+  
+}
 
 #endif

@@ -20,6 +20,8 @@
 
 #include "BitField.h"
 
+namespace fec {
+
 struct Branch {
   BitField<uint16_t> nextState;
   BitField<uint16_t> output;
@@ -33,9 +35,9 @@ class TrellisStructure {
   friend class boost::serialization::access;
 public:
   TrellisStructure() = default;
-  TrellisStructure(std::vector<int> nextState, std::vector<int> output, uint8_t inputSize, uint8_t outputSize, uint8_t stateSize);
-  TrellisStructure(std::vector<BitField<uint16_t> > constraintLengths, std::vector<std::vector<BitField<uint16_t> > > generator);
-  TrellisStructure(std::vector<BitField<uint16_t> > constraintLengths, std::vector<std::vector<BitField<uint16_t> > > generator, std::vector<BitField<uint16_t> > feedback);
+  TrellisStructure(::std::vector<int> nextState, ::std::vector<int> output, uint8_t inputSize, uint8_t outputSize, uint8_t stateSize);
+  TrellisStructure(::std::vector<BitField<uint16_t> > constraintLengths, ::std::vector<::std::vector<BitField<uint16_t> > > generator);
+  TrellisStructure(::std::vector<BitField<uint16_t> > constraintLengths, ::std::vector<::std::vector<BitField<uint16_t> > > generator, ::std::vector<BitField<uint16_t> > feedback);
   
   TrellisStructure(const TrellisStructure&) = default;
   
@@ -52,24 +54,24 @@ public:
   inline BitField<uint16_t> getNextState(int currentState, int input) const {return nextState_[currentState * inputCount() + input];}
   inline BitField<uint16_t> getOutput(int currentState, int input) const {return output_[currentState * inputCount() + input];}
 
-  inline std::vector<BitField<uint16_t> >::const_iterator beginState() const {return nextState_.begin();}
-  inline std::vector<BitField<uint16_t> >::const_iterator endState() const {return nextState_.end();}
+  inline ::std::vector<BitField<uint16_t> >::const_iterator beginState() const {return nextState_.begin();}
+  inline ::std::vector<BitField<uint16_t> >::const_iterator endState() const {return nextState_.end();}
   
-  inline std::vector<BitField<uint16_t> >::const_iterator beginOutput() const {return output_.begin();}
-  inline std::vector<BitField<uint16_t> >::const_iterator endOutput() const {return output_.end();}
+  inline ::std::vector<BitField<uint16_t> >::const_iterator beginOutput() const {return output_.begin();}
+  inline ::std::vector<BitField<uint16_t> >::const_iterator endOutput() const {return output_.end();}
   
 private:
   template <typename Archive>
   void serialize(Archive & ar, const unsigned int version) {
-    ar & BOOST_SERIALIZATION_NVP(stateSize_);
-    ar & BOOST_SERIALIZATION_NVP(inputSize_);
-    ar & BOOST_SERIALIZATION_NVP(outputSize_);
-    ar & BOOST_SERIALIZATION_NVP(stateCount_);
-    ar & BOOST_SERIALIZATION_NVP(inputCount_);
-    ar & BOOST_SERIALIZATION_NVP(outputCount_);
-    ar & BOOST_SERIALIZATION_NVP(tableSize_);
-    ar & BOOST_SERIALIZATION_NVP(nextState_);
-    ar & BOOST_SERIALIZATION_NVP(output_);
+    ar & ::BOOST_SERIALIZATION_NVP(stateSize_);
+    ar & ::BOOST_SERIALIZATION_NVP(inputSize_);
+    ar & ::BOOST_SERIALIZATION_NVP(outputSize_);
+    ar & ::BOOST_SERIALIZATION_NVP(stateCount_);
+    ar & ::BOOST_SERIALIZATION_NVP(inputCount_);
+    ar & ::BOOST_SERIALIZATION_NVP(outputCount_);
+    ar & ::BOOST_SERIALIZATION_NVP(tableSize_);
+    ar & ::BOOST_SERIALIZATION_NVP(nextState_);
+    ar & ::BOOST_SERIALIZATION_NVP(output_);
   }
   
   int stateSize_;
@@ -82,10 +84,12 @@ private:
   
   int tableSize_;
   
-  std::vector<BitField<uint16_t> > nextState_;
-  std::vector<BitField<uint16_t> > output_;
+  ::std::vector<BitField<uint16_t> > nextState_;
+  ::std::vector<BitField<uint16_t> > output_;
 };
 
-std::ostream& operator<<(std::ostream& os, const TrellisStructure& trellis);
+}
+
+std::ostream& operator<<(std::ostream& os, const fec::TrellisStructure& trellis);
 
 #endif
