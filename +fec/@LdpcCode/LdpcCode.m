@@ -7,7 +7,7 @@ classdef LdpcCode < fec.Code
         % Overload of the loadobj
         %   Allocate underlying ressources from saved configuration.
         %
-            b = LdpcCode();
+            b = fec.LdpcCode();
             b.load(a);
         end
     end

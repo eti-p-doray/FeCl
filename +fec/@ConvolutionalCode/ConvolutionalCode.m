@@ -7,7 +7,7 @@ classdef ConvolutionalCode < fec.Code
         % Overload of the loadobj
         %   Allocate underlying ressources from saved configuration.
         %
-            b = ConvolutionalCode();
+            b = fec.ConvolutionalCode();
             b.load(a);
         end
     end

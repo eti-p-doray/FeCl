@@ -7,7 +7,7 @@ classdef TurboCode < fec.Code
         % Overload of the loadobj
         %   Allocate underlying ressources from saved configuration.
         %
-            b = TurboCode();
+            b = fec.TurboCode();
             b.load(a);
         end
     end
