@@ -26,7 +26,7 @@ namespace fec {
 class ConvolutionalCodeStructure : public CodeStructure {
   friend class ::boost::serialization::access;
 public:
-  enum BlocEndType {
+  enum TrellisEndType {
     ZeroTail,
     Truncation
   };
@@ -36,14 +36,14 @@ public:
   };
   
   ConvolutionalCodeStructure() = default;
-  ConvolutionalCodeStructure(TrellisStructure trellis, size_t blocSize, BlocEndType endType = Truncation, DecoderType type = MaxLogMap);
+  ConvolutionalCodeStructure(TrellisStructure trellis, size_t blocSize, TrellisEndType trellisEndType = Truncation, DecoderType type = MaxLogMap);
   virtual ~ConvolutionalCodeStructure() = default;
   
   virtual CodeStructure::Type type() const {return CodeStructure::Convolutional;}
   
   inline size_t blocSize() const {return blocSize_;}
   inline size_t tailSize() const {return tailSize_;}
-  inline BlocEndType endType() const {return endType_;}
+  inline TrellisEndType endType() const {return trellisEndType_;}
   inline DecoderType decoderType() const {return decoderType_;}
   inline const TrellisStructure& trellis() const {return trellis_;}
   
@@ -63,14 +63,14 @@ private:
     using namespace boost::serialization;
     ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(CodeStructure);
     ar & ::BOOST_SERIALIZATION_NVP(trellis_);
-    ar & ::BOOST_SERIALIZATION_NVP(endType_);
+    ar & ::BOOST_SERIALIZATION_NVP(trellisEndType_);
     ar & ::BOOST_SERIALIZATION_NVP(decoderType_);
     ar & ::BOOST_SERIALIZATION_NVP(tailSize_);
     ar & ::BOOST_SERIALIZATION_NVP(blocSize_);
   }
   
   TrellisStructure trellis_;
-  BlocEndType endType_;
+  TrellisEndType trellisEndType_;
   DecoderType decoderType_;
   size_t tailSize_;
   size_t blocSize_;

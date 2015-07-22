@@ -17,12 +17,25 @@
 #include <mex.h>
 
 #include "CodeStructure/TrellisStructure.h"
+#include "MexConversion.h"
 
 using namespace fec;
 
-TrellisStructure toTrellisStructure(const mxArray* nextState, const mxArray* output, const mxArray* inputCount, const mxArray* outputCount, const mxArray* stateCount)
-{
-  return TrellisStructure(toVector<int>(nextState), toVector<int>(output), log2(toScalar<uint8_t>(inputCount)), log2(toScalar<uint8_t>(outputCount)), log2(toScalar<uint8_t>(stateCount)));
-}
+const char* const trellisProperties[] = {"nextStates", "outputs", "numInputSymbols", "numOutputSymbols", "numStates"};
+
+
+template <>
+class MexConverter<TrellisStructure> {
+public:
+  static TrellisStructure convert(const mxArray* in) {
+    if ()
+    return TrellisStructure(toVector<int>(mxGetProperty(in, 0, trellisProperties[0])),
+                            toVector<int>(mxGetProperty(in, 0, trellisProperties[1])),
+                            log2(toScalar<uint8_t>(mxGetProperty(in, 0, trellisProperties[2]))),
+                            log2(toScalar<uint8_t>(mxGetProperty(in, 0, trellisProperties[3]))),
+                            log2(toScalar<uint8_t>(mxGetProperty(in, 0, trellisProperties[4]))));
+  }
+};
+
 
 #endif

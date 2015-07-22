@@ -43,7 +43,7 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
   std::unique_ptr<fec::Code> code;
   try {
     code = toObject<fec::Code>(prhs[0], "Code");
-    plhs[0] = toMxArray(code->extrinsicMsgSize());
+    plhs[0] = toMxArray(code->extrinsicSize());
   }
   catch (std::exception& e) {
     mexPrintf(e.what());

@@ -11,13 +11,13 @@
 
 using namespace fec;
 
-ConvolutionalCodeStructure::ConvolutionalCodeStructure(TrellisStructure trellis, size_t blocSize, BlocEndType endType, DecoderType type) : CodeStructure(blocSize * trellis.inputSize(), blocSize * trellis.outputSize()), trellis_(trellis)
+ConvolutionalCodeStructure::ConvolutionalCodeStructure(TrellisStructure trellis, size_t blocSize, TrellisEndType endType, DecoderType type) : CodeStructure(blocSize * trellis.inputSize(), blocSize * trellis.outputSize()), trellis_(trellis)
 {
   blocSize_ = blocSize;
-  endType_ = endType;
+  trellisEndType_ = endType;
   decoderType_ = type;
   
-  switch (endType_) {
+  switch (trellisEndType_) {
     case ZeroTail:
       paritySize_ += trellis_.stateSize() * trellis.outputSize();
       tailSize_ = trellis_.stateSize();

@@ -16,6 +16,7 @@
 #include "../Code.h"
 #include "../CodeStructure/TurboCodeStructure.h"
 #include "../ConvolutionalCode/ConvolutionalCode.h"
+#include "TurboCodeImpl.h"
 
 namespace fec {
 
@@ -35,8 +36,22 @@ public:
   
   virtual size_t msgSize() const {return codeStructure_.msgSize();}
   virtual size_t paritySize() const {return codeStructure_.paritySize();}
-  virtual size_t extrinsicMsgSize() const {return codeStructure_.msgSize();}
-  virtual size_t extrinsicParitySize() const {return codeStructure_.msgSize();}
+  virtual size_t extrinsicSize() const {
+    size_t extrinsicSize = 0;
+    switch (codeStructure_.structureType()) {
+      default:
+      case TurboCodeStructure::Serial:
+        return codeStructure_.msgSize();
+        break;
+        
+      case TurboCodeStructure::Parallel:
+        for (auto & i : codeStructure_.structures()) {
+          extrinsicSize += i.msgSize();
+        }
+        return extrinsicSize;
+        break;
+    }
+  }
   virtual const CodeStructure& structure() const {return codeStructure_;}
   
 protected:
@@ -44,7 +59,7 @@ protected:
   
   virtual void encodeBloc(std::vector<uint8_t>::const_iterator messageIt, std::vector<uint8_t>::iterator parityIt) const;
   
-  virtual void parityAppDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n) const;
+  //virtual void parityAppDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n) const;
   virtual void appDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n) const;
   virtual void softOutDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::iterator messageOut, size_t n) const;
   virtual void decodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<uint8_t>::iterator messageOut, size_t n) const;
@@ -54,21 +69,11 @@ private:
   void serialize(Archive & ar, const unsigned int version) {
     using namespace boost::serialization;
     ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(Code);
-    ar & ::BOOST_SERIALIZATION_NVP(code1_);
-    ar & ::BOOST_SERIALIZATION_NVP(code2_);
+    ar & ::BOOST_SERIALIZATION_NVP(code_);
     ar & ::BOOST_SERIALIZATION_NVP(codeStructure_);
   }
   
-  template <typename T> void packParity(const std::vector<T>& parity1, const std::vector<T>& parity2, std::vector<T>& codeOut) const;
-  template <typename T> void packParityNBloc(typename std::vector<T>::const_iterator parity1, typename std::vector<T>::const_iterator parity2, typename std::vector<T>::iterator parityOut, size_t n) const;
-  template <typename T> void packParityBloc(typename std::vector<T>::const_iterator parity1, typename std::vector<T>::const_iterator parity2, typename std::vector<T>::iterator parityOut) const;
-  
-  void unpackParity(const std::vector<LlrType>& parityIn, std::vector<LlrType>& parity1, std::vector<LlrType>& parity2) const;
-  void unpackParityNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::iterator parity1, std::vector<LlrType>::iterator parity2, size_t n) const;
-  void unpackParityBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::iterator parity1, std::vector<LlrType>::iterator parity2) const;
-  
-  ConvolutionalCode code1_;
-  ConvolutionalCode code2_;
+  std::vector<ConvolutionalCode> code_;
   TurboCodeStructure codeStructure_;
 };
   
@@ -76,48 +81,5 @@ private:
 
 BOOST_CLASS_EXPORT_KEY(fec::TurboCode);
 BOOST_CLASS_TYPE_INFO(fec::TurboCode,extended_type_info_no_rtti<fec::TurboCode>);
-
-template <typename T>
-void fec::TurboCode::packParity(const std::vector<T>& parity1, const std::vector<T>& parity2, std::vector<T>& parityOut) const
-{
-  auto parity1It = parity1.begin();
-  auto parity2It = parity2.begin();
-  for (auto parity = parityOut.begin(); parity < parityOut.end(); parity += codeStructure_.paritySize()) {
-    packParityBloc(parity1It, parity2It, parity);
-    parity1It += codeStructure_.structure1().paritySize();
-    parity2It += codeStructure_.structure2().paritySize();
-  }
-}
-
-template <typename T>
-void fec::TurboCode::packParityNBloc(typename std::vector<T>::const_iterator parity1, typename std::vector<T>::const_iterator parity2, typename std::vector<T>::iterator parityOut, size_t n) const
-{
-  for (size_t i = 0; i < n; ++i) {
-    packParityBloc<T>(parity1, parity2, parityOut);
-    parity1 += codeStructure_.structure1().paritySize();
-    parity2 += codeStructure_.structure2().paritySize();
-    parityOut += codeStructure_.paritySize();
-  }
-}
-
-template <typename T>
-void fec::TurboCode::packParityBloc(typename std::vector<T>::const_iterator parity1, typename std::vector<T>::const_iterator parity2, typename std::vector<T>::iterator codeOut) const
-{
-  for (size_t j = 0; j < codeStructure_.structure2().blocSize(); ++j) {
-    for (size_t k = 0; k < codeStructure_.structure1().trellis().outputSize(); ++k) {
-      codeOut[k] = parity1[k];
-    }
-    codeOut += codeStructure_.structure1().trellis().outputSize();
-    parity1 += codeStructure_.structure1().trellis().outputSize();
-    for (size_t k = codeStructure_.structure2().trellis().inputSize(); k < codeStructure_.structure2().trellis().outputSize(); ++k) {
-      codeOut[k-codeStructure_.structure2().trellis().inputSize()] = parity2[k];
-    }
-    codeOut += codeStructure_.structure2().trellis().outputSize() - codeStructure_.structure2().trellis().inputSize();
-    parity2 += codeStructure_.structure2().trellis().outputSize();
-  }
-  for (size_t j = 0; j < codeStructure_.structure1().tailSize()*codeStructure_.structure1().trellis().outputSize(); ++j) {
-    codeOut[j] = parity1[j];
-  }
-}
 
 #endif

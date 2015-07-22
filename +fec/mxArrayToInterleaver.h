@@ -16,17 +16,21 @@
 
 #include <mex.h>
 
+#include "MexConversion.h"
 #include "CodeStructure/Interleaver.h"
 
 using namespace fec;
 
-Interleaver toInterleaver(const mxArray* in)
-{
-  std::vector<size_t> perm = toVector<size_t>(in);
-  for (auto & i : perm) {
-    i--;
+template <>
+class MexConverter<Interleaver> {
+public:
+  static Interleaver convert(const mxArray* in) {
+    std::vector<size_t> perm = toVector<size_t>(in);
+    for (auto & i : perm) {
+      i--;
+    }
+    return Interleaver(perm);
   }
-  return Interleaver(perm);
-}
+};
 
 #endif

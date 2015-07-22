@@ -37,7 +37,7 @@ classdef ConvolutionalCode < fec.Code
           if (nargin < 5)
             workGroupSize = 4;
           end
-          this.mexHandle_ = fec.bin.ConvolutionalCode_constructor(trellis.nextStates, trellis.outputs, trellis.numInputSymbols, trellis.numOutputSymbols, trellis.numStates,blocSize, trellisEndType.char, mapDecoderType.char, workGroupSize);
+          this.mexHandle_ = fec.bin.ConvolutionalCode_constructor(trellis, blocSize, trellisEndType.char, mapDecoderType.char, workGroupSize);
         end
     end
 end

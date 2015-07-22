@@ -27,31 +27,39 @@ namespace fec {
 class TurboCodeStructure : public CodeStructure {
   friend class ::boost::serialization::access;
 public:
+  enum DecoderType {
+    Serial,
+    Parallel,
+  };
+  
   TurboCodeStructure() = default;
-  TurboCodeStructure(TrellisStructure trellis1, TrellisStructure trellis2, Interleaver interleaver, size_t iterationCount = 5, ConvolutionalCodeStructure::BlocEndType endType = ConvolutionalCodeStructure::Truncation, ConvolutionalCodeStructure::DecoderType type = ConvolutionalCodeStructure::MaxLogMap);
+  TurboCodeStructure(const std::vector<TrellisStructure>& trellis, const std::vector<Interleaver>& interleaver, size_t iterationCount = 5, DecoderType structureType = Serial, ConvolutionalCodeStructure::DecoderType mapType = ConvolutionalCodeStructure::MaxLogMap);
   virtual ~TurboCodeStructure() = default;
   
   virtual CodeStructure::Type type() const {return CodeStructure::Turbo;}
   
-  inline const ConvolutionalCodeStructure& structure1() const {return structure1_;}
-  inline const ConvolutionalCodeStructure& structure2() const {return structure2_;}
-  inline const Interleaver& interleaver() const {return interleaver_;}
+  inline size_t structureCount() const {return structure_.size();}
+  inline const std::vector<ConvolutionalCodeStructure>& structures() const {return structure_;}
+  inline const std::vector<Interleaver>& interleavers() const {return interleaver_;}
+  inline const ConvolutionalCodeStructure& structure(size_t i) const {return structure_[i];}
+  inline const Interleaver& interleaver(size_t i) const {return interleaver_[i];}
   inline size_t iterationCount() const {return iterationCount_;}
+  inline DecoderType structureType() const {return structureType_;}
   
 private:
   template <typename Archive>
   void serialize(Archive & ar, const unsigned int version) {
     using namespace boost::serialization;
     ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(CodeStructure);
-    ar & ::BOOST_SERIALIZATION_NVP(structure1_);
-    ar & ::BOOST_SERIALIZATION_NVP(structure2_);
+    ar & ::BOOST_SERIALIZATION_NVP(structure_);
     ar & ::BOOST_SERIALIZATION_NVP(interleaver_);
+    ar & ::BOOST_SERIALIZATION_NVP(structureType_);
     ar & ::BOOST_SERIALIZATION_NVP(iterationCount_);
   }
   
-  ConvolutionalCodeStructure structure1_;
-  ConvolutionalCodeStructure structure2_;
-  Interleaver interleaver_;
+  std::vector<ConvolutionalCodeStructure> structure_;
+  std::vector<Interleaver> interleaver_;
+  DecoderType structureType_;
   size_t iterationCount_;
 };
   

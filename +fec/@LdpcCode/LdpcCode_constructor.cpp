@@ -60,7 +60,7 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
   if (nlhs != outputCount) {
     throw std::invalid_argument("Wrong argout count in LdpcCode_constructor");
   }
-  fec::LdpcCodeStructure codeStructure(toBitMatrix(prhs[0]), toScalar<size_t>(prhs[1]), toEnum<fec::LdpcCodeStructure::DecoderType>(prhs[2], BpTypeEnumeration, BpTypeCount));
+  fec::LdpcCodeStructure codeStructure(MexConverter<SparseBitMatrix>::convert(prhs[0]), toScalar<size_t>(prhs[1]), toEnum<fec::LdpcCodeStructure::DecoderType>(prhs[2], BpTypeEnumeration, BpTypeCount));
   std::unique_ptr<fec::Code> code = fec::Code::create(codeStructure, toScalar<size_t>(prhs[3]));
   
   plhs[0] = toMxArray(std::move(code));

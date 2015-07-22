@@ -37,6 +37,24 @@ template <> mxClassID mexClassId<uint32_t>() {return mxUINT32_CLASS;}
 template <> mxClassID mexClassId<int64_t>() {return mxINT64_CLASS;}
 template <> mxClassID mexClassId<uint64_t>() {return mxUINT64_CLASS;}
 
+template <class T>
+class MexConverter {
+public:
+  static T convert(const mxArray* in) {return T();}
+};
+  
+template <class T>
+std::vector<T> mxCellArrayToVector(const mxArray* in) {
+  if (!mxIsCell(in)) {
+    throw std::invalid_argument("Input must be a cell array");
+  }
+   mexPrintf("n:%i\n", mxGetNumberOfElements(in));
+  std::vector<T> out(mxGetNumberOfElements(in));
+  for (size_t i = 0; i < out.size(); ++i) {
+    out[i] = MexConverter<T>::convert(mxGetCell(in, i));
+  }
+  return out;
+}
 
 template <class T>
 mxArray* toMxArray(const MexAllocator<T>& in)
@@ -114,7 +132,7 @@ mxArray* toMxArray(T scalar) throw(std::bad_cast)
 template <class T>
 std::unique_ptr<T> toObject(const mxArray* in, const char* name) throw(std::invalid_argument)
 {
-  if (mxGetProperty(in, 0, "mexHandle_") == nullptr) { //mxIsClass(in, name) != true ||
+  if (mxGetProperty(in, 0, "mexHandle_") == nullptr) {
     throw std::invalid_argument("wrong arg class");
   }
   if (mxGetData(mxGetProperty(in, 0, "mexHandle_")) == nullptr) {
@@ -129,7 +147,7 @@ std::unique_ptr<T> toObject(const mxArray* in, const char* name) throw(std::inva
 }
 
 template <class T>
-std::vector<T, MexAllocator<T>> toMexVector(const mxArray* in) throw(std::bad_cast)
+std::vector<T, MexAllocator<T>> toMexVector(const mxArray* in)
 {
   if (mxIsComplex(in) || mxGetData(in) == nullptr || mexClassId<T>() != mxGetClassID(in)) {
     throw std::bad_cast();
@@ -140,7 +158,7 @@ std::vector<T, MexAllocator<T>> toMexVector(const mxArray* in) throw(std::bad_ca
 }
 
 template <class T>
-std::vector<T> toVector(const mxArray* in) throw(std::bad_cast)
+std::vector<T> toVector(const mxArray* in)
 {
   if (mxIsComplex(in) || mxGetData(in) == nullptr) {
     throw std::bad_cast();
@@ -196,7 +214,7 @@ std::vector<T> toVector(const mxArray* in) throw(std::bad_cast)
 }
 
 template <class T>
-T toScalar(const mxArray* in) throw(std::bad_cast)
+T toScalar(const mxArray* in)
 {
   if (mxIsComplex(in) || mxGetNumberOfElements(in) != 1 || mxGetData(in) == nullptr) {
     throw std::bad_cast();
@@ -250,7 +268,7 @@ T toScalar(const mxArray* in) throw(std::bad_cast)
 }
 
 template <class T>
-T toEnum(const mxArray* in, const char* const enumeration[], size_t count) throw(std::bad_cast)
+T toEnum(const mxArray* in, const char* const enumeration[], size_t count)
 {
   if (!mxIsChar(in)) {
     throw std::bad_cast();

@@ -48,11 +48,8 @@ TrellisStructure::TrellisStructure(std::vector<BitField<uint16_t> > constraintLe
     assert(outputSize_ == generator[i].size());
   }
   
-  stateCount_ = 1<<outputSize_;
   outputCount_ = 1<<outputSize_;
   inputCount_ = 1<<inputSize_;
-  
-  tableSize_ = stateCount() * inputCount();
 
   
   std::vector<BitField<uint16_t> > inputStates(constraintLengths.size(), 0);
@@ -61,8 +58,10 @@ TrellisStructure::TrellisStructure(std::vector<BitField<uint16_t> > constraintLe
   for (int i = 0; i < constraintLengths.size(); i++) {
     stateSize_ += constraintLengths[i] - 1;
   }
+  stateCount_ = 1<<stateSize_;
   nextState_.resize(stateCount()*inputCount());
   output_.resize(stateCount()*inputCount());
+  tableSize_ = stateCount() * inputCount();
   
   for (BitField<uint16_t> state = 0; state < stateCount(); state++) {
     for (BitField<uint16_t> input = 0; input < inputCount(); input++) {

@@ -59,11 +59,11 @@ void LdpcCode::encodeBloc(std::vector<uint8_t>::const_iterator messageIt, std::v
  *  \param  messageIn  Vector containing extrinsic information L-values
  *  \param  messageOut[out] Vector containing a posteriori information L-values
  ******************************************************************************/
-void LdpcCode::parityAppDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n) const
+/*void LdpcCode::parityAppDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n) const
 {
   auto worker = BpDecoder::create(codeStructure_);
   worker->parityAppDecodeNBloc(parityIn, extrinsicIn, messageOut, extrinsicOut, n);
-}
+}*/
 
 /*******************************************************************************
  *  Decodes several blocs of information bits.

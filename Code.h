@@ -41,8 +41,9 @@ public:
   
   virtual size_t msgSize() const = 0;
   virtual size_t paritySize() const = 0;
-  virtual size_t extrinsicMsgSize() const = 0;
-  virtual size_t extrinsicParitySize() const = 0;
+  virtual size_t extrinsicSize() const = 0;
+  //virtual size_t extrinsicMsgSize() const = 0;
+  //virtual size_t extrinsicParitySize() const = 0;
   virtual const CodeStructure& structure() const = 0;
   
   template <typename T> void encode(const T& message, T& parity) const;
@@ -50,7 +51,7 @@ public:
   template <typename T1, typename T2> void decode(const T1& parityIn, T2& msgOut) const;
   template <typename T> void softOutDecode(const T& parityIn, T& msgOut) const;
   template <typename T> void appDecode(const T& parityIn, const T& extrinsicIn, T& msgOut, T& extrinsicOut) const;
-  template <typename T> void parityAppDecode(const T& parityIn, const T& extrinsicIn, T& msgOut, T& extrinsicOut) const;
+  //template <typename T> void parityAppDecode(const T& parityIn, const T& extrinsicIn, T& msgOut, T& extrinsicOut) const;
   
 protected:
   Code(int workGroupdSize = 4);
@@ -60,7 +61,7 @@ protected:
   virtual void encodeNBloc(std::vector<uint8_t>::const_iterator messageIt, std::vector<uint8_t>::iterator parityIt, size_t n) const;
   virtual void encodeBloc(std::vector<uint8_t>::const_iterator messageIt, std::vector<uint8_t>::iterator parityIt) const = 0;
   
-  virtual void parityAppDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n) const = 0;
+  //virtual void parityAppDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n) const = 0;
   virtual void appDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n) const = 0;
   virtual void softOutDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::iterator messageOut, size_t n) const = 0;
   virtual void decodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<uint8_t>::iterator messageOut, size_t n) const = 0;
@@ -121,7 +122,7 @@ void fec::Code::encode(const T& message, T& parity) const
  *  \param  messageIn  Vector containing extrinsic information L-values
  *  \param  messageOut[out] Vector containing a posteriori information L-values
  ******************************************************************************/
-template <typename T>
+/*template <typename T>
 void fec::Code::parityAppDecode(const T& parityIn, const T& extrinsicIn, T& msgOut, T& extrinsicOut) const
 {
   size_t blocCount = parityIn.size() / paritySize();
@@ -162,7 +163,7 @@ void fec::Code::parityAppDecode(const T& parityIn, const T& extrinsicIn, T& msgO
   for (auto & thread : threadGroup) {
     thread.join();
   }
-}
+}*/
 
 /*******************************************************************************
  *  Decodes several blocs of information bits.
@@ -177,7 +178,7 @@ void fec::Code::appDecode(const T& parityIn, const T& extrinsicIn, T& messageOut
   if (parityIn.size() != blocCount * paritySize()) {
     throw std::invalid_argument("Invalid size for parity");
   }
-  if (extrinsicIn.size() != blocCount *  extrinsicMsgSize()) {
+  if (extrinsicIn.size() != blocCount *  extrinsicSize()) {
     throw std::invalid_argument("Invalid size for message extrinsic");
   }
   
@@ -199,8 +200,8 @@ void fec::Code::appDecode(const T& parityIn, const T& extrinsicIn, T& messageOut
     threadGroup.push_back( std::thread(&Code::appDecodeNBloc, this,
                                        parityInIt,extrinsicInIt,messageOutIt, extrinsicOutIt, step) );
     parityInIt += paritySize() * step;
-    extrinsicInIt += extrinsicMsgSize() * step;
-    extrinsicOutIt += extrinsicMsgSize() * step;
+    extrinsicInIt += extrinsicSize() * step;
+    extrinsicOutIt += extrinsicSize() * step;
     messageOutIt += msgSize() * step;
     
     thread++;

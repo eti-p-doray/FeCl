@@ -48,7 +48,7 @@ void MapDecoder::appDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, s
   }
 }
 
-void MapDecoder::parityAppDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n)
+/*void MapDecoder::parityAppDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n)
 {
   for (size_t i = 0; i < n; ++i) {
     parityAppDecodeBloc(parityIn,extrinsicIn,messageOut,extrinsicOut);
@@ -57,7 +57,7 @@ void MapDecoder::parityAppDecodeNBloc(std::vector<LlrType>::const_iterator parit
     messageOut += codeStructure_.msgSize();
     extrinsicOut += codeStructure_.paritySize();
   }
-}
+}*/
 
 void MapDecoder::softOutDecodeBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::iterator messageOut)
 {
@@ -76,13 +76,12 @@ void MapDecoder::appDecodeBloc(std::vector<LlrType>::const_iterator parityIn, st
   
   messageAPosteriori(messageOut);
   
-  std::copy(messageOut, messageOut+codeStructure().msgSize(), extrinsicOut);
   for (size_t i = 0; i < codeStructure().msgSize(); ++i) {
-    extrinsicOut[i] -= extrinsicIn[i];
+    extrinsicOut[i] = messageOut[i] - extrinsicIn[i];
   }
 }
 
-void MapDecoder::parityAppDecodeBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut)
+/*void MapDecoder::parityAppDecodeBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut)
 {  
   parityAppBranchMetrics(parityIn, extrinsicIn);
   forwardMetrics();
@@ -94,7 +93,7 @@ void MapDecoder::parityAppDecodeBloc(std::vector<LlrType>::const_iterator parity
   for (size_t i = 0; i < codeStructure().paritySize(); ++i) {
     extrinsicOut[i] -= extrinsicIn[i];
   }
-}
+}*/
 
 MapDecoder::MapDecoder(const ConvolutionalCodeStructure& codeStructure) : codeStructure_(codeStructure)
 {

@@ -28,7 +28,7 @@ std::unique_ptr<BpDecoder> BpDecoder::create(const LdpcCodeStructure& codeStruct
   }
 }
 
-void BpDecoder::parityAppDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n)
+/*void BpDecoder::parityAppDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n)
 {
   for (size_t i = 0; i < n; ++i) {
     parityAppDecodeBloc(parityIn, extrinsicIn, messageOut, extrinsicOut);
@@ -37,7 +37,7 @@ void BpDecoder::parityAppDecodeNBloc(std::vector<LlrType>::const_iterator parity
     messageOut += codeStructure_.msgSize();
     extrinsicOut += codeStructure_.parityCheck().size();
   }
-}
+}*/
 
 void BpDecoder::appDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n)
 {
@@ -59,7 +59,7 @@ void BpDecoder::softOutDecodeNBloc(std::vector<LlrType>::const_iterator parityIn
   }
 }
 
-void BpDecoder::parityAppDecodeBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut)
+void BpDecoder::appDecodeBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut)
 {
   if (codeStructure().iterationCount() == 0) {
     std::copy(extrinsicIn, extrinsicIn+codeStructure_.parityCheck().size(), extrinsicOut);
@@ -96,7 +96,7 @@ void BpDecoder::parityAppDecodeBloc(std::vector<LlrType>::const_iterator parityI
   std::copy(checkMetrics_.begin(), checkMetrics_.end(), extrinsicOut);
 }
 
-void BpDecoder::appDecodeBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut)
+/*void BpDecoder::appDecodeBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut)
 {
   if (codeStructure().iterationCount() == 0) {
     std::copy(extrinsicIn, extrinsicIn+codeStructure().msgSize(), extrinsicOut);
@@ -142,7 +142,7 @@ void BpDecoder::appDecodeBloc(std::vector<LlrType>::const_iterator parityIn, std
     extrinsicOut[i] -= extrinsicIn[i];
   }
 
-}
+}*/
 
 void BpDecoder::softOutDecodeBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::iterator messageOut)
 {

@@ -18,7 +18,7 @@
 #include "../MexConversion.h"
 #include "../mxArrayToTrellis.h"
 
-const int inputCount = 9;
+const int inputCount = 5;
 const int outputCount = 1;
 
 const int MapTypeCount = 2;
@@ -27,8 +27,8 @@ const char* const MapTypeEnumeration[MapTypeCount] = {
   "MaxLogMap",
 };
 
-const int BlocEndTypeCount = 2;
-const char* const BlocEndTypeEnumeration[BlocEndTypeCount] = {
+const int TrellisEndTypeCount = 2;
+const char* const TrellisEndTypeEnumeration[TrellisEndTypeCount] = {
   "ZeroTail",
   "Truncation"
 };
@@ -60,9 +60,9 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
     throw std::invalid_argument("Wrong argout count in ConvolutionalCode_destructor");
   }
   
-  fec::TrellisStructure trellis = toTrellisStructure(prhs[0], prhs[1], prhs[2], prhs[3], prhs[4]);
-  fec::ConvolutionalCodeStructure codeStructure(trellis, toScalar<size_t>(prhs[5]), toEnum<fec::ConvolutionalCodeStructure::BlocEndType>(prhs[6], BlocEndTypeEnumeration, BlocEndTypeCount), toEnum<fec::ConvolutionalCodeStructure::DecoderType>(prhs[7], MapTypeEnumeration, MapTypeCount));
-  std::unique_ptr<fec::Code> code = fec::Code::create(codeStructure, toScalar<size_t>(prhs[8]));
+  fec::TrellisStructure trellis = MexConverter<TrellisStructure>::convert(prhs[0]);
+  fec::ConvolutionalCodeStructure codeStructure(trellis, toScalar<size_t>(prhs[1]), toEnum<fec::ConvolutionalCodeStructure::TrellisEndType>(prhs[2], TrellisEndTypeEnumeration, TrellisEndTypeCount), toEnum<fec::ConvolutionalCodeStructure::DecoderType>(prhs[3], MapTypeEnumeration, MapTypeCount));
+  std::unique_ptr<fec::Code> code = fec::Code::create(codeStructure, toScalar<size_t>(prhs[4]));
   
   plhs[0] = toMxArray(std::move(code));
 }

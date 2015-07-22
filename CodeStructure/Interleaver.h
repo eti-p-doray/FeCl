@@ -25,9 +25,19 @@ public:
   Interleaver() = default;
   Interleaver(::std::vector<size_t> sequence) {
     sequence_ = sequence;
+    dstSize_ = *std::max_element(sequence_.begin(), sequence_.end()) + 1;
+    srcSize_ = sequence_.size();
+  }
+  Interleaver(::std::vector<size_t> sequence, size_t srcSize, size_t dstSize) {
+    sequence_ = sequence;
+    dstSize_ = dstSize;
+    srcSize_ = srcSize;
   }
   
-  size_t size() const {return sequence_.size();}
+  size_t& dstSize() {return dstSize_;}
+  size_t& srcSize() {return srcSize_;}
+  size_t srcSize() const {return srcSize_;}
+  size_t dstSize() const {return dstSize_;}
   
   template <typename T> void interleave(const ::std::vector<T>& input, ::std::vector<T>& output) const;
   template <typename T> void deInterleave(const ::std::vector<T>& input, ::std::vector<T>& output) const;
@@ -47,8 +57,8 @@ public:
   {
     for (size_t i = 0; i < n; i++) {
       interleaveBloc<T>(input, output);
-      input += size();
-      output += size();
+      input += srcSize();
+      output += dstSize();
     }
   }
   
@@ -56,19 +66,13 @@ public:
   {
     for (size_t i = 0; i < n; i++) {
       deInterleaveBloc<T>(input, output);
-      input += size();
-      output += size();
+      input += dstSize();
+      output += srcSize();
     }
   }
   
   template <typename T> void interleaveBloc(typename ::std::vector<T>::const_iterator input, typename ::std::vector<T>::iterator output) const;
-  
   template <typename T> void deInterleaveBloc(typename ::std::vector<T>::const_iterator input, typename ::std::vector<T>::iterator output) const;
-  
-  size_t serialSize() const
-  {
-    return ( sequence_.size() + 1 ) * sizeof(size_t);
-  }
   
 private:
   template <typename Archive>
@@ -78,6 +82,8 @@ private:
   }
   
   ::std::vector<size_t> sequence_;
+  size_t dstSize_;
+  size_t srcSize_;
 };
   
 }
@@ -85,7 +91,7 @@ private:
 template <typename T>
 void fec::Interleaver::interleave(const std::vector<T>& input, std::vector<T>& output) const
 {
-  output.resize(input.size());
+  output.resize(input.size() / srcSize() * dstSize());
   
   auto inputIt = input.begin();
   auto outputIt = output.begin();
@@ -97,7 +103,7 @@ void fec::Interleaver::interleave(const std::vector<T>& input, std::vector<T>& o
 template <typename T>
 void fec::Interleaver::deInterleave(const std::vector<T>& input, std::vector<T>& output) const
 {
-  output.resize(input.size());
+  output.resize(input.size() / dstSize() * srcSize());
   
   auto inputIt = input.begin();
   auto outputIt = output.begin();

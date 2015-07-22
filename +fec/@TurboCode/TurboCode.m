@@ -13,7 +13,7 @@ classdef TurboCode < fec.Code
     end
 
     methods
-        function this = TurboCode(trellis1, trellis2, interleaver, iterationCount, trellisEndType, mapDecoderType, workGroupSize)
+        function this = TurboCode(trellis, interleaver, iterationCount, structureType, mapDecoderType, workGroupSize)
         % ConvolutionalCode constructore
         %   Configures the object internally and allocate cpp ressources
         %
@@ -33,7 +33,7 @@ classdef TurboCode < fec.Code
               iterationCount = 5;
           end
           if (nargin < 5)
-            trellisEndType = fec.TrellisEndType.Truncation;
+            structureType = fec.StructureType.Serial;
           end
           if (nargin < 6)
             mapDecoderType = fec.MapType.MaxLogMap;
@@ -41,10 +41,7 @@ classdef TurboCode < fec.Code
           if (nargin < 7)
             workGroupSize = 4;
           end
-          this.mexHandle_ = fec.bin.TurboCode_constructor(...
-              trellis1.nextStates, trellis1.outputs, trellis1.numInputSymbols, trellis1.numOutputSymbols, trellis1.numStates,...
-              trellis2.nextStates, trellis2.outputs, trellis2.numInputSymbols, trellis2.numOutputSymbols, trellis2.numStates,...
-              interleaver, iterationCount, trellisEndType.char, mapDecoderType.char, workGroupSize);
+          this.mexHandle_ = fec.bin.TurboCode_constructor(trellis, interleaver, iterationCount, structureType.char, mapDecoderType.char, workGroupSize);
         end
     end
 end

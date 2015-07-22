@@ -19,19 +19,19 @@
 #include "../mxArrayToTrellis.h"
 #include "../mxArrayToInterleaver.h"
 
-const int inputCount = 15;
+const int inputCount = 6;
 const int outputCount = 1;
+
+const int StructureTypeCount = 2;
+const char* const StructureTypeEnumeration[StructureTypeCount] = {
+  "Serial",
+  "Parralel",
+};
 
 const int MapTypeCount = 2;
 const char* const MapTypeEnumeration[MapTypeCount] = {
   "LogMap",
   "MaxLogMap",
-};
-
-const int BlocEndTypeCount = 2;
-const char* const BlocEndTypeEnumeration[BlocEndTypeCount] = {
-  "ZeroTail",
-  "Truncation"
 };
 
 /*******************************************************************************
@@ -67,10 +67,10 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
     throw std::invalid_argument("Wrong argout count in TurboCode_destructor");
   }
   
-  fec::TrellisStructure trellis1 = toTrellisStructure(prhs[0], prhs[1], prhs[2], prhs[3], prhs[4]);
-  fec::TrellisStructure trellis2 = toTrellisStructure(prhs[5], prhs[6], prhs[7], prhs[8], prhs[9]);
-  fec::TurboCodeStructure codeStructure(trellis1, trellis2, toInterleaver(prhs[10]), toScalar<size_t>(prhs[11]), toEnum<fec::ConvolutionalCodeStructure::BlocEndType>(prhs[12], BlocEndTypeEnumeration, BlocEndTypeCount), toEnum<fec::ConvolutionalCodeStructure::DecoderType>(prhs[13], MapTypeEnumeration, MapTypeCount));
-  std::unique_ptr<fec::Code> code = fec::Code::create(codeStructure, toScalar<size_t>(prhs[14]));
+  std::vector<fec::TrellisStructure> trellis = mxCellArrayToVector<TrellisStructure>(prhs[0]);
+  std::vector<fec::Interleaver> interleavers = mxCellArrayToVector<Interleaver>(prhs[1]);
+  fec::TurboCodeStructure codeStructure(trellis, interleavers, toScalar<size_t>(prhs[2]), toEnum<fec::TurboCodeStructure::DecoderType>(prhs[3], StructureTypeEnumeration, StructureTypeCount), toEnum<fec::ConvolutionalCodeStructure::DecoderType>(prhs[4], MapTypeEnumeration, MapTypeCount));
+  std::unique_ptr<fec::Code> code = fec::Code::create(codeStructure, toScalar<size_t>(prhs[5]));
   
   plhs[0] = toMxArray(std::move(code));
 }

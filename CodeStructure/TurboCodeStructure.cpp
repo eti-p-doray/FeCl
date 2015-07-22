@@ -11,13 +11,34 @@
 
 using namespace fec;
 
-TurboCodeStructure::TurboCodeStructure(TrellisStructure trellis1, TrellisStructure trellis2, Interleaver interleaver, size_t iterationCount, ConvolutionalCodeStructure::BlocEndType endType, ConvolutionalCodeStructure::DecoderType type) :
-  CodeStructure(interleaver.size(), 0),
-  structure1_(trellis1, interleaver.size(), endType, type),
-  structure2_(trellis2, interleaver.size(), ConvolutionalCodeStructure::Truncation, type),
+TurboCodeStructure::TurboCodeStructure(const std::vector<TrellisStructure>& trellis, const std::vector<Interleaver>& interleaver, size_t iterationCount, DecoderType structureType, ConvolutionalCodeStructure::DecoderType mapType) :
   interleaver_(interleaver)
 {
+  structureType_ = structureType;
+  if (trellis.size() != interleaver.size()) {
+    throw std::invalid_argument("Trellis count and Interleaver count don't match");
+  }
+  for (size_t i = 0; i < trellis.size(); ++i) {
+    size_t blocSize = interleaver[i].dstSize() / trellis[i].inputSize();
+    if (blocSize * trellis[i].inputSize() != interleaver[i].dstSize()) {
+      throw std::invalid_argument("Invalid size for interleaver");
+    }
+    structure_.push_back(ConvolutionalCodeStructure(trellis[i], blocSize, ConvolutionalCodeStructure::Truncation, mapType));
+  }
+  
   iterationCount_ = iterationCount;
   
-  paritySize_ = structure1_.paritySize() + structure2_.paritySize() - msgSize();
+  messageSize_ = 0;
+  paritySize_ = 0;
+  for (size_t i = 0; i < structure_.size(); ++i) {
+    paritySize_ += structure_[i].paritySize();
+    if (interleaver_[i].srcSize() > msgSize()) {
+      messageSize_ = interleaver_[i].srcSize();
+    }
+  }
+  paritySize_ += msgSize();
+  
+  for (size_t i = 0; i < interleaver_.size(); ++i) {
+    interleaver_[i].srcSize() = msgSize();
+  }
 }

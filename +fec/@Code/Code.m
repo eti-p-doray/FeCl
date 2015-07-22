@@ -13,8 +13,7 @@ classdef Code < handle
     properties (Dependent = true)
         paritySize %Size of 1 parity bloc
         msgSize %Size of 1 msg bloc
-        extrinsicMsgSize %Size of 1 bloc of msg extrinsic information
-        extrinsicParitySize  %Size of 1 bloc of parity extrinsic information
+        extrinsicSize %Size of 1 bloc of msg extrinsic information
     end
     
     methods (Static)
@@ -33,11 +32,8 @@ classdef Code < handle
         function size = get.paritySize(this)
             size = fec.bin.Code_get_paritySize(this);
         end
-        function size = get.extrinsicMsgSize(this)
-            size = fec.bin.Code_get_extrinsicMsgSize(this);
-        end
-        function size = get.extrinsicParitySize(this)
-            size = fec.bin.Code_get_extrinsicParitySize(this);
+        function size = get.extrinsicSize(this)
+            size = fec.bin.Code_get_extrinsicSize(this);
         end
         
         function a = saveobj(this)
@@ -115,33 +111,8 @@ classdef Code < handle
         %
             msgOut = reshape(fec.bin.Code_softOutDecode(this, double(parityIn)), [], size(parityIn,2));
         end
-
-        function [msgOut, extrinsicOut] = appDecode(this, parityIn, extrinsicIn)
-        % Decode several blocs of soft data according to the object code
-        % structure,  using a priori (extrinsic) information about the msg
-        % and providing equivalent extrinsic L-values.
-        %
-        % Inputs
-        %   this - Code object
-        %   parityIn - Parity L-values correspondig to the received signal.
-        %       Given a signal y and a parity bit x, we define the correspondig L-value as
-        %         L = ln[ p(x = 1 | y) / p(x = 0 | y) ] = ln[ p(y | x = 1) / p(y | x = 0) ]
-        %       This array is expected to have its number of rows equals to the
-        %       paritySize.
-        %       Each column corresponds to one bloc of data.
-        %       Many parity blocs can be decoded at once.
-        %   extrinsicIn - Extrinsic L-values associated with the msg.
-        %
-        % Outputs:
-        %   msgOut - Msg a posteriori L-values associated with the parity L-values.
-        %   extrinsicOut - Extrinsic L-values associated with the msg.
-        %
-            [msgOut, extrinsicOut] = fec.bin.Code_appDecode(this, double(parityIn), double(extrinsicIn));
-            msgOut = reshape(msgOut, [], size(parityIn,2));
-            extrinsicOut = reshape(extrinsicOut, [], size(parityIn,2));
-        end
         
-        function [msgOut, extrinsicOut] = parityAppDecode(this, parityIn, extrinsicIn)
+        function [msgOut, extrinsicOut] = appDecode(this, parityIn, extrinsicIn)
         % Decode several blocs of soft data according to the object code
         % structure,  using a priori (extrinsic) information about the whole decoder state (same parity)
         % and providing equivalent extrinsic L-values.
