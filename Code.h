@@ -178,8 +178,8 @@ void fec::Code::appDecode(const T& parityIn, const T& extrinsicIn, T& messageOut
   if (parityIn.size() != blocCount * paritySize()) {
     throw std::invalid_argument("Invalid size for parity");
   }
-  if (extrinsicIn.size() != blocCount *  extrinsicSize()) {
-    throw std::invalid_argument("Invalid size for message extrinsic");
+  if (extrinsicIn.size() != blocCount * extrinsicSize()) {
+    throw std::invalid_argument("Invalid size for extrinsic");
   }
   
   std::vector<std::thread> threadGroup;

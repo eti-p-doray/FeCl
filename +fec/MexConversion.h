@@ -45,10 +45,12 @@ public:
   
 template <class T>
 std::vector<T> mxCellArrayToVector(const mxArray* in) {
+  if (in == nullptr) {
+    throw std::invalid_argument("Null mxArray");
+  }
   if (!mxIsCell(in)) {
     throw std::invalid_argument("Input must be a cell array");
   }
-   mexPrintf("n:%i\n", mxGetNumberOfElements(in));
   std::vector<T> out(mxGetNumberOfElements(in));
   for (size_t i = 0; i < out.size(); ++i) {
     out[i] = MexConverter<T>::convert(mxGetCell(in, i));
@@ -160,8 +162,11 @@ std::vector<T, MexAllocator<T>> toMexVector(const mxArray* in)
 template <class T>
 std::vector<T> toVector(const mxArray* in)
 {
+  if (in == nullptr) {
+    throw std::invalid_argument("Null mxArray");
+  }
   if (mxIsComplex(in) || mxGetData(in) == nullptr) {
-    throw std::bad_cast();
+    throw std::invalid_argument("Invalid data");
   }
   std::vector<T> vec(mxGetNumberOfElements(in));
   switch (mxGetClassID(in))
@@ -216,8 +221,11 @@ std::vector<T> toVector(const mxArray* in)
 template <class T>
 T toScalar(const mxArray* in)
 {
+  if (in == nullptr) {
+    throw std::invalid_argument("Null mxArray");
+  }
   if (mxIsComplex(in) || mxGetNumberOfElements(in) != 1 || mxGetData(in) == nullptr) {
-    throw std::bad_cast();
+    throw std::invalid_argument("Invalid data");
   }
   switch (mxGetClassID(in))
   {

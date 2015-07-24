@@ -34,10 +34,10 @@ const int outputCount = 1;
 void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 {
   if (nrhs != inputCount) {
-    throw std::invalid_argument("Wrong argin count in Code_get_extrinsicMsgSize");
+    throw std::invalid_argument("Wrong argin count in Code_get_extrinsicSize");
   }
   if (nlhs != outputCount) {
-    throw std::invalid_argument("Wrong argout count in Code_get_extrinsicMsgSize");
+    throw std::invalid_argument("Wrong argout count in Code_get_extrinsicSize");
   }
   
   std::unique_ptr<fec::Code> code;

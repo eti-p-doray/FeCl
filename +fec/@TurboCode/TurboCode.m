@@ -29,16 +29,16 @@ classdef TurboCode < fec.Code
           if (nargin == 0)
               return;
           end
-          if (nargin < 4)
+          if (nargin < 3)
               iterationCount = 5;
           end
-          if (nargin < 5)
+          if (nargin < 4)
             structureType = fec.StructureType.Serial;
           end
-          if (nargin < 6)
+          if (nargin < 5)
             mapDecoderType = fec.MapType.MaxLogMap;
           end
-          if (nargin < 7)
+          if (nargin < 6)
             workGroupSize = 4;
           end
           this.mexHandle_ = fec.bin.TurboCode_constructor(trellis, interleaver, iterationCount, structureType.char, mapDecoderType.char, workGroupSize);

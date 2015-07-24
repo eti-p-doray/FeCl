@@ -28,12 +28,14 @@ template <>
 class MexConverter<TrellisStructure> {
 public:
   static TrellisStructure convert(const mxArray* in) {
-    if ()
-    return TrellisStructure(toVector<int>(mxGetProperty(in, 0, trellisProperties[0])),
-                            toVector<int>(mxGetProperty(in, 0, trellisProperties[1])),
-                            log2(toScalar<uint8_t>(mxGetProperty(in, 0, trellisProperties[2]))),
-                            log2(toScalar<uint8_t>(mxGetProperty(in, 0, trellisProperties[3]))),
-                            log2(toScalar<uint8_t>(mxGetProperty(in, 0, trellisProperties[4]))));
+    if (in == nullptr) {
+      throw std::invalid_argument("Null mxArray");
+    }
+    return TrellisStructure(toVector<int>(mxGetField(in, 0, trellisProperties[0])),
+                            toVector<int>(mxGetField(in, 0, trellisProperties[1])),
+                            log2(toScalar<uint8_t>(mxGetField(in, 0, trellisProperties[2]))),
+                            log2(toScalar<uint8_t>(mxGetField(in, 0, trellisProperties[3]))),
+                            log2(toScalar<uint8_t>(mxGetField(in, 0, trellisProperties[4]))));
   }
 };
 

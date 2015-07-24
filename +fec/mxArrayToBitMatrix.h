@@ -26,6 +26,9 @@ template <>
 class MexConverter<SparseBitMatrix> {
 public:
   static SparseBitMatrix convert(const mxArray* in) {
+    if (in == nullptr) {
+      throw std::invalid_argument("Null mxArray");
+    }
     if (mxIsComplex(in) || mxGetData(in) == nullptr) {
       throw std::invalid_argument("Invalid data");
     }

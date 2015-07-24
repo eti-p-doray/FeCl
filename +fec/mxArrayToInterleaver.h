@@ -25,6 +25,9 @@ template <>
 class MexConverter<Interleaver> {
 public:
   static Interleaver convert(const mxArray* in) {
+    if (in == nullptr) {
+      throw std::invalid_argument("Null mxArray");
+    }
     std::vector<size_t> perm = toVector<size_t>(in);
     for (auto & i : perm) {
       i--;

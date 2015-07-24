@@ -136,7 +136,7 @@ classdef Code < handle
         %   msgOut - Msg a posteriori L-values associated with the parity L-values.
         %   extrinsicOut - Extrinsic L-values associated with the parities.
         %
-            [msgOut, extrinsicOut] = fec.bin.Code_parityAppDecode(this, double(parityIn), double(extrinsicIn));
+            [msgOut, extrinsicOut] = fec.bin.Code_appDecode(this, double(parityIn), double(extrinsicIn));
             msgOut = reshape(msgOut, [], size(parityIn,2));
             extrinsicOut = reshape(extrinsicOut, [], size(parityIn,2));
         end

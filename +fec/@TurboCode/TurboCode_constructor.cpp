@@ -25,7 +25,7 @@ const int outputCount = 1;
 const int StructureTypeCount = 2;
 const char* const StructureTypeEnumeration[StructureTypeCount] = {
   "Serial",
-  "Parralel",
+  "Parallel",
 };
 
 const int MapTypeCount = 2;
