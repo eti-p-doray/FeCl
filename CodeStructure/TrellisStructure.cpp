@@ -11,7 +11,7 @@
 
 using namespace fec;
 
-TrellisStructure::TrellisStructure(std::vector<int> nextState, std::vector<int> output, uint8_t inputSize, uint8_t outputSize, uint8_t stateSize)
+TrellisStructure::TrellisStructure(boost::container::vector<int> nextState, boost::container::vector<int> output, uint8_t inputSize, uint8_t outputSize, uint8_t stateSize)
 {
   stateSize_ = stateSize;
   outputSize_ = outputSize;
@@ -39,7 +39,7 @@ TrellisStructure::TrellisStructure(std::vector<int> nextState, std::vector<int> 
   }
 }
 
-TrellisStructure::TrellisStructure(std::vector<BitField<uint16_t> > constraintLengths, std::vector<std::vector<BitField<uint16_t> > > generator)
+TrellisStructure::TrellisStructure(boost::container::vector<BitField<uint16_t> > constraintLengths, boost::container::vector<boost::container::vector<BitField<uint16_t> > > generator)
 {
   inputSize_ = int(generator.size());
   outputSize_ = int(generator[0].size());
@@ -52,7 +52,7 @@ TrellisStructure::TrellisStructure(std::vector<BitField<uint16_t> > constraintLe
   inputCount_ = 1<<inputSize_;
 
   
-  std::vector<BitField<uint16_t> > inputStates(constraintLengths.size(), 0);
+  boost::container::vector<BitField<uint16_t> > inputStates(constraintLengths.size(), 0);
   
   stateSize_ = 0;
   for (int i = 0; i < constraintLengths.size(); i++) {

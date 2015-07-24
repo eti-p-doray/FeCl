@@ -26,9 +26,9 @@ class MinSumBp {
 public:
   
 private:
-  static inline void checkMetric(std::vector<LlrType>::iterator first, std::vector<LlrType>::iterator last, std::vector<LlrType>::iterator buffer) {
+  static inline void checkMetric(boost::container::vector<LlrType>::iterator first, boost::container::vector<LlrType>::iterator last, boost::container::vector<LlrType>::iterator buffer) {
     bool sign = false;
-    std::vector<LlrType>::iterator min[2];
+    boost::container::vector<LlrType>::iterator min[2];
     min[0] = first;
     for (auto metricIt = first; metricIt < last; ++metricIt) {
       sign ^= !std::signbit(*metricIt);

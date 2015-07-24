@@ -27,7 +27,7 @@ class TrueBp {
 public:
   
 private:
-  static inline void checkMetric(std::vector<LlrType>::iterator first, std::vector<LlrType>::iterator last, std::vector<LlrType>::iterator buffer)
+  static inline void checkMetric(boost::container::vector<LlrType>::iterator first, boost::container::vector<LlrType>::iterator last, boost::container::vector<LlrType>::iterator buffer)
   {
     LlrType sum = *first;
     auto tmp = buffer + 1;
@@ -45,7 +45,7 @@ private:
     *first = sum;
   }
   
-  static inline void checkMetricImpl(std::vector<LlrPdf>::iterator first, std::vector<LlrPdf>::iterator last, std::vector<LlrPdf>::iterator buffer)
+  static inline void checkMetricImpl(boost::container::vector<LlrPdf>::iterator first, boost::container::vector<LlrPdf>::iterator last, boost::container::vector<LlrPdf>::iterator buffer)
   {
     LlrType sum = first->mean;
     auto tmp = buffer + 1;
@@ -68,7 +68,7 @@ private:
     tmp->mean = sum;
   }
   
-  static inline void checkMetric(std::vector<LlrPdf>::iterator first, std::vector<LlrPdf>::iterator last, std::vector<LlrPdf>::iterator buffer)
+  static inline void checkMetric(boost::container::vector<LlrPdf>::iterator first, boost::container::vector<LlrPdf>::iterator last, boost::container::vector<LlrPdf>::iterator buffer)
   {
     LlrType weight = 0.0;
     

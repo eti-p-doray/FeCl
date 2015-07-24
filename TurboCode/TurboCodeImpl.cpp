@@ -1,17 +1,17 @@
 /*******************************************************************************
  *  \file TurboCodeImpl.h
  *  \author Etienne Pierre-Doray
- *  \since 2015-06-17
- *  \version Last update : 2015-06-17
+ *  \since 2015-07-22
+ *  \version Last update : 2015-07-24
  *
- *  Definition of MapCode class
+ *  Definition of TurboCodeImpl class
  ******************************************************************************/
 
 #include "TurboCodeImpl.h"
 
 using namespace fec;
 
-void TurboCodeImpl::appDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n) const
+void TurboCodeImpl::appDecodeNBloc(boost::container::vector<LlrType>::const_iterator parityIn, boost::container::vector<LlrType>::const_iterator extrinsicIn, boost::container::vector<LlrType>::iterator messageOut, boost::container::vector<LlrType>::iterator extrinsicOut, size_t n) const
 {
   switch (codeStructure_.structureType()) {
     case TurboCodeStructure::Serial:
@@ -38,13 +38,13 @@ void TurboCodeImpl::appDecodeNBloc(std::vector<LlrType>::const_iterator parityIn
   }
 }
 
-void TurboCodeImpl::serialDecodeBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut) const
+void TurboCodeImpl::serialDecodeBloc(boost::container::vector<LlrType>::const_iterator parityIn, boost::container::vector<LlrType>::const_iterator extrinsicIn, boost::container::vector<LlrType>::iterator messageOut, boost::container::vector<LlrType>::iterator extrinsicOut) const
 {
-  std::vector<LlrType> msg(codeStructure_.msgSize());
+  boost::container::vector<LlrType> msg(codeStructure_.msgSize());
   for (size_t k = 0; k < codeStructure_.msgSize(); ++k) {
     extrinsicOut[k] += extrinsicIn[k] + parityIn[k];
   }
-  std::vector<LlrType> extrinsicInterl(codeStructure_.msgSize(), 0);
+  boost::container::vector<LlrType> extrinsicInterl(codeStructure_.msgSize(), 0);
   for (size_t i = 0; i < codeStructure_.iterationCount() - 1; ++i) {
     auto parityIt = parityIn + codeStructure_.msgSize();
     for (size_t j = 0; j < codeStructure_.structureCount(); ++j) {
@@ -75,9 +75,9 @@ void TurboCodeImpl::serialDecodeBloc(std::vector<LlrType>::const_iterator parity
   }
 }
 
-void TurboCodeImpl::parallelDecodeBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut) const
+void TurboCodeImpl::parallelDecodeBloc(boost::container::vector<LlrType>::const_iterator parityIn, boost::container::vector<LlrType>::const_iterator extrinsicIn, boost::container::vector<LlrType>::iterator messageOut, boost::container::vector<LlrType>::iterator extrinsicOut) const
 {
-  std::vector<LlrType> msg(codeStructure_.msgSize());
+  boost::container::vector<LlrType> msg(codeStructure_.msgSize());
   auto extrinsicOutIt = extrinsicOut;
   auto extrinsicInIt = extrinsicIn;
   for (size_t i = 0; i < codeStructure_.structureCount(); ++i) {
@@ -88,8 +88,8 @@ void TurboCodeImpl::parallelDecodeBloc(std::vector<LlrType>::const_iterator pari
     extrinsicInIt += codeStructure_.structure(i).msgSize();
   }
   
-  std::vector<LlrType> parityBuffer(extrinsicSize());
-  std::vector<LlrType> extrinsicInterl(codeStructure_.msgSize() , 0);
+  boost::container::vector<LlrType> parityBuffer(extrinsicSize());
+  boost::container::vector<LlrType> extrinsicInterl(codeStructure_.msgSize() , 0);
   for (size_t i = 0; i < codeStructure_.iterationCount(); ++i) {
     auto parityIt = parityIn + codeStructure_.msgSize();
     auto extrinsicOutIt = extrinsicOut;

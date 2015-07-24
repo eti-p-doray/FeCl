@@ -43,7 +43,7 @@ Code::Code(int workGroupSize)
   workGroupSize_ = workGroupSize;
 }
 
-void Code::encodeNBloc(std::vector<uint8_t>::const_iterator messageIt, std::vector<uint8_t>::iterator parityIt, size_t n) const
+void Code::encodeNBloc(boost::container::vector<uint8_t>::const_iterator messageIt, boost::container::vector<uint8_t>::iterator parityIt, size_t n) const
 {
   for (size_t i = 0; i < n; ++i) {
     encodeBloc(messageIt, parityIt);

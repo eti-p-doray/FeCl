@@ -31,7 +31,7 @@ public:
   
 protected:
   virtual void checkUpdate();
-  virtual void bitUpdate(std::vector<LlrType>::const_iterator parity);
+  virtual void bitUpdate(boost::container::vector<LlrType>::const_iterator parity);
 };
 
 template <typename A>
@@ -52,7 +52,7 @@ void BpDecoderImpl<A>::checkUpdate()
 }
 
 template <typename A>
-void BpDecoderImpl<A>::bitUpdate(std::vector<LlrType>::const_iterator parity)
+void BpDecoderImpl<A>::bitUpdate(boost::container::vector<LlrType>::const_iterator parity)
 {
   std::fill(bitMetrics_.begin(), bitMetrics_.end(), 0);
   auto check = codeStructure().parityCheck().begin();

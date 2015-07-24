@@ -1,10 +1,10 @@
 /*******************************************************************************
  *  \file TurboCodeImpl.h
  *  \author Etienne Pierre-Doray
- *  \since 2015-05-12
- *  \version Last update : 2015-05-27
+ *  \since 2015-07-22
+ *  \version Last update : 2015-07-24
  *
- *  Declaration of ConvolutionalCode class
+ *  Declaration of TurboCodeImpl class
  ******************************************************************************/
 
 #ifndef TURBO_CODE_IMPL_H
@@ -55,14 +55,14 @@ public:
 protected:
   TurboCodeImpl() = default;
   
-  void appDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n) const;
+  void appDecodeNBloc(boost::container::vector<LlrType>::const_iterator parityIn, boost::container::vector<LlrType>::const_iterator extrinsicIn, boost::container::vector<LlrType>::iterator messageOut, boost::container::vector<LlrType>::iterator extrinsicOut, size_t n) const;
 
 private:
   
-  void serialDecodeBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut) const;
-  void parallelDecodeBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut) const;
+  void serialDecodeBloc(boost::container::vector<LlrType>::const_iterator parityIn, boost::container::vector<LlrType>::const_iterator extrinsicIn, boost::container::vector<LlrType>::iterator messageOut, boost::container::vector<LlrType>::iterator extrinsicOut) const;
+  void parallelDecodeBloc(boost::container::vector<LlrType>::const_iterator parityIn, boost::container::vector<LlrType>::const_iterator extrinsicIn, boost::container::vector<LlrType>::iterator messageOut, boost::container::vector<LlrType>::iterator extrinsicOut) const;
   
-  std::vector<std::unique_ptr<MapDecoder>> code_;
+  boost::container::vector<std::unique_ptr<MapDecoder>> code_;
   TurboCodeStructure codeStructure_;
 };
   

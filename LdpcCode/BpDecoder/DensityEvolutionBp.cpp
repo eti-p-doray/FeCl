@@ -16,7 +16,7 @@ std::unique_ptr<DensityEvolutionBp> DensityEvolutionBp::create(const LdpcCodeStr
   return std::unique_ptr<DensityEvolutionBp>(new DensityEvolutionBp(codeStructure));
 }
 
-void DensityEvolutionBp::predictNBloc(std::vector<LlrPdf>::const_iterator parityIn, std::vector<LlrPdf>::iterator parityOut, std::vector<LlrPdf>::iterator messageOut, size_t n)
+void DensityEvolutionBp::predictNBloc(boost::container::vector<LlrPdf>::const_iterator parityIn, boost::container::vector<LlrPdf>::iterator parityOut, boost::container::vector<LlrPdf>::iterator messageOut, size_t n)
 {
   for (size_t i = 0; i < n; ++i) {
     predictBloc(parityIn, parityOut, messageOut);
@@ -26,7 +26,7 @@ void DensityEvolutionBp::predictNBloc(std::vector<LlrPdf>::const_iterator parity
   }
 }
 
-void DensityEvolutionBp::predictBloc(std::vector<LlrPdf>::const_iterator parityIn, std::vector<LlrPdf>::iterator parityOut, std::vector<LlrPdf>::iterator messageOut)
+void DensityEvolutionBp::predictBloc(boost::container::vector<LlrPdf>::const_iterator parityIn, boost::container::vector<LlrPdf>::iterator parityOut, boost::container::vector<LlrPdf>::iterator messageOut)
 {
   if (codeStructure().iterationCount() == 0) {
     std::copy(parityIn, parityIn+codeStructure().messageSize(), messageOut);
@@ -85,7 +85,7 @@ void DensityEvolutionBp::checkUpdate()
   }
 }
 
-void DensityEvolutionBp::bitUpdate(std::vector<LlrPdf>::const_iterator parity)
+void DensityEvolutionBp::bitUpdate(boost::container::vector<LlrPdf>::const_iterator parity)
 {
   std::fill(bitMetrics_.begin(), bitMetrics_.end(), 0);
   auto check = codeStructure().parityCheck().begin();

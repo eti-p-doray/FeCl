@@ -29,7 +29,7 @@ ConvolutionalCode::ConvolutionalCode(const ConvolutionalCodeStructure& codeStruc
 {
 }
 
-void ConvolutionalCode::encodeBloc(std::vector<uint8_t>::const_iterator messageIt, std::vector<uint8_t>::iterator parityIt) const
+void ConvolutionalCode::encodeBloc(boost::container::vector<uint8_t>::const_iterator messageIt, boost::container::vector<uint8_t>::iterator parityIt) const
 {
   uint16_t state = 0;
   
@@ -74,25 +74,25 @@ void ConvolutionalCode::encodeBloc(std::vector<uint8_t>::const_iterator messageI
   }
 }
 
-/*void ConvolutionalCode::parityAppDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n) const
+/*void ConvolutionalCode::parityAppDecodeNBloc(boost::container::vector<LlrType>::const_iterator parityIn, boost::container::vector<LlrType>::const_iterator extrinsicIn, boost::container::vector<LlrType>::iterator messageOut, boost::container::vector<LlrType>::iterator extrinsicOut, size_t n) const
 {
   auto worker = MapDecoder::create(codeStructure_);
   worker->parityAppDecodeNBloc(parityIn, extrinsicIn, messageOut, extrinsicOut, n);
 }*/
 
-void ConvolutionalCode::appDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n) const
+void ConvolutionalCode::appDecodeNBloc(boost::container::vector<LlrType>::const_iterator parityIn, boost::container::vector<LlrType>::const_iterator extrinsicIn, boost::container::vector<LlrType>::iterator messageOut, boost::container::vector<LlrType>::iterator extrinsicOut, size_t n) const
 {
   auto worker = MapDecoder::create(codeStructure_);
   worker->appDecodeNBloc(parityIn, extrinsicIn, messageOut, extrinsicOut, n);
 }
 
-void ConvolutionalCode::softOutDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::iterator messageOut, size_t n) const
+void ConvolutionalCode::softOutDecodeNBloc(boost::container::vector<LlrType>::const_iterator parityIn, boost::container::vector<LlrType>::iterator messageOut, size_t n) const
 {
   auto worker = MapDecoder::create(codeStructure_);
   worker->softOutDecodeNBloc(parityIn, messageOut, n);
 }
 
-void ConvolutionalCode::decodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<uint8_t>::iterator messageOut, size_t n) const
+void ConvolutionalCode::decodeNBloc(boost::container::vector<LlrType>::const_iterator parityIn, boost::container::vector<uint8_t>::iterator messageOut, size_t n) const
 {
   auto worker = std::unique_ptr<ViterbiDecoder>(new ViterbiDecoder(codeStructure_));
   worker->decodeNBloc(parityIn, messageOut, n);

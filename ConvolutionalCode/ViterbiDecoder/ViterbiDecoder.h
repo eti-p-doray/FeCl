@@ -28,18 +28,18 @@ public:
   ViterbiDecoder(const ConvolutionalCodeStructure& codeStructure);
   ~ViterbiDecoder() = default;
   
-  void decodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<uint8_t>::iterator messageOut, size_t n);
-  void decodeBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<uint8_t>::iterator messageOut);
+  void decodeNBloc(boost::container::vector<LlrType>::const_iterator parityIn, boost::container::vector<uint8_t>::iterator messageOut, size_t n);
+  void decodeBloc(boost::container::vector<LlrType>::const_iterator parityIn, boost::container::vector<uint8_t>::iterator messageOut);
   
 protected:
   
   inline const ConvolutionalCodeStructure& codeStructure() const {return codeStructure_;}
   
-  std::vector<LlrType> previousPathMetrics;
-  std::vector<LlrType> nextPathMetrics;
-  std::vector<LlrType> branchMetrics;
-  std::vector<BitField<uint16_t>> stateTraceBack;
-  std::vector<BitField<uint16_t>> inputTraceBack;
+  boost::container::vector<LlrType> previousPathMetrics;
+  boost::container::vector<LlrType> nextPathMetrics;
+  boost::container::vector<LlrType> branchMetrics;
+  boost::container::vector<BitField<uint16_t>> stateTraceBack;
+  boost::container::vector<BitField<uint16_t>> inputTraceBack;
 
 private:
   

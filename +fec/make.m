@@ -3,7 +3,7 @@ function make
 % This function should be called once before any attempt to use MapCode
 % The directoty path is automatically found
 %   
-    cxxFlags = ['-std=c++11'];
+    cxxFlags = ['-std=c++11 -fPIC -fno-omit-frame-pointer -pthread -fexceptions'];
     iPath = {['-I' fullfile('../')], ['-I' fullfile('../libs/include/')]};
     lPath = {['-L' fullfile('../libs/')]};
 
@@ -12,7 +12,8 @@ function make
     trgPath = '';
     
     objDst = 'build';
-    trgDst = '+bin';
+    trgDst = 'test';
+    
     
     src = {...
         'Code.cpp'; ...
@@ -90,7 +91,7 @@ function make
         objInfo = dir(['build/' name '.*']);
         srcInfo = dir([srcPath src{i}]);
         if (isempty(objInfo) || objInfo.datenum < srcInfo.datenum)
-            mex(['CXXFLAGS="\$CXXFLAGS ' cxxFlags '"'], iPath{:}, '-outdir', objDst, '-c', [srcPath src{i}]);
+            mex(['CXXFLAGS=' cxxFlags], iPath{:}, '-outdir', objDst, '-c', [srcPath src{i}]);
         else
             disp('skip');
         end
@@ -103,7 +104,7 @@ function make
         objInfo = dir(['build/' name '.*']);
         srcInfo = dir([libsPath libs{i}]);
         if (isempty(objInfo) || objInfo.datenum < srcInfo.datenum)
-            mex(['CXXFLAGS="\$CXXFLAGS ' cxxFlags '"'], iPath{:}, '-outdir', objDst, '-c', [libsPath libs{i}]);
+            mex(['CXXFLAGS=' cxxFlags], iPath{:}, '-outdir', objDst, '-c', [libsPath libs{i}]);
         else
             disp('skip');
         end
@@ -113,7 +114,7 @@ function make
     end
 
     for i = 1:length(trg)
-        mex(['CXXFLAGS="\$CXXFLAGS ' cxxFlags '"'], iPath{:},lPath{:}, '-largeArrayDims', '-outdir', trgDst, [trgPath trg{i}], objs{:});
+        mex(['CXXFLAGS=' cxxFlags], iPath{:},lPath{:}, '-largeArrayDims', '-outdir', trgDst, [trgPath trg{i}], objs{:});
     end
     
 

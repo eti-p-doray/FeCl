@@ -28,27 +28,27 @@ public:
   static std::unique_ptr<BpDecoder> create(const LdpcCodeStructure&);
   virtual ~BpDecoder() = default;
   
-  //void parityAppDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n);
-  void appDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n);
-  void softOutDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::iterator messageOut, size_t n);
+  //void parityAppDecodeNBloc(boost::container::vector<LlrType>::const_iterator parityIn, boost::container::vector<LlrType>::const_iterator extrinsicIn, boost::container::vector<LlrType>::iterator messageOut, boost::container::vector<LlrType>::iterator extrinsicOut, size_t n);
+  void appDecodeNBloc(boost::container::vector<LlrType>::const_iterator parityIn, boost::container::vector<LlrType>::const_iterator extrinsicIn, boost::container::vector<LlrType>::iterator messageOut, boost::container::vector<LlrType>::iterator extrinsicOut, size_t n);
+  void softOutDecodeNBloc(boost::container::vector<LlrType>::const_iterator parityIn, boost::container::vector<LlrType>::iterator messageOut, size_t n);
   
 protected:
   BpDecoder(const LdpcCodeStructure& codeStructure);
   
-  //void parityAppDecodeBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut);
-  void appDecodeBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut);
-  void softOutDecodeBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::iterator messageOut);
+  //void parityAppDecodeBloc(boost::container::vector<LlrType>::const_iterator parityIn, boost::container::vector<LlrType>::const_iterator extrinsicIn, boost::container::vector<LlrType>::iterator messageOut, boost::container::vector<LlrType>::iterator extrinsicOut);
+  void appDecodeBloc(boost::container::vector<LlrType>::const_iterator parityIn, boost::container::vector<LlrType>::const_iterator extrinsicIn, boost::container::vector<LlrType>::iterator messageOut, boost::container::vector<LlrType>::iterator extrinsicOut);
+  void softOutDecodeBloc(boost::container::vector<LlrType>::const_iterator parityIn, boost::container::vector<LlrType>::iterator messageOut);
   
   virtual void checkUpdate() = 0;
-  virtual void bitUpdate(std::vector<LlrType>::const_iterator parity) = 0;
+  virtual void bitUpdate(boost::container::vector<LlrType>::const_iterator parity) = 0;
   
   inline const LdpcCodeStructure& codeStructure() const {return codeStructure_;}
  
-  std::vector<uint8_t> hardParity_;
+  boost::container::vector<uint8_t> hardParity_;
   
-  std::vector<LlrType> bitMetrics_;
-  std::vector<LlrType> checkMetrics_;
-  std::vector<LlrType> checkMetricsBuffer_;
+  boost::container::vector<LlrType> bitMetrics_;
+  boost::container::vector<LlrType> checkMetrics_;
+  boost::container::vector<LlrType> checkMetricsBuffer_;
 
 private:
   

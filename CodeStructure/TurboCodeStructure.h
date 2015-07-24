@@ -33,14 +33,14 @@ public:
   };
   
   TurboCodeStructure() = default;
-  TurboCodeStructure(const std::vector<TrellisStructure>& trellis, const std::vector<Interleaver>& interleaver, size_t iterationCount = 5, DecoderType structureType = Serial, ConvolutionalCodeStructure::DecoderType mapType = ConvolutionalCodeStructure::MaxLogMap);
+  TurboCodeStructure(const boost::container::vector<TrellisStructure>& trellis, const boost::container::vector<Interleaver>& interleaver, size_t iterationCount = 5, DecoderType structureType = Serial, ConvolutionalCodeStructure::DecoderType mapType = ConvolutionalCodeStructure::MaxLogMap);
   virtual ~TurboCodeStructure() = default;
   
   virtual CodeStructure::Type type() const {return CodeStructure::Turbo;}
   
   inline size_t structureCount() const {return structure_.size();}
-  inline const std::vector<ConvolutionalCodeStructure>& structures() const {return structure_;}
-  inline const std::vector<Interleaver>& interleavers() const {return interleaver_;}
+  inline const boost::container::vector<ConvolutionalCodeStructure>& structures() const {return structure_;}
+  inline const boost::container::vector<Interleaver>& interleavers() const {return interleaver_;}
   inline const ConvolutionalCodeStructure& structure(size_t i) const {return structure_[i];}
   inline const Interleaver& interleaver(size_t i) const {return interleaver_[i];}
   inline size_t iterationCount() const {return iterationCount_;}
@@ -57,8 +57,8 @@ private:
     ar & ::BOOST_SERIALIZATION_NVP(iterationCount_);
   }
   
-  std::vector<ConvolutionalCodeStructure> structure_;
-  std::vector<Interleaver> interleaver_;
+  boost::container::vector<ConvolutionalCodeStructure> structure_;
+  boost::container::vector<Interleaver> interleaver_;
   DecoderType structureType_;
   size_t iterationCount_;
 };

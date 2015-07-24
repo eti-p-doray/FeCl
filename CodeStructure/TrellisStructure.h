@@ -12,11 +12,11 @@
 
 #include <assert.h>
 #include <iostream>
-#include <vector>
 
+#include <boost/container/vector.hpp>
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/utility.hpp>
-#include <boost/serialization/vector.hpp>
+#include "vector.hpp"
 
 #include "BitField.h"
 
@@ -35,9 +35,9 @@ class TrellisStructure {
   friend class boost::serialization::access;
 public:
   TrellisStructure() = default;
-  TrellisStructure(::std::vector<int> nextState, ::std::vector<int> output, uint8_t inputSize, uint8_t outputSize, uint8_t stateSize);
-  TrellisStructure(::std::vector<BitField<uint16_t> > constraintLengths, ::std::vector<::std::vector<BitField<uint16_t> > > generator);
-  TrellisStructure(::std::vector<BitField<uint16_t> > constraintLengths, ::std::vector<::std::vector<BitField<uint16_t> > > generator, ::std::vector<BitField<uint16_t> > feedback);
+  TrellisStructure(::boost::container::vector<int> nextState, ::boost::container::vector<int> output, uint8_t inputSize, uint8_t outputSize, uint8_t stateSize);
+  TrellisStructure(::boost::container::vector<BitField<uint16_t> > constraintLengths, ::boost::container::vector<::boost::container::vector<BitField<uint16_t> > > generator);
+  TrellisStructure(::boost::container::vector<BitField<uint16_t> > constraintLengths, ::boost::container::vector<::boost::container::vector<BitField<uint16_t> > > generator, ::boost::container::vector<BitField<uint16_t> > feedback);
   
   TrellisStructure(const TrellisStructure&) = default;
   
@@ -54,11 +54,11 @@ public:
   inline BitField<uint16_t> getNextState(int currentState, int input) const {return nextState_[currentState * inputCount() + input];}
   inline BitField<uint16_t> getOutput(int currentState, int input) const {return output_[currentState * inputCount() + input];}
 
-  inline ::std::vector<BitField<uint16_t> >::const_iterator beginState() const {return nextState_.begin();}
-  inline ::std::vector<BitField<uint16_t> >::const_iterator endState() const {return nextState_.end();}
+  inline ::boost::container::vector<BitField<uint16_t> >::const_iterator beginState() const {return nextState_.begin();}
+  inline ::boost::container::vector<BitField<uint16_t> >::const_iterator endState() const {return nextState_.end();}
   
-  inline ::std::vector<BitField<uint16_t> >::const_iterator beginOutput() const {return output_.begin();}
-  inline ::std::vector<BitField<uint16_t> >::const_iterator endOutput() const {return output_.end();}
+  inline ::boost::container::vector<BitField<uint16_t> >::const_iterator beginOutput() const {return output_.begin();}
+  inline ::boost::container::vector<BitField<uint16_t> >::const_iterator endOutput() const {return output_.end();}
   
 private:
   template <typename Archive>
@@ -84,8 +84,8 @@ private:
   
   int tableSize_;
   
-  ::std::vector<BitField<uint16_t> > nextState_;
-  ::std::vector<BitField<uint16_t> > output_;
+  ::boost::container::vector<BitField<uint16_t> > nextState_;
+  ::boost::container::vector<BitField<uint16_t> > output_;
 };
 
 }

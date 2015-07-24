@@ -28,7 +28,7 @@ std::unique_ptr<MapDecoder> MapDecoder::create(const ConvolutionalCodeStructure&
   }
 }
 
-void MapDecoder::softOutDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::iterator messageOut, size_t n)
+void MapDecoder::softOutDecodeNBloc(boost::container::vector<LlrType>::const_iterator parityIn, boost::container::vector<LlrType>::iterator messageOut, size_t n)
 {
   for (size_t i = 0; i < n; ++i) {
     softOutDecodeBloc(parityIn,messageOut);
@@ -37,7 +37,7 @@ void MapDecoder::softOutDecodeNBloc(std::vector<LlrType>::const_iterator parityI
   }
 }
 
-void MapDecoder::appDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n)
+void MapDecoder::appDecodeNBloc(boost::container::vector<LlrType>::const_iterator parityIn, boost::container::vector<LlrType>::const_iterator extrinsicIn, boost::container::vector<LlrType>::iterator messageOut, boost::container::vector<LlrType>::iterator extrinsicOut, size_t n)
 {
   for (size_t i = 0; i < n; ++i) {
     appDecodeBloc(parityIn,extrinsicIn,messageOut,extrinsicOut);
@@ -48,7 +48,7 @@ void MapDecoder::appDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, s
   }
 }
 
-/*void MapDecoder::parityAppDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n)
+/*void MapDecoder::parityAppDecodeNBloc(boost::container::vector<LlrType>::const_iterator parityIn, boost::container::vector<LlrType>::const_iterator extrinsicIn, boost::container::vector<LlrType>::iterator messageOut, boost::container::vector<LlrType>::iterator extrinsicOut, size_t n)
 {
   for (size_t i = 0; i < n; ++i) {
     parityAppDecodeBloc(parityIn,extrinsicIn,messageOut,extrinsicOut);
@@ -59,7 +59,7 @@ void MapDecoder::appDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, s
   }
 }*/
 
-void MapDecoder::softOutDecodeBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::iterator messageOut)
+void MapDecoder::softOutDecodeBloc(boost::container::vector<LlrType>::const_iterator parityIn, boost::container::vector<LlrType>::iterator messageOut)
 {
   branchMetrics(parityIn);
   forwardMetrics();
@@ -68,7 +68,7 @@ void MapDecoder::softOutDecodeBloc(std::vector<LlrType>::const_iterator parityIn
   messageAPosteriori(messageOut);
 }
 
-void MapDecoder::appDecodeBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut)
+void MapDecoder::appDecodeBloc(boost::container::vector<LlrType>::const_iterator parityIn, boost::container::vector<LlrType>::const_iterator extrinsicIn, boost::container::vector<LlrType>::iterator messageOut, boost::container::vector<LlrType>::iterator extrinsicOut)
 {
   appBranchMetrics(parityIn, extrinsicIn);
   forwardMetrics();
@@ -81,7 +81,7 @@ void MapDecoder::appDecodeBloc(std::vector<LlrType>::const_iterator parityIn, st
   }
 }
 
-/*void MapDecoder::parityAppDecodeBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut)
+/*void MapDecoder::parityAppDecodeBloc(boost::container::vector<LlrType>::const_iterator parityIn, boost::container::vector<LlrType>::const_iterator extrinsicIn, boost::container::vector<LlrType>::iterator messageOut, boost::container::vector<LlrType>::iterator extrinsicOut)
 {  
   parityAppBranchMetrics(parityIn, extrinsicIn);
   forwardMetrics();

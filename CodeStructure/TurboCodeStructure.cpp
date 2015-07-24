@@ -11,7 +11,7 @@
 
 using namespace fec;
 
-TurboCodeStructure::TurboCodeStructure(const std::vector<TrellisStructure>& trellis, const std::vector<Interleaver>& interleaver, size_t iterationCount, DecoderType structureType, ConvolutionalCodeStructure::DecoderType mapType) :
+TurboCodeStructure::TurboCodeStructure(const boost::container::vector<TrellisStructure>& trellis, const boost::container::vector<Interleaver>& interleaver, size_t iterationCount, DecoderType structureType, ConvolutionalCodeStructure::DecoderType mapType) :
   interleaver_(interleaver)
 {
   structureType_ = structureType;

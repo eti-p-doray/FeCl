@@ -11,7 +11,6 @@
 #define CODE_STRUCTURE_H
 
 #include <iostream>
-#include <vector>
 #include <limits>
 
 #include <boost/serialization/nvp.hpp>

@@ -11,7 +11,7 @@
 
 using namespace fec;
 
-void ViterbiDecoder::decodeNBloc(std::vector<LlrType>::const_iterator codeIn, std::vector<uint8_t>::iterator messageOut, size_t n)
+void ViterbiDecoder::decodeNBloc(boost::container::vector<LlrType>::const_iterator codeIn, boost::container::vector<uint8_t>::iterator messageOut, size_t n)
 {
   for (size_t i = 0; i < n; i++) {
     decodeBloc(codeIn, messageOut);
@@ -20,7 +20,7 @@ void ViterbiDecoder::decodeNBloc(std::vector<LlrType>::const_iterator codeIn, st
   }
 }
 
-void ViterbiDecoder::decodeBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<uint8_t>::iterator messageOut)
+void ViterbiDecoder::decodeBloc(boost::container::vector<LlrType>::const_iterator parityIn, boost::container::vector<uint8_t>::iterator messageOut)
 {
   previousPathMetrics[0] = 0;
   std::fill(previousPathMetrics.begin()+1, previousPathMetrics.end(), -MAX_LLR);
