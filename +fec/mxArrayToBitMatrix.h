@@ -4,16 +4,15 @@
  *  \since 2015-05-27
  *  \version Last update : 2015-05-27
  *
- *  Definition of toTrellis conversion function.
+ *  Definition of SparseBitMatrix conversion function.
  ******************************************************************************/
 
 #ifndef TO_BITMATRIX_H
 #define TO_BITMATRIX_H
 
-#include <vector>
 #include <memory>
 #include <math.h>
-
+#include <boost/container/vector.hpp>
 #include <mex.h>
 #include <matrix.h>
 
@@ -23,9 +22,9 @@
 using namespace fec;
 
 template <>
-class MexConverter<SparseBitMatrix> {
+class mxArrayTo<SparseBitMatrix> {
 public:
-  static SparseBitMatrix convert(const mxArray* in) {
+  static SparseBitMatrix f(const mxArray* in) {
     if (in == nullptr) {
       throw std::invalid_argument("Null mxArray");
     }
@@ -40,7 +39,7 @@ public:
         throw std::invalid_argument("Invalid data");
       }
       
-      std::vector<size_t> rowSizes(mxGetM(in), 0);
+      boost::container::vector<size_t> rowSizes(mxGetM(in), 0);
       for (size_t j = 0; j < mxGetN(in); ++j) {
         for (size_t i = jc[j]; i < jc[j+1]; ++i) {
           rowSizes[ir[i]]++;
@@ -60,7 +59,7 @@ public:
     }
     else {
       double* pr = mxGetPr(in);
-      std::vector<size_t> rowSizes(mxGetM(in), 0);
+      boost::container::vector<size_t> rowSizes(mxGetM(in), 0);
       for (size_t j = 0; j < mxGetN(in); ++j) {
         for (size_t i = 0; i < mxGetM(in); ++i, ++pr) {
           if (*pr != 0) {
@@ -83,5 +82,5 @@ public:
 
   }
 };
-
+  
 #endif

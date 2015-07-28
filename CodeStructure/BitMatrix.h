@@ -11,7 +11,7 @@
 #define BIT_MATRIX_H
 
 #include <iostream>
-#include "vector.hpp"
+#include <boost/serialization/vector.hpp>
 #include <boost/serialization/utility.hpp>
 #include <boost/serialization/nvp.hpp>
 

@@ -4,6 +4,8 @@ function make
 % The directoty path is automatically found
 %   
     cxxFlags = ['-std=c++11 -fPIC -fno-omit-frame-pointer -pthread -fexceptions'];
+    %cxxFlags = ['-std=c++11'];
+    
     iPath = {['-I' fullfile('../')], ['-I' fullfile('../libs/include/')]};
     lPath = {['-L' fullfile('../libs/')]};
 
@@ -12,7 +14,7 @@ function make
     trgPath = '';
     
     objDst = 'build';
-    trgDst = 'test';
+    trgDst = '+bin';
     
     
     src = {...
@@ -91,7 +93,7 @@ function make
         objInfo = dir(['build/' name '.*']);
         srcInfo = dir([srcPath src{i}]);
         if (isempty(objInfo) || objInfo.datenum < srcInfo.datenum)
-            mex(['CXXFLAGS=' cxxFlags], iPath{:}, '-outdir', objDst, '-c', [srcPath src{i}]);
+            mex(['CXXFLAGS= ' cxxFlags], iPath{:}, '-largeArrayDims', '-outdir', objDst, '-c', [srcPath src{i}]);
         else
             disp('skip');
         end
@@ -104,7 +106,7 @@ function make
         objInfo = dir(['build/' name '.*']);
         srcInfo = dir([libsPath libs{i}]);
         if (isempty(objInfo) || objInfo.datenum < srcInfo.datenum)
-            mex(['CXXFLAGS=' cxxFlags], iPath{:}, '-outdir', objDst, '-c', [libsPath libs{i}]);
+            mex(['CXXFLAGS= ' cxxFlags], iPath{:}, '-largeArrayDims', '-outdir', objDst, '-c', [libsPath libs{i}]);
         else
             disp('skip');
         end

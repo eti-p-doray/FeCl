@@ -11,7 +11,7 @@
 
 using namespace fec;
 
-TrellisStructure::TrellisStructure(boost::container::vector<int> nextState, boost::container::vector<int> output, uint8_t inputSize, uint8_t outputSize, uint8_t stateSize)
+TrellisStructure::TrellisStructure(boost::container::vector<size_t> nextState, boost::container::vector<size_t> output, size_t inputSize, size_t outputSize, size_t stateSize)
 {
   stateSize_ = stateSize;
   outputSize_ = outputSize;
@@ -26,25 +26,25 @@ TrellisStructure::TrellisStructure(boost::container::vector<int> nextState, boos
   nextState_.resize(inputCount()*stateCount());
   output_.resize(inputCount()*stateCount());
   
-  for (int i = 0; i < stateCount(); i++) {
-    for (int j = 0; j < inputCount(); j++) {
+  for (size_t i = 0; i < stateCount(); i++) {
+    for (size_t j = 0; j < inputCount(); j++) {
       nextState_[i*inputCount()+j] = nextState[i+j*stateCount()];
       assert(nextState_[i*inputCount()+j] < stateCount());
       output_[i*inputCount()+j] = 0;
-      for (int k = 0; k < this->outputSize(); k++) {
-        output_[i*inputCount()+j][k] = BitField<int>(output[i+j*stateCount()])[this->outputSize()-k-1];
+      for (size_t k = 0; k < this->outputSize(); k++) {
+        output_[i*inputCount()+j][k] = BitField<size_t>(output[i+j*stateCount()])[this->outputSize()-k-1];
       }
       assert(output_[i*inputCount()+j] < outputCount());
     }
   }
 }
 
-TrellisStructure::TrellisStructure(boost::container::vector<BitField<uint16_t> > constraintLengths, boost::container::vector<boost::container::vector<BitField<uint16_t> > > generator)
+TrellisStructure::TrellisStructure(boost::container::vector<BitField<size_t> > constraintLengths, boost::container::vector<boost::container::vector<BitField<size_t> > > generator)
 {
-  inputSize_ = int(generator.size());
-  outputSize_ = int(generator[0].size());
+  inputSize_ = size_t(generator.size());
+  outputSize_ = size_t(generator[0].size());
   assert(constraintLengths.size() == generator.size());
-  for (int i = 0; i < inputSize(); i++) {
+  for (size_t i = 0; i < inputSize(); i++) {
     assert(outputSize_ == generator[i].size());
   }
   
@@ -52,10 +52,10 @@ TrellisStructure::TrellisStructure(boost::container::vector<BitField<uint16_t> >
   inputCount_ = 1<<inputSize_;
 
   
-  boost::container::vector<BitField<uint16_t> > inputStates(constraintLengths.size(), 0);
+  boost::container::vector<BitField<size_t> > inputStates(constraintLengths.size(), 0);
   
   stateSize_ = 0;
-  for (int i = 0; i < constraintLengths.size(); i++) {
+  for (size_t i = 0; i < constraintLengths.size(); i++) {
     stateSize_ += constraintLengths[i] - 1;
   }
   stateCount_ = 1<<stateSize_;
@@ -63,18 +63,18 @@ TrellisStructure::TrellisStructure(boost::container::vector<BitField<uint16_t> >
   output_.resize(stateCount()*inputCount());
   tableSize_ = stateCount() * inputCount();
   
-  for (BitField<uint16_t> state = 0; state < stateCount(); state++) {
-    for (BitField<uint16_t> input = 0; input < inputCount(); input++) {
+  for (BitField<size_t> state = 0; state < stateCount(); state++) {
+    for (BitField<size_t> input = 0; input < inputCount(); input++) {
       nextState_[state*inputCount()+input] = 0;
-      BitField<uint16_t> output = 0;
-      int j = 0;
-      for (int i = 0; i < constraintLengths.size(); i++, j += constraintLengths[i]-1) {
-        for (int k = 0; k < constraintLengths[i]-1; k++) {
+      BitField<size_t> output = 0;
+      size_t j = 0;
+      for (size_t i = 0; i < constraintLengths.size(); i++) {
+        for (size_t k = 0; k < constraintLengths[i]-1; k++) {
           assert(i < inputStates.size());
           inputStates[i][k] = state[j+k];
         }
         
-        for (int k = 0; k < outputSize_; k++) {
+        for (size_t k = 0; k < outputSize_; k++) {
           assert((generator[i][k]>>1) <= stateCount());
           output[k] ^= input[i] & generator[i][k][stateSize()] ^ parity(inputStates[i] & generator[i][k]);
         }
@@ -84,6 +84,8 @@ TrellisStructure::TrellisStructure(boost::container::vector<BitField<uint16_t> >
         
         nextState_[state*inputCount()+input][j+constraintLengths[i]-2] = input[i];
         nextState_[state*inputCount()+input] |= (inputStates[i] >> 1) << j ;
+        
+        j += constraintLengths[i]-1;
       }
     }
   }
@@ -91,8 +93,8 @@ TrellisStructure::TrellisStructure(boost::container::vector<BitField<uint16_t> >
 
 std::ostream& operator<<(std::ostream& os, const TrellisStructure& trellis)
 {
-  for (BitField<uint16_t> i = 0; i < trellis.stateCount(); i++) {
-    for (BitField<uint16_t> j = 0; j < trellis.inputCount(); j++) {
+  for (BitField<size_t> i = 0; i < trellis.stateCount(); i++) {
+    for (BitField<size_t> j = 0; j < trellis.inputCount(); j++) {
       std::cout << i << ", " << j << ", " << trellis.getNextState(i, j) << ", " << trellis.getOutput(i, j) << std::endl;
     }
   }

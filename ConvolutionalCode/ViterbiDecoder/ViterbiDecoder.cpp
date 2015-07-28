@@ -30,7 +30,7 @@ void ViterbiDecoder::decodeBloc(boost::container::vector<LlrType>::const_iterato
   for (size_t i = 0; i < codeStructure().blocSize() + codeStructure().tailSize(); ++i) {
     std::fill(nextPathMetrics.begin(), nextPathMetrics.end(), -MAX_LLR);
     
-    for (BitField<uint16_t> j = 0; j < codeStructure().trellis().outputCount(); ++j) {
+    for (BitField<size_t> j = 0; j < codeStructure().trellis().outputCount(); ++j) {
       branchMetrics[j] = codeStructure().correlationProbability(j, parityIn, codeStructure().trellis().outputSize());
     }
     parityIn += codeStructure().trellis().outputSize();
@@ -38,8 +38,8 @@ void ViterbiDecoder::decodeBloc(boost::container::vector<LlrType>::const_iterato
     auto previousPathMetricsIt = previousPathMetrics.begin();
     auto stateIt = codeStructure().trellis().beginState();
     auto outputIt = codeStructure().trellis().beginOutput();
-    for (BitField<uint16_t> j = 0; j < codeStructure().trellis().stateCount(); ++j) {
-      for (BitField<uint16_t> k = 0; k < codeStructure().trellis().inputCount(); ++k) {
+    for (BitField<size_t> j = 0; j < codeStructure().trellis().stateCount(); ++j) {
+      for (BitField<size_t> k = 0; k < codeStructure().trellis().inputCount(); ++k) {
         auto & pathMetricRef = nextPathMetrics[*stateIt];
         LlrType competitor = *previousPathMetricsIt + branchMetrics[*outputIt];
         if (competitor >= pathMetricRef) {
@@ -72,10 +72,10 @@ void ViterbiDecoder::decodeBloc(boost::container::vector<LlrType>::const_iterato
   stateTraceBackIt -= codeStructure().trellis().stateCount();
   inputTraceBackIt -= codeStructure().trellis().stateCount();
   
-  BitField<uint16_t> bestState = 0;
+  BitField<size_t> bestState = 0;
   switch (codeStructure().endType()) {
     case ConvolutionalCodeStructure::Truncation:
-      for (BitField<uint16_t> i = 0; i < codeStructure().trellis().stateCount(); ++i) {
+      for (BitField<size_t> i = 0; i < codeStructure().trellis().stateCount(); ++i) {
         if (previousPathMetrics[i] > previousPathMetrics[bestState]) {
           bestState = i;
         }
@@ -90,7 +90,7 @@ void ViterbiDecoder::decodeBloc(boost::container::vector<LlrType>::const_iterato
   messageOut += (codeStructure().blocSize() - 1) * codeStructure().trellis().inputSize();
   for (int64_t i = codeStructure().blocSize() + codeStructure().tailSize() - 1; i >= 0; --i) {
     if (i < codeStructure().blocSize()) {
-      for (BitField<uint16_t> j = 0; j < codeStructure().trellis().inputSize(); ++j) {
+      for (BitField<size_t> j = 0; j < codeStructure().trellis().inputSize(); ++j) {
         messageOut[j] = inputTraceBackIt[bestState].test(j);
       }
       messageOut -= codeStructure().trellis().inputSize();

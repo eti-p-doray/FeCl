@@ -38,12 +38,12 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
     throw std::invalid_argument("Wrong argout count in Code_destructor");
   }
   try {
-    std::unique_ptr<fec::Code> code = toObject<fec::Code>(prhs[0], "Code");
+    std::unique_ptr<fec::Code> code = mxArrayTo<std::unique_ptr<fec::Code>>::f(prhs[0]);
     code.reset();
-    plhs[0] = toMxArray<fec::Code>(std::move(code));
+    plhs[0] = toMxArray(std::move(code));
   }
   catch (...) {
     std::unique_ptr<fec::Code> null;
-    plhs[0] = toMxArray<fec::Code>(std::move(null));
+    plhs[0] = toMxArray(std::move(null));
   }
 }

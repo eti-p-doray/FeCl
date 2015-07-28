@@ -31,7 +31,7 @@ const char* const BpTypeEnumeration[BpTypeCount] = {
 };
 
 template <typename T>
-std::ostream& operator<<(std::ostream& os, const std::vector<T>& a)
+std::ostream& operator<<(std::ostream& os, const boost::container::vector<T>& a)
 {
   for (uint64_t i = 0; i < a.size(); i++) {
     os << float(a[i]) << " ";
@@ -60,8 +60,9 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
   if (nlhs != outputCount) {
     throw std::invalid_argument("Wrong argout count in LdpcCode_constructor");
   }
-  fec::LdpcCodeStructure codeStructure(MexConverter<SparseBitMatrix>::convert(prhs[0]), toScalar<size_t>(prhs[1]), toEnum<fec::LdpcCodeStructure::DecoderType>(prhs[2], BpTypeEnumeration, BpTypeCount));
-  std::unique_ptr<fec::Code> code = fec::Code::create(codeStructure, toScalar<size_t>(prhs[3]));
+  
+  fec::LdpcCodeStructure codeStructure(mxArrayTo<SparseBitMatrix>::f(prhs[0]), mxArrayTo<size_t>::f(prhs[1]), mxArrayTo<LdpcCodeStructure::DecoderType>::f(prhs[2],BpTypeEnumeration, BpTypeCount));
+  std::unique_ptr<fec::Code> code = fec::Code::create(codeStructure,mxArrayTo<size_t>::f(prhs[3]));
   
   plhs[0] = toMxArray(std::move(code));
 }

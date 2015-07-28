@@ -15,7 +15,7 @@
 #include <boost/container/vector.hpp>
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/utility.hpp>
-#include "vector.hpp"
+#include <boost/serialization/vector.hpp>
 
 namespace fec {
 

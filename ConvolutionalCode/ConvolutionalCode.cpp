@@ -31,16 +31,16 @@ ConvolutionalCode::ConvolutionalCode(const ConvolutionalCodeStructure& codeStruc
 
 void ConvolutionalCode::encodeBloc(boost::container::vector<uint8_t>::const_iterator messageIt, boost::container::vector<uint8_t>::iterator parityIt) const
 {
-  uint16_t state = 0;
+  size_t state = 0;
   
   for (int j = 0; j < codeStructure_.blocSize(); j++) {
-    BitField<uint16_t> input = 0;
+    BitField<size_t> input = 0;
     for (int k = 0; k < codeStructure_.trellis().inputSize(); k++) {
       input[k] = messageIt[k];
     }
     messageIt += codeStructure_.trellis().inputSize();
     
-    BitField<uint16_t> output = codeStructure_.trellis().getOutput(state, input);
+    BitField<size_t> output = codeStructure_.trellis().getOutput(state, input);
     state = codeStructure_.trellis().getNextState(state, input);
     
     for (int k = 0; k < codeStructure_.trellis().outputSize(); k++) {
@@ -52,10 +52,10 @@ void ConvolutionalCode::encodeBloc(boost::container::vector<uint8_t>::const_iter
   switch (codeStructure_.endType()) {
     case ConvolutionalCodeStructure::ZeroTail:
       for (int j = 0; j < codeStructure_.tailSize(); j++) {
-        for (BitField<uint16_t> input = 0; input < codeStructure_.trellis().inputSize(); input++) {
-          BitField<uint16_t> nextState = codeStructure_.trellis().getNextState(state, input);
+        for (BitField<size_t> input = 0; input < codeStructure_.trellis().inputSize(); input++) {
+          BitField<size_t> nextState = codeStructure_.trellis().getNextState(state, input);
           if (nextState.test(codeStructure_.trellis().stateSize()-1) == 0) {
-            BitField<uint16_t> output = codeStructure_.trellis().getOutput(state, 0);
+            BitField<size_t> output = codeStructure_.trellis().getOutput(state, 0);
             for (int k = 0; k < codeStructure_.trellis().outputSize(); k++) {
               parityIt[k] = output.test(k);
             }

@@ -42,9 +42,9 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
   
   std::unique_ptr<fec::Code> code;
   try {
-    code = toObject<fec::Code>(prhs[0], "ErrorCorrectingCode");
-    std::vector<fec::LlrType, MexAllocator<fec::LlrType>> decodedMsg;
-    code->softOutDecode(toMexVector<fec::LlrType>(prhs[1]), decodedMsg);
+    code = mxArrayTo<std::unique_ptr<fec::Code>>::f(prhs[0]);
+    boost::container::vector<fec::LlrType, MexAllocator<fec::LlrType>> decodedMsg;
+    code->softOutDecode(mxArrayTo<boost::container::vector<fec::LlrType,MexAllocator<fec::LlrType>>>::f(prhs[1]), decodedMsg);
     plhs[0] = toMxArray(decodedMsg);
   }
   catch (std::exception& e) {

@@ -65,13 +65,13 @@ void MapDecoderImpl<A>::parityAPosteriori(boost::container::vector<LlrType>::ite
           if (outputIt->test(j)) {
             oneMetric = A::logAdd(
                                oneMetric,
-                               LlrType(*branchMetricIt + *forwardMetricIt + backwardMetricIt[uint16_t(*stateIt)])
+                               LlrType(*branchMetricIt + *forwardMetricIt + backwardMetricIt[size_t(*stateIt)])
                                );
           }
           else {
             zeroMetric = A::logAdd(
                                 zeroMetric,
-                                LlrType(*branchMetricIt + *forwardMetricIt + backwardMetricIt[uint16_t(*stateIt)])
+                                LlrType(*branchMetricIt + *forwardMetricIt + backwardMetricIt[size_t(*stateIt)])
                                 );
           }
           branchMetricIt++;
@@ -103,13 +103,13 @@ void MapDecoderImpl<A>::messageAPosteriori(boost::container::vector<LlrType>::it
       for (auto stateIt = codeStructure().trellis().beginState(); stateIt < codeStructure().trellis().endState();) {
         zeroMetric = A::logAdd(
                                zeroMetric,
-                               LlrType(*branchMetricIt + *forwardMetricIt + backwardMetricIt[uint16_t(*stateIt)])
+                               LlrType(*branchMetricIt + *forwardMetricIt + backwardMetricIt[size_t(*stateIt)])
                                );
         ++branchMetricIt;
         ++stateIt;
         oneMetric = A::logAdd(
                               oneMetric,
-                              LlrType(*branchMetricIt + *forwardMetricIt + backwardMetricIt[uint16_t(*stateIt)])
+                              LlrType(*branchMetricIt + *forwardMetricIt + backwardMetricIt[size_t(*stateIt)])
                               );
         ++branchMetricIt;
         ++stateIt;
@@ -127,18 +127,18 @@ void MapDecoderImpl<A>::appBranchMetrics(boost::container::vector<LlrType>::cons
 {
   int i = 0;
   for (auto branchMetricIt = branchMetrics_.begin(); branchMetricIt < branchMetrics_.end(); ++i) {
-    for (BitField<uint16_t> j = 0; j < codeStructure().trellis().outputCount(); ++j) {
+    for (BitField<size_t> j = 0; j < codeStructure().trellis().outputCount(); ++j) {
       branchOutputMetrics_[j] = codeStructure().correlationProbability(j, parity, codeStructure().trellis().outputSize());
     }
     if (i < codeStructure().blocSize()) {
-      for (BitField<uint16_t> j = 0; j < codeStructure().trellis().inputCount(); ++j) {
+      for (BitField<size_t> j = 0; j < codeStructure().trellis().inputCount(); ++j) {
         branchInputMetrics_[j] = codeStructure().correlationProbability(j, extrinsic, codeStructure().trellis().inputSize());
       }
     }
     
     for (auto outputIt = codeStructure().trellis().beginOutput(); outputIt < codeStructure().trellis().endOutput();) {
       for (auto k : branchInputMetrics_) {
-        *branchMetricIt = branchOutputMetrics_[uint16_t(*outputIt)];
+        *branchMetricIt = branchOutputMetrics_[size_t(*outputIt)];
         *branchMetricIt += k;
         
         ++branchMetricIt;
@@ -155,19 +155,19 @@ void MapDecoderImpl<A>::parityAppBranchMetrics(boost::container::vector<LlrType>
 {
   int i = 0;
   for (auto branchMetricIt = branchMetrics_.begin(); branchMetricIt < branchMetrics_.end(); ++i) {
-    for (BitField<uint16_t> j = 0; j < codeStructure().trellis().outputCount(); ++j) {
+    for (BitField<size_t> j = 0; j < codeStructure().trellis().outputCount(); ++j) {
       branchOutputMetrics_[j] = codeStructure().correlationProbability(j, parity, codeStructure().trellis().outputSize()) +
       codeStructure().correlationProbability(j, extrinsic, codeStructure().trellis().outputSize());
     }
     if (i < codeStructure().blocSize()) {
-      for (BitField<uint16_t> j = 0; j < codeStructure().trellis().inputCount(); ++j) {
+      for (BitField<size_t> j = 0; j < codeStructure().trellis().inputCount(); ++j) {
         branchInputMetrics_[j] = codeStructure().correlationProbability(j, extrinsic, codeStructure().trellis().inputSize());
       }
     }
     
     for (auto outputIt = codeStructure().trellis().beginOutput(); outputIt < codeStructure().trellis().endOutput();) {
       for (auto k : branchInputMetrics_) {
-        *branchMetricIt = branchOutputMetrics_[uint16_t(*outputIt)];
+        *branchMetricIt = branchOutputMetrics_[size_t(*outputIt)];
         
         ++branchMetricIt;
         ++outputIt;
@@ -183,13 +183,13 @@ void MapDecoderImpl<A>::branchMetrics(boost::container::vector<LlrType>::const_i
 {
   int i = 0;
   for (auto branchMetricIt = branchMetrics_.begin(); branchMetricIt < branchMetrics_.end(); ++i) {
-    for (BitField<uint16_t> j = 0; j < codeStructure().trellis().outputCount(); ++j) {
+    for (BitField<size_t> j = 0; j < codeStructure().trellis().outputCount(); ++j) {
       branchOutputMetrics_[j] = codeStructure().correlationProbability(j, parity, codeStructure().trellis().outputSize());
     }
     
     for (auto outputIt = codeStructure().trellis().beginOutput(); outputIt < codeStructure().trellis().endOutput();) {
       for (auto k : branchInputMetrics_) {
-        *branchMetricIt = branchOutputMetrics_[uint16_t(*outputIt)];
+        *branchMetricIt = branchOutputMetrics_[size_t(*outputIt)];
         
         ++branchMetricIt;
         ++outputIt;
@@ -211,9 +211,9 @@ void MapDecoderImpl<A>::forwardMetrics()
   for (; forwardMetricIt < forwardMetrics_.end() - codeStructure().trellis().stateCount();) {
     std::fill(forwardMetricIt + codeStructure().trellis().stateCount(), forwardMetricIt + 2*codeStructure().trellis().stateCount(), -MAX_LLR);
     auto stateIt = codeStructure().trellis().beginState();
-    for (BitField<uint16_t> j = 0; j < codeStructure().trellis().stateCount(); ++j) {
-      for (BitField<uint16_t> k = 0; k < codeStructure().trellis().inputCount(); ++k) {
-        auto & forwardMetricRef = forwardMetricIt[codeStructure().trellis().stateCount() + uint16_t(*stateIt)];
+    for (BitField<size_t> j = 0; j < codeStructure().trellis().stateCount(); ++j) {
+      for (BitField<size_t> k = 0; k < codeStructure().trellis().inputCount(); ++k) {
+        auto & forwardMetricRef = forwardMetricIt[codeStructure().trellis().stateCount() + size_t(*stateIt)];
         forwardMetricRef =
         A::logAdd(
                forwardMetricRef,
@@ -225,13 +225,13 @@ void MapDecoderImpl<A>::forwardMetrics()
     }
     forwardMetricIt += codeStructure().trellis().stateCount();
     LlrType max = -MAX_LLR;
-    for (BitField<uint16_t> j = 0; j < codeStructure().trellis().stateCount(); ++j) {
+    for (BitField<size_t> j = 0; j < codeStructure().trellis().stateCount(); ++j) {
       if (forwardMetricIt[j] > max) {
         max = forwardMetricIt[j];
       }
     }
     if (max < -THRESHOLD_LLR) {
-      for (BitField<uint16_t> j = 0; j < codeStructure().trellis().stateCount(); ++j) {
+      for (BitField<size_t> j = 0; j < codeStructure().trellis().stateCount(); ++j) {
         forwardMetricIt[j] -= max;
       }
     }
@@ -263,26 +263,26 @@ void MapDecoderImpl<A>::backwardMetrics()
     std::fill(backwardMetricIt, backwardMetricIt + codeStructure().trellis().stateCount(), -MAX_LLR);
     auto stateIt = codeStructure().trellis().beginState();
     LlrType max = -MAX_LLR;
-    for (BitField<uint16_t> j = 0; j < codeStructure().trellis().stateCount(); ++j) {
-      for (BitField<uint16_t> k = 0; k < codeStructure().trellis().inputCount(); ++k) {
+    for (BitField<size_t> j = 0; j < codeStructure().trellis().stateCount(); ++j) {
+      for (BitField<size_t> k = 0; k < codeStructure().trellis().inputCount(); ++k) {
         auto & backwardMetricRef = backwardMetricIt[j];
         backwardMetricRef =
         A::logAdd(
                backwardMetricRef,
-               LlrType(backwardMetricIt[uint16_t(*stateIt)+codeStructure().trellis().stateCount()] + *branchMetricIt)
+               LlrType(backwardMetricIt[size_t(*stateIt)+codeStructure().trellis().stateCount()] + *branchMetricIt)
                );
         ++branchMetricIt;
         ++stateIt;
       }
     }
     branchMetricIt -= 2*codeStructure().trellis().tableSize();
-    for (BitField<uint16_t> j = 0; j < codeStructure().trellis().stateCount(); ++j) {
+    for (BitField<size_t> j = 0; j < codeStructure().trellis().stateCount(); ++j) {
       if (backwardMetricIt[j] > max) {
         max = backwardMetricIt[j];
       }
     }
     if (max < -THRESHOLD_LLR) {
-      for (BitField<uint16_t> j = 0; j < codeStructure().trellis().stateCount(); ++j) {
+      for (BitField<size_t> j = 0; j < codeStructure().trellis().stateCount(); ++j) {
         backwardMetricIt[j] -= max;
       }
     }

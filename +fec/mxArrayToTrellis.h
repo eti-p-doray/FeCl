@@ -10,10 +10,9 @@
 #ifndef TO_TRELLIS_H
 #define TO_TRELLIS_H
 
-#include <vector>
 #include <memory>
 #include <math.h>
-
+#include <boost/container/vector.hpp>
 #include <mex.h>
 
 #include "CodeStructure/TrellisStructure.h"
@@ -23,19 +22,18 @@ using namespace fec;
 
 const char* const trellisProperties[] = {"nextStates", "outputs", "numInputSymbols", "numOutputSymbols", "numStates"};
 
-
-template <>
-class MexConverter<TrellisStructure> {
+template<>
+class mxArrayTo<TrellisStructure> {
 public:
-  static TrellisStructure convert(const mxArray* in) {
+  static TrellisStructure f(const mxArray* in) {
     if (in == nullptr) {
       throw std::invalid_argument("Null mxArray");
     }
-    return TrellisStructure(toVector<int>(mxGetField(in, 0, trellisProperties[0])),
-                            toVector<int>(mxGetField(in, 0, trellisProperties[1])),
-                            log2(toScalar<uint8_t>(mxGetField(in, 0, trellisProperties[2]))),
-                            log2(toScalar<uint8_t>(mxGetField(in, 0, trellisProperties[3]))),
-                            log2(toScalar<uint8_t>(mxGetField(in, 0, trellisProperties[4]))));
+    return TrellisStructure(mxArrayTo<boost::container::vector<size_t>>::f(mxGetField(in, 0, trellisProperties[0])),
+                            mxArrayTo<boost::container::vector<size_t>>::f(mxGetField(in, 0, trellisProperties[1])),
+                            log2(mxArrayTo<size_t>::f(mxGetField(in, 0, trellisProperties[2]))),
+                            log2(mxArrayTo<size_t>::f(mxGetField(in, 0, trellisProperties[3]))),
+                            log2(mxArrayTo<size_t>::f(mxGetField(in, 0, trellisProperties[4]))));
   }
 };
 

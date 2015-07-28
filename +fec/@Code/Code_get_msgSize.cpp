@@ -42,7 +42,7 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
   
   std::unique_ptr<fec::Code> code;
   try {
-    code = toObject<fec::Code>(prhs[0], "Code");
+    code = mxArrayTo<std::unique_ptr<fec::Code>>::f(prhs[0]);
     plhs[0] = toMxArray(code->msgSize());
   }
   catch (std::exception& e) {

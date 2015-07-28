@@ -17,7 +17,7 @@
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/utility.hpp>
-#include <vector.hpp>
+#include <boost/serialization/vector.hpp>
 
 #include "CodeStructure.h"
 #include "BitMatrix.h"

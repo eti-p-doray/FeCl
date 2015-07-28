@@ -10,10 +10,10 @@
 #ifndef MEX_CONVERSION
 #define MEX_CONVERSION
 
-#include <vector>
 #include <memory>
 #include <cstring>
-
+#include <type_traits>
+#include <boost/container/vector.hpp>
 #include <boost/iostreams/stream.hpp>
 #include <boost/iostreams/concepts.hpp>
 #include <boost/iostreams/device/array.hpp>
@@ -24,7 +24,7 @@
 
 #include "MexAllocator.h"
 
-template <typename T> mxClassID mexClassId() {return mxDOUBLE_CLASS;}
+template <typename T> mxClassID mexClassId() {return mxUNKNOWN_CLASS;}
 template <> mxClassID mexClassId<double>() {return mxDOUBLE_CLASS;}
 template <> mxClassID mexClassId<float>() {return mxSINGLE_CLASS;}
 template <> mxClassID mexClassId<bool>() {return mxLOGICAL_CLASS;}
@@ -37,41 +37,176 @@ template <> mxClassID mexClassId<uint32_t>() {return mxUINT32_CLASS;}
 template <> mxClassID mexClassId<int64_t>() {return mxINT64_CLASS;}
 template <> mxClassID mexClassId<uint64_t>() {return mxUINT64_CLASS;}
 
-template <class T>
-class MexConverter {
+
+template <class T, class Enable = void>
+class mxArrayTo {
 public:
-  static T convert(const mxArray* in) {return T();}
+  static T f(const mxArray* in) {
+    if (in == nullptr) {
+      throw std::invalid_argument("Null mxArray");
+    }
+    if (mxIsComplex(in) || mxGetNumberOfElements(in) != 1 || mxGetData(in) == nullptr) {
+      throw std::invalid_argument("Invalid data");
+    }
+    switch (mxGetClassID(in))
+    {
+      case mxINT8_CLASS:
+        return *reinterpret_cast<int8_t*>(mxGetData(in));
+        break;
+        
+      case mxUINT8_CLASS:
+        return *reinterpret_cast<uint8_t*>(mxGetData(in));
+        break;
+        
+      case mxINT16_CLASS:
+        return *reinterpret_cast<int16_t*>(mxGetData(in));
+        break;
+        
+      case mxUINT16_CLASS:
+        return *reinterpret_cast<uint16_t*>(mxGetData(in));
+        break;
+        
+      case mxINT32_CLASS:
+        return *reinterpret_cast<int32_t*>(mxGetData(in));
+        break;
+        
+      case mxUINT32_CLASS:
+        return *reinterpret_cast<uint32_t*>(mxGetData(in));
+        break;
+        
+      case mxINT64_CLASS:
+        return *reinterpret_cast<int64_t*>(mxGetData(in));
+        break;
+        
+      case mxUINT64_CLASS:
+        return *reinterpret_cast<uint64_t*>(mxGetData(in));
+        break;
+        
+      case mxSINGLE_CLASS:
+        return *reinterpret_cast<float*>(mxGetData(in));
+        break;
+        
+      case mxDOUBLE_CLASS:
+        return *reinterpret_cast<double*>(mxGetData(in));
+        break;
+        
+      default:
+        throw std::invalid_argument("Unknown class");
+        break;
+    }
+  }
 };
-  
+
 template <class T>
-std::vector<T> mxCellArrayToVector(const mxArray* in) {
-  if (in == nullptr) {
-    throw std::invalid_argument("Null mxArray");
-  }
-  if (!mxIsCell(in)) {
-    throw std::invalid_argument("Input must be a cell array");
-  }
-  std::vector<T> out(mxGetNumberOfElements(in));
-  for (size_t i = 0; i < out.size(); ++i) {
-    out[i] = MexConverter<T>::convert(mxGetCell(in, i));
-  }
+mxArray* toMxArray(const T& in) {
+  mxArray* out = mxCreateDoubleScalar(in);
   return out;
 }
 
 template <class T>
-mxArray* toMxArray(const MexAllocator<T>& in)
-{
-  mxArray* out = mxCreateNumericMatrix(0, 0, mexClassId<T>(), mxREAL);
-  mxSetData(out, in.ptr());
-  mxSetM(out, in.size());
-  mxSetN(out, 1);
-  
+class mxCellArrayTo {
+public:
+  static boost::container::vector<T> f(const mxArray* in) {
+    if (in == nullptr) {
+      throw std::invalid_argument("Null mxArray");
+    }
+    if (!mxIsCell(in)) {
+      throw std::invalid_argument("Invalid data");
+    }
+    
+    boost::container::vector<T> out(mxGetNumberOfElements(in));
+    for (size_t i = 0; i < out.size(); ++i) {
+      out[i] = mxArrayTo<T>::f(mxGetCell(in, i));
+    }
+    return out;
+  }
+};
+
+template <class T, class A, template <class, class> class V>
+class mxArrayTo<V<T,A>> {
+public:
+  static V<T,A> f(const mxArray* in) {
+    if (in == nullptr) {
+      throw std::invalid_argument("Null mxArray");
+    }
+    if (mxIsComplex(in) || mxGetData(in) == nullptr) {
+      throw std::invalid_argument("Invalid data");
+    }
+    V<T,A> vec(mxGetNumberOfElements(in));
+    switch (mxGetClassID(in))
+    {
+      case mxINT8_CLASS:
+        std::copy(reinterpret_cast<int8_t*>(mxGetData(in)), reinterpret_cast<int8_t*>(mxGetData(in))+vec.size(), vec.begin());
+        break;
+        
+      case mxUINT8_CLASS:
+        std::copy(reinterpret_cast<uint8_t*>(mxGetData(in)), reinterpret_cast<uint8_t*>(mxGetData(in))+vec.size(), vec.begin());
+        break;
+        
+      case mxINT16_CLASS:
+        std::copy(reinterpret_cast<int16_t*>(mxGetData(in)), reinterpret_cast<int16_t*>(mxGetData(in))+vec.size(), vec.begin());
+        break;
+        
+      case mxUINT16_CLASS:
+        std::copy(reinterpret_cast<uint16_t*>(mxGetData(in)), reinterpret_cast<uint16_t*>(mxGetData(in))+vec.size(), vec.begin());
+        break;
+        
+      case mxINT32_CLASS:
+        std::copy(reinterpret_cast<int32_t*>(mxGetData(in)), reinterpret_cast<int32_t*>(mxGetData(in))+vec.size(), vec.begin());
+        break;
+        
+      case mxUINT32_CLASS:
+        std::copy(reinterpret_cast<uint32_t*>(mxGetData(in)), reinterpret_cast<uint32_t*>(mxGetData(in))+vec.size(), vec.begin());
+        break;
+        
+      case mxINT64_CLASS:
+        std::copy(reinterpret_cast<int64_t*>(mxGetData(in)), reinterpret_cast<int64_t*>(mxGetData(in))+vec.size(), vec.begin());
+        break;
+        
+      case mxUINT64_CLASS:
+        std::copy(reinterpret_cast<uint64_t*>(mxGetData(in)), reinterpret_cast<uint64_t*>(mxGetData(in))+vec.size(), vec.begin());
+        break;
+        
+      case mxSINGLE_CLASS:
+        std::copy(reinterpret_cast<float*>(mxGetData(in)), reinterpret_cast<float*>(mxGetData(in))+vec.size(), vec.begin());
+        break;
+        
+      case mxDOUBLE_CLASS:
+        std::copy(reinterpret_cast<double*>(mxGetData(in)), reinterpret_cast<double*>(mxGetData(in))+vec.size(), vec.begin());
+        break;
+        
+      default:
+        throw std::invalid_argument("Unknown class");
+        break;
+    }
+    return vec;
+  }
+};
+
+template <class T, template <class> class V>
+mxArray* toMxArray(const V<T>& in) {
+  mxArray* out = mxCreateDoubleScalar(in);
   return out;
 }
 
-template <class T>
-mxArray* toMxArray(const std::vector<T, MexAllocator<T>>& vec)
-{
+template <class T, template <class, class> class V>
+class mxArrayTo<V<T, MexAllocator<T>>> {
+public:
+  static V<T, MexAllocator<T>> f(const mxArray* in) {
+    if (in == nullptr) {
+      throw std::invalid_argument("Null mxArray");
+    }
+    if (mxIsComplex(in) || mxGetData(in) == nullptr || mexClassId<T>() != mxGetClassID(in)) {
+      throw std::invalid_argument("Unknown class");
+    }
+    V<T, MexAllocator<T>> vec((MexAllocator<T>(in)));
+    vec.resize(mxGetNumberOfElements(in));
+    return vec;
+  }
+};
+
+template <class T, template <class, class> class V>
+mxArray* toMxArray(const V<T, MexAllocator<T>>& vec) {
   auto all = vec.get_allocator();
   mxArray* out = mxCreateNumericMatrix(0, 0, mexClassId<T>(), mxREAL);
   mxSetData(out, all.ptr());
@@ -81,214 +216,56 @@ mxArray* toMxArray(const std::vector<T, MexAllocator<T>>& vec)
   return out;
 }
 
-template <class U, class T>
-mxArray* toMxArray(const std::vector<T, MexAllocator<T>>& vec)
-{
-  auto all = vec.get_allocator();
-  mxArray* out = mxCreateNumericMatrix(0, 0, mexClassId<U>(), mxREAL);
-  mxSetData(out, all.ptr());
-  mxSetM(out, all.size());
-  mxSetN(out, 1);
-  
-  return out;
-}
+template <class T>
+class mxArrayTo<std::unique_ptr<T>> {
+public:
+  static std::unique_ptr<T> f(const mxArray* in) {
+    if (in == nullptr) {
+      throw std::invalid_argument("Null mxArray");
+    }
+    if (mxGetProperty(in, 0, "mexHandle_") == nullptr) {
+      throw std::invalid_argument("wrong arg class");
+    }
+    if (mxGetData(mxGetProperty(in, 0, "mexHandle_")) == nullptr) {
+      throw std::invalid_argument("Invalid data");
+    }
+    T* ptr = reinterpret_cast<T*>(*((uint64_t *)mxGetData(mxGetProperty(in, 0, "mexHandle_"))));
+    ptr = dynamic_cast<T*>(ptr);
+    if (ptr == nullptr) {
+      throw std::invalid_argument("null ptr received");
+    }
+    return std::unique_ptr<T>(ptr);
+  }
+};
 
 template <class T>
-mxArray* toMxArray(std::unique_ptr<T>&& u)
-{
+mxArray* toMxArray(std::unique_ptr<T>&& u) {
   mxArray* out = mxCreateNumericMatrix(1, 1, mxUINT64_CLASS, mxREAL);
   *((uint64_t *)mxGetData(out)) = reinterpret_cast<uint64_t>(u.release());
   
   return out;
 }
 
+
 template <typename T>
-mxArray* toMxArray(const std::vector<T>& vec)
-{
-  mxArray* out = mxCreateNumericMatrix(vec.size(), 1, mexClassId<T>(), mxREAL);
-  if (mxGetData(out) == nullptr) {
-    return out;
-  }
-  std::copy(vec.begin(), vec.end(), reinterpret_cast<T*>(mxGetData(out)));
-  return out;
-}
-
-template <typename T, template <typename> class I>
-mxArray* toMxArray(I<T> first, I<T> last)
-{
-  mxArray* out = mxCreateNumericMatrix(last-first, 1, mexClassId<T>(), mxREAL);
-  if (mxGetData(out) == nullptr) {
-    return out;
-  }
-  std::copy(first, last, reinterpret_cast<T*>(mxGetData(out)));
-  return out;
-}
-
-template <class T>
-mxArray* toMxArray(T scalar) throw(std::bad_cast)
-{
-  mxArray* out = mxCreateDoubleScalar(scalar);
-  return out;
-}
-
-template <class T>
-std::unique_ptr<T> toObject(const mxArray* in, const char* name) throw(std::invalid_argument)
-{
-  if (mxGetProperty(in, 0, "mexHandle_") == nullptr) {
-    throw std::invalid_argument("wrong arg class");
-  }
-  if (mxGetData(mxGetProperty(in, 0, "mexHandle_")) == nullptr) {
-    throw std::invalid_argument("Invalid data");
-  }
-  T* ptr = reinterpret_cast<T*>(*((uint64_t *)mxGetData(mxGetProperty(in, 0, "mexHandle_"))));
-  ptr = dynamic_cast<T*>(ptr);
-  if (ptr == nullptr) {
-    throw std::invalid_argument("null ptr received");
-  }
-  return std::unique_ptr<T>(ptr);
-}
-
-template <class T>
-std::vector<T, MexAllocator<T>> toMexVector(const mxArray* in)
-{
-  if (mxIsComplex(in) || mxGetData(in) == nullptr || mexClassId<T>() != mxGetClassID(in)) {
-    throw std::bad_cast();
-  }
-  std::vector<T, MexAllocator<T>> vec((MexAllocator<T>(in)));
-  vec.resize(mxGetNumberOfElements(in));
-  return vec;
-}
-
-template <class T>
-std::vector<T> toVector(const mxArray* in)
-{
-  if (in == nullptr) {
-    throw std::invalid_argument("Null mxArray");
-  }
-  if (mxIsComplex(in) || mxGetData(in) == nullptr) {
-    throw std::invalid_argument("Invalid data");
-  }
-  std::vector<T> vec(mxGetNumberOfElements(in));
-  switch (mxGetClassID(in))
-  {
-    case mxINT8_CLASS:
-      std::copy(reinterpret_cast<int8_t*>(mxGetData(in)), reinterpret_cast<int8_t*>(mxGetData(in))+vec.size(), vec.begin());
-      break;
-          
-    case mxUINT8_CLASS:
-      std::copy(reinterpret_cast<uint8_t*>(mxGetData(in)), reinterpret_cast<uint8_t*>(mxGetData(in))+vec.size(), vec.begin());
-      break;
-      
-    case mxINT16_CLASS:
-      std::copy(reinterpret_cast<int16_t*>(mxGetData(in)), reinterpret_cast<int16_t*>(mxGetData(in))+vec.size(), vec.begin());
-      break;
-          
-    case mxUINT16_CLASS:
-      std::copy(reinterpret_cast<uint16_t*>(mxGetData(in)), reinterpret_cast<uint16_t*>(mxGetData(in))+vec.size(), vec.begin());
-      break;
-      
-    case mxINT32_CLASS:
-      std::copy(reinterpret_cast<int32_t*>(mxGetData(in)), reinterpret_cast<int32_t*>(mxGetData(in))+vec.size(), vec.begin());
-      break;
-          
-    case mxUINT32_CLASS:
-      std::copy(reinterpret_cast<uint32_t*>(mxGetData(in)), reinterpret_cast<uint32_t*>(mxGetData(in))+vec.size(), vec.begin());
-      break;
-      
-    case mxINT64_CLASS:
-      std::copy(reinterpret_cast<int64_t*>(mxGetData(in)), reinterpret_cast<int64_t*>(mxGetData(in))+vec.size(), vec.begin());
-      break;
-          
-    case mxUINT64_CLASS:
-      std::copy(reinterpret_cast<uint64_t*>(mxGetData(in)), reinterpret_cast<uint64_t*>(mxGetData(in))+vec.size(), vec.begin());
-      break;
-      
-    case mxSINGLE_CLASS:
-      std::copy(reinterpret_cast<float*>(mxGetData(in)), reinterpret_cast<float*>(mxGetData(in))+vec.size(), vec.begin());
-      break;
-          
-    case mxDOUBLE_CLASS:
-      std::copy(reinterpret_cast<double*>(mxGetData(in)), reinterpret_cast<double*>(mxGetData(in))+vec.size(), vec.begin());
-      break;
-      
-    default:
-      throw std::bad_cast();
-      break;
-  }
-  return vec;
-}
-
-template <class T>
-T toScalar(const mxArray* in)
-{
-  if (in == nullptr) {
-    throw std::invalid_argument("Null mxArray");
-  }
-  if (mxIsComplex(in) || mxGetNumberOfElements(in) != 1 || mxGetData(in) == nullptr) {
-    throw std::invalid_argument("Invalid data");
-  }
-  switch (mxGetClassID(in))
-  {
-    case mxINT8_CLASS:
-      return *reinterpret_cast<int8_t*>(mxGetData(in));
-      break;
-          
- 	case mxUINT8_CLASS:
-      return *reinterpret_cast<uint8_t*>(mxGetData(in));
-      break;
-      
-    case mxINT16_CLASS:
-      return *reinterpret_cast<int16_t*>(mxGetData(in));
-      break;
-          
- 	case mxUINT16_CLASS:
-      return *reinterpret_cast<uint16_t*>(mxGetData(in));
-      break;
-      
-    case mxINT32_CLASS:
-      return *reinterpret_cast<int32_t*>(mxGetData(in));
-      break;
-          
- 	case mxUINT32_CLASS:
-      return *reinterpret_cast<uint32_t*>(mxGetData(in));
-      break;
-      
-    case mxINT64_CLASS:
-      return *reinterpret_cast<int64_t*>(mxGetData(in));
-      break;
-          
- 	case mxUINT64_CLASS:
-      return *reinterpret_cast<uint64_t*>(mxGetData(in));
-      break;
-      
-    case mxSINGLE_CLASS:
-      return *reinterpret_cast<float*>(mxGetData(in));
-      break;
-          
- 	case mxDOUBLE_CLASS:
-      return *reinterpret_cast<double*>(mxGetData(in));
-      break;
-      
-    default:
-      throw std::bad_cast();
-      break;
-  }
-}
-
-template <class T>
-T toEnum(const mxArray* in, const char* const enumeration[], size_t count)
-{
-  if (!mxIsChar(in)) {
-    throw std::bad_cast();
-  }
-  for (size_t i = 0; i < count; i++) {
-    if (!strcmp(enumeration[i], mxArrayToString(in))) {
-      return static_cast<T>(i);
+class mxArrayTo<T, typename std::enable_if<std::is_enum<T>::value>::type> {
+public:
+  static T f(const mxArray* in, const char* const enumeration[], size_t count) {
+    if (in == nullptr) {
+      throw std::invalid_argument("Null mxArray");
     }
+    if (!mxIsChar(in)) {
+      throw std::invalid_argument("Invalid data");
+    }
+    for (size_t i = 0; i < count; i++) {
+      if (!strcmp(enumeration[i], mxArrayToString(in))) {
+        return static_cast<T>(i);
+      }
+    }
+    throw std::invalid_argument("Unknown enum");
+    return static_cast<T>(0);
   }
-  throw std::bad_cast();
-  return static_cast<T>(0);
-}
+};
 
 
 class sink_counter : public boost::iostreams::sink {
@@ -306,7 +283,7 @@ private:
 const char* saveStructFieldNames[] = {"data"};
 
 template <class T>
-mxArray* save(const std::unique_ptr<T>& u) throw(boost::archive::archive_exception)
+mxArray* save(const std::unique_ptr<T>& u)
 {
   
   mxArray* save = mxCreateStructMatrix(1, 1, 1, {saveStructFieldNames});
@@ -332,14 +309,14 @@ mxArray* save(const std::unique_ptr<T>& u) throw(boost::archive::archive_excepti
 }
 
 template <class T>
-std::unique_ptr<T> load(const mxArray* in) throw(boost::archive::archive_exception, std::bad_cast)
+std::unique_ptr<T> load(const mxArray* in)
 {
   mxArray* data = mxGetField(in, 0, "data");
   if (data == nullptr) {
-    throw std::bad_cast();
+    std::invalid_argument("Null mxArray");
   }
   if (mxGetData(data) == nullptr) {
-    throw std::bad_cast();
+    std::invalid_argument("Invalid data");
   }
   size_t serialSize = mxGetNumberOfElements(data);
   

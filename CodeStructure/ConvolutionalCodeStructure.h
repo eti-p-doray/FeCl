@@ -47,7 +47,7 @@ public:
   inline DecoderType decoderType() const {return decoderType_;}
   inline const TrellisStructure& trellis() const {return trellis_;}
   
-  static inline LlrType correlationProbability(const BitField<uint16_t>& a, boost::container::vector<LlrType>::const_iterator b, size_t size) {
+  static inline LlrType correlationProbability(const BitField<size_t>& a, boost::container::vector<LlrType>::const_iterator b, size_t size) {
     LlrType x = 0;
     for (size_t i = 0; i < size; ++i) {
       if (a.test(i)) {

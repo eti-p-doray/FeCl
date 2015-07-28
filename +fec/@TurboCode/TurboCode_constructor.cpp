@@ -67,10 +67,13 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
     throw std::invalid_argument("Wrong argout count in TurboCode_destructor");
   }
   
-  std::vector<fec::TrellisStructure> trellis = mxCellArrayToVector<TrellisStructure>(prhs[0]);
-  std::vector<fec::Interleaver> interleavers = mxCellArrayToVector<Interleaver>(prhs[1]);
-  fec::TurboCodeStructure codeStructure(trellis, interleavers, toScalar<size_t>(prhs[2]), toEnum<fec::TurboCodeStructure::DecoderType>(prhs[3], StructureTypeEnumeration, StructureTypeCount), toEnum<fec::ConvolutionalCodeStructure::DecoderType>(prhs[4], MapTypeEnumeration, MapTypeCount));
-  std::unique_ptr<fec::Code> code = fec::Code::create(codeStructure, toScalar<size_t>(prhs[5]));
+  boost::container::vector<fec::TrellisStructure> trellis = mxCellArrayTo<fec::TrellisStructure>::f(prhs[0]);
+  boost::container::vector<fec::Interleaver> interleavers = mxCellArrayTo<fec::Interleaver>::f(prhs[1]);
+  
+  fec::TurboCodeStructure codeStructure(trellis, interleavers, mxArrayTo<size_t>::f(prhs[2]),
+                                        mxArrayTo<fec::TurboCodeStructure::DecoderType>::f(prhs[4], StructureTypeEnumeration, StructureTypeCount),
+                                        mxArrayTo<fec::ConvolutionalCodeStructure::DecoderType>::f(prhs[3],MapTypeEnumeration, MapTypeCount));
+  std::unique_ptr<fec::Code> code = fec::Code::create(codeStructure, mxArrayTo<size_t>::f(prhs[5]));
   
   plhs[0] = toMxArray(std::move(code));
 }
