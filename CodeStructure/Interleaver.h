@@ -12,7 +12,7 @@
 
 #include <stdint.h>
 
-#include <boost/container/vector.hpp>
+#include <vector>
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/utility.hpp>
 #include <boost/serialization/vector.hpp>
@@ -23,12 +23,12 @@ class Interleaver {
   friend class boost::serialization::access;
 public:
   Interleaver() = default;
-  Interleaver(::boost::container::vector<size_t> sequence) {
+  Interleaver(::std::vector<size_t> sequence) {
     sequence_ = sequence;
     dstSize_ = *std::max_element(sequence_.begin(), sequence_.end()) + 1;
     srcSize_ = sequence_.size();
   }
-  Interleaver(::boost::container::vector<size_t> sequence, size_t srcSize, size_t dstSize) {
+  Interleaver(::std::vector<size_t> sequence, size_t srcSize, size_t dstSize) {
     sequence_ = sequence;
     dstSize_ = dstSize;
     srcSize_ = srcSize;
@@ -39,21 +39,21 @@ public:
   size_t srcSize() const {return srcSize_;}
   size_t dstSize() const {return dstSize_;}
   
-  template <typename T> void interleave(const ::boost::container::vector<T>& input, ::boost::container::vector<T>& output) const;
-  template <typename T> void deInterleave(const ::boost::container::vector<T>& input, ::boost::container::vector<T>& output) const;
+  template <typename T> void interleave(const ::std::vector<T>& input, ::std::vector<T>& output) const;
+  template <typename T> void deInterleave(const ::std::vector<T>& input, ::std::vector<T>& output) const;
   
-  template <typename T> ::boost::container::vector<T> interleave(const ::boost::container::vector<T>& input) const {
-    ::boost::container::vector<T> output;
+  template <typename T> ::std::vector<T> interleave(const ::std::vector<T>& input) const {
+    ::std::vector<T> output;
     interleave(input, output);
     return output;
   }
-  template <typename T> ::boost::container::vector<T> deInterleave(const ::boost::container::vector<T>& input) const {
-    ::boost::container::vector<T> output;
+  template <typename T> ::std::vector<T> deInterleave(const ::std::vector<T>& input) const {
+    ::std::vector<T> output;
     deInterleave<T>(input, output);
     return output;
   }
   
-  template <typename T> void interleaveNBloc(typename ::boost::container::vector<T>::const_iterator input, typename ::boost::container::vector<T>::iterator output, size_t n) const
+  template <typename T> void interleaveNBloc(typename ::std::vector<T>::const_iterator input, typename ::std::vector<T>::iterator output, size_t n) const
   {
     for (size_t i = 0; i < n; i++) {
       interleaveBloc<T>(input, output);
@@ -62,7 +62,7 @@ public:
     }
   }
   
-  template <typename T> void deInterleaveNBloc(typename ::boost::container::vector<T>::const_iterator input, typename ::boost::container::vector<T>::iterator output, size_t n) const
+  template <typename T> void deInterleaveNBloc(typename ::std::vector<T>::const_iterator input, typename ::std::vector<T>::iterator output, size_t n) const
   {
     for (size_t i = 0; i < n; i++) {
       deInterleaveBloc<T>(input, output);
@@ -71,8 +71,8 @@ public:
     }
   }
   
-  template <typename T> void interleaveBloc(typename ::boost::container::vector<T>::const_iterator input, typename ::boost::container::vector<T>::iterator output) const;
-  template <typename T> void deInterleaveBloc(typename ::boost::container::vector<T>::const_iterator input, typename ::boost::container::vector<T>::iterator output) const;
+  template <typename T> void interleaveBloc(typename ::std::vector<T>::const_iterator input, typename ::std::vector<T>::iterator output) const;
+  template <typename T> void deInterleaveBloc(typename ::std::vector<T>::const_iterator input, typename ::std::vector<T>::iterator output) const;
   
 private:
   template <typename Archive>
@@ -81,7 +81,7 @@ private:
     ar & BOOST_SERIALIZATION_NVP(sequence_);
   }
   
-  ::boost::container::vector<size_t> sequence_;
+  ::std::vector<size_t> sequence_;
   size_t dstSize_;
   size_t srcSize_;
 };
@@ -89,7 +89,7 @@ private:
 }
 
 template <typename T>
-void fec::Interleaver::interleave(const boost::container::vector<T>& input, boost::container::vector<T>& output) const
+void fec::Interleaver::interleave(const std::vector<T>& input, std::vector<T>& output) const
 {
   output.resize(input.size() / srcSize() * dstSize());
   
@@ -101,7 +101,7 @@ void fec::Interleaver::interleave(const boost::container::vector<T>& input, boos
 }
 
 template <typename T>
-void fec::Interleaver::deInterleave(const boost::container::vector<T>& input, boost::container::vector<T>& output) const
+void fec::Interleaver::deInterleave(const std::vector<T>& input, std::vector<T>& output) const
 {
   output.resize(input.size() / dstSize() * srcSize());
   
@@ -113,7 +113,7 @@ void fec::Interleaver::deInterleave(const boost::container::vector<T>& input, bo
 }
 
 template <typename T>
-void fec::Interleaver::interleaveBloc(typename boost::container::vector<T>::const_iterator input, typename boost::container::vector<T>::iterator output) const
+void fec::Interleaver::interleaveBloc(typename std::vector<T>::const_iterator input, typename std::vector<T>::iterator output) const
 {
   for (size_t i = 0; i < sequence_.size(); i++) {
     output[sequence_[i]] = input[i];
@@ -121,7 +121,7 @@ void fec::Interleaver::interleaveBloc(typename boost::container::vector<T>::cons
 }
 
 template <typename T>
-void fec::Interleaver::deInterleaveBloc(typename boost::container::vector<T>::const_iterator input, typename boost::container::vector<T>::iterator output) const
+void fec::Interleaver::deInterleaveBloc(typename std::vector<T>::const_iterator input, typename std::vector<T>::iterator output) const
 {
   for (size_t i = 0; i < sequence_.size(); i++) {
     output[i] = input[sequence_[i]];

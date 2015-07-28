@@ -43,9 +43,9 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
   std::unique_ptr<fec::Code> code;
   try {
     code = mxArrayTo<std::unique_ptr<fec::Code>>::f(prhs[0]);
-    boost::container::vector<uint8_t, MexAllocator<uint8_t>> parity;
+    std::vector<uint8_t, MexAllocator<uint8_t>> parity;
     
-    code->encode(mxArrayTo<boost::container::vector<uint8_t,MexAllocator<uint8_t>>>::f(prhs[1]), parity);
+    code->encode(mxArrayTo<std::vector<uint8_t,MexAllocator<uint8_t>>>::f(prhs[1]), parity);
   
     plhs[0] = toMxArray(parity);
   } 

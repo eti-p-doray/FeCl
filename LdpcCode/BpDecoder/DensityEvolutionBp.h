@@ -28,21 +28,21 @@ public:
   static std::unique_ptr<DensityEvolutionBp> create(const LdpcCodeStructure&);
   virtual ~DensityEvolutionBp() = default;
   
-  void predictNBloc(boost::container::vector<LlrPdf>::const_iterator parityIn, boost::container::vector<LlrPdf>::iterator parityOut, boost::container::vector<LlrPdf>::iterator messageOut, size_t n);
+  void predictNBloc(std::vector<LlrPdf>::const_iterator parityIn, std::vector<LlrPdf>::iterator parityOut, std::vector<LlrPdf>::iterator messageOut, size_t n);
   
 protected:
   DensityEvolutionBp(const LdpcCodeStructure& codeStructure);
   
-  void predictBloc(boost::container::vector<LlrPdf>::const_iterator parityIn, boost::container::vector<LlrPdf>::iterator parityOut, boost::container::vector<LlrPdf>::iterator messageOut);
+  void predictBloc(std::vector<LlrPdf>::const_iterator parityIn, std::vector<LlrPdf>::iterator parityOut, std::vector<LlrPdf>::iterator messageOut);
   
   virtual void checkUpdate();
-  virtual void bitUpdate(boost::container::vector<LlrPdf>::const_iterator parity);
+  virtual void bitUpdate(std::vector<LlrPdf>::const_iterator parity);
   
   inline const LdpcCodeStructure& codeStructure() const {return codeStructure_;}
   
-  boost::container::vector<LlrPdf> bitMetrics_;
-  boost::container::vector<LlrPdf> checkMetrics_;
-  boost::container::vector<LlrPdf> checkMetricsBuffer_;
+  std::vector<LlrPdf> bitMetrics_;
+  std::vector<LlrPdf> checkMetrics_;
+  std::vector<LlrPdf> checkMetricsBuffer_;
 
 private:
   

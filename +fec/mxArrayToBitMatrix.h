@@ -12,7 +12,7 @@
 
 #include <memory>
 #include <math.h>
-#include <boost/container/vector.hpp>
+#include <vector>
 #include <mex.h>
 #include <matrix.h>
 
@@ -39,7 +39,7 @@ public:
         throw std::invalid_argument("Invalid data");
       }
       
-      boost::container::vector<size_t> rowSizes(mxGetM(in), 0);
+      std::vector<size_t> rowSizes(mxGetM(in), 0);
       for (size_t j = 0; j < mxGetN(in); ++j) {
         for (size_t i = jc[j]; i < jc[j+1]; ++i) {
           rowSizes[ir[i]]++;
@@ -59,7 +59,7 @@ public:
     }
     else {
       double* pr = mxGetPr(in);
-      boost::container::vector<size_t> rowSizes(mxGetM(in), 0);
+      std::vector<size_t> rowSizes(mxGetM(in), 0);
       for (size_t j = 0; j < mxGetN(in); ++j) {
         for (size_t i = 0; i < mxGetM(in); ++i, ++pr) {
           if (*pr != 0) {

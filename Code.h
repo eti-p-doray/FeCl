@@ -14,7 +14,7 @@
 #include <thread>
 
 #include "Archive.h"
-#include <boost/container/vector.hpp>
+#include <vector>
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/utility.hpp>
 #include <boost/serialization/export.hpp>
@@ -45,23 +45,23 @@ public:
   virtual size_t extrinsicSize() const = 0;
   virtual const CodeStructure& structure() const = 0;
   
-  template <typename T> void encode(const boost::container::vector<uint8_t,T>& message, boost::container::vector<uint8_t,T>& parity) const;
+  template <typename T> void encode(const std::vector<uint8_t,T>& message, std::vector<uint8_t,T>& parity) const;
   
-  template <typename T1,typename T2> void decode(const boost::container::vector<LlrType,T1>& parityIn, boost::container::vector<uint8_t,T2>& msgOut) const;
-  template <typename T> void softOutDecode(const boost::container::vector<LlrType,T>& parityIn, boost::container::vector<LlrType,T>& msgOut) const;
-  template <typename T> void appDecode(const boost::container::vector<LlrType,T>& parityIn, const boost::container::vector<LlrType,T>& extrinsicIn, boost::container::vector<LlrType,T>& msgOut, boost::container::vector<LlrType,T>& extrinsicOut) const;
+  template <typename T1,typename T2> void decode(const std::vector<LlrType,T1>& parityIn, std::vector<uint8_t,T2>& msgOut) const;
+  template <typename T> void softOutDecode(const std::vector<LlrType,T>& parityIn, std::vector<LlrType,T>& msgOut) const;
+  template <typename T> void appDecode(const std::vector<LlrType,T>& parityIn, const std::vector<LlrType,T>& extrinsicIn, std::vector<LlrType,T>& msgOut, std::vector<LlrType,T>& extrinsicOut) const;
 
 protected:
   Code(int workGroupdSize = 4);
   
   inline int workGroupSize() const {return workGroupSize_;}
   
-  virtual void encodeNBloc(boost::container::vector<uint8_t>::const_iterator messageIt, boost::container::vector<uint8_t>::iterator parityIt, size_t n) const;
-  virtual void encodeBloc(boost::container::vector<uint8_t>::const_iterator messageIt, boost::container::vector<uint8_t>::iterator parityIt) const = 0;
+  virtual void encodeNBloc(std::vector<uint8_t>::const_iterator messageIt, std::vector<uint8_t>::iterator parityIt, size_t n) const;
+  virtual void encodeBloc(std::vector<uint8_t>::const_iterator messageIt, std::vector<uint8_t>::iterator parityIt) const = 0;
   
-  virtual void appDecodeNBloc(boost::container::vector<LlrType>::const_iterator parityIn, boost::container::vector<LlrType>::const_iterator extrinsicIn, boost::container::vector<LlrType>::iterator messageOut, boost::container::vector<LlrType>::iterator extrinsicOut, size_t n) const = 0;
-  virtual void softOutDecodeNBloc(boost::container::vector<LlrType>::const_iterator parityIn, boost::container::vector<LlrType>::iterator messageOut, size_t n) const = 0;
-  virtual void decodeNBloc(boost::container::vector<LlrType>::const_iterator parityIn, boost::container::vector<uint8_t>::iterator messageOut, size_t n) const = 0;
+  virtual void appDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n) const = 0;
+  virtual void softOutDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::iterator messageOut, size_t n) const = 0;
+  virtual void decodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<uint8_t>::iterator messageOut, size_t n) const = 0;
   
 private:
   template <typename Archive>
@@ -85,7 +85,7 @@ BOOST_CLASS_EXPORT_KEY(fec::Code);
  *  \param  parity[out] Vector containing parity bits
  ******************************************************************************/
 template <typename T>
-void fec::Code::encode(const boost::container::vector<uint8_t,T>& message, boost::container::vector<uint8_t,T>& parity) const
+void fec::Code::encode(const std::vector<uint8_t,T>& message, std::vector<uint8_t,T>& parity) const
 {
   uint64_t blocCount = message.size() / (msgSize());
   if (message.size() != blocCount * msgSize()) {
@@ -95,10 +95,10 @@ void fec::Code::encode(const boost::container::vector<uint8_t,T>& message, boost
   parity.resize(blocCount * paritySize());
   std::fill(parity.begin(), parity.end(), 0);
   
-  boost::container::vector<uint8_t>::const_iterator messageIt = message.begin();
-  boost::container::vector<uint8_t>::iterator parityIt = parity.begin();
+  std::vector<uint8_t>::const_iterator messageIt = message.begin();
+  std::vector<uint8_t>::iterator parityIt = parity.begin();
   
-  boost::container::vector<std::thread> threadGroup;
+  std::vector<std::thread> threadGroup;
   threadGroup.reserve(workGroupSize());
   auto thread = threadGroup.begin();
   size_t step = (blocCount+workGroupSize()-1)/workGroupSize();
@@ -126,7 +126,7 @@ void fec::Code::encode(const boost::container::vector<uint8_t,T>& message, boost
  *  \param  extrinsicOut[out] Vector containing a extrinsic L-values
  ******************************************************************************/
 template <typename T>
-void fec::Code::appDecode(const boost::container::vector<LlrType,T>& parityIn, const boost::container::vector<LlrType,T>& extrinsicIn, boost::container::vector<LlrType,T>& messageOut, boost::container::vector<LlrType,T>& extrinsicOut) const
+void fec::Code::appDecode(const std::vector<LlrType,T>& parityIn, const std::vector<LlrType,T>& extrinsicIn, std::vector<LlrType,T>& messageOut, std::vector<LlrType,T>& extrinsicOut) const
 {
   size_t blocCount = parityIn.size() / paritySize();
   if (parityIn.size() != blocCount * paritySize()) {
@@ -136,16 +136,16 @@ void fec::Code::appDecode(const boost::container::vector<LlrType,T>& parityIn, c
     throw std::invalid_argument("Invalid size for extrinsic");
   }
   
-  boost::container::vector<std::thread> threadGroup;
+  std::vector<std::thread> threadGroup;
   threadGroup.reserve(workGroupSize());
   
   messageOut.resize(blocCount * msgSize());
   extrinsicOut.resize(extrinsicIn.size());
   
-  boost::container::vector<LlrType>::const_iterator extrinsicInIt = extrinsicIn.begin();
-  boost::container::vector<LlrType>::const_iterator  parityInIt = parityIn.begin();
-  boost::container::vector<LlrType>::iterator extrinsicOutIt = extrinsicOut.begin();
-  boost::container::vector<LlrType>::iterator messageOutIt = messageOut.begin();
+  std::vector<LlrType>::const_iterator extrinsicInIt = extrinsicIn.begin();
+  std::vector<LlrType>::const_iterator  parityInIt = parityIn.begin();
+  std::vector<LlrType>::iterator extrinsicOutIt = extrinsicOut.begin();
+  std::vector<LlrType>::iterator messageOutIt = messageOut.begin();
   
   
   auto thread = threadGroup.begin();
@@ -174,7 +174,7 @@ void fec::Code::appDecode(const boost::container::vector<LlrType,T>& parityIn, c
  *  \param  messageOut[out] Vector containing a posteriori information L-values
  ******************************************************************************/
 template <typename T>
-void fec::Code::softOutDecode(const boost::container::vector<LlrType,T>& parityIn, boost::container::vector<LlrType,T>& messageOut) const
+void fec::Code::softOutDecode(const std::vector<LlrType,T>& parityIn, std::vector<LlrType,T>& messageOut) const
 {
   size_t blocCount = parityIn.size() / paritySize();
   if (parityIn.size() != blocCount * paritySize()) {
@@ -183,10 +183,10 @@ void fec::Code::softOutDecode(const boost::container::vector<LlrType,T>& parityI
   
   messageOut.resize(blocCount * msgSize());
   
-  boost::container::vector<LlrType>::const_iterator parityInIt = parityIn.begin();
-  boost::container::vector<LlrType>::iterator messageOutIt = messageOut.begin();
+  std::vector<LlrType>::const_iterator parityInIt = parityIn.begin();
+  std::vector<LlrType>::iterator messageOutIt = messageOut.begin();
   
-  boost::container::vector<std::thread> threadGroup;
+  std::vector<std::thread> threadGroup;
   threadGroup.reserve(workGroupSize());
   
   auto thread = threadGroup.begin();
@@ -215,20 +215,20 @@ void fec::Code::softOutDecode(const boost::container::vector<LlrType,T>& parityI
  *  \param  messageOut[out] Vector containing message bits
  ******************************************************************************/
 template <typename T1, typename T2>
-void fec::Code::decode(const boost::container::vector<LlrType,T1>& parityIn, boost::container::vector<uint8_t,T2>& messageOut) const
+void fec::Code::decode(const std::vector<LlrType,T1>& parityIn, std::vector<uint8_t,T2>& messageOut) const
 {
   size_t blocCount = parityIn.size() / paritySize();
   if (parityIn.size() != blocCount * paritySize()) {
     throw std::invalid_argument("Invalid size for parity");
   }
   
-  boost::container::vector<std::thread> threadGroup;
+  std::vector<std::thread> threadGroup;
   threadGroup.reserve(workGroupSize());
   
   messageOut.resize(blocCount * msgSize());
   
-  boost::container::vector<LlrType>::const_iterator parityInIt = parityIn.begin();
-  boost::container::vector<uint8_t>::iterator messageOutIt = messageOut.begin();
+  std::vector<LlrType>::const_iterator parityInIt = parityIn.begin();
+  std::vector<uint8_t>::iterator messageOutIt = messageOut.begin();
   
   auto thread = threadGroup.begin();
   size_t step = (blocCount+workGroupSize()-1)/workGroupSize();

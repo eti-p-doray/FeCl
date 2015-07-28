@@ -11,7 +11,7 @@
 
 using namespace fec;
 
-TrellisStructure::TrellisStructure(boost::container::vector<size_t> nextState, boost::container::vector<size_t> output, size_t inputSize, size_t outputSize, size_t stateSize)
+TrellisStructure::TrellisStructure(std::vector<size_t> nextState, std::vector<size_t> output, size_t inputSize, size_t outputSize, size_t stateSize)
 {
   stateSize_ = stateSize;
   outputSize_ = outputSize;
@@ -39,7 +39,7 @@ TrellisStructure::TrellisStructure(boost::container::vector<size_t> nextState, b
   }
 }
 
-TrellisStructure::TrellisStructure(boost::container::vector<BitField<size_t> > constraintLengths, boost::container::vector<boost::container::vector<BitField<size_t> > > generator)
+TrellisStructure::TrellisStructure(std::vector<BitField<size_t> > constraintLengths, std::vector<std::vector<BitField<size_t> > > generator)
 {
   inputSize_ = size_t(generator.size());
   outputSize_ = size_t(generator[0].size());
@@ -52,7 +52,7 @@ TrellisStructure::TrellisStructure(boost::container::vector<BitField<size_t> > c
   inputCount_ = 1<<inputSize_;
 
   
-  boost::container::vector<BitField<size_t> > inputStates(constraintLengths.size(), 0);
+  std::vector<BitField<size_t> > inputStates(constraintLengths.size(), 0);
   
   stateSize_ = 0;
   for (size_t i = 0; i < constraintLengths.size(); i++) {

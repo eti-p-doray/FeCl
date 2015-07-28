@@ -56,9 +56,9 @@ public:
   inline DecoderType decoderType() const {return decoderType_;}
   inline size_t iterationCount() const {return iterationCount_;}
   
-  void syndrome(boost::container::vector<uint8_t>::const_iterator parity, boost::container::vector<uint8_t>::iterator syndrome) const;
-  bool syndromeCheck(boost::container::vector<uint8_t>::const_iterator parity) const;
-  void encode(boost::container::vector<uint8_t>::const_iterator msg, boost::container::vector<uint8_t>::iterator parity) const;
+  void syndrome(std::vector<uint8_t>::const_iterator parity, std::vector<uint8_t>::iterator syndrome) const;
+  bool syndromeCheck(std::vector<uint8_t>::const_iterator parity) const;
+  void encode(std::vector<uint8_t>::const_iterator msg, std::vector<uint8_t>::iterator parity) const;
   
 private:
   template <typename Archive>

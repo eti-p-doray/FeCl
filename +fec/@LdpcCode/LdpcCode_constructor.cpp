@@ -31,7 +31,7 @@ const char* const BpTypeEnumeration[BpTypeCount] = {
 };
 
 template <typename T>
-std::ostream& operator<<(std::ostream& os, const boost::container::vector<T>& a)
+std::ostream& operator<<(std::ostream& os, const std::vector<T>& a)
 {
   for (uint64_t i = 0; i < a.size(); i++) {
     os << float(a[i]) << " ";

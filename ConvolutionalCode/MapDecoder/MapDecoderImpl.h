@@ -30,14 +30,14 @@ public:
   ~MapDecoderImpl() = default;
   
 protected:
-  virtual void appBranchMetrics(boost::container::vector<LlrType>::const_iterator code, boost::container::vector<LlrType>::const_iterator extrinsic);
-  virtual void parityAppBranchMetrics(boost::container::vector<LlrType>::const_iterator code, boost::container::vector<LlrType>::const_iterator extrinsic);
-  virtual void branchMetrics(boost::container::vector<LlrType>::const_iterator code);
+  virtual void appBranchMetrics(std::vector<LlrType>::const_iterator code, std::vector<LlrType>::const_iterator extrinsic);
+  virtual void parityAppBranchMetrics(std::vector<LlrType>::const_iterator code, std::vector<LlrType>::const_iterator extrinsic);
+  virtual void branchMetrics(std::vector<LlrType>::const_iterator code);
   virtual void forwardMetrics();
   virtual void backwardMetrics();
   
-  virtual void parityAPosteriori(boost::container::vector<LlrType>::iterator parityOut);
-  virtual void messageAPosteriori(boost::container::vector<LlrType>::iterator messageOut);
+  virtual void parityAPosteriori(std::vector<LlrType>::iterator parityOut);
+  virtual void messageAPosteriori(std::vector<LlrType>::iterator messageOut);
 };
 
 template <typename A>
@@ -47,7 +47,7 @@ MapDecoderImpl<A>::MapDecoderImpl(const ConvolutionalCodeStructure& codeStructur
 }
 
 template <typename A>
-void MapDecoderImpl<A>::parityAPosteriori(boost::container::vector<LlrType>::iterator parityOut)
+void MapDecoderImpl<A>::parityAPosteriori(std::vector<LlrType>::iterator parityOut)
 {
   auto backwardMetricIt = backwardMetrics_.begin();
   
@@ -88,7 +88,7 @@ void MapDecoderImpl<A>::parityAPosteriori(boost::container::vector<LlrType>::ite
 }
 
 template <typename A>
-void MapDecoderImpl<A>::messageAPosteriori(boost::container::vector<LlrType>::iterator messageOut)
+void MapDecoderImpl<A>::messageAPosteriori(std::vector<LlrType>::iterator messageOut)
 {
   auto backwardMetricIt = backwardMetrics_.begin();
   
@@ -123,7 +123,7 @@ void MapDecoderImpl<A>::messageAPosteriori(boost::container::vector<LlrType>::it
 }
 
 template <typename A>
-void MapDecoderImpl<A>::appBranchMetrics(boost::container::vector<LlrType>::const_iterator parity, boost::container::vector<LlrType>::const_iterator extrinsic)
+void MapDecoderImpl<A>::appBranchMetrics(std::vector<LlrType>::const_iterator parity, std::vector<LlrType>::const_iterator extrinsic)
 {
   int i = 0;
   for (auto branchMetricIt = branchMetrics_.begin(); branchMetricIt < branchMetrics_.end(); ++i) {
@@ -151,7 +151,7 @@ void MapDecoderImpl<A>::appBranchMetrics(boost::container::vector<LlrType>::cons
 }
 
 template <typename A>
-void MapDecoderImpl<A>::parityAppBranchMetrics(boost::container::vector<LlrType>::const_iterator parity, boost::container::vector<LlrType>::const_iterator extrinsic)
+void MapDecoderImpl<A>::parityAppBranchMetrics(std::vector<LlrType>::const_iterator parity, std::vector<LlrType>::const_iterator extrinsic)
 {
   int i = 0;
   for (auto branchMetricIt = branchMetrics_.begin(); branchMetricIt < branchMetrics_.end(); ++i) {
@@ -179,7 +179,7 @@ void MapDecoderImpl<A>::parityAppBranchMetrics(boost::container::vector<LlrType>
 }
 
 template <typename A>
-void MapDecoderImpl<A>::branchMetrics(boost::container::vector<LlrType>::const_iterator parity)
+void MapDecoderImpl<A>::branchMetrics(std::vector<LlrType>::const_iterator parity)
 {
   int i = 0;
   for (auto branchMetricIt = branchMetrics_.begin(); branchMetricIt < branchMetrics_.end(); ++i) {

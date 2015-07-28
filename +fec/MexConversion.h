@@ -13,7 +13,7 @@
 #include <memory>
 #include <cstring>
 #include <type_traits>
-#include <boost/container/vector.hpp>
+#include <vector>
 #include <boost/iostreams/stream.hpp>
 #include <boost/iostreams/concepts.hpp>
 #include <boost/iostreams/device/array.hpp>
@@ -106,7 +106,7 @@ mxArray* toMxArray(const T& in) {
 template <class T>
 class mxCellArrayTo {
 public:
-  static boost::container::vector<T> f(const mxArray* in) {
+  static std::vector<T> f(const mxArray* in) {
     if (in == nullptr) {
       throw std::invalid_argument("Null mxArray");
     }
@@ -114,7 +114,7 @@ public:
       throw std::invalid_argument("Invalid data");
     }
     
-    boost::container::vector<T> out(mxGetNumberOfElements(in));
+    std::vector<T> out(mxGetNumberOfElements(in));
     for (size_t i = 0; i < out.size(); ++i) {
       out[i] = mxArrayTo<T>::f(mxGetCell(in, i));
     }

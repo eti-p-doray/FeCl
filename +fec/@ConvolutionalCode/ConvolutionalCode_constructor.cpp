@@ -42,14 +42,10 @@ const char* const TrellisEndTypeEnumeration[TrellisEndTypeCount] = {
  *  \param  nrhs    [in]  Number of input
  *  \param  prhs    [in]  Array of output mxArray
  *  \param  prhs[0] [in]  trellis state table
- *  \param  prhs[1] [in]  trellis output table
- *  \param  prhs[2] [in]  trellis input count
- *  \param  prhs[3] [in]  trellis output count
- *  \param  prhs[4] [in]  trellis state count
- *  \param  prhs[5] [in]  blocSize
- *  \param  prhs[6] [in]  trellis termination type
- *  \param  prhs[7] [in]  decoder algorithm type
- *  \param  prhs[7] [in]  work group size - for parralelisation
+ *  \param  prhs[1] [in]  blocSize
+ *  \param  prhs[2] [in]  trellis termination type
+ *  \param  prhs[3] [in]  decoder algorithm type
+ *  \param  prhs[4] [in]  work group size - for parralelisation
  ******************************************************************************/
 void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 {

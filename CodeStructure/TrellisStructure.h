@@ -13,7 +13,7 @@
 #include <assert.h>
 #include <iostream>
 
-#include <boost/container/vector.hpp>
+#include <vector>
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/utility.hpp>
 #include <boost/serialization/vector.hpp>
@@ -35,9 +35,9 @@ class TrellisStructure {
   friend class boost::serialization::access;
 public:
   TrellisStructure() = default;
-  TrellisStructure(::boost::container::vector<size_t> nextState, ::boost::container::vector<size_t> output, size_t inputSize, size_t outputSize, size_t stateSize);
-  TrellisStructure(::boost::container::vector<BitField<size_t> > constraintLengths, ::boost::container::vector<::boost::container::vector<BitField<size_t> > > generator);
-  TrellisStructure(::boost::container::vector<BitField<size_t> > constraintLengths, ::boost::container::vector<::boost::container::vector<BitField<size_t> > > generator, ::boost::container::vector<BitField<size_t> > feedback);
+  TrellisStructure(::std::vector<size_t> nextState, ::std::vector<size_t> output, size_t inputSize, size_t outputSize, size_t stateSize);
+  TrellisStructure(::std::vector<BitField<size_t> > constraintLengths, ::std::vector<::std::vector<BitField<size_t> > > generator);
+  TrellisStructure(::std::vector<BitField<size_t> > constraintLengths, ::std::vector<::std::vector<BitField<size_t> > > generator, ::std::vector<BitField<size_t> > feedback);
   
   TrellisStructure(const TrellisStructure&) = default;
   
@@ -54,11 +54,11 @@ public:
   inline BitField<size_t> getNextState(size_t currentState, size_t input) const {return nextState_[currentState * inputCount() + input];}
   inline BitField<size_t> getOutput(size_t currentState, size_t input) const {return output_[currentState * inputCount() + input];}
 
-  inline ::boost::container::vector<BitField<size_t> >::const_iterator beginState() const {return nextState_.begin();}
-  inline ::boost::container::vector<BitField<size_t> >::const_iterator endState() const {return nextState_.end();}
+  inline ::std::vector<BitField<size_t> >::const_iterator beginState() const {return nextState_.begin();}
+  inline ::std::vector<BitField<size_t> >::const_iterator endState() const {return nextState_.end();}
   
-  inline ::boost::container::vector<BitField<size_t> >::const_iterator beginOutput() const {return output_.begin();}
-  inline ::boost::container::vector<BitField<size_t> >::const_iterator endOutput() const {return output_.end();}
+  inline ::std::vector<BitField<size_t> >::const_iterator beginOutput() const {return output_.begin();}
+  inline ::std::vector<BitField<size_t> >::const_iterator endOutput() const {return output_.end();}
   
 private:
   template <typename Archive>
@@ -84,8 +84,8 @@ private:
   
   size_t tableSize_;
   
-  ::boost::container::vector<BitField<size_t> > nextState_;
-  ::boost::container::vector<BitField<size_t> > output_;
+  ::std::vector<BitField<size_t> > nextState_;
+  ::std::vector<BitField<size_t> > output_;
 };
 
 }

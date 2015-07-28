@@ -55,7 +55,7 @@ LdpcCodeStructure::LdpcCodeStructure(SparseBitMatrix&& H, size_t iterationCount,
   iterationCount_ = iterationCount;
 }
 
-void LdpcCodeStructure::syndrome(boost::container::vector<uint8_t>::const_iterator parity, boost::container::vector<uint8_t>::iterator syndrome) const
+void LdpcCodeStructure::syndrome(std::vector<uint8_t>::const_iterator parity, std::vector<uint8_t>::iterator syndrome) const
 {
   for (auto parityEq = parityCheck().begin(); parityEq < parityCheck().end(); ++parityEq, ++syndrome) {
     for (auto parityBit = parityEq->begin(); parityBit < parityEq->end(); ++parityBit) {
@@ -64,7 +64,7 @@ void LdpcCodeStructure::syndrome(boost::container::vector<uint8_t>::const_iterat
   }
 }
 
-bool LdpcCodeStructure::syndromeCheck(boost::container::vector<uint8_t>::const_iterator parity) const
+bool LdpcCodeStructure::syndromeCheck(std::vector<uint8_t>::const_iterator parity) const
 {
   for (auto parityEq = parityCheck().begin(); parityEq < parityCheck().end(); ++parityEq) {
     bool syndrome;
@@ -78,7 +78,7 @@ bool LdpcCodeStructure::syndromeCheck(boost::container::vector<uint8_t>::const_i
   return true;
 }
 
-void LdpcCodeStructure::encode(boost::container::vector<uint8_t>::const_iterator msg, boost::container::vector<uint8_t>::iterator parity) const
+void LdpcCodeStructure::encode(std::vector<uint8_t>::const_iterator msg, std::vector<uint8_t>::iterator parity) const
 {
   std::copy(msg, msg + msgSize(), parity);
   std::fill(parity+msgSize(), parity+paritySize(), 0);
@@ -115,7 +115,7 @@ void LdpcCodeStructure::encode(boost::container::vector<uint8_t>::const_iterator
 
 void LdpcCodeStructure::computeGeneratorMatrix(SparseBitMatrix&& H)
 {
-  boost::container::vector<size_t> colSizes;
+  std::vector<size_t> colSizes;
   size_t maxRow = H.rows();
   size_t tSize = 0;
   

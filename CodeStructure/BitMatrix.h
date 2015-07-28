@@ -55,17 +55,17 @@ public:
   {
     friend class SparseBitMatrix;
   public:
-    inline ::boost::container::vector<size_t>::const_iterator begin() const {return begin_;}
-    inline ::boost::container::vector<size_t>::const_iterator end() const {return end_;}
+    inline ::std::vector<size_t>::const_iterator begin() const {return begin_;}
+    inline ::std::vector<size_t>::const_iterator end() const {return end_;}
     inline size_t offset() const {return offset_;}
     inline size_t size() const {return end() - begin();}
     
   private:
     inline ConstOffsetRowRef() = default;
-    inline ConstOffsetRowRef(::boost::container::vector<size_t>::const_iterator begin, ::boost::container::vector<size_t>::const_iterator end, size_t offset) {begin_ = begin; end_ = end; offset_ = offset;}
+    inline ConstOffsetRowRef(::std::vector<size_t>::const_iterator begin, ::std::vector<size_t>::const_iterator end, size_t offset) {begin_ = begin; end_ = end; offset_ = offset;}
     
-    ::boost::container::vector<size_t>::const_iterator begin_;
-    ::boost::container::vector<size_t>::const_iterator end_;
+    ::std::vector<size_t>::const_iterator begin_;
+    ::std::vector<size_t>::const_iterator end_;
     size_t offset_;
   };
   
@@ -79,8 +79,8 @@ public:
     ConstRowRef(const ConstRowRef&) = default;
     inline ConstRowRef(RowRef b) {begin_ = b.begin(); end_ = b.end();}
     
-    inline ::boost::container::vector<size_t>::const_iterator begin() const {return begin_;}
-    inline ::boost::container::vector<size_t>::const_iterator end() const {return end_;}
+    inline ::std::vector<size_t>::const_iterator begin() const {return begin_;}
+    inline ::std::vector<size_t>::const_iterator end() const {return end_;}
     
     inline bool test(size_t j) const {return std::binary_search(begin(), end(), j);}
     inline size_t first() const {return end() - begin() == 0 ? -1 : *begin();}
@@ -96,10 +96,10 @@ public:
     
   private:
     inline ConstRowRef() = default;
-    inline ConstRowRef(::boost::container::vector<size_t>::const_iterator begin, ::boost::container::vector<size_t>::const_iterator end) : begin_(begin), end_(end) {}
+    inline ConstRowRef(::std::vector<size_t>::const_iterator begin, ::std::vector<size_t>::const_iterator end) : begin_(begin), end_(end) {}
     
-    ::boost::container::vector<size_t>::const_iterator begin_;
-    ::boost::container::vector<size_t>::const_iterator end_;
+    ::std::vector<size_t>::const_iterator begin_;
+    ::std::vector<size_t>::const_iterator end_;
   };
   
   /*******************************************************************************
@@ -127,10 +127,10 @@ public:
       ::std::copy(b.begin(), b.end(), begin());
     }
     
-    inline ::boost::container::vector<size_t>::const_iterator begin() const {return begin_ + rowIdx_.begin;}
-    inline ::boost::container::vector<size_t>::const_iterator end() const {return begin_ + rowIdx_.end;}
-    inline ::boost::container::vector<size_t>::iterator begin() {return begin_ + rowIdx_.begin;}
-    inline ::boost::container::vector<size_t>::iterator end() {return begin_ + rowIdx_.end;}
+    inline ::std::vector<size_t>::const_iterator begin() const {return begin_ + rowIdx_.begin;}
+    inline ::std::vector<size_t>::const_iterator end() const {return begin_ + rowIdx_.end;}
+    inline ::std::vector<size_t>::iterator begin() {return begin_ + rowIdx_.begin;}
+    inline ::std::vector<size_t>::iterator end() {return begin_ + rowIdx_.end;}
     
     inline bool test(size_t j) const {return std::binary_search(begin(), end(), j);}
     inline size_t first() const {return end() - begin() == 0 ? -1 : *begin();}
@@ -156,9 +156,9 @@ public:
     
   private:
     inline RowRef() = default;
-    inline RowRef(::boost::container::vector<size_t>::iterator begin, RowIdx& rowIdx) : begin_(begin), rowIdx_(rowIdx) {}
+    inline RowRef(::std::vector<size_t>::iterator begin, RowIdx& rowIdx) : begin_(begin), rowIdx_(rowIdx) {}
     
-    ::boost::container::vector<size_t>::iterator begin_;
+    ::std::vector<size_t>::iterator begin_;
     RowIdx& rowIdx_;
   };
   
@@ -219,10 +219,10 @@ public:
     inline ConstRowRef operator[] (size_t i) const {return ConstRowRef(begin_ + rowIdx_[i].begin, begin_ + rowIdx_[i].end);}
     
   private:
-    inline ConstIterator(::boost::container::vector<size_t>::const_iterator begin, ::boost::container::vector<RowIdx>::const_iterator rowIdx) :begin_(begin), rowIdx_(rowIdx) {}
+    inline ConstIterator(::std::vector<size_t>::const_iterator begin, ::std::vector<RowIdx>::const_iterator rowIdx) :begin_(begin), rowIdx_(rowIdx) {}
     
-    ::boost::container::vector<size_t>::const_iterator begin_;
-    ::boost::container::vector<RowIdx>::const_iterator rowIdx_;
+    ::std::vector<size_t>::const_iterator begin_;
+    ::std::vector<RowIdx>::const_iterator rowIdx_;
   };
   /*******************************************************************************
    *  This is a random access iterator of a sparse matrix.
@@ -260,10 +260,10 @@ public:
     inline ConstRowRef operator[] (size_t i) const {return ConstRowRef(begin_ + rowIdx_[i].begin, begin_ + rowIdx_[i].end);}
     
   private:
-    inline Iterator(::boost::container::vector<size_t>::iterator begin, ::boost::container::vector<RowIdx>::iterator rowIdx) : begin_(begin), rowIdx_(rowIdx) {}
+    inline Iterator(::std::vector<size_t>::iterator begin, ::std::vector<RowIdx>::iterator rowIdx) : begin_(begin), rowIdx_(rowIdx) {}
     
-    ::boost::container::vector<size_t>::iterator begin_;
-    ::boost::container::vector<RowIdx>::iterator rowIdx_;
+    ::std::vector<size_t>::iterator begin_;
+    ::std::vector<RowIdx>::iterator rowIdx_;
   };
   
   SparseBitMatrix() = default;
@@ -271,14 +271,14 @@ public:
   SparseBitMatrix(const BitMatrix& b) {*this = b;}
   SparseBitMatrix(SparseBitMatrix&& b) {cols_ = b.cols_; ::std::swap(elementIdx_, b.elementIdx_); ::std::swap(rowIdx_, b.rowIdx_);}
   inline SparseBitMatrix(size_t rows, size_t cols, size_t rowSizes) {resize(rows, cols, rowSizes);}
-  inline SparseBitMatrix(const ::boost::container::vector<size_t>& rowSizes, size_t cols) {resize(rowSizes, cols);}
+  inline SparseBitMatrix(const ::std::vector<size_t>& rowSizes, size_t cols) {resize(rowSizes, cols);}
   
   inline SparseBitMatrix& operator = (const SparseBitMatrix& b);
   inline SparseBitMatrix& operator = (const fec::BitMatrix& b);
   inline SparseBitMatrix& operator = (SparseBitMatrix&& b) {cols_ = b.cols_; ::std::swap(elementIdx_, b.elementIdx_); ::std::swap(rowIdx_, b.rowIdx_); return *this;}
   
   inline void resize(size_t rows, size_t cols, size_t rowSizes);
-  inline void resize(const ::boost::container::vector<size_t>& rowSizes, size_t cols);
+  inline void resize(const ::std::vector<size_t>& rowSizes, size_t cols);
   
   inline size_t rows() const {return rowIdx_.size();}
   inline size_t cols() const {return cols_;}
@@ -297,13 +297,13 @@ public:
   inline ConstRowRef operator[] (size_t i) const {return ConstRowRef(elementIdx_.begin() + rowIdx_[i].begin, elementIdx_.begin() + rowIdx_[i].end);}
   inline RowRef operator[] (size_t i) {return RowRef(elementIdx_.begin(), rowIdx_[i]);}
   
-  inline void colSizes(const size_t rowRange[2], const size_t colRange[2], ::boost::container::vector<size_t>& dst) const;
-  inline void colSizes(::boost::container::vector<size_t>& dst) const {colSizes({0, rows()}, {0, cols()}, dst);}
-  inline void colSizes(const ::std::initializer_list<size_t>& rowRange, const ::std::initializer_list<size_t>& colRange, ::boost::container::vector<size_t>& x) const {colSizes(rowRange.begin(), colRange.begin(), x);}
+  inline void colSizes(const size_t rowRange[2], const size_t colRange[2], ::std::vector<size_t>& dst) const;
+  inline void colSizes(::std::vector<size_t>& dst) const {colSizes({0, rows()}, {0, cols()}, dst);}
+  inline void colSizes(const ::std::initializer_list<size_t>& rowRange, const ::std::initializer_list<size_t>& colRange, ::std::vector<size_t>& x) const {colSizes(rowRange.begin(), colRange.begin(), x);}
   
-  inline void rowSizes(::boost::container::vector<size_t>& x) const {rowSizes({0, rows()}, {0, cols()}, x);}
-  inline void rowSizes(const size_t rowRange[2], const size_t colRange[2], ::boost::container::vector<size_t>& x) const;
-  inline void rowSizes(const ::std::initializer_list<size_t>& rowRange, const ::std::initializer_list<size_t>& colRange, ::boost::container::vector<size_t>& x) const {rowSizes(rowRange.begin(), colRange.begin(), x);}
+  inline void rowSizes(::std::vector<size_t>& x) const {rowSizes({0, rows()}, {0, cols()}, x);}
+  inline void rowSizes(const size_t rowRange[2], const size_t colRange[2], ::std::vector<size_t>& x) const;
+  inline void rowSizes(const ::std::initializer_list<size_t>& rowRange, const ::std::initializer_list<size_t>& colRange, ::std::vector<size_t>& x) const {rowSizes(rowRange.begin(), colRange.begin(), x);}
   
   inline void moveCol(size_t a, size_t b);
   
@@ -323,8 +323,8 @@ private:
   }
   
   size_t cols_;
-  ::boost::container::vector<size_t> elementIdx_;
-  ::boost::container::vector<RowIdx> rowIdx_;
+  ::std::vector<size_t> elementIdx_;
+  ::std::vector<RowIdx> rowIdx_;
 };
   
 }
@@ -372,11 +372,11 @@ public:
       inline bool operator*() const {return bloc_->test(idx_);}
       
     private:
-      ConstIterator(boost::container::vector<BitField<size_t>>::const_iterator bloc) : bloc_(bloc) {}
-      ConstIterator(boost::container::vector<BitField<size_t>>::const_iterator bloc, size_t idx) : bloc_(bloc), idx_(idx) {}
+      ConstIterator(std::vector<BitField<size_t>>::const_iterator bloc) : bloc_(bloc) {}
+      ConstIterator(std::vector<BitField<size_t>>::const_iterator bloc, size_t idx) : bloc_(bloc), idx_(idx) {}
       static size_t blocSize() {return sizeof(size_t) * 8;}
       
-      boost::container::vector<BitField<size_t>>::const_iterator bloc_;
+      std::vector<BitField<size_t>>::const_iterator bloc_;
       size_t idx_ = 0;
     };
     
@@ -414,7 +414,7 @@ public:
     inline void resize(size_t cols) {elements_.resize((cols+blocSize()-1)/blocSize());}
     static size_t blocSize() {return sizeof(size_t) * 8;}
     
-    boost::container::vector<BitField<size_t>> elements_;
+    std::vector<BitField<size_t>> elements_;
   };
   
   inline BitMatrix() = default;
@@ -428,21 +428,21 @@ public:
   inline BitMatrix operator() (const std::initializer_list<size_t>& rowRange, const std::initializer_list<size_t>& colRange) {return (*this)(rowRange.begin(), colRange.begin());}
   inline BitMatrix operator() (const size_t rowRange[2], const size_t colRange[2]) const;
   
-  inline boost::container::vector<Row>::iterator begin() {return rows_.begin();}
-  inline boost::container::vector<Row>::iterator end() {return rows_.end();}
-  inline boost::container::vector<Row>::const_iterator begin() const {return rows_.begin();}
-  inline boost::container::vector<Row>::const_iterator end() const {return rows_.end();}
+  inline std::vector<Row>::iterator begin() {return rows_.begin();}
+  inline std::vector<Row>::iterator end() {return rows_.end();}
+  inline std::vector<Row>::const_iterator begin() const {return rows_.begin();}
+  inline std::vector<Row>::const_iterator end() const {return rows_.end();}
   
   inline const Row& operator[] (size_t i) const {return rows_[i];}
   inline Row& operator[] (size_t i) {return rows_[i];}
   
-  inline void colSizes(boost::container::vector<size_t>& dst) const {colSizes({0, rows()}, {0, cols()}, dst);}
-  inline void colSizes(const size_t rowRange[2], const size_t colRange[2], boost::container::vector<size_t>& x) const;
-  inline void colSizes(const std::initializer_list<size_t>& rowRange, const std::initializer_list<size_t>& colRange, boost::container::vector<size_t>& x) const {colSizes(rowRange.begin(), colRange.begin(), x);}
+  inline void colSizes(std::vector<size_t>& dst) const {colSizes({0, rows()}, {0, cols()}, dst);}
+  inline void colSizes(const size_t rowRange[2], const size_t colRange[2], std::vector<size_t>& x) const;
+  inline void colSizes(const std::initializer_list<size_t>& rowRange, const std::initializer_list<size_t>& colRange, std::vector<size_t>& x) const {colSizes(rowRange.begin(), colRange.begin(), x);}
   
-  inline void rowSizes(boost::container::vector<size_t>& dst) const {rowSizes({0, rows()}, {0, cols()}, dst);}
-  inline void rowSizes(const size_t rowRange[2], const size_t colRange[2], boost::container::vector<size_t>& dst) const;
-  inline void rowSizes(const std::initializer_list<size_t>& rowRange, const std::initializer_list<size_t>& colRange, boost::container::vector<size_t>& x) const  {rowSizes(rowRange.begin(), colRange.begin(), x);}
+  inline void rowSizes(std::vector<size_t>& dst) const {rowSizes({0, rows()}, {0, cols()}, dst);}
+  inline void rowSizes(const size_t rowRange[2], const size_t colRange[2], std::vector<size_t>& dst) const;
+  inline void rowSizes(const std::initializer_list<size_t>& rowRange, const std::initializer_list<size_t>& colRange, std::vector<size_t>& x) const  {rowSizes(rowRange.begin(), colRange.begin(), x);}
   
   inline void moveCol(size_t a, size_t b);
   
@@ -454,7 +454,7 @@ public:
   }
   inline void swapCols(size_t a, size_t b, const std::initializer_list<size_t>& rowRange) {swapCols(a, b, rowRange.begin());}
   
-  inline void deleteRow(boost::container::vector<Row>::iterator a) {rows_.erase(a);}
+  inline void deleteRow(std::vector<Row>::iterator a) {rows_.erase(a);}
   
 private:
   template <typename Archive>
@@ -467,7 +467,7 @@ private:
   inline void resize(size_t rows, size_t cols);
   
   size_t cols_;
-  boost::container::vector<Row> rows_;
+  std::vector<Row> rows_;
 };
   
 }
@@ -549,7 +549,7 @@ void fec::SparseBitMatrix::RowRef::move(size_t a, size_t b)
 
 fec::SparseBitMatrix& fec::SparseBitMatrix::operator = (const fec::SparseBitMatrix& b)
 {
-  boost::container::vector<size_t> rowSizes;
+  std::vector<size_t> rowSizes;
   b.rowSizes(rowSizes);
   
   resize(rowSizes, b.cols());
@@ -562,7 +562,7 @@ fec::SparseBitMatrix& fec::SparseBitMatrix::operator = (const fec::SparseBitMatr
 
 fec::SparseBitMatrix& fec::SparseBitMatrix::operator = (const fec::BitMatrix& b)
 {
-  boost::container::vector<size_t> rowSizes;
+  std::vector<size_t> rowSizes;
   b.rowSizes(rowSizes);
   
   resize(rowSizes, b.cols());
@@ -579,7 +579,7 @@ fec::SparseBitMatrix& fec::SparseBitMatrix::operator = (const fec::BitMatrix& b)
 
 fec::SparseBitMatrix fec::SparseBitMatrix::operator() (const size_t rowRange[2], const size_t colRange[2]) const
 {
-  boost::container::vector<size_t> rowSizes;
+  std::vector<size_t> rowSizes;
   this->rowSizes(rowRange, colRange, rowSizes);
   
   SparseBitMatrix x(rowSizes, colRange[1]-colRange[0]);
@@ -590,7 +590,7 @@ fec::SparseBitMatrix fec::SparseBitMatrix::operator() (const size_t rowRange[2],
   return x;
 }
 
-void fec::SparseBitMatrix::colSizes(const size_t rowRange[2], const size_t colRange[2], boost::container::vector<size_t>& dst) const
+void fec::SparseBitMatrix::colSizes(const size_t rowRange[2], const size_t colRange[2], std::vector<size_t>& dst) const
 {
   dst.resize(colRange[1] - colRange[0]);
   std::fill(dst.begin(), dst.end(), 0);
@@ -605,7 +605,7 @@ void fec::SparseBitMatrix::colSizes(const size_t rowRange[2], const size_t colRa
   }
 }
 
-void fec::SparseBitMatrix::rowSizes(const size_t rowRange[2], const size_t colRange[2], boost::container::vector<size_t>& dst) const
+void fec::SparseBitMatrix::rowSizes(const size_t rowRange[2], const size_t colRange[2], std::vector<size_t>& dst) const
 {
   dst.resize(rowRange[1] - rowRange[0]);
   for (size_t i = 0; i < dst.size(); ++i) {
@@ -630,7 +630,7 @@ void fec::SparseBitMatrix::swapCols(size_t a, size_t b, const size_t rowRange[2]
 
 fec::SparseBitMatrix fec::SparseBitMatrix::transpose() const
 {
-  boost::container::vector<size_t> colSizes;
+  std::vector<size_t> colSizes;
   this->colSizes(colSizes);
   
   SparseBitMatrix x(colSizes, rows());
@@ -656,7 +656,7 @@ void fec::SparseBitMatrix::resize(size_t rows, size_t cols, size_t rowSizes)
   }
 }
 
-void fec::SparseBitMatrix::resize(const boost::container::vector<size_t>& rowSizes, size_t cols)
+void fec::SparseBitMatrix::resize(const std::vector<size_t>& rowSizes, size_t cols)
 {
   cols_ = cols;
   if (rowSizes.size() == 0) return;
@@ -812,7 +812,7 @@ fec::BitMatrix fec::BitMatrix::operator() (const size_t rowRange[2], const size_
   return x;
 }
 
-void fec::BitMatrix::colSizes(const size_t rowRange[2], const size_t colRange[2], boost::container::vector<size_t>& x) const
+void fec::BitMatrix::colSizes(const size_t rowRange[2], const size_t colRange[2], std::vector<size_t>& x) const
 {
   x.resize(colRange[1] - colRange[0], 0);
   for (auto row = begin()+rowRange[0]; row < begin()+rowRange[1]; ++row) {
@@ -824,7 +824,7 @@ void fec::BitMatrix::colSizes(const size_t rowRange[2], const size_t colRange[2]
   }
 }
 
-void fec::BitMatrix::rowSizes(const size_t rowRange[2], const size_t colRange[2], boost::container::vector<size_t>& dst) const
+void fec::BitMatrix::rowSizes(const size_t rowRange[2], const size_t colRange[2], std::vector<size_t>& dst) const
 {
   dst.resize(rowRange[1] - rowRange[0]);
   for (size_t i = rowRange[0]; i < rowRange[1]; ++i) {

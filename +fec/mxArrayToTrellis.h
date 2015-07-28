@@ -12,7 +12,7 @@
 
 #include <memory>
 #include <math.h>
-#include <boost/container/vector.hpp>
+#include <vector>
 #include <mex.h>
 
 #include "CodeStructure/TrellisStructure.h"
@@ -29,8 +29,8 @@ public:
     if (in == nullptr) {
       throw std::invalid_argument("Null mxArray");
     }
-    return TrellisStructure(mxArrayTo<boost::container::vector<size_t>>::f(mxGetField(in, 0, trellisProperties[0])),
-                            mxArrayTo<boost::container::vector<size_t>>::f(mxGetField(in, 0, trellisProperties[1])),
+    return TrellisStructure(mxArrayTo<std::vector<size_t>>::f(mxGetField(in, 0, trellisProperties[0])),
+                            mxArrayTo<std::vector<size_t>>::f(mxGetField(in, 0, trellisProperties[1])),
                             log2(mxArrayTo<size_t>::f(mxGetField(in, 0, trellisProperties[2]))),
                             log2(mxArrayTo<size_t>::f(mxGetField(in, 0, trellisProperties[3]))),
                             log2(mxArrayTo<size_t>::f(mxGetField(in, 0, trellisProperties[4]))));

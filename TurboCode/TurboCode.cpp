@@ -31,11 +31,11 @@ TurboCode::TurboCode(const TurboCodeStructure& codeStructure, int workGroupdSize
   }
 }
 
-void TurboCode::encodeBloc(boost::container::vector<uint8_t>::const_iterator messageIn, boost::container::vector<uint8_t>::iterator parityOut) const
+void TurboCode::encodeBloc(std::vector<uint8_t>::const_iterator messageIn, std::vector<uint8_t>::iterator parityOut) const
 {
   std::copy(messageIn, messageIn + codeStructure_.msgSize(), parityOut);
   parityOut += codeStructure_.msgSize();
-  boost::container::vector<uint8_t> messageInterl;
+  std::vector<uint8_t> messageInterl;
   for (size_t i = 0; i < codeStructure_.structureCount(); ++i) {
     messageInterl.resize(codeStructure_.structure(i).msgSize());
     codeStructure_.interleaver(i).interleaveBloc<uint8_t>(messageIn, messageInterl.begin());
@@ -44,21 +44,21 @@ void TurboCode::encodeBloc(boost::container::vector<uint8_t>::const_iterator mes
   }
 }
 
-void TurboCode::appDecodeNBloc(boost::container::vector<LlrType>::const_iterator parityIn, boost::container::vector<LlrType>::const_iterator extrinsicIn, boost::container::vector<LlrType>::iterator messageOut, boost::container::vector<LlrType>::iterator extrinsicOut, size_t n) const
+void TurboCode::appDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n) const
 {
   TurboCodeImpl worker(codeStructure_);
   worker.appDecodeNBloc(parityIn, extrinsicIn, messageOut, extrinsicOut, n);
 }
 
-void TurboCode::softOutDecodeNBloc(boost::container::vector<LlrType>::const_iterator parityIn, boost::container::vector<LlrType>::iterator messageOut, size_t n) const
+void TurboCode::softOutDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::iterator messageOut, size_t n) const
 {
-  boost::container::vector<LlrType> extrinsic(n * extrinsicSize(), 0);
+  std::vector<LlrType> extrinsic(n * extrinsicSize(), 0);
   appDecodeNBloc(parityIn, extrinsic.begin(), messageOut, extrinsic.begin(), n);
 }
 
-void TurboCode::decodeNBloc(boost::container::vector<LlrType>::const_iterator parityIn, boost::container::vector<uint8_t>::iterator messageOut, size_t n) const
+void TurboCode::decodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<uint8_t>::iterator messageOut, size_t n) const
 {
-  boost::container::vector<LlrType> messageAPosteriori(n * codeStructure_.msgSize());
+  std::vector<LlrType> messageAPosteriori(n * codeStructure_.msgSize());
   softOutDecodeNBloc(parityIn, messageAPosteriori.begin(), n);
 
   for (auto messageIt = messageAPosteriori.begin(); messageIt < messageAPosteriori.end(); ++messageIt, ++messageOut) {
