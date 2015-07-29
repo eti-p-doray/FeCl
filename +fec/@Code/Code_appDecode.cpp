@@ -42,6 +42,13 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
     throw std::invalid_argument("Wrong argout count in Code_appDecode");
   }
   
+  if (typeof(typename std::vector<uint8_t>::iterator) == typeof(typename std::vector<uint8_t,MexAllocator<uint8_t>>::iterator)) {
+    template <typename T> using Allocator = MexAllocator<T>;
+  }
+  else {
+    template <typename T> using Allocator = std::allocator<T>;
+  }
+  
   std::unique_ptr<fec::Code> code;
   try {
     code = mxArrayTo<std::unique_ptr<fec::Code>>::f(prhs[0]);
