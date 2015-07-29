@@ -183,12 +183,6 @@ public:
   }
 };
 
-template <class T, template <class> class V>
-mxArray* toMxArray(const V<T>& in) {
-  mxArray* out = mxCreateDoubleScalar(in);
-  return out;
-}
-
 template <class T, template <class, class> class V>
 class mxArrayTo<V<T, MexAllocator<T>>> {
 public:
@@ -204,6 +198,15 @@ public:
     return vec;
   }
 };
+
+template <class T, template <class> class A, template <class, class> class V>
+mxArray* toMxArray(const V<T, A<T>>& vec) {
+  auto all = vec.get_allocator();
+  mxArray* out = mxCreateNumericMatrix(vec.size(), 1, mexClassId<T>(), mxREAL);
+  std::copy(vec.begin(), vec.end(), static_cast<T*>(mxGetData(out)));
+  
+  return out;
+}
 
 template <class T, template <class, class> class V>
 mxArray* toMxArray(const V<T, MexAllocator<T>>& vec) {

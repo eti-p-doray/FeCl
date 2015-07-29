@@ -62,4 +62,17 @@ private:
   size_t size_ = 0;
 };    //    end of class Allocator
 
+template <typename T, class Enable = void>
+struct Allocator
+{
+  typedef std::allocator<T> type;
+};
+
+template <typename T>
+struct Allocator<T, typename std::enable_if<std::is_convertible<typename std::vector<T>::iterator,typename std::vector<T,MexAllocator<T>>::iterator>::value>::type>
+{
+  typedef MexAllocator<T> type;
+};
+
+
 #endif
