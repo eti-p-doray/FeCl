@@ -52,22 +52,17 @@ void decode_test(const std::shared_ptr<ErrorCorrectingCode>& code, const std::ve
   }
 }
 
-void decode_badParitySize_test(const std::shared_ptr<ErrorCorrectingCode>& code, const std::vector<uint8_t>& msg)
+void decode_badParitySize_test(const std::shared_ptr<ErrorCorrectingCode>& code)
 {
-  std::vector<uint8_t> parity;
-  code->encode(msg, parity);
-  
-  std::vector<LlrType> codeL(parity.size());
-  for (size_t i = 0; i < parity.size(); ++i) {
-    codeL[i] = parity[i]*2 - 1.0;
-  }
+  std::vector<LlrType> codeL(parity.size()+1);
   
   std::vector<uint8_t> decodedMsg;
-  code->decode(codeL, decodedMsg);
-  
-  for (size_t i = 0; i < code->msgSize(); i++) {
-    BOOST_REQUIRE(decodedMsg[i] == msg[i]);
+  try {
+    code->decode(codeL, decodedMsg);
+  } catch (std::exception& e) {
+    return;
   }
+  BOOST_ERROR("Wrong parity size exception not thrown");
 }
 
 void softOutDecode_test(const std::shared_ptr<ErrorCorrectingCode>& code, const std::vector<uint8_t>& msg)
@@ -115,33 +110,6 @@ void appDecode_test(const std::shared_ptr<ErrorCorrectingCode>& code, const std:
   }
 }
 
-void parityAppDecode_test(const std::shared_ptr<ErrorCorrectingCode>& code, const std::vector<uint8_t>& msg)
-{
-  std::vector<uint8_t> parity;
-  code->encode(msg, parity);
-  
-  std::vector<LlrType> codeL(parity.size());
-  for (size_t i = 0; i < parity.size(); ++i) {
-    codeL[i] = parity[i]*2 - 1.0;
-  }
-  
-  std::vector<LlrType> decodedMsg;
-  code->softOutDecode(codeL, decodedMsg);
-  
-  std::vector<LlrType> extrinsic(code->extrinsicParitySize() * msg.size() / code->msgSize(), 0);
-  std::vector<LlrType> decodedMsg1;
-  code->parityAppDecode(codeL, extrinsic, decodedMsg1, extrinsic);
-  
-  std::vector<LlrType> decodedMsg2;
-  code->parityAppDecode(codeL, extrinsic, decodedMsg2, extrinsic);
-  
-  for (size_t i = 0; i < code->msgSize(); i++) {
-    BOOST_REQUIRE((decodedMsg1[i] > 0) == msg[i]);
-    BOOST_REQUIRE((decodedMsg2[i] > 0) == msg[i]);
-    BOOST_REQUIRE(decodedMsg1[i] == decodedMsg[i]);
-  }
-}
-
 std::vector<uint8_t> randomBits(size_t n) {
   uint64_t seed = std::chrono::system_clock::now().time_since_epoch().count();
   std::independent_bits_engine<std::mt19937,1,uint8_t> bitGenerator((uint32_t(seed)));
@@ -156,18 +124,23 @@ test_suite*
 init_unit_test_suite( int argc, char* argv[] )
 {
   std::vector<std::shared_ptr<ErrorCorrectingCode>> codes;
-  codes.push_back( ErrorCorrectingCode::create(ConvolutionalCodeStructure(TrellisStructure({3}, {{04, 05}}), 8, ConvolutionalCodeStructure::Truncation,  ConvolutionalCodeStructure::MaxLogMap), 4) );
-  codes.push_back( ErrorCorrectingCode::create(LdpcCodeStructure(LdpcCodeStructure::gallagerConstruction(1024, 3, 5)), 4) );
+  codes.push_back( fec::Code::create(ConvolutionalCodeStructure(TrellisStructure({3}, {{04, 05}}), 8, ConvolutionalCodeStructure::Truncation,  ConvolutionalCodeStructure::MaxLogMap), 4) );
+  codes.push_back( fec::Code::create(ConvolutionalCodeStructure(TrellisStructure({3}, {{04, 05}}), 8, ConvolutionalCodeStructure::Truncation,  ConvolutionalCodeStructure::LogMap), 4) );
+  codes.push_back( fec::Code::create(LdpcCodeStructure(LdpcCodeStructure::gallagerConstruction(1024, 3, 5)), 4) );
   
   uint64_t seed = std::chrono::system_clock::now().time_since_epoch().count();
   std::srand ( unsigned (seed ) );
-  std::vector<size_t> randPerm(1024);
+  std::vector<size_t> randPerm1(1024);
+  std::vector<size_t> randPerm2(1024);
   for (size_t i = 0; i < randPerm.size(); i++) {
-    randPerm[i] = i;
+    randPerm1[i] = i;
+    randPerm2[i] = i;
   }
-  std::random_shuffle (randPerm.begin(), randPerm.end());
+  std::random_shuffle (randPerm2.begin(), randPerm2.end());
   
-  codes.push_back( ErrorCorrectingCode::create(TurboCodeStructure(TrellisStructure({3}, {{04, 05}}),TrellisStructure({3}, {{04, 05}}), randPerm, 5, ConvolutionalCodeStructure::ZeroTail,  ConvolutionalCodeStructure::MaxLogMap), 4 ));
+  auto trellis = TrellisStructure({3}, {{05}});
+  codes.push_back( fec::Code::create({trellis, trellis}, {randPerm1,randPerm2}, 5, fec::TurboCodeStructure::Parallel,  fec::ConvolutionalCodeStructure::MaxLogMap), 4 ));
+  codes.push_back( fec::Code::create({trellis, trellis}, {randPerm1,randPerm2}, 5, fec::TurboCodeStructure::Serial,  fec::ConvolutionalCodeStructure::MaxLogMap), 4 ));
   
   for (auto& code : codes) {
     framework::master_test_suite().
@@ -187,11 +160,6 @@ init_unit_test_suite( int argc, char* argv[] )
     add( BOOST_TEST_CASE( std::bind( &appDecode_test, code, randomBits(code->msgSize()*1) )));
     framework::master_test_suite().
     add( BOOST_TEST_CASE( std::bind( &appDecode_test, code, randomBits(code->msgSize()*5) )));
-    
-    framework::master_test_suite().
-    add( BOOST_TEST_CASE( std::bind( &parityAppDecode_test, code, randomBits(code->msgSize()*1) )));
-    framework::master_test_suite().
-    add( BOOST_TEST_CASE( std::bind( &parityAppDecode_test, code, randomBits(code->msgSize()*5) )));
   }
   return 0;
 }
