@@ -1,5 +1,5 @@
 function succes = test_softOutDecode(code)
-    msg = int8(randi([0 1],code{i}.msgSize,5));
+    msg = int8(randi([0 1],code.msgSize,5));
 
     parity = int8(code.encode(msg));
     llr = 2*parity-1;
