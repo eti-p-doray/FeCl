@@ -9,7 +9,7 @@ Convolutional<br/>
 Turbo (generalized to n codes)<br/>
 Ldpc
 
-A common interface is offered by every fec codes which make the API more flexible and easier to use.
+A common interface is offered by every fec codes which makes the API more flexible and easier to use.
 
 =================
 
