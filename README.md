@@ -22,6 +22,6 @@ Download and run the toolbox file found at <http://www.mathworks.com/matlabcentr
 You can build the source files for Matlab with mex. To do so, you need a Matlab compatible compiler. For release R2015a, see <http://www.mathworks.com/support/compilers/R2015a/index.html> <br/>
 1-Download the project<br/>
 2-Add the directory in your Matlab path<br/>
-3-Run 'fec.make' in the Matlab command prompt
+3-Run `fec.make` in the Matlab command prompt
 
 You can build the source file as a static library with Cmake.
