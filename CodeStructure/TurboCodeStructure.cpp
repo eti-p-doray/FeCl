@@ -37,8 +37,4 @@ TurboCodeStructure::TurboCodeStructure(const std::vector<TrellisStructure>& trel
     }
   }
   paritySize_ += msgSize();
-  
-  for (size_t i = 0; i < interleaver_.size(); ++i) {
-    interleaver_[i].srcSize() = msgSize();
-  }
 }

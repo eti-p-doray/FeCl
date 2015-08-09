@@ -44,40 +44,6 @@ private:
     }
     *first = sum;
   }
-  
-  static inline void checkMetricImpl(std::vector<LlrPdf>::iterator first, std::vector<LlrPdf>::iterator last, std::vector<LlrPdf>::iterator buffer)
-  {
-    LlrType sum = first->mean;
-    auto tmp = buffer + 1;
-    for (auto metric = first+1; metric < last-1; ++metric, ++tmp) {
-      //*tmp = *metric;
-      tmp->mean = sum;
-      //*metric = sum;
-      //sum = boxPlus(sum, *tmp);
-      sum = boxPlus(sum, metric->mean);
-    }
-    std::swap(tmp->mean, (last-1)->mean);
-    std::swap(sum, (last-1)->mean);
-    --tmp;
-    for (auto metric = last-2; metric > first; --metric, --tmp) {
-      //*metric = boxPlus(sum, *metric);
-      tmp->mean = boxPlus(sum, tmp->mean);
-      //sum = boxPlus(sum, *tmp);
-      sum = boxPlus(sum, metric->mean);
-    }
-    tmp->mean = sum;
-  }
-  
-  static inline void checkMetric(std::vector<LlrPdf>::iterator first, std::vector<LlrPdf>::iterator last, std::vector<LlrPdf>::iterator buffer)
-  {
-    LlrType weight = 0.0;
-    
-    checkMetricImpl(first, last, buffer);
-    for (size_t i = 0; i < (last-first); ++i) {
-      checkMetricImpl(first, last, buffer);
-      checkMetricImpl(first, last, buffer);
-    }
-  }
      
   static inline LlrType boxPlus(LlrType a, LlrType b) {
     if (std::signbit(a) ^ std::signbit(b)) {

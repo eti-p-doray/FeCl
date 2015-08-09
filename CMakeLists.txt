@@ -32,12 +32,17 @@ target_link_libraries(ecc PRIVATE ${Boost_LIBRARIES})
 target_include_directories(ecc PRIVATE ${Boost_INCLUDE_DIRS})
 target_include_directories(ecc PUBLIC ${CMAKE_SOURCE_DIR})
 
-enable_testing()
+find_package(Doxygen)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile
+${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
+add_custom_target(doc
+${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+COMMENT "Generating API documentation with Doxygen" VERBATIM
+)
 
+enable_testing()
 add_executable(test_ecc test/test_ecc.cpp)
 target_link_libraries(test_ecc ecc)
-
 add_test( test_ecc test_ecc)
 target_include_directories(test_ecc PRIVATE ${Boost_INCLUDE_DIRS})
-
-add_subdirectory(Matlab)

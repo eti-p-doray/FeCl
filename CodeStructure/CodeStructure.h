@@ -23,19 +23,14 @@ typedef double LlrType;
 const LlrType MAX_LLR = std::numeric_limits<LlrType>::infinity();
 const LlrType THRESHOLD_LLR = 10000.0;
 
-struct LlrPdf {
-  LlrType mean;
-  LlrType var;
-};
-
-/*******************************************************************************
+/**************************************************************************//**
  *  This class represents a general code structure
  *  It provides a usefull interface to store and acces the code information.
  ******************************************************************************/
 class CodeStructure {
   friend class boost::serialization::access;
 public:
-  enum Type {Convolutional, Turbo, Ldpc};
+  enum Type {Convolutional, Turbo, Ldpc}; /**< Implemented code structure types */
   
   CodeStructure() = default;
   CodeStructure(size_t messageSize, size_t paritySize);

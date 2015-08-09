@@ -119,7 +119,8 @@ function make
         mex(['CXXFLAGS=$CXXFLAGS ' cxxFlags], iPath{:},lPath{:}, '-largeArrayDims', '-outdir', trgDst, [trgPath trg{i}], objs{:});
     end
     
-
+    fec.test.all
+    
     cd(oldpath)
 end
     

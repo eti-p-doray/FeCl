@@ -4,7 +4,7 @@
  *  \since 2015-07-08
  *  \version Last update : 2015-07-08
  *
- *  Include of archives that might be used.
+ *  Include of archives that might be used for serialisation.
  ******************************************************************************/
 
 #ifndef ARCHIVE_H

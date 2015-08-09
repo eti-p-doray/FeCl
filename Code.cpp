@@ -2,7 +2,7 @@
  *  \file ErroCorrectingCode.h
  *  \author Etienne Pierre-Doray
  *  \since 2015-06-11
- *  \version Last update : 2015-06-11
+ *  \version Last update : 2015-08-07
  *
  *  Definition of MapCode class
  ******************************************************************************/
@@ -17,6 +17,12 @@ using namespace fec;
 
 BOOST_CLASS_EXPORT_IMPLEMENT(Code);
 
+/**
+ *  Code creator function.
+ *  Construct in a factory behavior a code object corresponding to the structure.
+ *  \param codeStructure Code object structure
+ *  \workGroupSize Number of thread used in encoding and decoding.
+ */
 std::unique_ptr<Code> Code::create(const CodeStructure& codeStructure, int workGroupdSize)
 {
   switch (codeStructure.type()) {

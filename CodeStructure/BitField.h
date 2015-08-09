@@ -18,7 +18,7 @@
 
 namespace fec {
 
-/*******************************************************************************
+/**************************************************************************//**
  *  This class emulates a reference to a single bit.
  ******************************************************************************/
 class BitReference {
@@ -38,10 +38,13 @@ private:
   uint8_t index_;
 };
 
-/*******************************************************************************
+/**
  *  This class represents a field 
  *  in which every bits can be accessed individualy.
- ******************************************************************************/
+ *  A Bitfield has a fixed size defined by its holder type 
+ *  and can easily be converted back and forth to this type.
+ *  \tparam T Data holder type
+ */
 template <typename T>
 class BitField {
   friend class boost::serialization::access;
@@ -84,8 +87,8 @@ public:
   void operator--(int) {value_--;}
   
   template <typename S = BlocType>
-  static uint8_t blocSize() {return sizeof(S)/sizeof(uint8_t) * 8;}
-  static uint8_t size() {return sizeof(T)/sizeof(uint8_t) * 8;}
+  static uint8_t blocSize() {return sizeof(S)/sizeof(uint8_t) * 8;} /**< Field size in bloc count */
+  static uint8_t size() {return sizeof(T)/sizeof(uint8_t) * 8;} /**< Field size in bits */
   
 private:
   template <typename Archive>

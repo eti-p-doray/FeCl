@@ -42,34 +42,44 @@ void TurboCodeImpl::serialDecodeBloc(std::vector<LlrType>::const_iterator parity
 {
   std::vector<LlrType> msg(codeStructure_.msgSize());
   for (size_t k = 0; k < codeStructure_.msgSize(); ++k) {
-    extrinsicOut[k] += extrinsicIn[k] + parityIn[k];
+    extrinsicOut[k] = extrinsicIn[k] + parityIn[k];
   }
   std::vector<LlrType> extrinsicInterl(codeStructure_.msgSize(), 0);
   for (size_t i = 0; i < codeStructure_.iterationCount() - 1; ++i) {
     auto parityIt = parityIn + codeStructure_.msgSize();
     for (size_t j = 0; j < codeStructure_.structureCount(); ++j) {
-      codeStructure_.interleaver(j).interleaveBloc<LlrType>(extrinsicOut, extrinsicInterl.begin());
+      for (size_t k = 0; k < codeStructure_.structure(j).msgSize(); ++k) {
+        extrinsicInterl[k] = extrinsicOut[codeStructure_.interleaver(j)[k]] + parityIn[codeStructure_.interleaver(j)[k]];
+      }
+      
+      //extrinsicInterl.resize(codeStructure_.structure(j).msgSize(), 0);
+      //codeStructure_.interleaver(j).interleaveBloc<LlrType>(extrinsicOut, extrinsicInterl.begin());
       code_[j]->appDecodeBloc(parityIt, extrinsicInterl.begin(), msg.begin(), extrinsicInterl.begin());
       codeStructure_.interleaver(j).deInterleaveBloc<LlrType>(extrinsicInterl.begin(), extrinsicOut);
-      std::fill(extrinsicInterl.begin(), extrinsicInterl.end(), 0);
+      //std::fill(extrinsicInterl.begin(), extrinsicInterl.end(), 0);
       
-      for (size_t k = 0; k < codeStructure_.structure(j).msgSize(); ++k) {
-        extrinsicOut[k] += parityIn[k];
-      }
+      //for (size_t k = 0; k < codeStructure_.structure(j).msgSize(); ++k) {
+      //  extrinsicOut[codeStructure_.interleaver(j)[k]] += parityIn[codeStructure_.interleaver(j)[k]];
+     // }
       parityIt += codeStructure_.structure(j).paritySize();
     }
   }
   auto parityIt = parityIn + codeStructure_.msgSize();
   std::copy(parityIn, parityIn + codeStructure_.msgSize(), messageOut);
   for (size_t i = 0; i < codeStructure_.structureCount(); ++i) {
-    codeStructure_.interleaver(i).interleaveBloc<LlrType>(extrinsicOut, extrinsicInterl.begin());
-    code_[i]->appDecodeBloc(parityIt, extrinsicInterl.begin(), msg.begin(), extrinsicInterl.begin());
-    codeStructure_.interleaver(i).deInterleaveBloc<LlrType>(extrinsicInterl.begin(), extrinsicOut);
-    std::fill(extrinsicInterl.begin(), extrinsicInterl.end(), 0);
+    for (size_t k = 0; k < codeStructure_.structure(i).msgSize(); ++k) {
+      extrinsicInterl[k] = extrinsicOut[codeStructure_.interleaver(i)[k]] + parityIn[codeStructure_.interleaver(i)[k]];
+    }
+    
+    //extrinsicInterl.resize(codeStructure_.structure(i).msgSize(), 0);
+    //codeStructure_.interleaver(i).interleaveBloc<LlrType>(extrinsicOut, extrinsicInterl.begin());
+    code_[i]->appDecodeBloc(parityIt, extrinsicOut, msg.begin(), extrinsicOut);
+    //codeStructure_.interleaver(i).deInterleaveBloc<LlrType>(extrinsicInterl.begin(), extrinsicOut);
+    //std::fill(extrinsicInterl.begin(), extrinsicInterl.end(), 0);
     
     for (size_t k = 0; k < codeStructure_.structure(i).msgSize(); ++k) {
-      messageOut[k] += extrinsicOut[k];
-      extrinsicOut[k] += parityIn[k];
+      messageOut[codeStructure_.interleaver(i)[k]] += extrinsicInterl[k];
+      extrinsicOut[codeStructure_.interleaver(i)[k]] = extrinsicInterl[k];
     }
     parityIt += codeStructure_.structure(i).paritySize();
   }
@@ -82,22 +92,23 @@ void TurboCodeImpl::parallelDecodeBloc(std::vector<LlrType>::const_iterator pari
   auto extrinsicInIt = extrinsicIn;
   for (size_t i = 0; i < codeStructure_.structureCount(); ++i) {
     for (size_t k = 0; k < codeStructure_.structure(i).msgSize(); ++k) {
-      extrinsicOutIt[k] = parityIn[k] + extrinsicInIt[k];
+      extrinsicOutIt[k] = parityIn[codeStructure_.interleaver(i)[k]] + extrinsicInIt[k];
     }
     extrinsicOutIt += codeStructure_.structure(i).msgSize();
     extrinsicInIt += codeStructure_.structure(i).msgSize();
   }
   
   std::vector<LlrType> parityBuffer(extrinsicSize());
-  std::vector<LlrType> extrinsicInterl(codeStructure_.msgSize() , 0);
+  //std::vector<LlrType> extrinsicInterl(codeStructure_.msgSize() , 0);
   for (size_t i = 0; i < codeStructure_.iterationCount(); ++i) {
     auto parityIt = parityIn + codeStructure_.msgSize();
     auto extrinsicOutIt = extrinsicOut;
     for (size_t j = 0; j < codeStructure_.structureCount(); ++j) {
-      codeStructure_.interleaver(j).interleaveBloc<LlrType>(extrinsicOutIt, extrinsicInterl.begin());
-      code_[j]->appDecodeBloc(parityIt, extrinsicInterl.begin(), msg.begin(), extrinsicInterl.begin());
-      codeStructure_.interleaver(j).deInterleaveBloc<LlrType>(extrinsicInterl.begin(), extrinsicOutIt);
-      std::fill(extrinsicInterl.begin(), extrinsicInterl.end(), 0);
+      //extrinsicInterl.resize(codeStructure_.structure(j).msgSize(), 0);
+      //codeStructure_.interleaver(j).interleaveBloc<LlrType>(extrinsicOutIt, extrinsicInterl.begin());
+      code_[j]->appDecodeBloc(parityIt, extrinsicOutIt, msg.begin(), extrinsicOutIt);
+      //codeStructure_.interleaver(j).deInterleaveBloc<LlrType>(extrinsicInterl.begin(), extrinsicOutIt);
+      //std::fill(extrinsicInterl.begin(), extrinsicInterl.end(), 0);
       extrinsicOutIt += codeStructure_.structure(j).msgSize();
       parityIt += codeStructure_.structure(j).paritySize();
     }
@@ -108,8 +119,8 @@ void TurboCodeImpl::parallelDecodeBloc(std::vector<LlrType>::const_iterator pari
     for (size_t j = 0; j < codeStructure_.structureCount(); ++j) {
       for (size_t k = 0; k < codeStructure_.structure(j).msgSize(); ++k) {
         parityTmp[k] = extrinsicOutIt[k];
-        extrinsicOutIt[k] = messageOut[k];
-        messageOut[k] += parityTmp[k];
+        extrinsicOutIt[k] = messageOut[codeStructure_.interleaver(j)[k]];
+        messageOut[codeStructure_.interleaver(j)[k]] += parityTmp[k];
       }
       extrinsicOutIt += codeStructure_.structure(j).msgSize();
       parityTmp += codeStructure_.structure(j).msgSize();
@@ -120,8 +131,8 @@ void TurboCodeImpl::parallelDecodeBloc(std::vector<LlrType>::const_iterator pari
       extrinsicOutIt -= codeStructure_.structure(j).msgSize();
       parityTmp -= codeStructure_.structure(j).msgSize();
       for (size_t k = 0; k < codeStructure_.structure(j).msgSize(); ++k) {
-        extrinsicOutIt[k] += messageOut[k];
-        messageOut[k] += parityTmp[k];
+        extrinsicOutIt[k] += messageOut[codeStructure_.interleaver(j)[k]];
+        messageOut[codeStructure_.interleaver(j)[k]] += parityTmp[k];
       }
     }
   }

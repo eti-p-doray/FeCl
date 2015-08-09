@@ -2,7 +2,7 @@
  *  \file Code.h
  *  \author Etienne Pierre-Doray
  *  \since 2015-06-11
- *  \version Last update : 2015-06-11
+ *  \version Last update : 2015-08-07
  *
  *  Declaration of Code class
  ******************************************************************************/
@@ -26,11 +26,10 @@
 
 namespace fec {
 
-/*******************************************************************************
- *  This class represents a map encode / decoder
- *  It offers methods encode and to decode data giving a posteriori informations
- *  using a trellis.
- ******************************************************************************/
+/**
+ *  This class represents a general encoder / decoder.
+ *  It offers methods to encode and to decode data given a code structure.
+ */
 class Code
 {
   friend class boost::serialization::access;
@@ -40,16 +39,28 @@ public:
   
   virtual const char * get_key() const = 0;
   
+  /**
+   *  Access size of the message in one bloc.
+   *  \return Message size
+   */
   virtual size_t msgSize() const = 0;
+  /**
+   *  Access size of one parity bloc.
+   *  \return Parity size
+   */
   virtual size_t paritySize() const = 0;
+  /**
+   *  Access size of extrinsic information in one bloc.
+   *  \return Extrinsic size
+   */
   virtual size_t extrinsicSize() const = 0;
   virtual const CodeStructure& structure() const = 0;
   
-  template <typename T> void encode(const std::vector<uint8_t,T>& message, std::vector<uint8_t,T>& parity) const;
+  template <template <typename> class A> void encode(const std::vector<uint8_t,A<uint8_t>>& message, std::vector<uint8_t,A<uint8_t>>& parity) const;
   
-  template <typename T1,typename T2> void decode(const std::vector<LlrType,T1>& parityIn, std::vector<uint8_t,T2>& msgOut) const;
-  template <typename T> void softOutDecode(const std::vector<LlrType,T>& parityIn, std::vector<LlrType,T>& msgOut) const;
-  template <typename T> void appDecode(const std::vector<LlrType,T>& parityIn, const std::vector<LlrType,T>& extrinsicIn, std::vector<LlrType,T>& msgOut, std::vector<LlrType,T>& extrinsicOut) const;
+  template <template <typename> class A> void decode(const std::vector<LlrType,A<LlrType>>& parityIn, std::vector<uint8_t,A<uint8_t>>& msgOut) const;
+  template <template <typename> class A> void softOutDecode(const std::vector<LlrType,A<LlrType>>& parityIn, std::vector<LlrType,A<LlrType>>& msgOut) const;
+  template <template <typename> class A> void appDecode(const std::vector<LlrType,A<LlrType>>& parityIn, const std::vector<LlrType,A<LlrType>>& extrinsicIn, std::vector<LlrType,A<LlrType>>& msgOut, std::vector<LlrType,A<LlrType>>& extrinsicOut) const;
 
 protected:
   Code(int workGroupdSize = 4);
@@ -79,13 +90,15 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(fec::Code);
 BOOST_CLASS_TYPE_INFO(fec::Code,extended_type_info_no_rtti<fec::Code>);
 BOOST_CLASS_EXPORT_KEY(fec::Code);
 
-/*******************************************************************************
+/**
  *  Encode several blocs of information bits.
  *  \param  message  Vector containing information bits
  *  \param  parity[out] Vector containing parity bits
- ******************************************************************************/
-template <typename T>
-void fec::Code::encode(const std::vector<uint8_t,T>& message, std::vector<uint8_t,T>& parity) const
+ *  \tparam A Container allocator. The reason for different allocator is to allow 
+ *    the matlab API to use a custom mex allocator
+ */
+template <template <typename> class A>
+void fec::Code::encode(const std::vector<uint8_t,A<uint8_t>>& message, std::vector<uint8_t,A<uint8_t>>& parity) const
 {
   uint64_t blocCount = message.size() / (msgSize());
   if (message.size() != blocCount * msgSize()) {
@@ -118,15 +131,17 @@ void fec::Code::encode(const std::vector<uint8_t,T>& message, std::vector<uint8_
   }
 }
 
-/*******************************************************************************
+/**
  *  Decodes several blocs of information bits.
  *  \param  parityIn  Vector containing parity L-values
  *  \param  extrinsicIn  Vector containing extrinsic L-values
  *  \param  messageOut[out] Vector containing a posteriori information L-values
  *  \param  extrinsicOut[out] Vector containing a extrinsic L-values
- ******************************************************************************/
-template <typename T>
-void fec::Code::appDecode(const std::vector<LlrType,T>& parityIn, const std::vector<LlrType,T>& extrinsicIn, std::vector<LlrType,T>& messageOut, std::vector<LlrType,T>& extrinsicOut) const
+ *  \tparam A Container allocator. The reason for different allocator is to allow
+ *    the matlab API to use a custom mex allocator
+ */
+template <template <typename> class A>
+void fec::Code::appDecode(const std::vector<LlrType,A<LlrType>>& parityIn, const std::vector<LlrType,A<LlrType>>& extrinsicIn, std::vector<LlrType,A<LlrType>>& messageOut, std::vector<LlrType,A<LlrType>>& extrinsicOut) const
 {
   size_t blocCount = parityIn.size() / paritySize();
   if (parityIn.size() != blocCount * paritySize()) {
@@ -168,13 +183,15 @@ void fec::Code::appDecode(const std::vector<LlrType,T>& parityIn, const std::vec
   }
 }
 
-/*******************************************************************************
+/**
  *  Decodes several blocs of information bits.
  *  \param  parityIn  Vector containing parity L-values
  *  \param  messageOut[out] Vector containing a posteriori information L-values
- ******************************************************************************/
-template <typename T>
-void fec::Code::softOutDecode(const std::vector<LlrType,T>& parityIn, std::vector<LlrType,T>& messageOut) const
+ *  \tparam A Container allocator. The reason for different allocator is to allow
+ *    the matlab API to use a custom mex allocator
+ */
+template <template <typename> class A>
+void fec::Code::softOutDecode(const std::vector<LlrType,A<LlrType>>& parityIn, std::vector<LlrType,A<LlrType>>& messageOut) const
 {
   size_t blocCount = parityIn.size() / paritySize();
   if (parityIn.size() != blocCount * paritySize()) {
@@ -209,13 +226,17 @@ void fec::Code::softOutDecode(const std::vector<LlrType,T>& parityIn, std::vecto
   }
 }
 
-/*******************************************************************************
+/**
  *  Decodes several blocs of information bits.
  *  \param  parityIn  Vector containing parity L-values
+ *    Given a signal y and a parity bit x, we define the correspondig L-value as
+ *    L = ln[ p(x = 1 | y) / p(x = 0 | y) ] = ln[ p(y | x = 1) / p(y | x = 0) ]
  *  \param  messageOut[out] Vector containing message bits
- ******************************************************************************/
-template <typename T1, typename T2>
-void fec::Code::decode(const std::vector<LlrType,T1>& parityIn, std::vector<uint8_t,T2>& messageOut) const
+ *  \tparam A Container allocator. The reason for different allocator is to allow
+ *    the matlab API to use a custom mex allocator
+ */
+template <template <typename> class A>
+void fec::Code::decode(const std::vector<LlrType,A<LlrType>>& parityIn, std::vector<uint8_t,A<uint8_t>>& messageOut) const
 {
   size_t blocCount = parityIn.size() / paritySize();
   if (parityIn.size() != blocCount * paritySize()) {

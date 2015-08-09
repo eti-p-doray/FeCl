@@ -22,16 +22,17 @@ namespace fec {
 class BitMatrix;
 class SparseBitMatrix;
 
-/*******************************************************************************
+/**
  *  This class represents a sparse bit matrix.
  *  Only non-zero elements are stored.
- ******************************************************************************/
+ *  The class defines basic methods to manipulate the matrix such as row/column swapping.
+ */
 class SparseBitMatrix
 {
   friend class ::boost::serialization::access;
   
-  /*******************************************************************************
-   *  This struct contains index to the bgin and end of a row.
+  /**************************************************************************//**
+   *  This struct contains index to the begining and end of a row.
    ******************************************************************************/
   struct RowIdx {
     size_t begin;
@@ -48,7 +49,7 @@ public:
   class Constrow;
   class RowRef;
   
-  /*******************************************************************************
+  /**************************************************************************//**
    *  This class is a const reference to a row with an offset.
    ******************************************************************************/
   class ConstOffsetRowRef
@@ -69,7 +70,7 @@ public:
     size_t offset_;
   };
   
-  /*******************************************************************************
+  /**************************************************************************//**
    *  This class is a const reference to a row.
    ******************************************************************************/
   class ConstRowRef
@@ -102,7 +103,7 @@ public:
     ::std::vector<size_t>::const_iterator end_;
   };
   
-  /*******************************************************************************
+  /**************************************************************************//**
    *  This class is a reference to a row.
    ******************************************************************************/
   class RowRef
@@ -162,7 +163,7 @@ public:
     RowIdx& rowIdx_;
   };
   
-  /*******************************************************************************
+  /**************************************************************************//**
    *  This class emulates a ptr to a row.
    *  It contains a reference to the row.
    ******************************************************************************/
@@ -187,7 +188,7 @@ public:
     RowRef row_;
   };
   
-  /*******************************************************************************
+  /**************************************************************************//**
    *  This is a random access input iterator of a sparse matrix.
    *  It iterates over the matrix rows.
    ******************************************************************************/
@@ -224,7 +225,7 @@ public:
     ::std::vector<size_t>::const_iterator begin_;
     ::std::vector<RowIdx>::const_iterator rowIdx_;
   };
-  /*******************************************************************************
+  /**************************************************************************//**
    *  This is a random access iterator of a sparse matrix.
    *  It iterates over the matrix rows.
    ******************************************************************************/
@@ -337,7 +338,7 @@ namespace std {
 
 namespace fec {
 
-/*******************************************************************************
+/**************************************************************************//**
  *  This class represents a full bit matrix.
  *  Every bit is stored in a compact BitField.
  ******************************************************************************/
@@ -345,7 +346,7 @@ class BitMatrix
 {
   friend class boost::serialization::access;
 public:
-  /*******************************************************************************
+  /**************************************************************************//**
    *  This class is a full bit row.
    ******************************************************************************/
   class Row
@@ -473,7 +474,12 @@ private:
 }
 
 
-
+/**
+ *  Access part of a row.
+ *  This function returns a reference to a part of the bit row.
+ *  \param  colRange  Range of the accessed bloc
+ *  \return Reference to the bits in the bloc
+ */
 fec::SparseBitMatrix::ConstOffsetRowRef fec::SparseBitMatrix::RowRef::operator() (const size_t colRange[2]) const
 {
   auto first = std::lower_bound(begin(), end(), colRange[0]);
@@ -481,6 +487,12 @@ fec::SparseBitMatrix::ConstOffsetRowRef fec::SparseBitMatrix::RowRef::operator()
   return ConstOffsetRowRef(first, last, colRange[0]);
 }
 
+/**
+ *  Access part of a row.
+ *  This method returns a reference to a part of the bit row.
+ *  \param  colRange  Range of the accessed bloc
+ *  \return Reference to the bits in the bloc
+ */
 fec::SparseBitMatrix::ConstOffsetRowRef fec::SparseBitMatrix::ConstRowRef::operator() (const size_t colRange[2]) const
 {
   auto first = std::lower_bound(begin(), end(), colRange[0]);
@@ -488,6 +500,11 @@ fec::SparseBitMatrix::ConstOffsetRowRef fec::SparseBitMatrix::ConstRowRef::opera
   return ConstOffsetRowRef(first, last, colRange[0]);
 }
 
+/**
+ *  Swaps two bits in a row.
+ *  \param  a Index of the first bit
+ *  \param  b Index of the second bit
+ */
 void fec::SparseBitMatrix::RowRef::swap(size_t a, size_t b)
 {
   if (a > b) {
@@ -510,6 +527,12 @@ void fec::SparseBitMatrix::RowRef::swap(size_t a, size_t b)
   }
 }
 
+/**
+ *  Move one bits from a position the another one.
+ *  All the bits in between are shifted by one to fill the old position.
+ *  \param  a Index of source
+ *  \param  b Index of destination
+ */
 void fec::SparseBitMatrix::RowRef::move(size_t a, size_t b)
 {
   if (empty()) {
@@ -547,6 +570,11 @@ void fec::SparseBitMatrix::RowRef::move(size_t a, size_t b)
   }
 }
 
+/**
+ *  Assignment operator.
+ *  The method reorders data (if needed) to optimize access performance
+ *  \param  b Bit matrix being copied
+ */
 fec::SparseBitMatrix& fec::SparseBitMatrix::operator = (const fec::SparseBitMatrix& b)
 {
   std::vector<size_t> rowSizes;
@@ -560,6 +588,11 @@ fec::SparseBitMatrix& fec::SparseBitMatrix::operator = (const fec::SparseBitMatr
   return *this;
 }
 
+/**
+ *  Assignment operator.
+ *  The method reorders data (if needed) to optimize access performance
+ *  \param  b Bit matrix being copied
+ */
 fec::SparseBitMatrix& fec::SparseBitMatrix::operator = (const fec::BitMatrix& b)
 {
   std::vector<size_t> rowSizes;

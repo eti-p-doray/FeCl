@@ -27,12 +27,24 @@ classdef Code < handle
     
     methods
         function size = get.msgSize(this)
+        % Access size of the message in one bloc.
+        %
+        % Outputs
+        %   size - Message size
             size = fec.bin.Code_get_msgSize(this);
         end
         function size = get.paritySize(this)
+        % Access size of one parity bloc.
+        %
+        % Outputs
+        %   size - Parity size
             size = fec.bin.Code_get_paritySize(this);
         end
         function size = get.extrinsicSize(this)
+        % Access size of extrinsic information in one bloc.
+        %
+        % Outputs
+        %   size - Extrinsic size
             size = fec.bin.Code_get_extrinsicSize(this);
         end
         

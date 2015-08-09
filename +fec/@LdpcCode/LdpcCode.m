@@ -20,7 +20,8 @@ classdef LdpcCode < fec.Code
         %
         % Inputs
         %   H - Parity check matrix given in sparse of full form.
-        %   [iterationCount] - Maximum number of iterations. default = 50
+        %   [iterationCount] - Maximum number of iterations. If a consistent msg is found before the maximum number of
+        %     iteration, the decoder will stop and the number of iteration is not reached. default = 50
         %   [decoderType] - decoder algorithm type. MinSumBp | TrueBp default = MinSumBp
         %   [workGroupSize] - Number of thread used. default = 4
         %

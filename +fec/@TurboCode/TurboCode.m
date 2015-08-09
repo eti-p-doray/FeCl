@@ -22,7 +22,8 @@ classdef TurboCode < fec.Code
         %   trellis2 - Trellis structure used by the second code in the matlab communication system toolox form
         %   interleaver - Interleaver used by the second code.
         %   [iterationCount] - Number of iterations. default = 5
-        %   [trellisEndType] - trellis termination type. ZeroTail | Truncation default = Truncation
+        %   [structureType] - Decoder algorithm type. This defines the scheduling of extrinsic communication between code
+        %       constituents. Serial | Parallel default = Serial
         %   [mapDecoderType] - decoder algorithm type. LogMap | MaxLogMap default = MaxLogMap
         %   [workGroupSize] - Number of thread used in decodage. default = 4
         %
