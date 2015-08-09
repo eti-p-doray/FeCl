@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.toolbox" plugin-version="1.0">
-  <configuration build-checksum="3009792707" file="/Users/Etienne/Documents/INRS/ForwardErrorCorrection/+fec/ForwardErrorCorrection.prj" location="/Users/Etienne/Documents/INRS/ForwardErrorCorrection/+fec" name="ForwardErrorCorrection" target="target.toolbox" target-name="Package Toolbox">
+  <configuration build-checksum="3905768657" file="/Users/Etienne/Documents/INRS/ForwardErrorCorrection/+fec/ForwardErrorCorrection.prj" location="/Users/Etienne/Documents/INRS/ForwardErrorCorrection/+fec" name="ForwardErrorCorrection" target="target.toolbox" target-name="Package Toolbox">
     <param.appname>ForwardErrorCorrection</param.appname>
     <param.authnamewatermark>Etienne Pierre-Doray</param.authnamewatermark>
     <param.email>etipdoray@gmail.com</param.email>
@@ -14,7 +14,11 @@ Turbo (generalized to n codes)
 Ldpc
 
 A common interface is offered by every fec codes which makes the API more flexible and easier to use.
-The implementation is optimized to process large amount of data. It profits from data alignement and parralelism.</param.description>
+The implementation is optimized to process large amount of data. It profits from data alignement and parallelism.
+Currently, the toolbox is built for the following architectures:
+win64
+maci64
+For more information and source code, see the github project: https://github.com/eti-p-doray/ForwardErrorCorrection</param.description>
     <param.screenshot />
     <param.version>1.0</param.version>
     <param.output>${PROJECT_ROOT}/ForwardErrorCorrection.mltbx</param.output>
@@ -52,9 +56,13 @@ The implementation is optimized to process large amount of data. It profits from
 % **/*.bak
 %
 
+**/*~
 **/*.o
 **/*.obj
-*.mltbx
+**/*.h
+**/*.cpp
+**/*.mltbx
+**/*.prj
 **/.DS_Store
 **/.git
 **/.gitignore
@@ -66,8 +74,6 @@ LdpcCode
 TurboCode
 test
 html
-**/*.h
-**/*.cpp
 Doxyfile</param.exclude.filters>
     <param.examples>&lt;?xml version="1.0" encoding="utf-8"?&gt;
 &lt;examples/&gt;</param.examples>

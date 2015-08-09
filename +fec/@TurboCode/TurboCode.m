@@ -14,8 +14,11 @@ classdef TurboCode < fec.Code
 
     methods
         function this = TurboCode(trellis, interleaver, iterationCount, structureType, mapDecoderType, workGroupSize)
-        % ConvolutionalCode constructore
+        % TurboCode constructor
         %   Configures the object internally and allocate cpp ressources
+        %
+        % For simplicity, the turbo code parity bits are generated following this structure:
+        %   msg | constituent1 | constituent2 | etc.
         %
         % Inputs
         %   trellis1 - Trellis structure used by the first code in the matlab communication system toolox form
