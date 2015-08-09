@@ -10,7 +10,7 @@ Turbo (generalized to n codes)<br/>
 Ldpc
 
 A common interface is offered by every fec codes which makes the API more flexible and easier to use.
-The implementation is optimized to process large amount of data. It profits from data alignement and parralelism.
+The implementation is optimized to process large amount of data. It profits from data alignement and parallelism.
 
 =================
 
