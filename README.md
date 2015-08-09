@@ -19,7 +19,7 @@ Instructions:
 To install the Matlab API <br/>
 Download and run the toolbox file found at <http://www.mathworks.com/matlabcentral/fileexchange/52420-forwarderrorcorrection>
 
-You can build the source files for Matlab with mex. To do so, you need a Matlab compatible compiler. For release R2015a, see <http://www.mathworks.com/support/compilers/R2015a/index.html> <br/>
+You can build the source files for Matlab with mex. To do so, you need a Matlab compatible compiler with c++11 support. For release R2015a, see <http://www.mathworks.com/support/compilers/R2015a/index.html> <br/>
 1-Download the project<br/>
 2-Add the directory in your Matlab path<br/>
 3-Run `fec.make` in the Matlab command prompt
