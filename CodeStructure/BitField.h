@@ -18,9 +18,9 @@
 
 namespace fec {
 
-/**************************************************************************//**
+/**
  *  This class emulates a reference to a single bit.
- ******************************************************************************/
+ */
 class BitReference {
 public:
   BitReference(uint8_t* bloc, uint8_t index) {bloc_ = bloc; index_ = index;}
@@ -87,7 +87,11 @@ public:
   void operator--(int) {value_--;}
   
   template <typename S = BlocType>
-  static uint8_t blocSize() {return sizeof(S)/sizeof(uint8_t) * 8;} /**< Field size in bloc count */
+  /**
+   *  Field size in bloc type
+   *  \tparam S Bloc type
+   */
+  static uint8_t blocSize() {return sizeof(S)/sizeof(uint8_t) * 8;}
   static uint8_t size() {return sizeof(T)/sizeof(uint8_t) * 8;} /**< Field size in bits */
   
 private:

@@ -26,13 +26,21 @@ namespace fec {
 class ConvolutionalCodeStructure : public CodeStructure {
   friend class ::boost::serialization::access;
 public:
+  /**
+   *  Trellis termination types.
+   *  This specifies the type of termination at the end of each bloc.
+   */
   enum TrellisEndType {
-    ZeroTail,
-    Truncation
+    ZeroTail, /**< The state is brought to zero by implicitly adding new msg bit */
+    Truncation /**< The state is forced to zero by truncating the trellis */
   };
+  /**
+   *  Decoder type
+   *  This specifies the decode algorithm used in app decoding.
+   */
   enum DecoderType {
-    LogMap,
-    MaxLogMap,
+    LogMap, /**< No approximation is used and the L-values are computed in logarithmic domain. */
+    MaxLogMap,  /**< The maxlog approximation is used */
   };
   
   ConvolutionalCodeStructure() = default;
@@ -41,12 +49,41 @@ public:
   
   virtual CodeStructure::Type type() const {return CodeStructure::Convolutional;}
   
+  /** 
+   *  Access the number of branches in one code bloc.
+   *  \return Bloc size
+   */
   inline size_t blocSize() const {return blocSize_;}
+  /** 
+   *  Access the size of added msg bit for the trellis termination.
+   *  This is zero in the cas of trunction.
+   *  \return Tail size
+   */
   inline size_t tailSize() const {return tailSize_;}
+  /** 
+   *  Access the type of the trellis termination.
+   *  \return Trellis end type
+   */
   inline TrellisEndType endType() const {return trellisEndType_;}
+  /** 
+   *  Access the algorithm used for app decoding.
+   *  \return Decoder type
+   */
   inline DecoderType decoderType() const {return decoderType_;}
+  /** 
+   *  Access the trellis structure object used by the code.
+   *  \return Trellis structure
+   */
   inline const TrellisStructure& trellis() const {return trellis_;}
   
+  /** 
+   *  Computes the probability (L-value) of a sequence of input L-values 
+   *  related to a sequence of bits.
+   *  The answer is defined as the correlations between the two inputs.
+   *  \param  a Sequence of bits as a BitField
+   *  \param  b Random access input iterator associated with the sequence of L-values
+   *  \return Correlation between the two inputs
+   */
   static inline LlrType correlationProbability(const BitField<size_t>& a, std::vector<LlrType>::const_iterator b, size_t size) {
     LlrType x = 0;
     for (size_t i = 0; i < size; ++i) {
