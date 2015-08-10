@@ -17,7 +17,7 @@ The implementation is optimized to process large amount of data. It profits from
 Instructions:
 
 To install the Matlab API <br/>
-Download and run the toolbox file found at <http://www.mathworks.com/matlabcentral/fileexchange/52420-forwarderrorcorrection>
+Download and run the toolbox file <https://github.com/eti-p-doray/ForwardErrorCorrection/blob/master/+fec/ForwardErrorCorrection.mltbx?raw=true>
 
 You can build the source files for Matlab with mex. To do so, you need a Matlab compatible compiler with c++11 support. For release R2015a, see <http://www.mathworks.com/support/compilers/R2015a/index.html> <br/>
 1-Download the project<br/>
