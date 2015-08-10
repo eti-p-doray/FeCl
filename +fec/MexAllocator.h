@@ -69,7 +69,7 @@ struct Allocator
 };
 
 template <typename T>
-struct Allocator<T, typename std::enable_if<std::is_convertible<typename std::vector<T>::iterator,typename std::vector<T,MexAllocator<T>>::iterator>::value>::type>
+struct Allocator<T, typename std::enable_if<std::is_convertible<typename std::vector<T,MexAllocator<T>>::iterator, typename std::vector<T>::iterator>::value>::type>
 {
   typedef MexAllocator<T> type;
 };
