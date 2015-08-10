@@ -1,6 +1,0 @@
-<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classfec_1_1_code.html" title="This class represents a general encoder / decoder It offers methods to encode and to decode data give..." alt="" coords="5,56,59,83"/>
-<area shape="rect" id="node2" href="$classfec_1_1_convolutional_code.html" title="ConvolutionalCode" alt="" coords="107,5,242,32"/>
-<area shape="rect" id="node3" href="$classfec_1_1_ldpc_code.html" title="LdpcCode" alt="" coords="133,56,216,83"/>
-<area shape="rect" id="node4" href="$classfec_1_1_turbo_code.html" title="TurboCode" alt="" coords="130,107,219,133"/>
-</map>

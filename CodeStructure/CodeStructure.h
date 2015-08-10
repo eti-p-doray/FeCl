@@ -23,22 +23,46 @@ typedef double LlrType;
 const LlrType MAX_LLR = std::numeric_limits<LlrType>::infinity();
 const LlrType THRESHOLD_LLR = 10000.0;
 
-/**************************************************************************//**
+/**
  *  This class represents a general code structure
  *  It provides a usefull interface to store and acces the code information.
- ******************************************************************************/
+ */
 class CodeStructure {
   friend class boost::serialization::access;
 public:
-  enum Type {Convolutional, Turbo, Ldpc}; /**< Implemented code structure types */
+  /**
+   *  This enum lists the implemented code structures.
+   */
+  enum Type {
+    Convolutional, /**< Convolutional code following a trellis structure */
+    Turbo,  /**< Parallel concatenated convolutional codes */
+    Ldpc  /**< Low-density parity check code */
+  };
   
   CodeStructure() = default;
+  /**
+   *  Code stucture constructor.
+   *  \param  messageSize Size of the msg in each code bloc
+   *  \param  paritySize Size of the parity code in each code bloc
+   */
   CodeStructure(size_t messageSize, size_t paritySize);
   virtual ~CodeStructure() = default;
   
+  /**
+   *  Access the code structure type as an enumerated type.
+   *  \return Code structure type
+   */
   virtual Type type() const = 0;
   
+  /**
+   *  Access the size of the msg in each code bloc.
+   *  \return Message size
+   */
   inline size_t msgSize() const {return messageSize_;}
+  /**
+   *  Access the size of the parity bloc in each code bloc.
+   *  \return Parity size
+   */
   inline size_t paritySize() const {return paritySize_;}
   
 protected:
@@ -49,8 +73,8 @@ protected:
     ar & BOOST_SERIALIZATION_NVP(paritySize_);
   }
   
-  size_t messageSize_;
-  size_t paritySize_;
+  size_t messageSize_;/**< Size of the parity bloc in each code bloc. */
+  size_t paritySize_;/**< Size of the parity bloc in each code bloc. */
 };
   
 }

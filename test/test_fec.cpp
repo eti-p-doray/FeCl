@@ -15,13 +15,13 @@
 #include <boost/test/included/unit_test.hpp>
 using namespace boost::unit_test;
 
-#include "ErrorCorrectingCode.h"
+#include "Code.h"
 
 #include "ConvolutionalCode/ConvolutionalCode.h"
 #include "TurboCode/TurboCode.h"
 #include "LdpcCode/LdpcCode.h"
 
-void encode_badMsgSize_test(const std::shared_ptr<ErrorCorrectingCode>& code)
+void encode_badMsgSize_test(const std::shared_ptr<fec::Code>& code)
 {
   std::vector<uint8_t> msg(code->msgSize()+1);
   
@@ -34,12 +34,12 @@ void encode_badMsgSize_test(const std::shared_ptr<ErrorCorrectingCode>& code)
   BOOST_ERROR("Wrong msg size exception not thrown");
 }
 
-void decode_test(const std::shared_ptr<ErrorCorrectingCode>& code, const std::vector<uint8_t>& msg)
+void decode_test(const std::shared_ptr<fec::Code>& code, const std::vector<uint8_t>& msg)
 {
   std::vector<uint8_t> parity;
   code->encode(msg, parity);
   
-  std::vector<LlrType> codeL(parity.size());
+  std::vector<fec::LlrType> codeL(parity.size());
   for (size_t i = 0; i < parity.size(); ++i) {
     codeL[i] = parity[i]*2 - 1.0;
   }
@@ -52,9 +52,9 @@ void decode_test(const std::shared_ptr<ErrorCorrectingCode>& code, const std::ve
   }
 }
 
-void decode_badParitySize_test(const std::shared_ptr<ErrorCorrectingCode>& code)
+/*void decode_badParitySize_test(const std::shared_ptr<fec::Code>& code)
 {
-  std::vector<LlrType> codeL(parity.size()+1);
+  std::vector<fec::LlrType> codeL(parity.size()+1);
   
   std::vector<uint8_t> decodedMsg;
   try {
@@ -63,19 +63,19 @@ void decode_badParitySize_test(const std::shared_ptr<ErrorCorrectingCode>& code)
     return;
   }
   BOOST_ERROR("Wrong parity size exception not thrown");
-}
+}*/
 
-void softOutDecode_test(const std::shared_ptr<ErrorCorrectingCode>& code, const std::vector<uint8_t>& msg)
+void softOutDecode_test(const std::shared_ptr<fec::Code>& code, const std::vector<uint8_t>& msg)
 {
   std::vector<uint8_t> parity;
   code->encode(msg, parity);
   
-  std::vector<LlrType> codeL(parity.size());
+  std::vector<fec::LlrType> codeL(parity.size());
   for (size_t i = 0; i < parity.size(); ++i) {
     codeL[i] = parity[i]*2 - 1.0;
   }
   
-  std::vector<LlrType> decodedMsg;
+  std::vector<fec::LlrType> decodedMsg;
   code->softOutDecode(codeL, decodedMsg);
   
   for (size_t i = 0; i < code->msgSize(); i++) {
@@ -83,24 +83,24 @@ void softOutDecode_test(const std::shared_ptr<ErrorCorrectingCode>& code, const 
   }
 }
 
-void appDecode_test(const std::shared_ptr<ErrorCorrectingCode>& code, const std::vector<uint8_t>& msg)
+void appDecode_test(const std::shared_ptr<fec::Code>& code, const std::vector<uint8_t>& msg)
 {
   std::vector<uint8_t> parity;
   code->encode(msg, parity);
   
-  std::vector<LlrType> codeL(parity.size());
+  std::vector<fec::LlrType> codeL(parity.size());
   for (size_t i = 0; i < parity.size(); ++i) {
     codeL[i] = parity[i]*2 - 1.0;
   }
   
-  std::vector<LlrType> decodedMsg;
+  std::vector<fec::LlrType> decodedMsg;
   code->softOutDecode(codeL, decodedMsg);
   
-  std::vector<LlrType> extrinsic(code->extrinsicMsgSize() * msg.size() / code->msgSize(), 0);
-  std::vector<LlrType> decodedMsg1;
+  std::vector<fec::LlrType> extrinsic(code->extrinsicSize() * msg.size() / code->msgSize(), 0);
+  std::vector<fec::LlrType> decodedMsg1;
   code->appDecode(codeL, extrinsic, decodedMsg1, extrinsic);
   
-  std::vector<LlrType> decodedMsg2;
+  std::vector<fec::LlrType> decodedMsg2;
   code->appDecode(codeL, extrinsic, decodedMsg2, extrinsic);
   
   for (size_t i = 0; i < code->msgSize(); i++) {
@@ -123,24 +123,24 @@ std::vector<uint8_t> randomBits(size_t n) {
 test_suite*
 init_unit_test_suite( int argc, char* argv[] )
 {
-  std::vector<std::shared_ptr<ErrorCorrectingCode>> codes;
-  codes.push_back( fec::Code::create(ConvolutionalCodeStructure(TrellisStructure({3}, {{04, 05}}), 8, ConvolutionalCodeStructure::Truncation,  ConvolutionalCodeStructure::MaxLogMap), 4) );
-  codes.push_back( fec::Code::create(ConvolutionalCodeStructure(TrellisStructure({3}, {{04, 05}}), 8, ConvolutionalCodeStructure::Truncation,  ConvolutionalCodeStructure::LogMap), 4) );
-  codes.push_back( fec::Code::create(LdpcCodeStructure(LdpcCodeStructure::gallagerConstruction(1024, 3, 5)), 4) );
+  std::vector<std::shared_ptr<fec::Code>> codes;
+  codes.push_back( fec::Code::create(fec::ConvolutionalCodeStructure(fec::TrellisStructure({3}, {{04, 05}}), 8, fec::ConvolutionalCodeStructure::Truncation,  fec::ConvolutionalCodeStructure::MaxLogMap), 4) );
+  codes.push_back( fec::Code::create(fec::ConvolutionalCodeStructure(fec::TrellisStructure({3}, {{04, 05}}), 8, fec::ConvolutionalCodeStructure::Truncation,  fec::ConvolutionalCodeStructure::LogMap), 4) );
+  codes.push_back( fec::Code::create(fec::LdpcCodeStructure(fec::LdpcCodeStructure::gallagerConstruction(1024, 3, 5)), 4) );
   
   uint64_t seed = std::chrono::system_clock::now().time_since_epoch().count();
   std::srand ( unsigned (seed ) );
   std::vector<size_t> randPerm1(1024);
   std::vector<size_t> randPerm2(1024);
-  for (size_t i = 0; i < randPerm.size(); i++) {
+  for (size_t i = 0; i < randPerm1.size(); i++) {
     randPerm1[i] = i;
     randPerm2[i] = i;
   }
   std::random_shuffle (randPerm2.begin(), randPerm2.end());
   
-  auto trellis = TrellisStructure({3}, {{05}});
-  codes.push_back( fec::Code::create({trellis, trellis}, {randPerm1,randPerm2}, 5, fec::TurboCodeStructure::Parallel,  fec::ConvolutionalCodeStructure::MaxLogMap), 4 ));
-  codes.push_back( fec::Code::create({trellis, trellis}, {randPerm1,randPerm2}, 5, fec::TurboCodeStructure::Serial,  fec::ConvolutionalCodeStructure::MaxLogMap), 4 ));
+  auto trellis = fec::TrellisStructure({3}, {{05}});
+  codes.push_back( fec::Code::create(fec::TurboCodeStructure({trellis, trellis}, {randPerm1,randPerm2}, 5, fec::TurboCodeStructure::Parallel,  fec::ConvolutionalCodeStructure::MaxLogMap), 4 ));
+  codes.push_back( fec::Code::create(fec::TurboCodeStructure({trellis, trellis}, {randPerm1,randPerm2}, 5, fec::TurboCodeStructure::Serial,  fec::ConvolutionalCodeStructure::MaxLogMap), 4 ));
   
   for (auto& code : codes) {
     framework::master_test_suite().
