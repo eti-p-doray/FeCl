@@ -1,10 +1,29 @@
 /*******************************************************************************
- *  \file BitMatrix.h
- *  \author Etienne Pierre-Doray
- *  \since 2015-06-11
- *  \version Last update : 2015-07-08
- *
- *  Declaration of the BitMatrix classes
+ Copyright (c) 2015, Etienne Pierre-Doray, INRS
+ All rights reserved.
+ 
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+ 
+ * Redistributions of source code must retain the above copyright notice, this
+ list of conditions and the following disclaimer.
+ 
+ * Redistributions in binary form must reproduce the above copyright notice,
+ this list of conditions and the following disclaimer in the documentation
+ and/or other materials provided with the distribution.
+ 
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ 
+ Declaration of the BitMatrix classes
  ******************************************************************************/
 
 #ifndef BIT_MATRIX_H
@@ -50,7 +69,7 @@ public:
   class RowRef;
   
   /**
-   *  This class is a const reference to a row with an offset.
+   *  This is a const reference to a SparseBitMatrix row with an offset.
    */
   class ConstOffsetRowRef
   {
@@ -90,13 +109,16 @@ public:
   };
   
   /**
-   *  This class is a const reference to a row.
+   *  This is a const reference to a SparseBitMatrix row.
    */
   class ConstRowRef
   {
     friend class SparseBitMatrix;
   public:
     ConstRowRef(const ConstRowRef&) = default;
+    /**
+     *  Converts a SparseBitMatrix::RowRef to a SparseBitMatrix::ConstRowRef
+     */
     inline ConstRowRef(RowRef b) {begin_ = b.begin(); end_ = b.end();}
     
     /**
@@ -165,7 +187,7 @@ public:
   };
   
   /**
-   *  This class is a reference to a row.
+   *  This ss a reference to a SparseBitMatrix row.
    */
   class RowRef
   {
@@ -173,6 +195,12 @@ public:
     friend class ConstRow;
   public:
     RowRef(const RowRef&) = default;
+    /**
+     *  Assign the data of a SparseBitMatrix::ConstOffsetRowRef to the data
+     *  referred by the object.
+     *  This will yield a copy of the underlying data.
+     *  The object must be a valid reference to sufficiently allocated space.
+     */
     inline void operator = (ConstOffsetRowRef b) {
       rowIdx_.end = rowIdx_.begin + b.size();
       ::std::copy(b.begin(), b.end(), begin());
@@ -180,38 +208,113 @@ public:
         *elem -= b.offset_;
       }
     }
+    /**
+     *  Assign the data of a SparseBitMatrix::ConstRowRef to the data
+     *  referred by the object.
+     *  This will yield a copy of the underlying data.
+     *  The object must be a valid reference to sufficiently allocated space.
+     */
     inline void operator = (ConstRowRef b) {
       rowIdx_.end = rowIdx_.begin + b.size();
       ::std::copy(b.begin(), b.end(), begin());
     }
+    /**
+     *  Assign the data of a SparseBitMatrix::RowRef to the data
+     *  referred by the object.
+     *  This will yield a copy of the underlying data.
+     *  The object must be a valid reference to sufficiently allocated space.
+     */
     inline void operator = (RowRef b) {
       rowIdx_.end = rowIdx_.begin + b.size();
       ::std::copy(b.begin(), b.end(), begin());
     }
     
+    /**
+     * Access a random access iterator pointing to the index of the first non-zero element in the row.
+     *  Since the matrix is sparse, the iterator can iterate only over index of non-zero element.
+     *  \return random access iterator
+     */
     inline ::std::vector<size_t>::const_iterator begin() const {return begin_ + rowIdx_.begin;}
+    /**
+     * Access a random access iterator referring to the past-the-end element in the row.
+     *  Since the matrix is sparse, the iterator can iterate only over index of non-zero element.
+     *  \return random access iterator
+     */
     inline ::std::vector<size_t>::const_iterator end() const {return begin_ + rowIdx_.end;}
+    /**
+     * Access a random access iterator pointing to the index of the first non-zero element in the row.
+     *  Since the matrix is sparse, the iterator can iterate only over index of non-zero element.
+     *  \return random access iterator
+     */
     inline ::std::vector<size_t>::iterator begin() {return begin_ + rowIdx_.begin;}
+    /**
+     * Access a random access iterator referring to the past-the-end element in the row.
+     *  Since the matrix is sparse, the iterator can iterate only over index of non-zero element.
+     *  \return random access iterator
+     */
     inline ::std::vector<size_t>::iterator end() {return begin_ + rowIdx_.end;}
     
+    /**
+     * Access the value of one element in the row.
+     *  \param  j Index of the accessed value
+     *  \return Value of the element
+     */
     inline bool test(size_t j) const {return std::binary_search(begin(), end(), j);}
+    /**
+     *  Access the index of the first non-zero element in a row.
+     *  \return Index of the first non-zero element
+     */
     inline size_t first() const {return end() - begin() == 0 ? -1 : *begin();}
+    /**
+     *  Access the number of non-zero elements in a row.
+     *  \return Number of non-zero elements
+     */
     inline size_t size() const {return rowIdx_.end - rowIdx_.begin;}
+    /**
+     *  Access the number of non-zero elements within a specified range of the row.
+     *  \param  range begin and end index of considered elements
+     *  \return Number of non-zero elements
+     */
     inline size_t size(const size_t range[2]) const {return ::std::lower_bound(begin(), end(), range[1]) - ::std::lower_bound(begin(), end(), range[0]);}
+    /**
+     *  Access the number of non-zero elements within a specified range of the row.
+     *  \param  range begin and end index of considered elements
+     *  \return Number of non-zero elements
+     */
     inline size_t size(const ::std::initializer_list<size_t> colRange) const {return size(colRange.begin());}
+    /**
+     *  \return True if the row contains no non-zero elements
+     */
     inline bool empty() const {return (end() - begin()) == 0;}
     
+    /**
+     *  Adds a non-zero element in the row.
+     *  The element's index must be bigger that any previous element.
+     *  The object must be a valid reference to sufficiently allocated space.
+     *  \param j Index of the element added.
+     */
     inline void set(size_t j) {
       *end() = j;
       ++rowIdx_.end;
     }
     
+    /**
+     *  Access part of a row specified by an index range.
+     *  This method returns a reference to a part of the bit row.
+     *  \param  colRange  Range of the accessed bloc
+     *  \return Reference to the bits in the bloc
+     */
     inline ConstOffsetRowRef operator() (const ::std::initializer_list<size_t>& colRange) const {return (*this)(colRange.begin());}
     inline ConstOffsetRowRef operator() (const size_t colRange[2]) const;
     
     inline void swap(size_t a, size_t b);
     inline void move(size_t a, size_t b);
     
+    /**
+     *  Swaps the row referred by the object with another row.
+     *  Both rows must be part of the same matrix.
+     *  \param  b Row being swapped with the object.
+     */
     void swap(RowRef b) {
       ::std::swap(rowIdx_, b.rowIdx_);
     }
@@ -225,7 +328,7 @@ public:
   };
   
   /**
-   *  This class emulates a ptr to a row.
+   *  This class emulates a const ptr to a row.
    *  It contains a reference to the row.
    */
   class ConstRowPtr
@@ -238,6 +341,10 @@ public:
   private:
     ConstRowRef row_;
   };
+  /**
+   *  This class emulates a ptr to a row.
+   *  It contains a reference to the row.
+   */
   class RowPtr
   {
     friend class Iterator;
@@ -250,7 +357,7 @@ public:
   };
   
   /**
-   *  This is a random access input iterator of a sparse matrix.
+   *  This is a random access input iterator of a SparseBitMatrix.
    *  It iterates over the matrix rows.
    */
   class ConstIterator
@@ -287,7 +394,7 @@ public:
     ::std::vector<RowIdx>::const_iterator rowIdx_;
   };
   /**
-   *  This is a random access iterator of a sparse matrix.
+   *  This is a random access iterator of a SparseBitMatrix.
    *  It iterates over the matrix rows.
    */
   class Iterator
@@ -329,48 +436,178 @@ public:
   };
   
   SparseBitMatrix() = default;
+  /**
+   *  Copy constructor.
+   */
   SparseBitMatrix(const SparseBitMatrix& b) {*this = b;}
+  /**
+   *  Copy constructor.
+   */
   SparseBitMatrix(const BitMatrix& b) {*this = b;}
+  /**
+   *  Move constructor.
+   */
   SparseBitMatrix(SparseBitMatrix&& b) {cols_ = b.cols_; ::std::swap(elementIdx_, b.elementIdx_); ::std::swap(rowIdx_, b.rowIdx_);}
+  /**
+   *  SparseBitMatrix constructor.
+   *  Allocates space for the specified matrix structure.
+   *  \param  rows Number of row
+   *  \param  cols Number of columns
+   *  \param  rowSizes Number of non-zero element within each row
+   */
   inline SparseBitMatrix(size_t rows, size_t cols, size_t rowSizes) {resize(rows, cols, rowSizes);}
+  /**
+   *  SparseBitMatrix constructor.
+   *  Allocates space for the specified matrix structure.
+   *  \param  rowSizes Vector containing the number of non-zero element within each row
+   *  \param  cols Number of columns
+   */
   inline SparseBitMatrix(const ::std::vector<size_t>& rowSizes, size_t cols) {resize(rowSizes, cols);}
   
   inline SparseBitMatrix& operator = (const SparseBitMatrix& b);
   inline SparseBitMatrix& operator = (const fec::BitMatrix& b);
+  /**
+   *  Move assignement operator.
+   */
   inline SparseBitMatrix& operator = (SparseBitMatrix&& b) {cols_ = b.cols_; ::std::swap(elementIdx_, b.elementIdx_); ::std::swap(rowIdx_, b.rowIdx_); return *this;}
   
   inline void resize(size_t rows, size_t cols, size_t rowSizes);
-  inline void resize(const ::std::vector<size_t>& rowSizes, size_t cols);
+  inline void resize(const std::vector<size_t>& rowSizes, size_t cols);
   
+  /**
+   *  Access the number of rows in the object.
+   *  \return Number of rows
+   */
   inline size_t rows() const {return rowIdx_.size();}
+  /**
+   *  Access the number of columns in the object.
+   *  \return Number of columns
+   */
   inline size_t cols() const {return cols_;}
+  /**
+   *  Access the size of the object.
+   *  We define the size as the number of non-zero elements.
+   *  \return Number of non-zero elements
+   */
   inline size_t size() const {return elementIdx_.size();}
   
+  /**
+   *  Access a submatrix specified by a row range and a column range.
+   *  A copy of the data is performed.
+   *  \param rowRange begin and end row index which the submatrix will contain.
+   *  \param colRange begin and end column index which the submatrix will contain.
+   *  \return submatrix
+   */
   inline SparseBitMatrix operator() (const ::std::initializer_list<size_t>& rowRange, const ::std::initializer_list<size_t>& colRange) const {return (*this)(rowRange.begin(), colRange.begin());}
   inline SparseBitMatrix operator() (const size_t rowRange[2], const size_t colRange[2]) const;
   
+  /**
+   *  Access a random access input iterator pointing to the first row in the object.
+   *  \return Random access input iterator
+   */
   inline ConstIterator begin() const {return ConstIterator(elementIdx_.begin(), rowIdx_.begin());}
+  /**
+   *  Access a random access input iterator referring to the past-the-end row in the object.
+   *  \return Random access input iterator
+   */
   inline ConstIterator end() const {return ConstIterator(elementIdx_.begin(), rowIdx_.end());}
+  /**
+   *  Access a random access input iterator pointing to the first row in the object.
+   *  \return Random access input iterator
+   */
   inline ConstIterator cbegin() const {return ConstIterator(elementIdx_.begin(), rowIdx_.begin());}
+  /**
+   *  Access a random access input iterator referring to the past-the-end row in the object.
+   *  \return Random access input iterator
+   */
   inline ConstIterator cend() const {return ConstIterator(elementIdx_.begin(), rowIdx_.end());}
+  /**
+   *  Access a random access iterator pointing to the first row in the object.
+   *  \return Random access iterator
+   */
   inline Iterator begin() {return Iterator(elementIdx_.begin(), rowIdx_.begin());}
+  /**
+   *  Access a random access iterator referring to the past-the-end row in the object.
+   *  \return Random access iterator
+   */
   inline Iterator end() {return Iterator(elementIdx_.begin(), rowIdx_.end());}
   
   inline ConstRowRef operator[] (size_t i) const {return ConstRowRef(elementIdx_.begin() + rowIdx_[i].begin, elementIdx_.begin() + rowIdx_[i].end);}
   inline RowRef operator[] (size_t i) {return RowRef(elementIdx_.begin(), rowIdx_[i]);}
   
+  /**
+   *  Computes the column sizes in the matrix.
+   *  We define the column size as the number of non-zero elements
+   *  within the specified range of a column.
+   *  A column size is given only for the column within the specified range.
+   *  \param[out] dst Vector containing the size of each column
+   */
   inline void colSizes(const size_t rowRange[2], const size_t colRange[2], ::std::vector<size_t>& dst) const;
+  /**
+   *  Computes the column sizes in the matrix.
+   *  We define the column size as the number of non-zero elements
+   *  within the specified range of a column.
+   *  A column size is given only for the column within the specified range.
+   *  \param rowRange begin and end row index of considered elements
+   *  \param colRange begin and end column index of considered elements
+   *  \param[out] dst Vector containing the size of each column
+   */
   inline void colSizes(::std::vector<size_t>& dst) const {colSizes({0, rows()}, {0, cols()}, dst);}
+  /**
+   *  Computes the column sizes in the matrix.
+   *  We define the column size as the number of non-zero elements
+   *  within the specified range of a column.
+   *  A column size is given only for the column within the specified range.
+   *  \param rowRange begin and end row index of considered elements
+   *  \param colRange begin and end column index of considered elements
+   *  \param[out] dst Vector containing the size of each column
+   */
   inline void colSizes(const ::std::initializer_list<size_t>& rowRange, const ::std::initializer_list<size_t>& colRange, ::std::vector<size_t>& x) const {colSizes(rowRange.begin(), colRange.begin(), x);}
   
+  /**
+   *  Computes the row sizes in the matrix.
+   *  We define the row size as the number of non-zero elements
+   *  within the specified range of a row.
+   *  A row size is given only for the row within the specified range.
+   *  \param[out] dst Vector containing the size of each row
+   */
   inline void rowSizes(::std::vector<size_t>& x) const {rowSizes({0, rows()}, {0, cols()}, x);}
-  inline void rowSizes(const size_t rowRange[2], const size_t colRange[2], ::std::vector<size_t>& x) const;
-  inline void rowSizes(const ::std::initializer_list<size_t>& rowRange, const ::std::initializer_list<size_t>& colRange, ::std::vector<size_t>& x) const {rowSizes(rowRange.begin(), colRange.begin(), x);}
+  /**
+   *  Computes the row sizes in the matrix.
+   *  We define the row size as the number of non-zero elements
+   *  within the specified range of a row.
+   *  A row size is given only for the row within the specified range.
+   *  \param rowRange begin and end row index of considered elements
+   *  \param colRange begin and end column index of considered elements
+   *  \param[out] dst Vector containing the size of each row
+   */
+  inline void rowSizes(const size_t rowRange[2], const size_t colRange[2], ::std::vector<size_t>& dst) const;
+  /**
+   *  Computes the row sizes in the matrix.
+   *  We define the row size as the number of non-zero elements
+   *  within the specified range of a row.
+   *  A row size is given only for the row within the specified range.
+   *  \param rowRange begin and end row index of considered elements
+   *  \param colRange begin and end column index of considered elements
+   *  \param[out] dst Vector containing the size of each row
+   */
+  inline void rowSizes(const ::std::initializer_list<size_t>& rowRange, const ::std::initializer_list<size_t>& colRange, ::std::vector<size_t>& dst) const {rowSizes(rowRange.begin(), colRange.begin(), dst);}
   
   inline void moveCol(size_t a, size_t b);
   
+  /**
+   *  Swaps two colums in the matrix.
+   *  \param  a Index of the first column
+   *  \param  b Index of the second column
+   */
   inline void swapCols(size_t a, size_t b) {swapCols(a, b, {0, rows()});}
   inline void swapCols(size_t a, size_t b, const size_t rowRange[2]);
+  /**
+   *  Swaps a part of two colums in the matrix.
+   *  \param  a Index of the first column
+   *  \param  b Index of the second column
+   *  \param  rowRange  Begin and end row involved in the operation.
+   */
   inline void swapCols(size_t a, size_t b, const ::std::initializer_list<size_t>& rowRange) {swapCols(a, b, rowRange.begin());}
   
   inline SparseBitMatrix transpose() const;
@@ -399,22 +636,26 @@ namespace std {
 
 namespace fec {
 
-/**************************************************************************//**
+/**
  *  This class represents a full bit matrix.
  *  Every bit is stored in a compact BitField.
- ******************************************************************************/
+ */
 class BitMatrix
 {
   friend class boost::serialization::access;
 public:
-  /**************************************************************************//**
+  /**
    *  This class is a full bit row.
-   ******************************************************************************/
+   */
   class Row
   {
     friend class boost::serialization::access;
     friend class BitMatrix;
   public:
+    /**
+     *  This is a random access input iterator of a BitMatrix::Row.
+     *  It iterates over every elements in a row.
+     */
     class ConstIterator {
       friend class Row;
     public:
@@ -691,15 +932,6 @@ fec::SparseBitMatrix fec::SparseBitMatrix::operator() (const size_t rowRange[2],
   return x;
 }
 
-/**
- *  Computes the column sizes in the matrix.
- *  We define the column size as the number of non-zero elements 
- *  within the specified range of a column.
- *  A column size is given only for the column within the specified range.
- *  \param rowRange begin and end row index of considered elements
- *  \param colRange begin and end column index of considered elements
- *  \param[out] dst Vector containing the size of each column
- */
 void fec::SparseBitMatrix::colSizes(const size_t rowRange[2], const size_t colRange[2], std::vector<size_t>& dst) const
 {
   dst.resize(colRange[1] - colRange[0]);
@@ -715,15 +947,6 @@ void fec::SparseBitMatrix::colSizes(const size_t rowRange[2], const size_t colRa
   }
 }
 
-/**
- *  Computes the row sizes in the matrix.
- *  We define the row size as the number of non-zero elements
- *  within the specified range of a row.
- *  A row size is given only for the row within the specified range.
- *  \param rowRange begin and end row index of considered elements
- *  \param colRange begin and end column index of considered elements
- *  \param[out] dst Vector containing the size of each row
- */
 void fec::SparseBitMatrix::rowSizes(const size_t rowRange[2], const size_t colRange[2], std::vector<size_t>& dst) const
 {
   dst.resize(rowRange[1] - rowRange[0]);
@@ -746,9 +969,10 @@ void fec::SparseBitMatrix::moveCol(size_t a, size_t b)
 }
 
 /**
- *  Swaps two colums in the matrix.
+ *  Swaps a part of two colums in the matrix.
  *  \param  a Index of the first column
  *  \param  b Index of the second column
+ *  \param  rowRange  Begin and end row involved in the operation.
  */
 void fec::SparseBitMatrix::swapCols(size_t a, size_t b, const size_t rowRange[2])
 {
@@ -800,9 +1024,8 @@ void fec::SparseBitMatrix::resize(size_t rows, size_t cols, size_t rowSizes)
 /**
  *  Resize the matrix to a specified shape.
  *  Data in the matrix may become invalid.
- *  \param  rows Number of row
- *  \param  cols Number of columns
  *  \param  rowSizes Vector containing the number of non-zero element within each row
+ *  \param  cols Number of columns
  */
 void fec::SparseBitMatrix::resize(const std::vector<size_t>& rowSizes, size_t cols)
 {

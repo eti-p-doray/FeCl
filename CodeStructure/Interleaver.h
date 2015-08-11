@@ -1,10 +1,29 @@
 /*******************************************************************************
- *  \file Interleaver.h
- *  \author Etienne Pierre-Doray
- *  \since 2015-06-17
- *  \version Last update : 2015-06-17
- *
- *  Declaration of the Interleaver class
+ Copyright (c) 2015, Etienne Pierre-Doray, INRS
+ All rights reserved.
+ 
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+ 
+ * Redistributions of source code must retain the above copyright notice, this
+ list of conditions and the following disclaimer.
+ 
+ * Redistributions in binary form must reproduce the above copyright notice,
+ this list of conditions and the following disclaimer in the documentation
+ and/or other materials provided with the distribution.
+ 
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ 
+ Declaration of the Interleaver class
  ******************************************************************************/
 
 #ifndef INTERLEAVER_H
@@ -19,15 +38,38 @@
 
 namespace fec {
 
+/**
+  * This class represents an interleaver.
+  * An interleaver generates a sequence of output data where each element 
+  * is picked at a specific index from the input sequence. 
+  * The index is defined by the index sequence given at the construction.
+  * The interleaver can interleave many independant sequences at once.
+  * An interleaver is most usefull in concatenated codes such as turbo code.
+  */
 class Interleaver {
   friend class boost::serialization::access;
 public:
   Interleaver() = default;
+  /**
+   * Interleaver constructor.
+   *  The size of the input and output sequence is automatically detected 
+   *  from the given index sequence
+   *  \param  sequence  Index sequence specifying the source index of each output element.
+   */
   Interleaver(::std::vector<size_t> sequence) {
     sequence_ = sequence;
     srcSize_ = *std::max_element(sequence_.begin(), sequence_.end()) + 1;
     dstSize_ = sequence_.size();
   }
+  /**
+   * Interleaver constructor.
+   *  You can specify a custom input and output seuqence size.
+   *  Be carefull specifying these size because an invalid index in the index sequence
+   *  will result in segfault.
+   *  \param  sequence  Index sequence specifying the source index of each output element.
+   *  \param  srcSize Length of the input sequence.
+   *  \param  dstSize Length of the output sequence.
+   */
   Interleaver(::std::vector<size_t> sequence, size_t srcSize, size_t dstSize) {
     sequence_ = sequence;
     dstSize_ = dstSize;

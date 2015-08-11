@@ -1,16 +1,9 @@
 var searchData=
 [
-  ['tailsize',['tailSize',['../classfec_1_1_convolutional_code_structure.html#a5619e344a2769be7aff8575da3a814f8',1,'fec::ConvolutionalCodeStructure']]],
-  ['test',['test',['../classfec_1_1_sparse_bit_matrix_1_1_const_row_ref.html#a58cdad1fcca1cf1758d3086ccf8e7902',1,'fec::SparseBitMatrix::ConstRowRef']]],
-  ['transpose',['transpose',['../classfec_1_1_sparse_bit_matrix.html#a9cb6847b9e59ca4be29aaefe23a34f57',1,'fec::SparseBitMatrix']]],
-  ['trellis',['trellis',['../classfec_1_1_convolutional_code_structure.html#a95519dcfbe3c9f75fbba463a0ed3493a',1,'fec::ConvolutionalCodeStructure']]],
-  ['trellisendtype',['TrellisEndType',['../classfec_1_1_convolutional_code_structure.html#a2c72f72d7bd15274f8f6e4a944ee25b7',1,'fec::ConvolutionalCodeStructure']]],
-  ['trellisstructure',['TrellisStructure',['../classfec_1_1_trellis_structure.html',1,'fec']]],
-  ['truebp',['TrueBp',['../classfec_1_1_true_bp.html',1,'fec']]],
-  ['truncation',['Truncation',['../classfec_1_1_convolutional_code_structure.html#a2c72f72d7bd15274f8f6e4a944ee25b7aa68aa5ca961e57badfef392a39c5cc70',1,'fec::ConvolutionalCodeStructure']]],
-  ['turbo',['Turbo',['../classfec_1_1_code_structure.html#a1d1cfd8ffb84e947f82999c682b666a7a2192b982dc2b07a7720a9ff965b71ffb',1,'fec::CodeStructure']]],
-  ['turbocode',['TurboCode',['../classfec_1_1_turbo_code.html',1,'fec']]],
-  ['turbocodeimpl',['TurboCodeImpl',['../classfec_1_1_turbo_code_impl.html',1,'fec']]],
-  ['turbocodestructure',['TurboCodeStructure',['../classfec_1_1_turbo_code_structure.html',1,'fec']]],
-  ['type',['Type',['../classfec_1_1_code_structure.html#a1d1cfd8ffb84e947f82999c682b666a7',1,'fec::CodeStructure::Type()'],['../classfec_1_1_code_structure.html#a149c7c1abe37b3b10c1c37fabd2001bd',1,'fec::CodeStructure::type() const =0'],['../classfec_1_1_convolutional_code_structure.html#afdf08d8af5960a8c16cfddde095c3e34',1,'fec::ConvolutionalCodeStructure::type()'],['../classfec_1_1_ldpc_code_structure.html#afdf08d8af5960a8c16cfddde095c3e34',1,'fec::LdpcCodeStructure::type()'],['../classfec_1_1_turbo_code_structure.html#afdf08d8af5960a8c16cfddde095c3e34',1,'fec::TurboCodeStructure::type()']]]
+  ['resize',['resize',['../classfec_1_1_sparse_bit_matrix.html#ae42e9f20e4b3f8562d4fd6f47254e7ec',1,'fec::SparseBitMatrix::resize(size_t rows, size_t cols, size_t rowSizes)'],['../classfec_1_1_sparse_bit_matrix.html#aaaa229a9f2cb30854af420df114a4a9d',1,'fec::SparseBitMatrix::resize(const std::vector&lt; size_t &gt; &amp;rowSizes, size_t cols)']]],
+  ['row',['Row',['../classfec_1_1_bit_matrix_1_1_row.html',1,'fec::BitMatrix']]],
+  ['rowptr',['RowPtr',['../classfec_1_1_sparse_bit_matrix_1_1_row_ptr.html',1,'fec::SparseBitMatrix']]],
+  ['rowref',['RowRef',['../classfec_1_1_sparse_bit_matrix_1_1_row_ref.html',1,'fec::SparseBitMatrix']]],
+  ['rows',['rows',['../classfec_1_1_sparse_bit_matrix.html#a809b02529383bbc459c62c030a96eed2',1,'fec::SparseBitMatrix']]],
+  ['rowsizes',['rowSizes',['../classfec_1_1_sparse_bit_matrix.html#ab8eecbfe00cfda83ed44414779ea3847',1,'fec::SparseBitMatrix::rowSizes(::std::vector&lt; size_t &gt; &amp;x) const '],['../classfec_1_1_sparse_bit_matrix.html#ac0e62ed0eeade76a56cdea2fdba7c913',1,'fec::SparseBitMatrix::rowSizes(const size_t rowRange[2], const size_t colRange[2],::std::vector&lt; size_t &gt; &amp;dst) const '],['../classfec_1_1_sparse_bit_matrix.html#adb09277596022c575a231a02d8a85ae7',1,'fec::SparseBitMatrix::rowSizes(const ::std::initializer_list&lt; size_t &gt; &amp;rowRange, const ::std::initializer_list&lt; size_t &gt; &amp;colRange,::std::vector&lt; size_t &gt; &amp;dst) const '],['../classfec_1_1_bit_matrix.html#a885566a5f4c91e0db8c55f1fb10bc61c',1,'fec::BitMatrix::rowSizes()']]]
 ];

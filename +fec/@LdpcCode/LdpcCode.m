@@ -1,5 +1,5 @@
 classdef LdpcCode < fec.Code
-    % This class is a specialization of the ErrorCorrectingCode.
+    % This class is a specialization of the Code abstract class.
     % It represents a Ldpc code.
 
     methods (Static)

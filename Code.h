@@ -1,10 +1,29 @@
 /*******************************************************************************
- *  \file Code.h
- *  \author Etienne Pierre-Doray
- *  \since 2015-06-11
- *  \version Last update : 2015-08-07
- *
- *  Declaration of Code class
+ Copyright (c) 2015, Etienne Pierre-Doray, INRS
+ All rights reserved.
+ 
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+ 
+ * Redistributions of source code must retain the above copyright notice, this
+ list of conditions and the following disclaimer.
+ 
+ * Redistributions in binary form must reproduce the above copyright notice,
+ this list of conditions and the following disclaimer in the documentation
+ and/or other materials provided with the distribution.
+ 
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ 
+ Declaration of Code class
  ******************************************************************************/
 
 #ifndef CODE_H
@@ -67,11 +86,56 @@ protected:
   
   inline int workGroupSize() const {return workGroupSize_;}
   
+  /**
+   *  Encodes several blocs of msg bits.
+   *  \param  messageIt  Input iterator pointing to the first element in the msg bit sequence.
+   *  \param  parityIt[out] Output iterator pointing to the first element in the parity bit sequence.
+   *    The output neeeds to be pre-allocated.
+   */
   virtual void encodeNBloc(std::vector<uint8_t>::const_iterator messageIt, std::vector<uint8_t>::iterator parityIt, size_t n) const;
+  /**
+   *  Encodes one bloc of msg bits.
+   *  \param  messageIt  Input iterator pointing to the first element in the msg bit sequence.
+   *  \param  parityIt[out] Output iterator pointing to the first element in the parity bit sequence.
+   *    The output neeeds to be pre-allocated.
+   */
   virtual void encodeBloc(std::vector<uint8_t>::const_iterator messageIt, std::vector<uint8_t>::iterator parityIt) const = 0;
   
+  /**
+   *  Decodes several blocs of information bits.
+   *  A priori information about the decoder state is provided and extrinsic
+   *  information is output, following the same structure. These informations
+   *  can be transfered sequencially to multiple decoding attempts.
+   *  \param  parityIn  Input iterator pointing to the first element 
+   *    in the parity L-value sequence
+   *  \param  extrinsicIn  Input iterator pointing to the first element 
+   *    in the a-priori extrinsic L-value sequence
+   *  \param  messageOut[out] Output iterator pointing to the first element 
+   *    in the a posteriori information L-value sequence. 
+   *    Output needs to be pre-allocated.
+   *  \param  extrinsicOut[out]  Output iterator pointing to the first element
+   *    in the extrinsic L-value sequence.
+   *    Output needs to be pre-allocated.
+   */
   virtual void appDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n) const = 0;
+  /**
+   *  Decodes several blocs of information bits.
+   *  A posteriori information about the msg is output instead of the decoded bit sequence.
+   *  \param  parityIn  Input iterator pointing to the first element
+   *    in the parity L-value sequence
+   *  \param  messageOut[out] Output iterator pointing to the first element
+   *    in the a posteriori information L-value sequence.
+   *    Output needs to be pre-allocated.
+   */
   virtual void softOutDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::iterator messageOut, size_t n) const = 0;
+  /**
+   *  Decodes several blocs of information bits.
+   *  \param  parityIn  Input iterator pointing to the first element
+   *    in the parity L-value sequence
+   *  \param  messageOut[out] Output iterator pointing to the first element
+   *    in the decoded msg sequence.
+   *    Output needs to be pre-allocated.
+   */
   virtual void decodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<uint8_t>::iterator messageOut, size_t n) const = 0;
   
 private:
@@ -91,7 +155,8 @@ BOOST_CLASS_TYPE_INFO(fec::Code,extended_type_info_no_rtti<fec::Code>);
 BOOST_CLASS_EXPORT_KEY(fec::Code);
 
 /**
- *  Encode several blocs of information bits.
+ *  Encodes several blocs of information bits.
+ *  Chunks of blocs are encded in parallel.
  *  \param  message  Vector containing information bits
  *  \param  parity[out] Vector containing parity bits
  *  \tparam A Container allocator. The reason for different allocator is to allow 
@@ -133,8 +198,12 @@ void fec::Code::encode(const std::vector<uint8_t,A<uint8_t>>& message, std::vect
 
 /**
  *  Decodes several blocs of information bits.
+ *  A priori information about the decoder state is provided and extrinsic
+ *  information is output, following the same structure. These informations
+ *  can be transfered sequencially to multiple decoding attempts.
+ *  Chunks of blocs are encded in parallel.
  *  \param  parityIn  Vector containing parity L-values
- *  \param  extrinsicIn  Vector containing extrinsic L-values
+ *  \param  extrinsicIn  Vector containing a-priori extrinsic L-values
  *  \param  messageOut[out] Vector containing a posteriori information L-values
  *  \param  extrinsicOut[out] Vector containing a extrinsic L-values
  *  \tparam A Container allocator. The reason for different allocator is to allow
@@ -185,6 +254,8 @@ void fec::Code::appDecode(const std::vector<LlrType,A<LlrType>>& parityIn, const
 
 /**
  *  Decodes several blocs of information bits.
+ *  A posteriori information about the msg is output instead of the decoded bit sequence.
+ *  Chunks of blocs are encded in parallel.
  *  \param  parityIn  Vector containing parity L-values
  *  \param  messageOut[out] Vector containing a posteriori information L-values
  *  \tparam A Container allocator. The reason for different allocator is to allow
@@ -228,6 +299,7 @@ void fec::Code::softOutDecode(const std::vector<LlrType,A<LlrType>>& parityIn, s
 
 /**
  *  Decodes several blocs of information bits.
+ *  Chunks of blocs are encded in parallel.
  *  \param  parityIn  Vector containing parity L-values
  *    Given a signal y and a parity bit x, we define the correspondig L-value as
  *    L = ln[ p(x = 1 | y) / p(x = 0 | y) ] = ln[ p(y | x = 1) / p(y | x = 0) ]

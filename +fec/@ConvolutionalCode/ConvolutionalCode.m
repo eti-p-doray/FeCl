@@ -1,5 +1,5 @@
 classdef ConvolutionalCode < fec.Code
-    % This class is a specialization of the ErrorCorrectingCode.
+    % This class is a specialization of the Code abstract class.
     % It represents a Convolutional code.
 
     methods (Static)

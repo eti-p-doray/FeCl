@@ -1,10 +1,29 @@
 /*******************************************************************************
- *  \file LdpcCodeStructure.h
- *  \author Etienne Pierre-Doray
- *  \since 2015-06-11
- *  \version Last update : 2015-06-11
- *
- *  Declaration of the LdpcCodeStructure class
+ Copyright (c) 2015, Etienne Pierre-Doray, INRS
+ All rights reserved.
+ 
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+ 
+ * Redistributions of source code must retain the above copyright notice, this
+ list of conditions and the following disclaimer.
+ 
+ * Redistributions in binary form must reproduce the above copyright notice,
+ this list of conditions and the following disclaimer in the documentation
+ and/or other materials provided with the distribution.
+ 
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ 
+ Declaration of the LdpcCodeStructure class
  ******************************************************************************/
 
 #ifndef LDPC_CODE_STRUCTURE_H
@@ -24,17 +43,20 @@
 
 namespace fec {
 
-/*******************************************************************************
+/**
  *  This class represents a ldpc code structure.
  *  It provides a usefull interface to store and acces the structure information.
- ******************************************************************************/
+ */
 class LdpcCodeStructure : public CodeStructure {
   friend class ::boost::serialization::access;
 public:
+  /**
+   *  Decoder type
+   *  This specifies the decode algorithm used in decoding.
+   */
   enum DecoderType {
-    TrueBp,
-    MinSumBp,
-    ScoreBp,
+    TrueBp, /**< No approximation is used and the boxplus formula is computed using standard implementation */
+    MinSumBp, /**< The minsum approximation is used instead of the boxplus formula */
   };
   
   static SparseBitMatrix gallagerConstruction(size_t n, size_t wc, size_t wr);
@@ -47,11 +69,6 @@ public:
   virtual CodeStructure::Type type() const {return CodeStructure::Ldpc;}
   
   inline const SparseBitMatrix& parityCheck() const {return H_;}
-  
-  inline const SparseBitMatrix& DC() const {return DC_;}
-  inline const SparseBitMatrix& A() const {return A_;}
-  inline const SparseBitMatrix& B() const {return B_;}
-  inline const SparseBitMatrix& T() const {return T_;}
   
   inline DecoderType decoderType() const {return decoderType_;}
   inline size_t iterationCount() const {return iterationCount_;}

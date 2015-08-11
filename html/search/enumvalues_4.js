@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['zerotail',['ZeroTail',['../classfec_1_1_convolutional_code_structure.html#a2c72f72d7bd15274f8f6e4a944ee25b7a8d8b4265c14a0fc956ac1160b6483858',1,'fec::ConvolutionalCodeStructure']]]
+  ['serial',['Serial',['../classfec_1_1_turbo_code_structure.html#a477bc238b10958849277f79d585eff2aaab27270f353006b03c91367e05e44b94',1,'fec::TurboCodeStructure']]]
 ];

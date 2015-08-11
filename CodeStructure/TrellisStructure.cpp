@@ -1,16 +1,45 @@
 /*******************************************************************************
- *  \file TrellisStructure.h
- *  \author Etienne Pierre-Doray
- *  \since 2015-05-12
- *  \version Last update : 2015-05-12
- *
- *  Definition of TrellisStructure class
+ Copyright (c) 2015, Etienne Pierre-Doray, INRS
+ All rights reserved.
+ 
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+ 
+ * Redistributions of source code must retain the above copyright notice, this
+ list of conditions and the following disclaimer.
+ 
+ * Redistributions in binary form must reproduce the above copyright notice,
+ this list of conditions and the following disclaimer in the documentation
+ and/or other materials provided with the distribution.
+ 
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ 
+ Definition of TrellisStructure class
  ******************************************************************************/
 
 #include "TrellisStructure.h"
 
 using namespace fec;
 
+/**
+ *  Trellis structure constructor.
+ *  Construct a trellis object given state and output lookup table.
+ *  Access the state size (register count) of the trellis.
+ *  \param  nextState Next state lookup table given in the matlab trellis form.
+ *  \param  output  Output sequence lookup table given in the matlab trellis form.
+ *  \param  inputSize Number of input bits for each branch
+ *  \param  outputSize  Number of output symbol for each branch
+ *  \param  stateSize Number of bits (registers) in the state
+ */
 TrellisStructure::TrellisStructure(std::vector<size_t> nextState, std::vector<size_t> output, size_t inputSize, size_t outputSize, size_t stateSize)
 {
   stateSize_ = stateSize;
@@ -20,8 +49,6 @@ TrellisStructure::TrellisStructure(std::vector<size_t> nextState, std::vector<si
   stateCount_ = 1<<stateSize_;
   outputCount_ = 1<<outputSize_;
   inputCount_ = 1<<inputSize_;
-  
-  tableSize_ = stateCount() * inputCount();
   
   nextState_.resize(inputCount()*stateCount());
   output_.resize(inputCount()*stateCount());
@@ -39,6 +66,15 @@ TrellisStructure::TrellisStructure(std::vector<size_t> nextState, std::vector<si
   }
 }
 
+/**
+ *  Trellis structure constructor.
+ *  Generate the state and output table lookup from a given constraint lenght and
+ *  a code generator given in Proakis integer form.
+ *  \param  constraintLengths Vector specifying the delay for each input bit stream.
+ *  \param  output  generator Vector specifying the generator polynomials 
+ *    (connections from each register to each output)
+ *    associated with each input bit stream
+ */
 TrellisStructure::TrellisStructure(std::vector<BitField<size_t> > constraintLengths, std::vector<std::vector<BitField<size_t> > > generator)
 {
   inputSize_ = size_t(generator.size());
@@ -61,7 +97,6 @@ TrellisStructure::TrellisStructure(std::vector<BitField<size_t> > constraintLeng
   stateCount_ = 1<<stateSize_;
   nextState_.resize(stateCount()*inputCount());
   output_.resize(stateCount()*inputCount());
-  tableSize_ = stateCount() * inputCount();
   
   for (BitField<size_t> state = 0; state < stateCount(); state++) {
     for (BitField<size_t> input = 0; input < inputCount(); input++) {

@@ -3,7 +3,7 @@ ForwardErrorCorrection {#mainpage}
 
 This software implements several forward error correction (fec) algorithms in C++ and offer a Matlab API.
 Its main use is in communication systems simulations for the research area.
-This project is a result of the emt research center at INRS, Quebec, Canada.
+This project is a result of my work at the emt research center at INRS, Quebec, Canada.
 
 Implemented fec Codes<br/>
 * Convolutional

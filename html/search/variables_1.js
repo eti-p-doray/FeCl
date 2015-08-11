@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['paritysize_5f',['paritySize_',['../classfec_1_1_code_structure.html#acfff31a4d86bf1333f0a5174fa7d1abb',1,'fec::CodeStructure']]]
+  ['forwardmetrics_5f',['forwardMetrics_',['../classfec_1_1_map_decoder.html#ac316f1a687e517735e845a8a747c5f29',1,'fec::MapDecoder']]]
 ];

@@ -1,10 +1,29 @@
 /*******************************************************************************
- *  \file test_ldpc.h
- *  \author Etienne Pierre-Doray
- *  \since 2015-07-15
- *  \version Last update : 2015-07-15
- *
- *  Definition of MapCode class
+ Copyright (c) 2015, Etienne Pierre-Doray, INRS
+ All rights reserved.
+ 
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+ 
+ * Redistributions of source code must retain the above copyright notice, this
+ list of conditions and the following disclaimer.
+ 
+ * Redistributions in binary form must reproduce the above copyright notice,
+ this list of conditions and the following disclaimer in the documentation
+ and/or other materials provided with the distribution.
+ 
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ 
+ fec test
  ******************************************************************************/
 
 #include <vector>
@@ -34,8 +53,9 @@ void encode_badMsgSize_test(const std::shared_ptr<fec::Code>& code)
   BOOST_ERROR("Wrong msg size exception not thrown");
 }
 
-void decode_test(const std::shared_ptr<fec::Code>& code, const std::vector<uint8_t>& msg)
+void decode_test(const std::shared_ptr<fec::Code>& code, size_t blocCount)
 {
+  std::vector<uint8_t> msg(code->msgSize()*blocCount, 0);
   std::vector<uint8_t> parity;
   code->encode(msg, parity);
   
@@ -65,8 +85,9 @@ void decode_test(const std::shared_ptr<fec::Code>& code, const std::vector<uint8
   BOOST_ERROR("Wrong parity size exception not thrown");
 }*/
 
-void softOutDecode_test(const std::shared_ptr<fec::Code>& code, const std::vector<uint8_t>& msg)
+void softOutDecode_test(const std::shared_ptr<fec::Code>& code, size_t blocCount)
 {
+  std::vector<uint8_t> msg(code->msgSize()*blocCount, 0);
   std::vector<uint8_t> parity;
   code->encode(msg, parity);
   
@@ -83,8 +104,9 @@ void softOutDecode_test(const std::shared_ptr<fec::Code>& code, const std::vecto
   }
 }
 
-void appDecode_test(const std::shared_ptr<fec::Code>& code, const std::vector<uint8_t>& msg)
+void appDecode_test(const std::shared_ptr<fec::Code>& code, size_t blocCount)
 {
+  std::vector<uint8_t> msg(code->msgSize()*blocCount, 0);
   std::vector<uint8_t> parity;
   code->encode(msg, parity);
   
@@ -147,19 +169,19 @@ init_unit_test_suite( int argc, char* argv[] )
     add( BOOST_TEST_CASE( std::bind( &encode_badMsgSize_test, code )));
     
     framework::master_test_suite().
-    add( BOOST_TEST_CASE( std::bind( &decode_test, code, randomBits(code->msgSize()*1) )));
+    add( BOOST_TEST_CASE( std::bind( &decode_test, code, 1 )));
     framework::master_test_suite().
-    add( BOOST_TEST_CASE( std::bind( &decode_test, code, randomBits(code->msgSize()*5) )));
+    add( BOOST_TEST_CASE( std::bind( &decode_test, code, 5 )));
     
     framework::master_test_suite().
-    add( BOOST_TEST_CASE( std::bind( &softOutDecode_test, code, randomBits(code->msgSize()*1) )));
+    add( BOOST_TEST_CASE( std::bind( &softOutDecode_test, code, 1 )));
     framework::master_test_suite().
-    add( BOOST_TEST_CASE( std::bind( &softOutDecode_test, code, randomBits(code->msgSize()*5) )));
+    add( BOOST_TEST_CASE( std::bind( &softOutDecode_test, code, 5 )));
     
     framework::master_test_suite().
-    add( BOOST_TEST_CASE( std::bind( &appDecode_test, code, randomBits(code->msgSize()*1) )));
+    add( BOOST_TEST_CASE( std::bind( &appDecode_test, code, 1 )));
     framework::master_test_suite().
-    add( BOOST_TEST_CASE( std::bind( &appDecode_test, code, randomBits(code->msgSize()*5) )));
+    add( BOOST_TEST_CASE( std::bind( &appDecode_test, code, 5 )));
   }
   return 0;
 }

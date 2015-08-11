@@ -1,6 +1,8 @@
 classdef TurboCode < fec.Code
-    % This class is a specialization of the ErrorCorrectingCode.
+    % This class is a specialization of the Code abstract class.
     % It represents a Turbo code.
+    % For simplicity, the turbo code parity bits are generated following this structure:
+    %   msg | constituent1 | constituent2 | etc.
 
     methods (Static)
         function b = loadobj(a)
@@ -16,9 +18,6 @@ classdef TurboCode < fec.Code
         function this = TurboCode(trellis, interleaver, iterationCount, structureType, mapDecoderType, workGroupSize)
         % TurboCode constructor
         %   Configures the object internally and allocate cpp ressources
-        %
-        % For simplicity, the turbo code parity bits are generated following this structure:
-        %   msg | constituent1 | constituent2 | etc.
         %
         % Inputs
         %   trellis1 - Trellis structure used by the first code in the matlab communication system toolox form

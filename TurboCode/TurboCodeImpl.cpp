@@ -1,10 +1,29 @@
 /*******************************************************************************
- *  \file TurboCodeImpl.h
- *  \author Etienne Pierre-Doray
- *  \since 2015-07-22
- *  \version Last update : 2015-07-24
- *
- *  Definition of TurboCodeImpl class
+ Copyright (c) 2015, Etienne Pierre-Doray, INRS
+ All rights reserved.
+ 
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+ 
+ * Redistributions of source code must retain the above copyright notice, this
+ list of conditions and the following disclaimer.
+ 
+ * Redistributions in binary form must reproduce the above copyright notice,
+ this list of conditions and the following disclaimer in the documentation
+ and/or other materials provided with the distribution.
+ 
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ 
+ Definition of TurboCodeImpl class
  ******************************************************************************/
 
 #include "TurboCodeImpl.h"
@@ -52,15 +71,9 @@ void TurboCodeImpl::serialDecodeBloc(std::vector<LlrType>::const_iterator parity
         extrinsicInterl[k] = extrinsicOut[codeStructure_.interleaver(j)[k]] + parityIn[codeStructure_.interleaver(j)[k]];
       }
       
-      //extrinsicInterl.resize(codeStructure_.structure(j).msgSize(), 0);
-      //codeStructure_.interleaver(j).interleaveBloc<LlrType>(extrinsicOut, extrinsicInterl.begin());
       code_[j]->appDecodeBloc(parityIt, extrinsicInterl.begin(), msg.begin(), extrinsicInterl.begin());
       codeStructure_.interleaver(j).deInterleaveBloc<LlrType>(extrinsicInterl.begin(), extrinsicOut);
-      //std::fill(extrinsicInterl.begin(), extrinsicInterl.end(), 0);
-      
-      //for (size_t k = 0; k < codeStructure_.structure(j).msgSize(); ++k) {
-      //  extrinsicOut[codeStructure_.interleaver(j)[k]] += parityIn[codeStructure_.interleaver(j)[k]];
-     // }
+
       parityIt += codeStructure_.structure(j).paritySize();
     }
   }
@@ -71,12 +84,8 @@ void TurboCodeImpl::serialDecodeBloc(std::vector<LlrType>::const_iterator parity
       extrinsicInterl[k] = extrinsicOut[codeStructure_.interleaver(i)[k]] + parityIn[codeStructure_.interleaver(i)[k]];
     }
     
-    //extrinsicInterl.resize(codeStructure_.structure(i).msgSize(), 0);
-    //codeStructure_.interleaver(i).interleaveBloc<LlrType>(extrinsicOut, extrinsicInterl.begin());
     code_[i]->appDecodeBloc(parityIt, extrinsicOut, msg.begin(), extrinsicOut);
-    //codeStructure_.interleaver(i).deInterleaveBloc<LlrType>(extrinsicInterl.begin(), extrinsicOut);
-    //std::fill(extrinsicInterl.begin(), extrinsicInterl.end(), 0);
-    
+
     for (size_t k = 0; k < codeStructure_.structure(i).msgSize(); ++k) {
       messageOut[codeStructure_.interleaver(i)[k]] += extrinsicInterl[k];
       extrinsicOut[codeStructure_.interleaver(i)[k]] = extrinsicInterl[k];
@@ -99,16 +108,13 @@ void TurboCodeImpl::parallelDecodeBloc(std::vector<LlrType>::const_iterator pari
   }
   
   std::vector<LlrType> parityBuffer(extrinsicSize());
-  //std::vector<LlrType> extrinsicInterl(codeStructure_.msgSize() , 0);
   for (size_t i = 0; i < codeStructure_.iterationCount(); ++i) {
     auto parityIt = parityIn + codeStructure_.msgSize();
     auto extrinsicOutIt = extrinsicOut;
     for (size_t j = 0; j < codeStructure_.structureCount(); ++j) {
-      //extrinsicInterl.resize(codeStructure_.structure(j).msgSize(), 0);
-      //codeStructure_.interleaver(j).interleaveBloc<LlrType>(extrinsicOutIt, extrinsicInterl.begin());
+
       code_[j]->appDecodeBloc(parityIt, extrinsicOutIt, msg.begin(), extrinsicOutIt);
-      //codeStructure_.interleaver(j).deInterleaveBloc<LlrType>(extrinsicInterl.begin(), extrinsicOutIt);
-      //std::fill(extrinsicInterl.begin(), extrinsicInterl.end(), 0);
+
       extrinsicOutIt += codeStructure_.structure(j).msgSize();
       parityIt += codeStructure_.structure(j).paritySize();
     }
