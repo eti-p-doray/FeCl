@@ -97,6 +97,8 @@ Doxyfile</param.exclude.filters>
       <file>/Users/Etienne/Documents/INRS/ForwardErrorCorrection/+fec</file>
       <file>/Users/Etienne/Documents/INRS/ForwardErrorCorrection/LICENSE</file>
       <file>/Users/Etienne/Documents/INRS/ForwardErrorCorrection/README.md</file>
+      <file>/Users/Etienne/Documents/INRS/ForwardErrorCorrection/build</file>
+      <file>/Users/Etienne/Documents/INRS/ForwardErrorCorrection/search</file>
     </fileset.rootfiles>
     <fileset.depfun.included />
     <fileset.depfun.excluded />
