@@ -21,3 +21,5 @@ build
 # System files
 *.DS_Store
 *~
+
+html/
