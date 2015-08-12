@@ -30,6 +30,16 @@
 
 using namespace fec;
 
+
+/**
+ *  Constructor.
+ *  Constructs an ldpc code structure following a trellis structure.
+ *  \snippet Convolutional.cpp Creating a Convolutional code structure
+ *  \param  trellis Trellis structure to follow
+ *  \param  blocSize  Number of branch in one bloc before being terminated
+ *  \param  endType Trellis termination type
+ *  \param  type  Algorithm use in app decoding
+ */
 ConvolutionalCodeStructure::ConvolutionalCodeStructure(TrellisStructure trellis, size_t blocSize, TrellisEndType endType, DecoderType type) : CodeStructure(blocSize * trellis.inputSize(), blocSize * trellis.outputSize()), trellis_(trellis)
 {
   blocSize_ = blocSize;

@@ -32,7 +32,7 @@ using namespace fec;
 
 /**
  *  Trellis structure constructor.
- *  Construct a trellis object given state and output lookup table.
+ *  Constructs a trellis object given state and output lookup table.
  *  Access the state size (register count) of the trellis.
  *  \param  nextState Next state lookup table given in the matlab trellis form.
  *  \param  output  Output sequence lookup table given in the matlab trellis form.
@@ -68,8 +68,9 @@ TrellisStructure::TrellisStructure(std::vector<size_t> nextState, std::vector<si
 
 /**
  *  Trellis structure constructor.
- *  Generate the state and output table lookup from a given constraint lenght and
+ *  Generates the state and output table lookup from a given constraint lenght and
  *  a code generator given in Proakis integer form.
+ *  \snippet Convolutional.cpp Creating a trellis
  *  \param  constraintLengths Vector specifying the delay for each input bit stream.
  *  \param  output  generator Vector specifying the generator polynomials 
  *    (connections from each register to each output)

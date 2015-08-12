@@ -37,7 +37,8 @@ const char * ConvolutionalCode::get_key() const {
 }
 
 /**
- *  ConvolutionalCode constructor
+ *  Constructor.
+ *  \snippet Convolutional.cpp Creating a Convolutional code
  *  \param  codeStructure Code structure used for encoding and decoding
  *  \param  workGroupSize Number of thread used for decoding
  */

@@ -47,7 +47,6 @@ namespace fec {
  *  The trellis is represented as a lookup table to access 
  *  the next state and the output sequence of a branch given the current state
  *  and the input bit sequence.
- *  \snippet Convolutional.cpp Creating a trellis
  */
 class TrellisStructure {
   friend class boost::serialization::access;

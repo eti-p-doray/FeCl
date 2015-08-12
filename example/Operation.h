@@ -23,47 +23,59 @@
  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  
- Convolutional code example
+ Operation code example
  ******************************************************************************/
 
 #include <vector>
 #include <random>
 #include <memory>
-#include <iostream>
 
-#include "ConvolutionalCode/ConvolutionalCode.h"
+#include "Code.h"
 
-#include "Operation.h"
+std::vector<uint8_t> randomBits(size_t n) {
+  uint64_t seed = std::chrono::system_clock::now().time_since_epoch().count();
+  std::independent_bits_engine<std::mt19937,1,uint8_t> bitGenerator((uint32_t(seed)));
+  std::vector<uint8_t> msg(n);
+  for (size_t i = 0; i < msg.size(); i++) {
+    msg[i] = bitGenerator();
+  }
+  return msg;
+}
 
-int main( int argc, char* argv[] )
+std::vector<fec::LlrType> distort(const std::vector<uint8_t>& input, double snrdb)
 {
-  //! [Creating a Convolutional code]
-  //! [Creating a Convolutional code structure]
-  //! [Creating a trellis]
-  /*
-   We are creating a trellis structure with 1 input bit.
-   The constraint length is 3, which means there are 2 registers associated
-   with the input bit.
-   There are two output bits, the first one with generator 4 (in octal) associated
-   with the input bit.
-   */
-  fec::TrellisStructure trellis({3}, {{04, 05}});
-  //! [Creating a trellis]
+  const int8_t bpsk[2] = {-1, 1};
   
-  /*
-   The trellis is used to create a code structure.
-   We specify that one bloc will conatins 256 branch before being terminated.
-   */
-  fec::ConvolutionalCodeStructure structure(trellis, 256);
-  //! [Creating a Convolutional code structure]
+  double snr = pow(10.0, snrdb/10.0);
   
-  /*
-   A code is created and ready to operate
-   */
-  std::unique_ptr<fec::Code> code = fec::Code::create(structure);
-  //! [Creating a Convolutional code]
+  uint64_t seed = std::chrono::system_clock::now().time_since_epoch().count();
+  std::default_random_engine randomGenerator;
+  randomGenerator.seed(uint32_t(seed));
+  std::normal_distribution<double> normalDistribution(snr*4.0, 4.0*sqrt(snr/2.0));
   
-  std::cout << per(code, 0.0) << std::endl;
+  std::vector<fec::LlrType> llr(input.size());
+  for (int i = 0; i < input.size(); i++) {
+    llr[i] = bpsk[input[i]] * normalDistribution(randomGenerator);
+  }
+  return llr;
+}
+
+int per(const std::unique_ptr<fec::Code>& code, double snrdb)
+{
+  std::vector<uint8_t> msg = randomBits(code->msgSize()*4);
+  std::vector<uint8_t> parity;
   
-  return 0;
+  code->encode(msg, parity);
+  
+  std::vector<fec::LlrType> llr = distort(parity, snrdb);
+  
+  std::vector<uint8_t> msgDec;
+  code->decode(llr, msgDec);
+  
+  int errorCount = 0;
+  for (size_t i = 0; i < msg.size(); ++i) {
+    errorCount += (msg[i] != msgDec[i]);
+  }
+  
+  return errorCount;
 }

@@ -23,7 +23,7 @@
  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  
- Convolutional code example
+ Ldpc code example
  ******************************************************************************/
 
 #include <vector>
@@ -31,39 +31,34 @@
 #include <memory>
 #include <iostream>
 
-#include "ConvolutionalCode/ConvolutionalCode.h"
+#include "LdpcCode/LdpcCode.h"
 
 #include "Operation.h"
 
 int main( int argc, char* argv[] )
 {
-  //! [Creating a Convolutional code]
-  //! [Creating a Convolutional code structure]
-  //! [Creating a trellis]
+  //! [Creating an ldpc code]
+  //! [Creating an ldpc code structure]
+  //! [Creating an ldpcMatrix]
   /*
-   We are creating a trellis structure with 1 input bit.
-   The constraint length is 3, which means there are 2 registers associated
-   with the input bit.
-   There are two output bits, the first one with generator 4 (in octal) associated
-   with the input bit.
+   We are creating an ldpc matrix
    */
-  fec::TrellisStructure trellis({3}, {{04, 05}});
-  //! [Creating a trellis]
+  auto checkMatrix = fec::LdpcCodeStructure::gallagerConstruction(4096, 8, 16);
+  //! [Creating an ldpcMatrix]
   
   /*
-   The trellis is used to create a code structure.
-   We specify that one bloc will conatins 256 branch before being terminated.
+   The matrix is used to create a code structure.
    */
-  fec::ConvolutionalCodeStructure structure(trellis, 256);
-  //! [Creating a Convolutional code structure]
+  fec::LdpcCodeStructure structure(checkMatrix);
+  //! [Creating a Turbo code structure]
   
   /*
    A code is created and ready to operate
    */
   std::unique_ptr<fec::Code> code = fec::Code::create(structure);
-  //! [Creating a Convolutional code]
+  //! [Creating an ldpc code]
   
-  std::cout << per(code, 0.0) << std::endl;
+  std::cout << per(code, -2.0) << std::endl;
   
   return 0;
 }

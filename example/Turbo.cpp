@@ -23,7 +23,7 @@
  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  
- Convolutional code example
+ Turbo code example
  ******************************************************************************/
 
 #include <vector>
@@ -31,39 +31,49 @@
 #include <memory>
 #include <iostream>
 
-#include "ConvolutionalCode/ConvolutionalCode.h"
+#include "TurboCode/TurboCode.h"
 
 #include "Operation.h"
 
 int main( int argc, char* argv[] )
 {
-  //! [Creating a Convolutional code]
-  //! [Creating a Convolutional code structure]
+  //! [Creating a Turbo code]
+  //! [Creating a Turbo code structure]
   //! [Creating a trellis]
   /*
    We are creating a trellis structure with 1 input bit.
    The constraint length is 3, which means there are 2 registers associated
    with the input bit.
-   There are two output bits, the first one with generator 4 (in octal) associated
+   There is one output bits, with generator 5 (in octal) associated
    with the input bit.
    */
-  fec::TrellisStructure trellis({3}, {{04, 05}});
+  fec::TrellisStructure trellis({3}, {{05}});
   //! [Creating a trellis]
   
+  uint64_t seed = std::chrono::system_clock::now().time_since_epoch().count();
+  std::srand ( unsigned (seed ) );
+  std::vector<size_t> systIdx(256);
+  std::vector<size_t> permIdx(256);
+  for (size_t i = 0; i < systIdx.size(); ++i) {
+    permIdx[i] = i;
+    systIdx[i] = i;
+  }
+  std::random_shuffle (permIdx.begin(), permIdx.end());
+  
   /*
-   The trellis is used to create a code structure.
-   We specify that one bloc will conatins 256 branch before being terminated.
+   The trellis and interleaver indices are used to create a code structure.
    */
-  fec::ConvolutionalCodeStructure structure(trellis, 256);
-  //! [Creating a Convolutional code structure]
+  fec::TurboCodeStructure structure({trellis, trellis}, {systIdx, permIdx});
+  //! [Creating a Turbo code structure]
+  
   
   /*
    A code is created and ready to operate
    */
   std::unique_ptr<fec::Code> code = fec::Code::create(structure);
-  //! [Creating a Convolutional code]
+  //! [Creating a Turbo code]
   
-  std::cout << per(code, 0.0) << std::endl;
+  std::cout << per(code, -2.0) << std::endl;
   
   return 0;
 }

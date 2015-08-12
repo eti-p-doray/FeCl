@@ -30,7 +30,7 @@ add_library(fec STATIC
 )
 
 target_link_libraries(fec PRIVATE ${Boost_LIBRARIES})
-target_include_directories(fec PRIVATE ${Boost_INCLUDE_DIRS})
+target_include_directories(fec PUBLIC ${Boost_INCLUDE_DIRS})
 target_include_directories(fec PUBLIC ${CMAKE_SOURCE_DIR})
 install(TARGETS fec ARCHIVE DESTINATION lib)
 install(FILES Code.h DESTINATION include/fec )
@@ -44,10 +44,18 @@ ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
 WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 COMMENT "Generating API documentation with Doxygen" VERBATIM
 )
-#install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html DESTINATION ${CMAKE_CURRENT_SOURCE_DIR})
 
 enable_testing()
-add_executable(test_fec test/test_fec.cpp)
-target_link_libraries(test_fec fec)
-add_test( test_fec test_fec)
-target_include_directories(test_fec PRIVATE ${Boost_INCLUDE_DIRS})
+add_executable(test_code test/code.cpp)
+target_link_libraries(test_code fec)
+add_test(code test_code)
+
+add_executable(example_Convolutional example/Convolutional.cpp)
+target_link_libraries(example_Convolutional fec)
+
+add_executable(example_Turbo example/Turbo.cpp)
+target_link_libraries(example_Turbo fec)
+
+add_executable(example_Ldpc example/Ldpc.cpp)
+target_link_libraries(example_Ldpc fec)
+
