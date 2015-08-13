@@ -63,7 +63,7 @@ int main( int argc, char* argv[] )
   /*
    The trellis and interleaver indices are used to create a code structure.
    */
-  fec::TurboCodeStructure structure({trellis, trellis}, {systIdx, permIdx});
+  fec::TurboCodeStructure structure({trellis, trellis}, {systIdx, permIdx}, {fec::ConvolutionalCodeStructure::Truncation,fec::ConvolutionalCodeStructure::Truncation});
   //! [Creating a Turbo code structure]
   
   

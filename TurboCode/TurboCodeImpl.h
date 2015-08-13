@@ -57,12 +57,12 @@ public:
     switch (codeStructure_.structureType()) {
       default:
       case TurboCodeStructure::Serial:
-        return codeStructure_.msgSize();
+        return codeStructure_.msgSize() + codeStructure_.msgTailSize();
         break;
         
       case TurboCodeStructure::Parallel:
         for (auto & i : codeStructure_.structures()) {
-          extrinsicSize += i.msgSize();
+          extrinsicSize += i.msgSize() + i.msgTailSize();
         }
         return extrinsicSize;
         break;

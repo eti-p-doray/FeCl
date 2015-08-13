@@ -74,9 +74,9 @@ void MapDecoder::appDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, s
   for (size_t i = 0; i < n; ++i) {
     appDecodeBloc(parityIn,extrinsicIn,messageOut,extrinsicOut);
     parityIn += codeStructure_.paritySize();
-    extrinsicIn += codeStructure_.msgSize();
+    extrinsicIn += codeStructure_.msgSize() + codeStructure_.msgTailSize();
     messageOut += codeStructure_.msgSize();
-    extrinsicOut += codeStructure_.msgSize();
+    extrinsicOut += codeStructure_.msgSize() + codeStructure_.msgTailSize();
   }
 }
 
@@ -120,10 +120,11 @@ void MapDecoder::appDecodeBloc(std::vector<LlrType>::const_iterator parityIn, st
   forwardMetrics();
   backwardMetrics();
   
-  messageAPosteriori(messageOut);
+  messageExtrinsic(extrinsicIn, extrinsicOut);
   
+  std::copy(extrinsicOut, extrinsicOut+codeStructure().msgSize(), messageOut);
   for (size_t i = 0; i < codeStructure().msgSize(); ++i) {
-    extrinsicOut[i] = messageOut[i] - extrinsicIn[i];
+    messageOut[i] += extrinsicIn[i];
   }
 }
 

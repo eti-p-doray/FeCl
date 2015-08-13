@@ -50,7 +50,7 @@ public:
    *  This specifies the type of termination at the end of each bloc.
    */
   enum TrellisEndType {
-    ZeroTail, /**< The state is brought to zero by implicitly adding new msg bit */
+    PaddingTail, /**< The state is brought to zero by implicitly adding new msg bit */
     Truncation /**< The state is forced to zero by truncating the trellis */
   };
   /**
@@ -79,6 +79,7 @@ public:
    *  \return Tail size
    */
   inline size_t tailSize() const {return tailSize_;}
+  inline size_t msgTailSize() const {return tailSize_ * trellis().inputSize();}
   /** 
    *  Access the type of the trellis termination.
    *  \return Trellis end type
@@ -112,6 +113,8 @@ public:
     }
     return x;
   }
+  
+  BitField<uint64_t> encode(std::vector<uint8_t>::const_iterator msg, std::vector<uint8_t>::iterator parity) const;
   
 private:
   template <typename Archive>

@@ -47,7 +47,7 @@ ConvolutionalCodeStructure::ConvolutionalCodeStructure(TrellisStructure trellis,
   decoderType_ = type;
   
   switch (trellisEndType_) {
-    case ZeroTail:
+    case PaddingTail:
       paritySize_ += trellis_.stateSize() * trellis.outputSize();
       tailSize_ = trellis_.stateSize();
       break;
@@ -57,4 +57,54 @@ ConvolutionalCodeStructure::ConvolutionalCodeStructure(TrellisStructure trellis,
       tailSize_ = 0;
       break;
   }
+}
+
+BitField<uint64_t> ConvolutionalCodeStructure::encode(std::vector<uint8_t>::const_iterator msg, std::vector<uint8_t>::iterator parity) const
+{
+  size_t state = 0;
+  
+  for (int j = 0; j < blocSize(); j++) {
+    BitField<size_t> input = 0;
+    for (int k = 0; k < trellis().inputSize(); k++) {
+      input[k] = msg[k];
+    }
+    msg += trellis().inputSize();
+    
+    BitField<size_t> output = trellis().getOutput(state, input);
+    state = trellis().getNextState(state, input);
+    
+    for (int k = 0; k < trellis().outputSize(); k++) {
+      parity[k] = output.test(k);
+    }
+    parity  += trellis().outputSize();
+  }
+  
+  BitField<uint64_t> tail = 0;
+  switch (endType()) {
+    case ConvolutionalCodeStructure::PaddingTail:
+      for (int j = 0; j < tailSize(); ++j) {
+        for (BitField<size_t> input = 0; input < trellis().inputCount(); ++input) {
+          BitField<size_t> nextState = trellis().getNextState(state, input);
+          if (nextState.test(trellis().stateSize()-1) == 0) {
+            BitField<size_t> output = trellis().getOutput(state, input);
+            for (int k = 0; k < trellis().inputSize(); ++k) {
+              tail[j*trellis().inputSize()+k] = input.test(k);
+            }
+            for (int k = 0; k < trellis().outputSize(); ++k) {
+              parity[k] = output.test(k);
+            }
+            parity += trellis().outputSize();
+            state = nextState;
+            break;
+          }
+        }
+      }
+      break;
+      
+    default:
+    case ConvolutionalCodeStructure::Truncation:
+      state = 0;
+      break;
+  }
+  return tail;
 }

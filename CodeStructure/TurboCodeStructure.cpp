@@ -30,30 +30,50 @@
 
 using namespace fec;
 
-TurboCodeStructure::TurboCodeStructure(const std::vector<TrellisStructure>& trellis, const std::vector<Interleaver>& interleaver, size_t iterationCount, DecoderType structureType, ConvolutionalCodeStructure::DecoderType mapType) :
+TurboCodeStructure::TurboCodeStructure(const std::vector<TrellisStructure>& trellis, const std::vector<Interleaver>& interleaver, const std::vector<ConvolutionalCodeStructure::TrellisEndType>& endType, size_t iterationCount, DecoderType structureType, ConvolutionalCodeStructure::DecoderType mapType) :
   interleaver_(interleaver)
 {
   structureType_ = structureType;
-  if (trellis.size() != interleaver.size()) {
-    throw std::invalid_argument("Trellis count and Interleaver count don't match");
+  if (trellis.size() != interleaver.size() || interleaver.size() != endType.size()) {
+    throw std::invalid_argument("Trellis count, Interleaver count and trellis termination count don't match");
   }
   for (size_t i = 0; i < trellis.size(); ++i) {
     size_t blocSize = interleaver[i].dstSize() / trellis[i].inputSize();
     if (blocSize * trellis[i].inputSize() != interleaver[i].dstSize()) {
       throw std::invalid_argument("Invalid size for interleaver");
     }
-    structure_.push_back(ConvolutionalCodeStructure(trellis[i], blocSize, ConvolutionalCodeStructure::Truncation, mapType));
+    structure_.push_back(ConvolutionalCodeStructure(trellis[i], blocSize, endType[i], mapType));
   }
   
   iterationCount_ = iterationCount;
   
   messageSize_ = 0;
   paritySize_ = 0;
+  tailSize_ = 0;
   for (size_t i = 0; i < structure_.size(); ++i) {
+    tailSize_ += structure(i).msgTailSize();
     paritySize_ += structure_[i].paritySize();
     if (interleaver_[i].srcSize() > msgSize()) {
       messageSize_ = interleaver_[i].srcSize();
     }
   }
-  paritySize_ += msgSize();
+  paritySize_ += msgSize() + msgTailSize();
+}
+
+void TurboCodeStructure::encode(std::vector<uint8_t>::const_iterator msg, std::vector<uint8_t>::iterator parity) const
+{
+  std::copy(msg, msg + msgSize(), parity);
+  parity += msgSize();
+  auto parityIt = parity + msgTailSize();
+  std::vector<uint8_t> messageInterl;
+  for (size_t i = 0; i < structureCount(); ++i) {
+    messageInterl.resize(structure(i).msgSize());
+    interleaver(i).interleaveBloc<uint8_t>(msg, messageInterl.begin());
+    BitField<uint64_t> tail = structure(i).encode(messageInterl.begin(), parityIt);
+    for (size_t j = 0; j < structure(i).msgTailSize(); ++j) {
+      parity[j] = tail.test(j);
+    }
+    parity += structure(i).msgTailSize();
+    parityIt += structure(i).paritySize();
+  }
 }

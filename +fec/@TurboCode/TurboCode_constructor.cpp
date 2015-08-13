@@ -38,8 +38,14 @@
 #include "../mxArrayToTrellis.h"
 #include "../mxArrayToInterleaver.h"
 
-const int inputCount = 6;
+const int inputCount = 7;
 const int outputCount = 1;
+
+const int TrellisEndTypeCount = 2;
+const char* const TrellisEndTypeEnumeration[TrellisEndTypeCount] = {
+  "PaddingTail",
+  "Truncation"
+};
 
 const int StructureTypeCount = 2;
 const char* const StructureTypeEnumeration[StructureTypeCount] = {
@@ -63,10 +69,11 @@ const char* const MapTypeEnumeration[MapTypeCount] = {
  *  \param  prhs    [in]  Array of output mxArray
  *  \param  prhs[0] [in]  trellis
  *  \param  prhs[1] [in]  Interleaver
- *  \param  prhs[2] [in]  Maximum nomber of iterations
- *  \param  prhs[3] [in]  trellis termination type
- *  \param  prhs[4] [in]  decoder algorithm type
- *  \param  prhs[5] [in]  work group size - for parralelisation
+ *  \param  prhs[2] [in]  Trellis end type
+ *  \param  prhs[3] [in]  Maximum nomber of iterations
+ *  \param  prhs[4] [in]  trellis termination type
+ *  \param  prhs[5] [in]  decoder algorithm type
+ *  \param  prhs[6] [in]  work group size - for parralelisation
  */
 void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 {
@@ -79,11 +86,13 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
   
   std::vector<fec::TrellisStructure> trellis = mxCellArrayTo<fec::TrellisStructure>::f(prhs[0]);
   std::vector<fec::Interleaver> interleavers = mxCellArrayTo<fec::Interleaver>::f(prhs[1]);
+  std::vector<fec::ConvolutionalCodeStructure::TrellisEndType> endType =
+  mxCellArrayTo<fec::ConvolutionalCodeStructure::TrellisEndType>::f(prhs[2], TrellisEndTypeEnumeration, TrellisEndTypeCount);
   
-  fec::TurboCodeStructure codeStructure(trellis, interleavers, mxArrayTo<size_t>::f(prhs[2]),
-                                        mxArrayTo<fec::TurboCodeStructure::DecoderType>::f(prhs[3], StructureTypeEnumeration, StructureTypeCount),
-                                        mxArrayTo<fec::ConvolutionalCodeStructure::DecoderType>::f(prhs[4],MapTypeEnumeration, MapTypeCount));
-  std::unique_ptr<fec::Code> code = fec::Code::create(codeStructure, mxArrayTo<size_t>::f(prhs[5]));
+  fec::TurboCodeStructure codeStructure(trellis, interleavers, endType, mxArrayTo<size_t>::f(prhs[3]),
+                                        mxArrayTo<fec::TurboCodeStructure::DecoderType>::f(prhs[4], StructureTypeEnumeration, StructureTypeCount),
+                                        mxArrayTo<fec::ConvolutionalCodeStructure::DecoderType>::f(prhs[5],MapTypeEnumeration, MapTypeCount));
+  std::unique_ptr<fec::Code> code = fec::Code::create(codeStructure, mxArrayTo<size_t>::f(prhs[6]));
   
   plhs[0] = toMxArray(std::move(code));
 }

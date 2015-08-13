@@ -122,7 +122,7 @@ mxArray* toMxArray(const T& in) {
   return out;
 }
 
-template <class T>
+template <class T, class Enable = void>
 class mxCellArrayTo {
 public:
   static std::vector<T> f(const mxArray* in) {
@@ -136,6 +136,25 @@ public:
     std::vector<T> out(mxGetNumberOfElements(in));
     for (size_t i = 0; i < out.size(); ++i) {
       out[i] = mxArrayTo<T>::f(mxGetCell(in, i));
+    }
+    return out;
+  }
+};
+
+template <typename T>
+class mxCellArrayTo<T, typename std::enable_if<std::is_enum<T>::value>::type> {
+public:
+  static std::vector<T> f(const mxArray* in, const char* const enumeration[], size_t count) {
+    if (in == nullptr) {
+      throw std::invalid_argument("Null mxArray");
+    }
+    if (!mxIsCell(in)) {
+      throw std::invalid_argument("Invalid data");
+    }
+    
+    std::vector<T> out(mxGetNumberOfElements(in));
+    for (size_t i = 0; i < out.size(); ++i) {
+      out[i] = mxArrayTo<T>::f(mxGetCell(in, i), enumeration, count);
     }
     return out;
   }
@@ -276,7 +295,7 @@ public:
     if (in == nullptr) {
       throw std::invalid_argument("Null mxArray");
     }
-    if (!mxIsChar(in)) {
+    if (mxArrayToString(in) == nullptr) {
       throw std::invalid_argument("Invalid data");
     }
     for (size_t i = 0; i < count; i++) {

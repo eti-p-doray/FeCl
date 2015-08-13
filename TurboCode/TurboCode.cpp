@@ -45,22 +45,11 @@ TurboCode::TurboCode(const TurboCodeStructure& codeStructure, int workGroupdSize
   Code(workGroupdSize),
   codeStructure_(codeStructure)
 {
-  for (size_t i = 0; i < codeStructure_.structureCount(); ++i) {
-    code_.push_back(ConvolutionalCode(codeStructure_.structure(i), workGroupdSize));
-  }
 }
 
 void TurboCode::encodeBloc(std::vector<uint8_t>::const_iterator messageIn, std::vector<uint8_t>::iterator parityOut) const
 {
-  std::copy(messageIn, messageIn + codeStructure_.msgSize(), parityOut);
-  parityOut += codeStructure_.msgSize();
-  std::vector<uint8_t> messageInterl;
-  for (size_t i = 0; i < codeStructure_.structureCount(); ++i) {
-    messageInterl.resize(codeStructure_.structure(i).msgSize());
-    codeStructure_.interleaver(i).interleaveBloc<uint8_t>(messageIn, messageInterl.begin());
-    code_[i].encodeBloc(messageInterl.begin(), parityOut);
-    parityOut += codeStructure_.structure(i).paritySize();
-  }
+  codeStructure_.encode(messageIn, parityOut);
 }
 
 void TurboCode::appDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n) const

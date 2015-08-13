@@ -48,7 +48,7 @@ const char* const MapTypeEnumeration[MapTypeCount] = {
 
 const int TrellisEndTypeCount = 2;
 const char* const TrellisEndTypeEnumeration[TrellisEndTypeCount] = {
-  "ZeroTail",
+  "PaddingTail",
   "Truncation"
 };
 

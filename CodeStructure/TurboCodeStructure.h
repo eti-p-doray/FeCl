@@ -60,11 +60,19 @@ public:
   };
   
   TurboCodeStructure() = default;
-  TurboCodeStructure(const std::vector<TrellisStructure>& trellis, const std::vector<Interleaver>& interleaver, size_t iterationCount = 5, DecoderType structureType = Serial, ConvolutionalCodeStructure::DecoderType mapType = ConvolutionalCodeStructure::MaxLogMap);
+  TurboCodeStructure(const std::vector<TrellisStructure>& trellis, const std::vector<Interleaver>& interleaver, const std::vector<ConvolutionalCodeStructure::TrellisEndType>& endType, size_t iterationCount = 5, DecoderType structureType = Serial, ConvolutionalCodeStructure::DecoderType mapType = ConvolutionalCodeStructure::MaxLogMap);
   virtual ~TurboCodeStructure() = default;
   
   virtual CodeStructure::Type type() const {return CodeStructure::Turbo;}
   
+  void encode(std::vector<uint8_t>::const_iterator msg, std::vector<uint8_t>::iterator parity) const;
+  
+  /**
+   *  Access the size of added msg bit for the trellis termination.
+   *  This is zero in the cas of trunction.
+   *  \return Tail size
+   */
+  inline size_t msgTailSize() const {return tailSize_;}
   inline size_t structureCount() const {return structure_.size();}
   inline const std::vector<ConvolutionalCodeStructure>& structures() const {return structure_;}
   inline const std::vector<Interleaver>& interleavers() const {return interleaver_;}
@@ -86,6 +94,7 @@ private:
   
   std::vector<ConvolutionalCodeStructure> structure_;
   std::vector<Interleaver> interleaver_;
+  size_t tailSize_;
   DecoderType structureType_;
   size_t iterationCount_;
 };

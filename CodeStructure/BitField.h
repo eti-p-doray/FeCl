@@ -142,7 +142,7 @@ bool parity(fec::BitField<T> a) {
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const fec::BitField<T>& a)
 {
-  for (uint64_t i = 0; i < a.size(); ++i) {
+  for (uint64_t i = 0; i < 4; ++i) {
     os << a.test(i);
   }
   return os;

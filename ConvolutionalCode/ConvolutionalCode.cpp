@@ -50,47 +50,7 @@ ConvolutionalCode::ConvolutionalCode(const ConvolutionalCodeStructure& codeStruc
 
 void ConvolutionalCode::encodeBloc(std::vector<uint8_t>::const_iterator messageIt, std::vector<uint8_t>::iterator parityIt) const
 {
-  size_t state = 0;
-  
-  for (int j = 0; j < codeStructure_.blocSize(); j++) {
-    BitField<size_t> input = 0;
-    for (int k = 0; k < codeStructure_.trellis().inputSize(); k++) {
-      input[k] = messageIt[k];
-    }
-    messageIt += codeStructure_.trellis().inputSize();
-    
-    BitField<size_t> output = codeStructure_.trellis().getOutput(state, input);
-    state = codeStructure_.trellis().getNextState(state, input);
-    
-    for (int k = 0; k < codeStructure_.trellis().outputSize(); k++) {
-      parityIt[k] = output.test(k);
-    }
-    parityIt += codeStructure_.trellis().outputSize();
-  }
-  
-  switch (codeStructure_.endType()) {
-    case ConvolutionalCodeStructure::ZeroTail:
-      for (int j = 0; j < codeStructure_.tailSize(); j++) {
-        for (BitField<size_t> input = 0; input < codeStructure_.trellis().inputSize(); input++) {
-          BitField<size_t> nextState = codeStructure_.trellis().getNextState(state, input);
-          if (nextState.test(codeStructure_.trellis().stateSize()-1) == 0) {
-            BitField<size_t> output = codeStructure_.trellis().getOutput(state, 0);
-            for (int k = 0; k < codeStructure_.trellis().outputSize(); k++) {
-              parityIt[k] = output.test(k);
-            }
-            parityIt += codeStructure_.trellis().outputSize();
-            state = nextState;
-            continue;
-          }
-        }
-      }
-      break;
-      
-    default:
-    case ConvolutionalCodeStructure::Truncation:
-      state = 0;
-      break;
-  }
+  codeStructure_.encode(messageIt, parityIt);
 }
 
 void ConvolutionalCode::appDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n) const

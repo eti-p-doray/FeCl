@@ -53,9 +53,8 @@ void encode_badMsgSize_test(const std::shared_ptr<fec::Code>& code)
   BOOST_ERROR("Wrong msg size exception not thrown");
 }
 
-void decode_test(const std::shared_ptr<fec::Code>& code, size_t blocCount)
+void decode_test(const std::shared_ptr<fec::Code>& code, const std::vector<uint8_t>& msg)
 {
-  std::vector<uint8_t> msg(code->msgSize()*blocCount, 0);
   std::vector<uint8_t> parity;
   code->encode(msg, parity);
   
@@ -85,9 +84,8 @@ void decode_test(const std::shared_ptr<fec::Code>& code, size_t blocCount)
   BOOST_ERROR("Wrong parity size exception not thrown");
 }*/
 
-void softOutDecode_test(const std::shared_ptr<fec::Code>& code, size_t blocCount)
+void softOutDecode_test(const std::shared_ptr<fec::Code>& code, const std::vector<uint8_t>& msg)
 {
-  std::vector<uint8_t> msg(code->msgSize()*blocCount, 0);
   std::vector<uint8_t> parity;
   code->encode(msg, parity);
   
@@ -104,9 +102,8 @@ void softOutDecode_test(const std::shared_ptr<fec::Code>& code, size_t blocCount
   }
 }
 
-void appDecode_test(const std::shared_ptr<fec::Code>& code, size_t blocCount)
+void appDecode_test(const std::shared_ptr<fec::Code>& code, const std::vector<uint8_t>& msg)
 {
-  std::vector<uint8_t> msg(code->msgSize()*blocCount, 0);
   std::vector<uint8_t> parity;
   code->encode(msg, parity);
   
@@ -148,6 +145,8 @@ init_unit_test_suite( int argc, char* argv[] )
   std::vector<std::shared_ptr<fec::Code>> codes;
   codes.push_back( fec::Code::create(fec::ConvolutionalCodeStructure(fec::TrellisStructure({3}, {{04, 05}}), 8, fec::ConvolutionalCodeStructure::Truncation,  fec::ConvolutionalCodeStructure::MaxLogMap), 4) );
   codes.push_back( fec::Code::create(fec::ConvolutionalCodeStructure(fec::TrellisStructure({3}, {{04, 05}}), 8, fec::ConvolutionalCodeStructure::Truncation,  fec::ConvolutionalCodeStructure::LogMap), 4) );
+  codes.push_back( fec::Code::create(fec::ConvolutionalCodeStructure(fec::TrellisStructure({3}, {{04, 05}}), 8, fec::ConvolutionalCodeStructure::PaddingTail,  fec::ConvolutionalCodeStructure::LogMap), 4) );
+  
   codes.push_back( fec::Code::create(fec::LdpcCodeStructure(fec::LdpcCodeStructure::gallagerConstruction(1024, 3, 5)), 4) );
   
   uint64_t seed = std::chrono::system_clock::now().time_since_epoch().count();
@@ -161,27 +160,29 @@ init_unit_test_suite( int argc, char* argv[] )
   std::random_shuffle (randPerm2.begin(), randPerm2.end());
   
   auto trellis = fec::TrellisStructure({3}, {{05}});
-  codes.push_back( fec::Code::create(fec::TurboCodeStructure({trellis, trellis}, {randPerm1,randPerm2}, 5, fec::TurboCodeStructure::Parallel,  fec::ConvolutionalCodeStructure::MaxLogMap), 4 ));
-  codes.push_back( fec::Code::create(fec::TurboCodeStructure({trellis, trellis}, {randPerm1,randPerm2}, 5, fec::TurboCodeStructure::Serial,  fec::ConvolutionalCodeStructure::MaxLogMap), 4 ));
+  codes.push_back( fec::Code::create(fec::TurboCodeStructure({trellis, trellis}, {randPerm1,randPerm2}, {fec::ConvolutionalCodeStructure::Truncation,fec::ConvolutionalCodeStructure::Truncation}, 5, fec::TurboCodeStructure::Parallel,  fec::ConvolutionalCodeStructure::MaxLogMap), 4 ));
+  codes.push_back( fec::Code::create(fec::TurboCodeStructure({trellis, trellis}, {randPerm1,randPerm2}, {fec::ConvolutionalCodeStructure::Truncation,fec::ConvolutionalCodeStructure::Truncation}, 5, fec::TurboCodeStructure::Serial,  fec::ConvolutionalCodeStructure::MaxLogMap), 4 ));
+  codes.push_back( fec::Code::create(fec::TurboCodeStructure({trellis, trellis}, {randPerm1,randPerm2}, {fec::ConvolutionalCodeStructure::PaddingTail,fec::ConvolutionalCodeStructure::PaddingTail}, 5, fec::TurboCodeStructure::Parallel,  fec::ConvolutionalCodeStructure::MaxLogMap), 4 ));
+  codes.push_back( fec::Code::create(fec::TurboCodeStructure({trellis, trellis}, {randPerm1,randPerm2}, {fec::ConvolutionalCodeStructure::Truncation,fec::ConvolutionalCodeStructure::PaddingTail}, 5, fec::TurboCodeStructure::Serial,  fec::ConvolutionalCodeStructure::MaxLogMap), 4 ));
   
   for (auto& code : codes) {
     framework::master_test_suite().
     add( BOOST_TEST_CASE( std::bind( &encode_badMsgSize_test, code )));
     
     framework::master_test_suite().
-    add( BOOST_TEST_CASE( std::bind( &decode_test, code, 1 )));
+    add( BOOST_TEST_CASE( std::bind( &decode_test, code, std::vector<uint8_t>(code->msgSize()*5, 0) )));
     framework::master_test_suite().
-    add( BOOST_TEST_CASE( std::bind( &decode_test, code, 5 )));
+    add( BOOST_TEST_CASE( std::bind( &decode_test, code, std::vector<uint8_t>(code->msgSize()*5, 1) )));
     
     framework::master_test_suite().
-    add( BOOST_TEST_CASE( std::bind( &softOutDecode_test, code, 1 )));
+    add( BOOST_TEST_CASE( std::bind( &softOutDecode_test, code, std::vector<uint8_t>(code->msgSize()*5, 0) )));
     framework::master_test_suite().
-    add( BOOST_TEST_CASE( std::bind( &softOutDecode_test, code, 5 )));
+    add( BOOST_TEST_CASE( std::bind( &softOutDecode_test, code, std::vector<uint8_t>(code->msgSize()*5, 1) )));
     
     framework::master_test_suite().
-    add( BOOST_TEST_CASE( std::bind( &appDecode_test, code, 1 )));
+    add( BOOST_TEST_CASE( std::bind( &appDecode_test, code, std::vector<uint8_t>(code->msgSize()*5, 0) )));
     framework::master_test_suite().
-    add( BOOST_TEST_CASE( std::bind( &appDecode_test, code, 5 )));
+    add( BOOST_TEST_CASE( std::bind( &appDecode_test, code, std::vector<uint8_t>(code->msgSize()*5, 1) )));
   }
   return 0;
 }

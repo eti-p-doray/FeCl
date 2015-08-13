@@ -15,7 +15,7 @@ classdef TurboCode < fec.Code
     end
 
     methods
-        function this = TurboCode(trellis, interleaver, iterationCount, structureType, mapDecoderType, workGroupSize)
+        function this = TurboCode(trellis, interleaver, endType, iterationCount, structureType, mapDecoderType, workGroupSize)
         % TurboCode constructor
         %   Configures the object internally and allocate cpp ressources
         %
@@ -32,19 +32,26 @@ classdef TurboCode < fec.Code
           if (nargin == 0)
               return;
           end
-          if (nargin < 3)
+          if (nargin < 4)
               iterationCount = 5;
           end
-          if (nargin < 4)
+          if (nargin < 5)
             structureType = fec.StructureType.Serial;
           end
-          if (nargin < 5)
+          if (nargin < 6)
             mapDecoderType = fec.MapType.MaxLogMap;
           end
-          if (nargin < 6)
+          if (nargin < 7)
             workGroupSize = 4;
           end
-          this.mexHandle_ = fec.bin.TurboCode_constructor(trellis, interleaver, iterationCount, structureType.char, mapDecoderType.char, workGroupSize);
+          if (length(endType) == 1)
+            endType = repmat({endType}, size(trellis));
+          end
+          endTypeChar = cell(size(endType));
+          for i = 1:length(endType)
+              endTypeChar{i} = endType{i}.char;
+          end
+          this.mexHandle_ = fec.bin.TurboCode_constructor(trellis, interleaver, endTypeChar, iterationCount, structureType.char, mapDecoderType.char, workGroupSize);
         end
     end
 end

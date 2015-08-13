@@ -76,12 +76,12 @@ public:
     switch (codeStructure_.structureType()) {
       default:
       case TurboCodeStructure::Serial:
-        return codeStructure_.msgSize();
+        return codeStructure_.msgSize() + codeStructure_.msgTailSize();
         break;
         
       case TurboCodeStructure::Parallel:
         for (auto & i : codeStructure_.structures()) {
-          extrinsicSize += i.msgSize();
+          extrinsicSize += i.msgSize() + i.msgTailSize();
         }
         return extrinsicSize;
         break;
@@ -104,11 +104,9 @@ private:
   void serialize(Archive & ar, const unsigned int version) {
     using namespace boost::serialization;
     ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(Code);
-    ar & ::BOOST_SERIALIZATION_NVP(code_);
     ar & ::BOOST_SERIALIZATION_NVP(codeStructure_);
   }
   
-  std::vector<ConvolutionalCode> code_;
   TurboCodeStructure codeStructure_;
 };
   

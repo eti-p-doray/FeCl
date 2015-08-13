@@ -113,7 +113,7 @@ void ViterbiDecoder::decodeBloc(std::vector<LlrType>::const_iterator parityIn, s
       break;
       
     default:
-    case ConvolutionalCodeStructure::ZeroTail:
+    case ConvolutionalCodeStructure::PaddingTail:
       break;
   }
   

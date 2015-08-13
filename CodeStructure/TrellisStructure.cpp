@@ -127,6 +127,57 @@ TrellisStructure::TrellisStructure(std::vector<BitField<size_t> > constraintLeng
   }
 }
 
+TrellisStructure::TrellisStructure(std::vector<BitField<size_t> > constraintLengths, std::vector<std::vector<BitField<size_t> > > generator, std::vector<BitField<size_t> > feedback)
+{
+  inputSize_ = size_t(generator.size());
+  outputSize_ = size_t(generator[0].size());
+  assert(constraintLengths.size() == generator.size());
+  for (size_t i = 0; i < inputSize(); i++) {
+    assert(outputSize_ == generator[i].size());
+  }
+  
+  outputCount_ = 1<<outputSize_;
+  inputCount_ = 1<<inputSize_;
+  
+  
+  std::vector<BitField<size_t> > inputStates(constraintLengths.size(), 0);
+  
+  stateSize_ = 0;
+  for (size_t i = 0; i < constraintLengths.size(); i++) {
+    stateSize_ += constraintLengths[i] - 1;
+  }
+  stateCount_ = 1<<stateSize_;
+  nextState_.resize(stateCount()*inputCount());
+  output_.resize(stateCount()*inputCount());
+  
+  for (BitField<size_t> state = 0; state < stateCount(); state++) {
+    for (BitField<size_t> input = 0; input < inputCount(); input++) {
+      nextState_[state*inputCount()+input] = 0;
+      BitField<size_t> output = 0;
+      size_t j = 0;
+      for (size_t i = 0; i < constraintLengths.size(); i++) {
+        for (size_t k = 0; k < constraintLengths[i]-1; k++) {
+          assert(i < inputStates.size());
+          inputStates[i][k] = state[j+k];
+        }
+        
+        for (size_t k = 0; k < outputSize_; k++) {
+          assert((generator[i][k]>>1) <= stateCount());
+          output[k] ^= (input[i] & generator[i][k][stateSize()]) ^ (parity(inputStates[i] & generator[i][k])) ^ parity(feedback[i] & state);;
+        }
+        
+        assert(state*inputCount()+input < nextState_.size());
+        output_[state*inputCount()+input] ^= output;
+        
+        nextState_[state*inputCount()+input][j+constraintLengths[i]-2] = (input[i] & feedback[i].test(stateSize())) ^ parity(feedback[i] & state);
+        nextState_[state*inputCount()+input] |= (inputStates[i] >> 1) << j ;
+        
+        j += constraintLengths[i]-1;
+      }
+    }
+  }
+}
+
 std::ostream& operator<<(std::ostream& os, const TrellisStructure& trellis)
 {
   for (BitField<size_t> i = 0; i < trellis.stateCount(); i++) {

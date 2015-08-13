@@ -34,5 +34,5 @@ function operation(code)
     [aPosteriori, extrinsic] = code.appDecode(llr, zeros(code.extrinsicSize,5));
     
     %Lets now count the errors in the decoded msg
-    errorCount = sum(sum(msgDecoded-msg) ~= 0)
+    errorCount = sum(sum(msgDecoded-msg) ~= 0);
 end
