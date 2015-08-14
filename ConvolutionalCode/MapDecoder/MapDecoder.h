@@ -67,7 +67,7 @@ protected:
   
   virtual void parityAPosteriori(std::vector<LlrType>::iterator parityOut) = 0;/**< Final (parity) L-values calculation. */
   virtual void messageAPosteriori(std::vector<LlrType>::iterator parityOut) = 0;
-  virtual void messageExtrinsic(std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator extrinscOut) = 0;/**< Final (msg) L-values calculation. */
+  virtual void messageExtrinsic(std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinscOut) = 0;/**< Final (msg) L-values calculation. */
   
   inline const ConvolutionalCodeStructure& codeStructure() const {return codeStructure_;} /**< Access the code structure */
   

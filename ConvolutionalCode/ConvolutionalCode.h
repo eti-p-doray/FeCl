@@ -70,7 +70,7 @@ public:
   
   virtual size_t msgSize() const {return codeStructure_.msgSize();}
   virtual size_t paritySize() const {return codeStructure_.paritySize();}
-  virtual size_t extrinsicSize() const {return codeStructure_.msgSize()+codeStructure_.tailSize()*codeStructure_.trellis().inputSize();}
+  virtual size_t extrinsicSize() const {return codeStructure_.msgSize()+codeStructure_.msgTailSize();}
   virtual const CodeStructure& structure() const {return codeStructure_;}
 
 protected:

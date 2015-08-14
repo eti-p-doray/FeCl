@@ -98,6 +98,12 @@ protected:
   virtual void appDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n) const;
   virtual void softOutDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::iterator messageOut, size_t n) const;
   virtual void decodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<uint8_t>::iterator messageOut, size_t n) const;
+  
+  template <typename T>
+  void pack(typename std::vector<T>::const_iterator parityIn, typename std::vector<T>::iterator parityOut);
+  
+  template <typename T>
+  void unPack(typename std::vector<T>::const_iterator parityIn, typename std::vector<T>::iterator parityOut);
 
 private:
   template <typename Archive>
@@ -114,5 +120,54 @@ private:
 
 BOOST_CLASS_EXPORT_KEY(fec::TurboCode);
 BOOST_CLASS_TYPE_INFO(fec::TurboCode,extended_type_info_no_rtti<fec::TurboCode>);
+
+template <typename T>
+void fec::TurboCode::pack(typename std::vector<T>::const_iterator parityIn, typename std::vector<T>::iterator parityOut)
+{
+  auto parityOutIt = parityOut;
+  auto msgInIt = parityIn;
+  auto parityInIt = parityIn;
+  size_t step = 0;
+  for (size_t i = 0; i < codeStructure_.msgSize(); ++i) {
+    *parityOut = *msgInIt;
+    step = 0;
+    for (size_t j = 0; j < codeStructure_.structureCount(); ++j) {
+      if (i < codeStructure_.structure(i).blocSize() - codeStructure_.structure(i).tailSize()) {
+        for (size_t k = 0; k < codeStructure_.structure(i).trellis().outputSize(); ++k) {
+          *parityOutIt = *parityInIt;
+          ++parityOutIt;
+        }
+      }
+      parityOutIt += (i < codeStructure_.msgSize());
+    }
+    ++msgInIt;
+  }
+  parityInIt = parityIn + codeStructure_.msgSize() + codeStructure_.msgTailSize();
+  for (size_t i = 0; i < codeStructure_.structureCount(); ++i) {
+    parityInIt += codeStructure_.structure(i).paritySize() - codeStructure_.structure(i).tailSize() * codeStructure_.structure(i).trellis().outputSize();
+    for (size_t j = 0; j < codeStructure_.structure(i).tailSize(); ++j) {
+      for (size_t k = 0; k < codeStructure_.structure(i).trellis().inputSize(); ++k) {
+        *parityOutIt = *msgInIt;
+        ++parityOutIt;
+        ++msgInIt;
+      }
+      for (size_t k = 0; k < codeStructure_.structure(i).trellis().outputSize(); ++k) {
+        *parityOutIt = *parityInIt;
+        ++parityOutIt;
+        ++parityInIt;
+      }
+    }
+  }
+  for (size_t j = 0; j < codeStructure_.structureCount(); ++j) {
+    *parityOutIt = *parityOutIt;
+  }
+}
+
+template <typename T>
+void fec::TurboCode::unPack(typename std::vector<T>::const_iterator parityIn, typename std::vector<T>::iterator parityOut)
+{
+  
+}
+
 
 #endif

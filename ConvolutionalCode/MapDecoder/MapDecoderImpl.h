@@ -59,7 +59,7 @@ protected:
   
   virtual void parityAPosteriori(std::vector<LlrType>::iterator parityOut);
   virtual void messageAPosteriori(std::vector<LlrType>::iterator parityOut);
-  virtual void messageExtrinsic(std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator extrinscOut);
+  virtual void messageExtrinsic(std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinscOut);
 };
 
 template <typename A>
@@ -110,7 +110,7 @@ void MapDecoderImpl<A>::parityAPosteriori(std::vector<LlrType>::iterator parityO
 }
 
 template <typename A>
-void MapDecoderImpl<A>::messageExtrinsic(std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator extrinsicOut)
+void MapDecoderImpl<A>::messageExtrinsic(std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut)
 {
   auto backwardMetricIt = backwardMetrics_.begin();
   
@@ -137,9 +137,13 @@ void MapDecoderImpl<A>::messageExtrinsic(std::vector<LlrType>::const_iterator ex
         ++stateIt;
         ++forwardMetricIt;
       }
+      if (i < codeStructure().blocSize()) {
+        *messageOut = oneMetric - zeroMetric;
+      }
       *extrinsicOut = oneMetric - zeroMetric - *extrinsicIn;
       ++extrinsicOut;
       ++extrinsicIn;
+      ++messageOut;
     }
     backwardMetricIt += codeStructure().trellis().stateCount();
   }
@@ -188,7 +192,7 @@ void MapDecoderImpl<A>::appBranchMetrics(std::vector<LlrType>::const_iterator pa
     for (BitField<size_t> j = 0; j < codeStructure().trellis().outputCount(); ++j) {
       branchOutputMetrics_[j] = codeStructure().correlationProbability(j, parity, codeStructure().trellis().outputSize());
     }
-    if (i < codeStructure().blocSize()) {
+    if (i < codeStructure().blocSize() + codeStructure().tailSize()) {
       for (BitField<size_t> j = 0; j < codeStructure().trellis().inputCount(); ++j) {
         branchInputMetrics_[j] = codeStructure().correlationProbability(j, extrinsic, codeStructure().trellis().inputSize());
       }

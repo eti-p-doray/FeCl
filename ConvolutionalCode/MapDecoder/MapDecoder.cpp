@@ -120,12 +120,7 @@ void MapDecoder::appDecodeBloc(std::vector<LlrType>::const_iterator parityIn, st
   forwardMetrics();
   backwardMetrics();
   
-  messageExtrinsic(extrinsicIn, extrinsicOut);
-  
-  std::copy(extrinsicOut, extrinsicOut+codeStructure().msgSize(), messageOut);
-  for (size_t i = 0; i < codeStructure().msgSize(); ++i) {
-    messageOut[i] += extrinsicIn[i];
-  }
+  messageExtrinsic(extrinsicIn, messageOut, extrinsicOut);
 }
 
 /**

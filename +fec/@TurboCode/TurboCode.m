@@ -32,6 +32,9 @@ classdef TurboCode < fec.Code
           if (nargin == 0)
               return;
           end
+          if (nargin < 3)
+              endType = fec.TrellisEndType.PaddingTail;
+          end
           if (nargin < 4)
               iterationCount = 5;
           end
@@ -42,10 +45,13 @@ classdef TurboCode < fec.Code
             mapDecoderType = fec.MapType.MaxLogMap;
           end
           if (nargin < 7)
-            workGroupSize = 4;
+            workGroupSize = 1;
           end
           if (length(endType) == 1)
-            endType = repmat({endType}, size(trellis));
+            trellis = repmat({trellis}, size(interleaver));
+          end
+          if (length(endType) == 1)
+            endType = repmat({endType}, size(interleaver));
           end
           endTypeChar = cell(size(endType));
           for i = 1:length(endType)

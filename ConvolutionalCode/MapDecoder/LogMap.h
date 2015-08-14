@@ -55,7 +55,21 @@ private:
     if (sum == -MAX_LLR) {
       return sum;
     }
-    return sum + log(1.0 + exp(-fabs(a-b)));
+    return sum + log1pexp(-fabs(a-b));
+  }
+  static inline LlrType log1pexp(LlrType x) {
+    if (x < -37.0) {
+      return exp(x);
+    }
+    //else if (x < 18.0) {
+      return log1p(exp(x));
+    //}
+    /*else if (x < 33.3) {
+      return x+exp(-x);
+    }
+    else {
+      return x;
+    }*/
   }
 };
   
