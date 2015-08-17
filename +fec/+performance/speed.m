@@ -1,6 +1,6 @@
-function all
-    N = 8;
-    M = 8;
+function speed
+    N = 256;
+    M = 128;
     T = 32400;
     trellis = poly2trellis(4, [13, 15], 13);
     turboTrellis = poly2trellis(4, [15], 13);
@@ -10,8 +10,8 @@ function all
     H = dvbs2ldpc(1/2);
     code{2} = fec.TurboCode(turboTrellis, {[1:T], pi}, fec.TrellisEndType.PaddingTail, 4, fec.StructureType.Serial, fec.MapType.LogMap);
     code{3} = fec.TurboCode(turboTrellis, {[1:T], pi}, fec.TrellisEndType.PaddingTail, 4, fec.StructureType.Serial, fec.MapType.MaxLogMap);
-    code{4} = fec.LdpcCode(H, 10, fec.BpType.TrueBp);
-    code{5} = fec.LdpcCode(H, 10, fec.BpType.MinSumBp);
+    code{4} = fec.LdpcCode(H, 20, fec.BpType.TrueBp);
+    code{5} = fec.LdpcCode(H, 20, fec.BpType.MinSumBp);
     
     matlabEncoder{1} = comm.ConvolutionalEncoder('TrellisStructure', trellis, 'TerminationMethod', 'Truncated');
     matlabDecoder{1} = comm.ViterbiDecoder('TrellisStructure', trellis, 'TerminationMethod', 'Truncated', 'TracebackDepth', T);
@@ -57,16 +57,13 @@ function all
         signal = symbol + randn(size(parity)) / sqrt(2*snr);
         llr = -4.0 * signal * snr;
 
-        %disp(codeDesc{i});
-        %disp([' For ' int2str(code{i}.msgSize) ' msg bits and ' int2str(N{i}) ' blocs']);
-        
         code{i}.workGroupSize = 1;
         [fecAvEncEt1(i), fecStdEncEt1(i)] = fec.performance.fecEncode(code{i}, msg, M);
-        [fecAvDecEt1(i), fecStdDecEt1(i)] = fec.performance.fecDecode(code{i}, msg, llr, M);
+        [fecAvDecEt1(i), fecStdDecEt1(i), ~] = fec.performance.fecDecode(code{i}, msg, llr, M);
 
         code{i}.workGroupSize = 4;
         [fecAvEncEt4(i), fecStdEncEt4(i)] = fec.performance.fecEncode(code{i}, msg, M);
-        [fecAvDecEt4(i), fecStdDecEt4(i)] = fec.performance.fecDecode(code{i}, msg, llr, M);
+        [fecAvDecEt4(i), fecStdDecEt4(i), ~] = fec.performance.fecDecode(code{i}, msg, llr, M);
         
         if (~isa(code{i}, 'fec.TurboCode'))
             llr = -llr;
@@ -91,16 +88,12 @@ function all
         end
         
         [matlabAvEncEt(i), matlabStdEncEt(i)] = fec.performance.matlabEncode(matlabEncoder{i}, msg, M);
-        [matlabAvDecEt(i), matlabStdDecEt(i)] = fec.performance.matlabDecode(matlabDecoder{i}, msg, llr, M); 
-
-        %disp('Bit Error Count');
-        %disp(table(reshape(snrdb{i},[],1), fecErrorCount, matlabErrorCount, 'VariableNames', {'snrdb', 'fec', 'matlab'}));
-        
-        %encGain = (matlabEncElapsedTime - fecEncElapsedTime)/matlabEncElapsedTime * 100.0;
-        %decGain = (matlabDecElapsedTime - fecDecElapsedTime)/matlabDecElapsedTime * 100.0;
-        %disp('Operation elapsed time');
-        %disp(table([fecEncElapsedTime;fecDecElapsedTime], [matlabEncElapsedTime;matlabDecElapsedTime], 'VariableNames', {'fec', 'matlab', 'gain'}, 'RowNames', {'Encoding', 'Decoding'}));
+        [matlabAvDecEt(i), matlabStdDecEt(i), ~] = fec.performance.matlabDecode(matlabDecoder{i}, msg, llr, M); 
     end
+    z = 1.96;
+    disp(table(matlabStdEncEt * z / sqrt(M), fecStdEncEt1 * z / sqrt(M), fecStdEncEt4 * z / sqrt(M), 'VariableNames', {'matlab', 'fec1', 'fec4'}, 'RowNames', codeDesc));
+    disp(table(matlabStdDecEt * z / sqrt(M), fecStdDecEt1 * z / sqrt(M), fecStdDecEt4 * z / sqrt(M), 'VariableNames', {'matlab', 'fec1', 'fec4'}, 'RowNames', codeDesc));
+    
     disp(table(matlabAvEncEt, fecAvEncEt1, fecAvEncEt4, 'VariableNames', {'matlab', 'fec1', 'fec4'}, 'RowNames', codeDesc));
     disp(table(matlabAvDecEt, fecAvDecEt1, fecAvDecEt4, 'VariableNames', {'matlab', 'fec1', 'fec4'}, 'RowNames', codeDesc));
 end

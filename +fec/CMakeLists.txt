@@ -1,8 +1,8 @@
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/) # add FindMatlab module
 
 find_package(Matlab REQUIRED)
-include (GenerateExportHeader)
-add_compiler_export_flags()
+#include (GenerateExportHeader)
+#add_compiler_export_flags()
 add_definitions(/DMATLAB_MEX_FILE) #define matlab macros
 
 set(Boost_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/libs/include/)
@@ -28,7 +28,7 @@ function (add_mex_function SRC_NAME)
     SET_TARGET_PROPERTIES(${FUNCTION_NAME} PROPERTIES LINK_FLAGS -Wl,--version-script,"${MATLAB_MAP}")
   endif (APPLE)
 
-  generate_export_header(${FUNCTION_NAME} BASE_NAME mex EXPORT_FILE_NAME ${CMAKE_SOURCE_DIR}/+fec/export.h)
+#generate_export_header(${FUNCTION_NAME} BASE_NAME mex EXPORT_FILE_NAME ${CMAKE_SOURCE_DIR}/+fec/export.h)
 
 	install(TARGETS ${FUNCTION_NAME} DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/+bin)
 endfunction()

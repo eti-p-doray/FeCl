@@ -63,10 +63,10 @@ BitField<uint64_t> ConvolutionalCodeStructure::encode(std::vector<uint8_t>::cons
 {
   size_t state = 0;
   
-  for (int j = 0; j < blocSize(); j++) {
+  for (int j = 0; j < blocSize(); ++j) {
     BitField<size_t> input = 0;
     for (int k = 0; k < trellis().inputSize(); k++) {
-      input[k] = msg[k];
+      input.set(k, msg[k]);
     }
     msg += trellis().inputSize();
     
@@ -88,7 +88,7 @@ BitField<uint64_t> ConvolutionalCodeStructure::encode(std::vector<uint8_t>::cons
           if (nextState.test(trellis().stateSize()-1) == 0) {
             BitField<size_t> output = trellis().getOutput(state, input);
             for (int k = 0; k < trellis().inputSize(); ++k) {
-              tail[j*trellis().inputSize()+k] = input.test(k);
+              tail.set(j*trellis().inputSize()+k, input.test(k));
             }
             for (int k = 0; k < trellis().outputSize(); ++k) {
               parity[k] = output.test(k);

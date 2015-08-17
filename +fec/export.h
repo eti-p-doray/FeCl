@@ -9,20 +9,20 @@
 #  ifndef MEX_EXPORT
 #    ifdef LdpcCode_set_iterationCount_EXPORTS
         /* We are building this library */
-#      define MEX_EXPORT __declspec(dllexport)
+#      define MEX_EXPORT __attribute__((visibility("default")))
 #    else
         /* We are using this library */
-#      define MEX_EXPORT __declspec(dllimport)
+#      define MEX_EXPORT __attribute__((visibility("default")))
 #    endif
 #  endif
 
 #  ifndef MEX_NO_EXPORT
-#    define MEX_NO_EXPORT 
+#    define MEX_NO_EXPORT __attribute__((visibility("hidden")))
 #  endif
 #endif
 
 #ifndef MEX_DEPRECATED
-#  define MEX_DEPRECATED __declspec(deprecated)
+#  define MEX_DEPRECATED __attribute__ ((__deprecated__))
 #endif
 
 #ifndef MEX_DEPRECATED_EXPORT
