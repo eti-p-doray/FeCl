@@ -47,7 +47,7 @@ LdpcCode::LdpcCode(const LdpcCodeStructure& codeStructure, int workGroupdSize) :
 {
 }
 
-void LdpcCode::syndrome(const std::vector<uint8_t>& parity, std::vector<uint8_t>& syndrome) const
+/*void LdpcCode::syndrome(const std::vector<uint8_t>& parity, std::vector<uint8_t>& syndrome) const
 {
   uint64_t blocCount = parity.size() / (codeStructure_.paritySize());
   if (parity.size() != blocCount * codeStructure_.paritySize()) {
@@ -64,7 +64,7 @@ void LdpcCode::syndrome(const std::vector<uint8_t>& parity, std::vector<uint8_t>
     parityIt += codeStructure_.paritySize();
     syndromeIt += codeStructure_.parityCheck().rows();
   }
-}
+}*/
 
 void LdpcCode::encodeBloc(std::vector<uint8_t>::const_iterator messageIt, std::vector<uint8_t>::iterator parityIt) const
 {

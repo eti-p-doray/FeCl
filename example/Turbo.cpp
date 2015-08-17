@@ -52,8 +52,8 @@ int main( int argc, char* argv[] )
   
   uint64_t seed = std::chrono::system_clock::now().time_since_epoch().count();
   std::srand ( unsigned (seed ) );
-  std::vector<size_t> systIdx(256);
-  std::vector<size_t> permIdx(256);
+  std::vector<size_t> systIdx(2048);
+  std::vector<size_t> permIdx(2048);
   for (size_t i = 0; i < systIdx.size(); ++i) {
     permIdx[i] = i;
     systIdx[i] = i;
@@ -63,7 +63,7 @@ int main( int argc, char* argv[] )
   /*
    The trellis and interleaver indices are used to create a code structure.
    */
-  fec::TurboCodeStructure structure({trellis, trellis}, {systIdx, permIdx}, {fec::ConvolutionalCodeStructure::Truncation,fec::ConvolutionalCodeStructure::Truncation});
+  fec::TurboCodeStructure structure({trellis, trellis}, {systIdx, permIdx}, {fec::ConvolutionalCodeStructure::PaddingTail,fec::ConvolutionalCodeStructure::PaddingTail}, 5, fec::TurboCodeStructure::Serial, fec::ConvolutionalCodeStructure::LogMap);
   //! [Creating a Turbo code structure]
   
   

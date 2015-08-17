@@ -1,6 +1,10 @@
 classdef LdpcCode < fec.Code
     % This class is a specialization of the Code abstract class.
     % It represents a Ldpc code.
+    
+    properties (Dependent = true)
+        iterationCount
+    end
 
     methods (Static)
         function b = loadobj(a)
@@ -13,6 +17,13 @@ classdef LdpcCode < fec.Code
     end
 
     methods
+        
+        function count = get.iterationCount(this)
+            count = fec.bin.LdpcCode_get_iterationCount(this);
+        end
+        function set.iterationCount(this, count)
+            fec.bin.LdpcCode_set_iterationCount(this, count);
+        end
 
         function this = LdpcCode(H, iterationCount, decoderType, workGroupSize)
         % LdpcCode constructor

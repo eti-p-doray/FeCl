@@ -96,25 +96,8 @@ public:
    */
   inline const TrellisStructure& trellis() const {return trellis_;}
   
-  /** 
-   *  Computes the probability (L-value) of a sequence of input L-values 
-   *  related to a sequence of bits.
-   *  The answer is defined as the correlations between the two inputs.
-   *  \param  a Sequence of bits as a BitField
-   *  \param  b Random access input iterator associated with the sequence of L-values
-   *  \return Correlation between the two inputs
-   */
-  static inline LlrType correlationProbability(const BitField<size_t>& a, std::vector<LlrType>::const_iterator b, size_t size) {
-    LlrType x = 0;
-    for (size_t i = 0; i < size; ++i) {
-      if (a.test(i)) {
-        x += b[i];
-      }
-    }
-    return x;
-  }
-  
   BitField<uint64_t> encode(std::vector<uint8_t>::const_iterator msg, std::vector<uint8_t>::iterator parity) const;
+  bool check(std::vector<uint8_t>::const_iterator parity) const;
   
 private:
   template <typename Archive>

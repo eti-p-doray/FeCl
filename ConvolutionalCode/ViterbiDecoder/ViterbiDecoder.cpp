@@ -61,7 +61,7 @@ void ViterbiDecoder::decodeBloc(std::vector<LlrType>::const_iterator parityIn, s
     std::fill(nextPathMetrics.begin(), nextPathMetrics.end(), -MAX_LLR);
     
     for (BitField<size_t> j = 0; j < codeStructure().trellis().outputCount(); ++j) {
-      branchMetrics[j] = codeStructure().correlationProbability(j, parityIn, codeStructure().trellis().outputSize());
+      branchMetrics[j] = correlationProbability(j, parityIn, codeStructure().trellis().outputSize());
     }
     parityIn += codeStructure().trellis().outputSize();
   

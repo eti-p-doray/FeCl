@@ -1,15 +1,14 @@
-function [errorCount, elapsedTime] = matlabDecode(decoder, msg, llr)
-    elapsedTime = 0;
-    errorCount = zeros(size(llr));
-    
-    decodedMsg = int8(decoder.step(llr{1}(:,1)));
-    for i = 1:length(llr)
+function [avElapsedTime, stdElapsedTime] = matlabDecode(decoder, msg, llr, N)
+    decodedMsg = int8(decoder.step(llr(:,1)));
+    elapsedTime = zeros(N,1);
+    for i = 1:N
         tic;
         for j = 1:size(msg,2)
-            decodedMsg = int8(decoder.step(llr{i}(:,j)));
-            errorCount(i) = errorCount(i) + sum(sum((decodedMsg-msg(:,j))~=0));
+            decodedMsg = int8(decoder.step(llr(:,j)));
+            %errorCount = errorCount(i) + sum(sum((decodedMsg-msg(:,j))~=0));
         end
-        elapsedTime = elapsedTime + toc;
+        elapsedTime(i) = toc;
     end
-    elapsedTime = elapsedTime / length(llr);
+    avElapsedTime = mean(elapsedTime);
+    stdElapsedTime = std(elapsedTime);
 end

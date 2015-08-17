@@ -108,3 +108,4 @@ BitField<uint64_t> ConvolutionalCodeStructure::encode(std::vector<uint8_t>::cons
   }
   return tail;
 }
+

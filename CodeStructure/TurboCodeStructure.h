@@ -65,8 +65,6 @@ public:
   
   virtual CodeStructure::Type type() const {return CodeStructure::Turbo;}
   
-  void encode(std::vector<uint8_t>::const_iterator msg, std::vector<uint8_t>::iterator parity) const;
-  
   /**
    *  Access the size of added msg bit for the trellis termination.
    *  This is zero in the cas of trunction.
@@ -81,12 +79,18 @@ public:
   inline size_t iterationCount() const {return iterationCount_;}
   inline DecoderType structureType() const {return structureType_;}
   
+  inline void setIterationCount(size_t count) {iterationCount_ = count;}
+  
+  void encode(std::vector<uint8_t>::const_iterator msg, std::vector<uint8_t>::iterator parity) const;
+  bool check(std::vector<uint8_t>::const_iterator parity) const;
+  
 private:
   template <typename Archive>
   void serialize(Archive & ar, const unsigned int version) {
     using namespace boost::serialization;
     ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(CodeStructure);
     ar & ::BOOST_SERIALIZATION_NVP(structure_);
+    ar & ::BOOST_SERIALIZATION_NVP(tailSize_);
     ar & ::BOOST_SERIALIZATION_NVP(interleaver_);
     ar & ::BOOST_SERIALIZATION_NVP(structureType_);
     ar & ::BOOST_SERIALIZATION_NVP(iterationCount_);

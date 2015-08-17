@@ -270,8 +270,15 @@ public:
     if (mxGetData(mxGetProperty(in, 0, "mexHandle_")) == nullptr) {
       throw std::invalid_argument("Invalid data");
     }
+    
+    
     T* ptr = reinterpret_cast<T*>(*((uint64_t *)mxGetData(mxGetProperty(in, 0, "mexHandle_"))));
     ptr = dynamic_cast<T*>(ptr);
+    
+    if (boost::serialization::extended_type_info_no_rtti<T>::get_const_instance().get_derived_extended_type_info(*ptr) == nullptr) {
+      //throw std::invalid_argument("Invalid class");
+    }
+    
     if (ptr == nullptr) {
       throw std::invalid_argument("null ptr received");
     }
@@ -323,10 +330,29 @@ private:
 
 const char* saveStructFieldNames[] = {"data"};
 
-template <class T>
-mxArray* save(const std::unique_ptr<T>& u)
+template <class ... Childs>
+struct RegisterAgent {
+};
+
+template <class Child, class ... Childs>
+struct RegisterAgent<Child, Childs...> : RegisterAgent<Childs...> {
+  template <typename Archive>
+  void register_type(Archive& archive) const
+  {
+    archive.template register_type<Child>();
+    RegisterAgent<Childs...>::register_type(archive);
+  }
+};
+
+template <>
+struct RegisterAgent<> {
+  template <typename Archive>
+  void register_type(Archive& archive) const {}
+};
+
+template <class T, class RegisterAgent>
+mxArray* save(const std::unique_ptr<T>& u, RegisterAgent registerAgent)
 {
-  
   mxArray* save = mxCreateStructMatrix(1, 1, 1, {saveStructFieldNames});
   const T* base_pointer = u.get();
   
@@ -334,6 +360,7 @@ mxArray* save(const std::unique_ptr<T>& u)
   sink_counter countSr(serialSize);
   boost::iostreams::stream< sink_counter > countSource(countSr);
   boost::archive::binary_oarchive countOa(countSource);
+  registerAgent.register_type(countOa);
   
   countOa & BOOST_SERIALIZATION_NVP(base_pointer);
   
@@ -342,6 +369,7 @@ mxArray* save(const std::unique_ptr<T>& u)
   boost::iostreams::basic_array_sink<char> sr(reinterpret_cast<char*>(mxGetData(data)), serialSize + 4096);
   boost::iostreams::stream< boost::iostreams::basic_array_sink<char> > source(sr);
   boost::archive::binary_oarchive oa(source);
+  registerAgent.register_type(oa);
   oa & BOOST_SERIALIZATION_NVP(base_pointer);
   
   mxSetField(save, 0, "data", data);
@@ -349,8 +377,8 @@ mxArray* save(const std::unique_ptr<T>& u)
   return save;
 }
 
-template <class T>
-std::unique_ptr<T> load(const mxArray* in)
+template <class T, class RegisterAgent>
+std::unique_ptr<T> load(const mxArray* in, RegisterAgent registerAgent)
 {
   mxArray* data = mxGetField(in, 0, "data");
   if (data == nullptr) {
@@ -364,6 +392,7 @@ std::unique_ptr<T> load(const mxArray* in)
   boost::iostreams::basic_array_source<char> sr(reinterpret_cast<char*>(mxGetData(data)), serialSize);
   boost::iostreams::stream< boost::iostreams::basic_array_source<char> > source(sr);
   boost::archive::binary_iarchive ia(source);
+  registerAgent.register_type(ia);
   
   std::unique_ptr<T> u(nullptr);
   T* base_ptr;

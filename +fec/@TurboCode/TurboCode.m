@@ -4,6 +4,10 @@ classdef TurboCode < fec.Code
     % For simplicity, the turbo code parity bits are generated following this structure:
     %   msg | constituent1 | constituent2 | etc.
 
+    properties (Dependent = true)
+        iterationCount
+    end
+    
     methods (Static)
         function b = loadobj(a)
         % Overload of the loadobj
@@ -15,6 +19,13 @@ classdef TurboCode < fec.Code
     end
 
     methods
+        function count = get.iterationCount(this)
+            count = fec.bin.TurboCode_get_iterationCount(this);
+        end
+        function set.iterationCount(this, count)
+            fec.bin.TurboCode_set_iterationCount(this, count);
+        end
+        
         function this = TurboCode(trellis, interleaver, endType, iterationCount, structureType, mapDecoderType, workGroupSize)
         % TurboCode constructor
         %   Configures the object internally and allocate cpp ressources
@@ -47,7 +58,7 @@ classdef TurboCode < fec.Code
           if (nargin < 7)
             workGroupSize = 1;
           end
-          if (length(endType) == 1)
+          if (length(trellis) == 1)
             trellis = repmat({trellis}, size(interleaver));
           end
           if (length(endType) == 1)

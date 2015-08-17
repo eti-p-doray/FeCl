@@ -335,7 +335,7 @@ public:
   {
     friend class ConstIterator;
   public:
-    ConstRowPtr(const ConstRowRef& row) : row_(row) {}
+    inline ConstRowPtr(const ConstRowRef& row) : row_(row) {}
     inline const ConstRowRef* operator-> () const {return &row_;}
     
   private:
@@ -349,7 +349,7 @@ public:
   {
     friend class Iterator;
   public:
-    RowPtr(const RowRef& row) : row_(row) {}
+    inline RowPtr(const RowRef& row) : row_(row) {}
     inline RowRef* operator-> () {return &row_;}
     
   private:

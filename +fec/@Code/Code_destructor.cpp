@@ -32,7 +32,7 @@
 #include <mex.h>
 
 #include "Code.h"
-
+#include "../export.h"
 #include "../MexConversion.h"
 
 const int inputCount = 1;

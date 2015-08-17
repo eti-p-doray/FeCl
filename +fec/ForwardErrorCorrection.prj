@@ -1,24 +1,25 @@
 <deployment-project plugin="plugin.toolbox" plugin-version="1.0">
-  <configuration build-checksum="1413444121" file="/Users/Etienne/Documents/INRS/ForwardErrorCorrection/+fec/ForwardErrorCorrection.prj" location="/Users/Etienne/Documents/INRS/ForwardErrorCorrection/+fec" name="ForwardErrorCorrection" target="target.toolbox" target-name="Package Toolbox">
+  <configuration build-checksum="2422255479" file="/Users/Etienne/Documents/INRS/ForwardErrorCorrection/+fec/ForwardErrorCorrection.prj" location="/Users/Etienne/Documents/INRS/ForwardErrorCorrection/+fec" name="ForwardErrorCorrection" target="target.toolbox" target-name="Package Toolbox">
     <param.appname>ForwardErrorCorrection</param.appname>
     <param.authnamewatermark>Etienne Pierre-Doray</param.authnamewatermark>
     <param.email>etipdoray@gmail.com</param.email>
     <param.company>INRS</param.company>
     <param.summary>This software implements several forward error correction algorithms in C++ and offer a Matlab API</param.summary>
-    <param.description>This software implements several forward error correction (fec) algorithms in C++ and offer a Matlab API.
+    <param.description>This software implements several forward error correction (fec) algorithms in C++ and offers a Matlab API.
 Its main use is in communication systems simulations for the research area.
+This project is a result of my work at the emt research center at INRS, Quebec, Canada.
 
 Implemented fec Codes:
-Convolutional
-Turbo (generalized to n codes)
-Ldpc
+  Convolutional
+  Turbo (generalized to n codes)
+  Ldpc
 
 A common interface is offered by every fec codes which makes the API more flexible and easier to use.
 The implementation is optimized to process large amount of data. It profits from data alignement and parallelism.
 Currently, the toolbox is built for the following architectures:
-win64
-maci64
-glnxa64
+  win64
+  maci64
+  glnxa64
 For more information and source code, see the github project: https://github.com/eti-p-doray/ForwardErrorCorrection</param.description>
     <param.screenshot />
     <param.version>1.0</param.version>
@@ -74,7 +75,10 @@ ConvolutionalCode
 LdpcCode
 TurboCode
 test
+example
+search
 html
+build
 Doxyfile</param.exclude.filters>
     <param.examples>&lt;?xml version="1.0" encoding="utf-8"?&gt;
 &lt;examples/&gt;</param.examples>
@@ -97,8 +101,6 @@ Doxyfile</param.exclude.filters>
       <file>/Users/Etienne/Documents/INRS/ForwardErrorCorrection/+fec</file>
       <file>/Users/Etienne/Documents/INRS/ForwardErrorCorrection/LICENSE</file>
       <file>/Users/Etienne/Documents/INRS/ForwardErrorCorrection/README.md</file>
-      <file>/Users/Etienne/Documents/INRS/ForwardErrorCorrection/build</file>
-      <file>/Users/Etienne/Documents/INRS/ForwardErrorCorrection/search</file>
     </fileset.rootfiles>
     <fileset.depfun.included />
     <fileset.depfun.excluded />

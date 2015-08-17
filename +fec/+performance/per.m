@@ -1,4 +1,4 @@
-function [errorCount, elapsedTime] = decode(code, msg, llr)
+function [errorCount] = per(code, msg, llr)
     elapsedTime = 0;
     errorCount = zeros(size(llr));
 

@@ -190,11 +190,11 @@ void MapDecoderImpl<A>::appBranchMetrics(std::vector<LlrType>::const_iterator pa
   int i = 0;
   for (auto branchMetricIt = branchMetrics_.begin(); branchMetricIt < branchMetrics_.end(); ++i) {
     for (BitField<size_t> j = 0; j < codeStructure().trellis().outputCount(); ++j) {
-      branchOutputMetrics_[j] = codeStructure().correlationProbability(j, parity, codeStructure().trellis().outputSize());
+      branchOutputMetrics_[j] = correlationProbability(j, parity, codeStructure().trellis().outputSize());
     }
     if (i < codeStructure().blocSize() + codeStructure().tailSize()) {
       for (BitField<size_t> j = 0; j < codeStructure().trellis().inputCount(); ++j) {
-        branchInputMetrics_[j] = codeStructure().correlationProbability(j, extrinsic, codeStructure().trellis().inputSize());
+        branchInputMetrics_[j] = correlationProbability(j, extrinsic, codeStructure().trellis().inputSize());
       }
     }
     
@@ -218,12 +218,12 @@ void MapDecoderImpl<A>::parityAppBranchMetrics(std::vector<LlrType>::const_itera
   int i = 0;
   for (auto branchMetricIt = branchMetrics_.begin(); branchMetricIt < branchMetrics_.end(); ++i) {
     for (BitField<size_t> j = 0; j < codeStructure().trellis().outputCount(); ++j) {
-      branchOutputMetrics_[j] = codeStructure().correlationProbability(j, parity, codeStructure().trellis().outputSize()) +
-      codeStructure().correlationProbability(j, extrinsic, codeStructure().trellis().outputSize());
+      branchOutputMetrics_[j] = correlationProbability(j, parity, codeStructure().trellis().outputSize()) +
+      correlationProbability(j, extrinsic, codeStructure().trellis().outputSize());
     }
     if (i < codeStructure().blocSize()) {
       for (BitField<size_t> j = 0; j < codeStructure().trellis().inputCount(); ++j) {
-        branchInputMetrics_[j] = codeStructure().correlationProbability(j, extrinsic, codeStructure().trellis().inputSize());
+        branchInputMetrics_[j] = correlationProbability(j, extrinsic, codeStructure().trellis().inputSize());
       }
     }
     
@@ -246,7 +246,7 @@ void MapDecoderImpl<A>::branchMetrics(std::vector<LlrType>::const_iterator parit
   int i = 0;
   for (auto branchMetricIt = branchMetrics_.begin(); branchMetricIt < branchMetrics_.end(); ++i) {
     for (BitField<size_t> j = 0; j < codeStructure().trellis().outputCount(); ++j) {
-      branchOutputMetrics_[j] = codeStructure().correlationProbability(j, parity, codeStructure().trellis().outputSize());
+      branchOutputMetrics_[j] = correlationProbability(j, parity, codeStructure().trellis().outputSize());
     }
     
     for (auto outputIt = codeStructure().trellis().beginOutput(); outputIt < codeStructure().trellis().endOutput();) {

@@ -134,7 +134,7 @@ void LdpcCodeStructure::syndrome(std::vector<uint8_t>::const_iterator parity, st
  *  \param  parity  Input iterator pointing to the first element of the parity sequence.
  *  \return True if the parity sequence is consistent. False otherwise.
  */
-bool LdpcCodeStructure::syndromeCheck(std::vector<uint8_t>::const_iterator parity) const
+bool LdpcCodeStructure::check(std::vector<uint8_t>::const_iterator parity) const
 {
   for (auto parityEq = parityCheck().begin(); parityEq < parityCheck().end(); ++parityEq) {
     bool syndrome;

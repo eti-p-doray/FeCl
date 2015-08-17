@@ -32,7 +32,6 @@
 #include <memory>
 #include <thread>
 
-#include "Archive.h"
 #include <vector>
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/utility.hpp>
@@ -74,6 +73,9 @@ public:
    */
   virtual size_t extrinsicSize() const = 0;
   virtual const CodeStructure& structure() const = 0;
+  
+  int getWorkGroupSize() const {return workGroupSize_;}
+  void setWorkGroupSize(int size) {workGroupSize_ = size;}
   
   template <template <typename> class A> void encode(const std::vector<uint8_t,A<uint8_t>>& message, std::vector<uint8_t,A<uint8_t>>& parity) const;
   

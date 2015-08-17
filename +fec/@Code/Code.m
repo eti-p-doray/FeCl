@@ -14,6 +14,7 @@ classdef Code < handle
         paritySize %Size of 1 parity bloc
         msgSize %Size of 1 msg bloc
         extrinsicSize %Size of 1 bloc of msg extrinsic information
+        workGroupSize %Size of 1 bloc of msg extrinsic information
     end
     
     methods (Static)
@@ -46,6 +47,20 @@ classdef Code < handle
         % Outputs
         %   size - Extrinsic size
             size = fec.bin.Code_get_extrinsicSize(this);
+        end
+        function size = get.workGroupSize(this)
+        % Access size of the message in one bloc.
+        %
+        % Outputs
+        %   size - Message size
+            size = fec.bin.Code_get_workGroupSize(this);
+        end
+        function set.workGroupSize(this, size)
+        % Access size of the message in one bloc.
+        %
+        % Outputs
+        %   size - Message size
+            fec.bin.Code_set_workGroupSize(this, size);
         end
         
         function a = saveobj(this)

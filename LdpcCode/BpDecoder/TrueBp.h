@@ -48,24 +48,9 @@ public:
 private:
   static inline void checkMetric(std::vector<LlrType>::iterator first, std::vector<LlrType>::iterator last, std::vector<LlrType>::iterator buffer)
   {
-    /*LlrType sum = *first;
-    auto tmp = buffer + 1;
-    for (auto metric = first+1; metric < last-1; ++metric, ++tmp) {
-      *tmp = *metric;
-      *metric = sum;
-      sum = boxPlus(sum, *tmp);
-    }
-    std::swap(sum, *(last-1));
-    --tmp;
-    for (auto metric = last-2; metric > first; --metric, --tmp) {
-      *metric = boxPlus(sum, *metric);
-      sum = boxPlus(sum, *tmp);
-    }
-    *first = sum;*/
-    
     auto tmp = buffer;
     for (auto metric = first; metric < last; ++metric, ++tmp) {
-      *tmp = stanh(-*metric/2.0);
+      *tmp = tanh(-*metric/2.0);
     }
     
     LlrType prod = *buffer;
@@ -74,88 +59,15 @@ private:
       *metric = prod;
       prod *= *tmp;
     }
-    *(last-1) = -2.0*satanh(prod);
+    *(last-1) = -2.0*atanh(prod);
     prod = *tmp;
     --tmp;
     for (auto metric = last-2; metric > first; --metric, --tmp) {
       *metric *= prod;
-      *metric = -2.0*satanh(*metric);
+      *metric = -2.0*atanh(*metric);
       prod *= *tmp;
     }
-    *first = -2.0*satanh(prod);
-  }
-  
-  /*bool sign = false;
-  std::vector<LlrType>::iterator min[2];
-  min[0] = first;
-  for (auto metricIt = first; metricIt < last; ++metricIt) {
-    sign ^= !std::signbit(*metricIt);
-    if (fabs(*metricIt) < fabs(*min[0])) {
-      min[0] = metricIt;
-    }
-  }
-  min[1] = min[0] == first ? first+1 : first;
-  for (auto metricIt = first; metricIt < last; ++metricIt) {
-    if (fabs(*metricIt) < fabs(*min[1]) && metricIt != min[0]) {
-      min[1] = metricIt;
-    }
-  }
-  
-  LlrType minValue[2] = {*min[0], *min[1]};
-  for (auto metricIt = first; metricIt < last; ++metricIt) {
-    LlrType currentMin = fabs(minValue[0]);
-    if (metricIt == min[0]) {
-      currentMin = fabs(minValue[1]);
-    }
-    if (sign ^ !std::signbit(*metricIt)) {
-      *metricIt = currentMin;
-    }
-    else {
-      *metricIt = -currentMin;
-    }
-  }*/
-  
-  static inline LlrType stanh(LlrType x) {
-    if (x >= 19.07) {
-      return 1.0;
-    }
-    else if (x <= -19.07) {
-      return -1.0;
-    }
-    else {
-      return tanh(x);
-    }
-  }
-  
-  static inline LlrType satanh(LlrType x) {
-    if (x >= 1.0) {
-      return 19.07;
-    }
-    else if (x <= -1) {
-      return -19.07;
-    }
-    else {
-      return atanh(x);
-    }
-  }
-  
-  static inline LlrType boxPlus(LlrType a, LlrType b) {
-    if (std::signbit(a) ^ std::signbit(b)) {
-      return std::min(std::abs(a),std::abs(b)) - log1pexp(-std::abs(a+b)) + log1pexp(-std::abs(a-b));
-      //return std::min(std::abs(a),std::abs(b)) - log((exp(-std::abs(a+b))+1)/(exp(-std::abs(a-b))+1));
-    }
-    else {
-      return -std::min(std::abs(a),std::abs(b)) - log1pexp(-std::abs(a+b)) + log1pexp(-std::abs(a-b));
-      //return -std::min(std::abs(a),std::abs(b)) - log((exp(-std::abs(a+b))+1)/(exp(-std::abs(a-b))+1));
-    }
-  }
-  static inline LlrType log1pexp(LlrType x) {
-    if (x < -37) {
-      return exp(x);
-    }
-    else {
-      return log1p(exp(x));
-    }
+    *first = -2.0*atanh(prod);
   }
 };
   

@@ -77,3 +77,4 @@ void TurboCodeStructure::encode(std::vector<uint8_t>::const_iterator msg, std::v
     parityIt += structure(i).paritySize();
   }
 }
+

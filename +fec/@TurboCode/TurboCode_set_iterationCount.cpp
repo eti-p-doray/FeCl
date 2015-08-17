@@ -23,7 +23,7 @@
  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  
- Definition of ErrorCorrectingCode_get_paritySize mex function
+ Definition of ErrorCorrectingCode_get_msgSize mex function
  ******************************************************************************/
 
 #include <memory>
@@ -31,21 +31,21 @@
 
 #include <mex.h>
 
-#include "Code.h"
+#include "TurboCode/TurboCode.h"
 #include "../export.h"
 #include "../MexConversion.h"
 #include "../MexAllocator.h"
 
-const int inputCount = 1;
-const int outputCount = 1;
+const int inputCount = 2;
+const int outputCount = 0;
 
 /**
- *  This is the implementation of the paritySize getter method
+ *  This is the implementation of the msgSize getter method
  *  in the ErrorCorrectingCode class.
  *
  *  \param  nlhs    [in]  Number of output
  *  \param  plhs    [out] Array of output mxArray
- *  \param  plhs[0] [out] paritySize
+ *  \param  plhs[0] [out] msgSize
  *  \param  nrhs    [in]  Number of input
  *  \param  prhs    [in]  Array of output mxArray
  *  \param  prhs[0] [in]  ErrorCorrectingCode object
@@ -53,16 +53,16 @@ const int outputCount = 1;
 void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 {
   if (nrhs != inputCount) {
-    throw std::invalid_argument("Wrong argin count in Code_get_paritySize");
+    throw std::invalid_argument("Wrong argin count in Code_get_msgSize");
   }
   if (nlhs != outputCount) {
-    throw std::invalid_argument("Wrong argout count in Code_get_paritySize");
+    throw std::invalid_argument("Wrong argout count in Code_get_msgSize");
   }
   
-  std::unique_ptr<fec::Code> code;
+  std::unique_ptr<fec::TurboCode> code;
   try {
-    code = mxArrayTo<std::unique_ptr<fec::Code>>::f(prhs[0]);
-    plhs[0] = toMxArray(code->paritySize());
+    code = mxArrayTo<std::unique_ptr<fec::TurboCode>>::f(prhs[0]);
+    code->setIterationCount(mxArrayTo<size_t>::f(prhs[1]));
   }
   catch (std::exception& e) {
     mexPrintf(e.what());

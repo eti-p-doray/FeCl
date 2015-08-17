@@ -4,7 +4,7 @@ build
 *.lo
 *.o
 *.obj
-build
+build*
 
 # Precompiled Headers
 *.gch

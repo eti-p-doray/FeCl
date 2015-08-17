@@ -35,7 +35,7 @@
 
 #include "LdpcCode/LdpcCode.h"
 #include "Code.h"
-
+#include "../export.h"
 #include "../MexConversion.h"
 #include "../mxArrayToBitMatrix.h"
 

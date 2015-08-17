@@ -23,7 +23,7 @@
  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  
- Definition of ErrorCorrectingCode_get_paritySize mex function
+ Definition of ErrorCorrectingCode_get_extrinsicMsgSize mex function
  ******************************************************************************/
 
 #include <memory>
@@ -40,12 +40,12 @@ const int inputCount = 1;
 const int outputCount = 1;
 
 /**
- *  This is the implementation of the paritySize getter method
+ *  This is the implementation of the extrinsicMsgSize getter method 
  *  in the ErrorCorrectingCode class.
  *
  *  \param  nlhs    [in]  Number of output
  *  \param  plhs    [out] Array of output mxArray
- *  \param  plhs[0] [out] paritySize
+ *  \param  plhs[0] [out] extrinsicMsgSize
  *  \param  nrhs    [in]  Number of input
  *  \param  prhs    [in]  Array of output mxArray
  *  \param  prhs[0] [in]  ErrorCorrectingCode object
@@ -53,16 +53,16 @@ const int outputCount = 1;
 void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 {
   if (nrhs != inputCount) {
-    throw std::invalid_argument("Wrong argin count in Code_get_paritySize");
+    throw std::invalid_argument("Wrong argin count in Code_get_workGroupSize");
   }
   if (nlhs != outputCount) {
-    throw std::invalid_argument("Wrong argout count in Code_get_paritySize");
+    throw std::invalid_argument("Wrong argout count in Code_get_workGroupSize");
   }
   
   std::unique_ptr<fec::Code> code;
   try {
     code = mxArrayTo<std::unique_ptr<fec::Code>>::f(prhs[0]);
-    plhs[0] = toMxArray(code->paritySize());
+    plhs[0] = toMxArray(code->getWorkGroupSize());
   }
   catch (std::exception& e) {
     mexPrintf(e.what());

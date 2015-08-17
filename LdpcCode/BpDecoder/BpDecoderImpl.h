@@ -80,21 +80,25 @@ void BpDecoderImpl<A>::bitUpdate(std::vector<LlrType>::const_iterator parity)
   for (auto checkMetric = checkMetrics_.begin(); checkMetric < checkMetrics_.end();  ++check) {
     for (auto checkBit = check->begin(); checkBit < check->end(); ++checkMetric, ++checkMetricTmp, ++checkBit) {
       *checkMetricTmp = *checkMetric;
-      *checkMetric = bitMetrics_[*checkBit];
-      bitMetrics_[*checkBit] += *checkMetricTmp;
+      LlrType& metricRef = bitMetrics_[*checkBit];
+      //*checkMetric = bitMetrics_[*checkBit];
+      //bitMetrics_[*checkBit] += *checkMetricTmp;
+      *checkMetric = metricRef;
+      metricRef += *checkMetricTmp;
     }
   }
   
-  for (auto bitMetric = bitMetrics_.begin(); bitMetric < bitMetrics_.end(); ++bitMetric, ++parity) {
-    *bitMetric = *parity;
-  }
+  std::copy(parity, parity + bitMetrics_.size(), bitMetrics_.begin());
   
   check = codeStructure().parityCheck().end() - 1;
   checkMetricTmp = checkMetricsBuffer_.end() - 1;
   for (auto checkMetric = checkMetrics_.end() - 1; checkMetric >= checkMetrics_.begin();  --check) {
     for (auto checkBit = check->end()-1; checkBit >= check->begin(); --checkMetric, --checkMetricTmp, --checkBit) {
-      *checkMetric += bitMetrics_[*checkBit];
-      bitMetrics_[*checkBit] += *checkMetricTmp;
+      LlrType& metricRef = bitMetrics_[*checkBit];
+      //*checkMetric += bitMetrics_[*checkBit];
+      //bitMetrics_[*checkBit] += *checkMetricTmp;
+      *checkMetric += metricRef;
+      metricRef += *checkMetricTmp;
     }
   }
 }

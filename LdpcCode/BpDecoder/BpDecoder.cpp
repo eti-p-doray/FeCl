@@ -47,17 +47,6 @@ std::unique_ptr<BpDecoder> BpDecoder::create(const LdpcCodeStructure& codeStruct
   }
 }
 
-/*void BpDecoder::parityAppDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n)
-{
-  for (size_t i = 0; i < n; ++i) {
-    parityAppDecodeBloc(parityIn, extrinsicIn, messageOut, extrinsicOut);
-    parityIn += codeStructure_.paritySize();
-    extrinsicIn += codeStructure_.parityCheck().size();
-    messageOut += codeStructure_.msgSize();
-    extrinsicOut += codeStructure_.parityCheck().size();
-  }
-}*/
-
 void BpDecoder::appDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n)
 {
   for (size_t i = 0; i < n; ++i) {
@@ -96,7 +85,7 @@ void BpDecoder::appDecodeBloc(std::vector<LlrType>::const_iterator parityIn, std
     for (size_t j = 0; j < codeStructure().paritySize(); ++j) {
       hardParity_[j] = (bitMetrics_[j] >= 0.0);
     }
-    if (codeStructure().syndromeCheck(hardParity_.begin())) {
+    if (codeStructure().check(hardParity_.begin())) {
       break;
     }
   }
@@ -136,7 +125,7 @@ void BpDecoder::softOutDecodeBloc(std::vector<LlrType>::const_iterator parityIn,
     for (size_t j = 0; j < codeStructure().paritySize(); ++j) {
       hardParity_[j] = (bitMetrics_[j] >= 0.0);
     }
-    if (codeStructure().syndromeCheck(hardParity_.begin())) {
+    if (codeStructure().check(hardParity_.begin())) {
       break;
     }
   }

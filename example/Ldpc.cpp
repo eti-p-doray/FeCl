@@ -49,7 +49,7 @@ int main( int argc, char* argv[] )
   /*
    The matrix is used to create a code structure.
    */
-  fec::LdpcCodeStructure structure(checkMatrix);
+  fec::LdpcCodeStructure structure(checkMatrix, 50, fec::LdpcCodeStructure::TrueBp);
   //! [Creating a Turbo code structure]
   
   /*

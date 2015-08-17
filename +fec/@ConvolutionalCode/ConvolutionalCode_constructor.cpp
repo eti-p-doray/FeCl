@@ -33,7 +33,7 @@
 
 #include "ConvolutionalCode/ConvolutionalCode.h"
 #include "Code.h"
-
+#include "../export.h"
 #include "../MexConversion.h"
 #include "../mxArrayToTrellis.h"
 

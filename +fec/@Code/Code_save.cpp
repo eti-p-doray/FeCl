@@ -31,12 +31,14 @@
 
 #include <mex.h>
 
-#include <boost/serialization/export.hpp>
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 
 #include "Code.h"
-
+#include "ConvolutionalCode/ConvolutionalCode.h"
+#include "TurboCode/TurboCode.h"
+#include "LdpcCode/LdpcCode.h"
+#include "../export.h"
 #include "../MexConversion.h"
 #include "../MexAllocator.h"
 
@@ -65,7 +67,8 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
   std::unique_ptr<fec::Code> code;
   try {
     code = mxArrayTo<std::unique_ptr<fec::Code>>::f(prhs[0]);
-    plhs[0] = save(code);
+    RegisterAgent<fec::ConvolutionalCode, fec::TurboCode, fec::LdpcCode> agent;
+    plhs[0] = save(code, agent);
   }
   catch (std::exception& e) {
     mexPrintf(e.what());
