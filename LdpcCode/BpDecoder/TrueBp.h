@@ -41,11 +41,7 @@ namespace fec {
  *  This class contains implementation of boxplus operation.
  */
 class TrueBp {
-  friend class BpDecoderImpl<TrueBp>;
-  friend class DensityEvolutionBp;
 public:
-  
-private:
   static inline void checkMetric(std::vector<LlrType>::iterator first, std::vector<LlrType>::iterator last, std::vector<LlrType>::iterator buffer)
   {
     auto tmp = buffer;

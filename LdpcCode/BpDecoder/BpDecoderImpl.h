@@ -81,8 +81,6 @@ void BpDecoderImpl<A>::bitUpdate(std::vector<LlrType>::const_iterator parity)
     for (auto checkBit = check->begin(); checkBit < check->end(); ++checkMetric, ++checkMetricTmp, ++checkBit) {
       *checkMetricTmp = *checkMetric;
       LlrType& metricRef = bitMetrics_[*checkBit];
-      //*checkMetric = bitMetrics_[*checkBit];
-      //bitMetrics_[*checkBit] += *checkMetricTmp;
       *checkMetric = metricRef;
       metricRef += *checkMetricTmp;
     }
@@ -95,8 +93,6 @@ void BpDecoderImpl<A>::bitUpdate(std::vector<LlrType>::const_iterator parity)
   for (auto checkMetric = checkMetrics_.end() - 1; checkMetric >= checkMetrics_.begin();  --check) {
     for (auto checkBit = check->end()-1; checkBit >= check->begin(); --checkMetric, --checkMetricTmp, --checkBit) {
       LlrType& metricRef = bitMetrics_[*checkBit];
-      //*checkMetric += bitMetrics_[*checkBit];
-      //bitMetrics_[*checkBit] += *checkMetricTmp;
       *checkMetric += metricRef;
       metricRef += *checkMetricTmp;
     }

@@ -1,6 +1,6 @@
 function per
-    N = 16;
-    M = 4;
+    N = 256;
+    M = 8;
     T = 32400;
     trellis = poly2trellis(4, [15, 17], 15);
     turboTrellis = poly2trellis(4, [17], 15);

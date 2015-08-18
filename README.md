@@ -28,8 +28,14 @@ You can build the source files for Matlab with mex. To do so, you need a Matlab 
 2. Add the directory in your Matlab path<br/>
 3. Run `fec.make` in the Matlab command prompt<br/>
 
-You can build the source file as a static library with cmake.
+You can build the source files as a library with cmake.
 For an out-of-place build, run the following from the project directory<br/>
 `mkdir build; cd build` <br/>
 `cmake ..` <br/>
 `make install` <br/>
+
+=================
+
+Documentation:
+
+Refer to the [web documentation](http://eti-p-doray.github.io/ForwardErrorCorrection/)

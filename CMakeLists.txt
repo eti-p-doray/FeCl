@@ -33,17 +33,17 @@ set(SOURCES
 add_library (core OBJECT ${SOURCES})
 target_include_directories(core PUBLIC ${Boost_INCLUDE_DIRS})
 
-#add_library (fec SHARED $<TARGET_OBJECTS:core>)
-add_library (fec STATIC $<TARGET_OBJECTS:core>)
-
-#target_link_libraries(fec PRIVATE ${Boost_LIBRARIES})
-#target_include_directories(fec PUBLIC ${Boost_INCLUDE_DIRS})
+add_library (fec SHARED $<TARGET_OBJECTS:core>)
+add_library (fecStatic STATIC $<TARGET_OBJECTS:core>)
 
 target_link_libraries(fec PRIVATE ${Boost_LIBRARIES})
 target_include_directories(fec PUBLIC ${Boost_INCLUDE_DIRS})
 
-#install(TARGETS fec LIBRARY DESTINATION lib)
-install(TARGETS fec ARCHIVE DESTINATION lib)
+target_link_libraries(fecStatic PRIVATE ${Boost_LIBRARIES})
+target_include_directories(fecStatic PUBLIC ${Boost_INCLUDE_DIRS})
+
+install(TARGETS fec LIBRARY DESTINATION lib)
+install(TARGETS fecStatic ARCHIVE DESTINATION lib)
 install(FILES Code.h DESTINATION include/fec )
 install(DIRECTORY TurboCode ConvolutionalCode LdpcCode CodeStructure DESTINATION include/fec FILES_MATCHING PATTERN "*.h")
 

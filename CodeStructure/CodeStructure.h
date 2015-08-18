@@ -40,6 +40,7 @@
 #include "BitField.h"
 
 namespace fec {
+  
 
 typedef double LlrType;
 const LlrType MAX_LLR = std::numeric_limits<LlrType>::infinity();
