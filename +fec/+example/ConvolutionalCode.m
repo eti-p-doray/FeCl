@@ -11,15 +11,15 @@ function ConvolutionalCode
     
     %We can specify the trellis end type : 
     %   ZeroTail | Truncation default = Truncation
-    code = fec.ConvolutionalCode(trellis, 256, fec.TrellisEndType.ZeroTail)
+    code = fec.ConvolutionalCode(trellis, 256, fec.TrellisEndType.PaddingTail)
     
     %We can also specify the decoder algorithm (only use for appDecode): 
     %   LogMap | MaxLogMap default = MaxLogMap
-    code = fec.ConvolutionalCode(trellis, 256, fec.TrellisEndType.ZeroTail, fec.MapType.LogMap)
+    code = fec.ConvolutionalCode(trellis, 256, fec.TrellisEndType.PaddingTail, fec.MapType.LogMap)
     
     %And as all codes, with can change the number of thread used for
     %operations. In this case, we are using 2 threads.
-    code = fec.ConvolutionalCode(trellis, 256, fec.TrellisEndType.ZeroTail, fec.MapType.LogMap, 2)
+    code = fec.ConvolutionalCode(trellis, 256, fec.TrellisEndType.PaddingTail, fec.MapType.LogMap, 2)
     
     %Lets now use the code for some operations. Since all code offer the
     %same interface, we call the operation function which will work on any

@@ -31,10 +31,10 @@ classdef TurboCode < fec.Code
         %   Configures the object internally and allocate cpp ressources
         %
         % Inputs
-        %   trellis1 - Trellis structure used by the first code in the matlab communication system toolox form
-        %   trellis2 - Trellis structure used by the second code in the matlab communication system toolox form
+        %   trellis - Trellis structure used by constituent codes in the matlab communication system toolox form
         %   interleaver - Interleaver used by the second code.
         %   [iterationCount] - Number of iterations. default = 5
+        %   [endType] - Trellis end type for every constituent codes. PaddingTail | Truncation default = PaddingTail
         %   [structureType] - Decoder algorithm type. This defines the scheduling of extrinsic communication between code
         %       constituents. Serial | Parallel default = Serial
         %   [mapDecoderType] - decoder algorithm type. LogMap | MaxLogMap default = MaxLogMap

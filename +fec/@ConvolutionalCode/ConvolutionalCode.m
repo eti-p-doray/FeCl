@@ -21,7 +21,7 @@ classdef ConvolutionalCode < fec.Code
         % Inputs
         %   trellis - Trellis structure used by the first encode / decoder in the matlab communication system toolox form
         %   blocSize - Size of each message bloc
-        %   [endType] - trellis termination type. ZeroTail | Truncation default = Truncation
+        %   [endType] - trellis termination type. PaddingTail | Truncation default = Truncation
         %   [mapDecoderType] - decoder algorithm type. LogMap | MaxLogMap default = MaxLogMap
         %   [workGroupSize] - Number of thread used in decodage. default = 4
         %

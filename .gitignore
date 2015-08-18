@@ -17,6 +17,9 @@ build*
 *.exe
 *.out
 *.app
+*.mexmaci64
+*.mexw64
+*.mexa64
 
 # System files
 *.DS_Store
