@@ -257,10 +257,35 @@ mxArray* toMxArray(const V<T, MexAllocator<T>>& vec) {
   return out;
 }
 
+template <class ... Childs>
+struct RegisterAgent {
+};
+
+template <class Child, class ... Childs>
+struct RegisterAgent<Child, Childs...> : RegisterAgent<Childs...> {
+  template <typename Archive>
+  void register_type(Archive& archive) const
+  {
+    archive.template register_type<Child>();
+    RegisterAgent<Childs...>::register_type(archive);
+  }
+  void register_type(Archive& archive) const
+  {
+    boost::serialization::type_info_implementation<Child>::type::get_const_instance();
+  }
+};
+
+template <>
+struct RegisterAgent<> {
+  template <typename Archive>
+  void register_type(Archive& archive) const {}
+};
+
 template <class T>
 class mxArrayTo<std::unique_ptr<T>> {
 public:
-  static std::unique_ptr<T> f(const mxArray* in) {
+  template <class RegisterAgent>
+  static std::unique_ptr<T> f(const mxArray* in, RegisterAgent registerAgent) {
     if (in == nullptr) {
       throw std::invalid_argument("Null mxArray");
     }
@@ -274,9 +299,12 @@ public:
     
     T* ptr = reinterpret_cast<T*>(*((uint64_t *)mxGetData(mxGetProperty(in, 0, "mexHandle_"))));
     ptr = dynamic_cast<T*>(ptr);
+
+    registerAgent.register_type();
     
-    if (boost::serialization::extended_type_info_no_rtti<T>::get_const_instance().get_derived_extended_type_info(*ptr) == nullptr) {
-      //throw std::invalid_argument("Invalid class");
+    if (boost::serialization::type_info_implementation<T>::get_const_instance().get_derived_extended_type_info(*ptr) == nullptr)
+    {
+      throw std::invalid_argument("Invalid class");
     }
     
     if (ptr == nullptr) {
@@ -329,26 +357,6 @@ private:
 };
 
 const char* saveStructFieldNames[] = {"data"};
-
-template <class ... Childs>
-struct RegisterAgent {
-};
-
-template <class Child, class ... Childs>
-struct RegisterAgent<Child, Childs...> : RegisterAgent<Childs...> {
-  template <typename Archive>
-  void register_type(Archive& archive) const
-  {
-    archive.template register_type<Child>();
-    RegisterAgent<Childs...>::register_type(archive);
-  }
-};
-
-template <>
-struct RegisterAgent<> {
-  template <typename Archive>
-  void register_type(Archive& archive) const {}
-};
 
 template <class T, class RegisterAgent>
 mxArray* save(const std::unique_ptr<T>& u, RegisterAgent registerAgent)

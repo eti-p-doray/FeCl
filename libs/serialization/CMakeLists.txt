@@ -20,7 +20,7 @@ if( CMAKE_CXX_COMPILER_ID STREQUAL "GNU" )
   # we use gcc to test for C++03 compatibility
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 elseif( CMAKE_CXX_COMPILER_ID STREQUAL "MSVC" )
-#add_definitions( /wd4996 )
+  add_definitions( /wd4996 )
   message(STATUS "compiler is MSVC")
 elseif( CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang" )
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ftemplate-depth=300")

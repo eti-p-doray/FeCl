@@ -32,7 +32,9 @@
 #include <mex.h>
 
 #include "Code.h"
-#include "../export.h"
+#include "ConvolutionalCode/ConvolutionalCode.h"
+#include "TurboCode/TurboCode.h"
+#include "LdpcCode/LdpcCode.h"
 #include "../MexConversion.h"
 #include "../MexAllocator.h"
 

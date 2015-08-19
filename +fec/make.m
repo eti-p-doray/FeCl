@@ -99,7 +99,7 @@ function make
         objInfo = dir(['build/' name '.*']);
         srcInfo = dir([srcPath src{i}]);
         if (isempty(objInfo) || objInfo.datenum < srcInfo.datenum)
-            mex('-v', ['CXXFLAGS=' cxxFlags], iPath{:}, '-largeArrayDims', '-outdir', objDst, '-c', [srcPath src{i}]);
+            mex('-v', ['CXXFLAGS=' cxxFlags], iPath{:}, '-largeArrayDims', '-DBOOST_ALL_NO_LIB','-outdir', objDst, '-c', [srcPath src{i}]);
         else
             disp('skip');
         end
@@ -112,7 +112,7 @@ function make
         objInfo = dir(['build/' name '.*']);
         srcInfo = dir([libsPath libs{i}]);
         if (isempty(objInfo) || objInfo.datenum < srcInfo.datenum)
-            mex('-v',['CXXFLAGS=' cxxFlags], iPath{:}, '-largeArrayDims', '-outdir', objDst, '-c', [libsPath libs{i}]);
+            mex('-v',['CXXFLAGS=' cxxFlags], iPath{:}, '-largeArrayDims','-DBOOST_ALL_NO_LIB', '-outdir', objDst, '-c', [libsPath libs{i}]);
         else
             disp('skip');
         end
@@ -122,7 +122,7 @@ function make
     end
 
     for i = 1:length(trg)
-        mex('-v',['CXXFLAGS=' cxxFlags], iPath{:},lPath{:}, '-largeArrayDims', '-outdir', trgDst, [trgPath trg{i}], objs{:});
+        mex('-v',['CXXFLAGS=' cxxFlags], iPath{:},lPath{:}, '-DBOOST_ALL_NO_LIB', '-largeArrayDims', '-outdir', trgDst, [trgPath trg{i}], objs{:});
     end
     
     cd(oldpath)

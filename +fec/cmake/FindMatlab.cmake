@@ -191,7 +191,11 @@ endforeach()
 find_file(MATLAB_MAP_ NAMES mexFunction.map PATHS ${MATLAB_ROOT_DIR}/extern/lib/${MATLAB_ARCH_} NO_DEFAULT_PATH)
 
 # get the path to the libraries
-set(MATLAB_LIBRARY_DIRS_ ${MATLAB_ROOT_DIR}/bin/${MATLAB_ARCH_})
+if (UNIX)
+  set(MATLAB_LIBRARY_DIRS_ ${MATLAB_ROOT_DIR}/bin/${MATLAB_ARCH_})
+elseif (WIN32)
+  set(MATLAB_LIBRARY_DIRS_ ${MATLAB_ROOT_DIR}/extern/lib/${MATLAB_ARCH_}/microsoft)
+endif (UNIX)
 
 # get the libraries
 set_libarch_prefix_suffix()
@@ -202,7 +206,6 @@ set(MATLAB_LIBRARIES_ ${MATLAB_LIB_MX_} ${MATLAB_LIB_MEX_} ${MATLAB_LIB_MAT_})
 
 # get the include path
 find_path(MATLAB_INCLUDE_DIRS_ mex.h ${MATLAB_ROOT_DIR}/extern/include)
-
 # get the mex shell script
 find_program(MATLAB_MEX_SCRIPT_ NAMES mex mex.bat PATHS ${MATLAB_ROOT_DIR}/bin NO_DEFAULT_PATH)
 
@@ -210,7 +213,7 @@ find_program(MATLAB_MEX_SCRIPT_ NAMES mex mex.bat PATHS ${MATLAB_ROOT_DIR}/bin N
 find_program(MATLAB_BIN_ NAMES matlab PATHS ${MATLAB_ROOT_DIR}/bin NO_DEFAULT_PATH)
 
 # export into parent scope
-if (MATLAB_MEX_SCRIPT_ AND MATLAB_LIBRARIES_ AND MATLAB_INCLUDE_DIRS_ AND MATLAB_MAP_)
+if (MATLAB_MEX_SCRIPT_ AND MATLAB_LIBRARIES_ AND MATLAB_INCLUDE_DIRS_)
 set(MATLAB_BIN          ${MATLAB_BIN_}          PARENT_SCOPE)
 set(MATLAB_MAP          ${MATLAB_MAP_}          PARENT_SCOPE)
 set(MATLAB_MEX_SCRIPT   ${MATLAB_MEX_SCRIPT_}   PARENT_SCOPE)

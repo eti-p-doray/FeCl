@@ -32,7 +32,9 @@
 #include <mex.h>
 
 #include "Code.h"
-#include "../export.h"
+#include "ConvolutionalCode/ConvolutionalCode.h"
+#include "TurboCode/TurboCode.h"
+#include "LdpcCode/LdpcCode.h"
 #include "../MexConversion.h"
 #include "../MexAllocator.h"
 
@@ -63,7 +65,8 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
   
   std::unique_ptr<fec::Code> code;
   try {
-    code = mxArrayTo<std::unique_ptr<fec::Code>>::f(prhs[0]);
+    RegisterAgent<fec::ConvolutionalCode, fec::TurboCode, fec::LdpcCode> agent;
+    code = mxArrayTo<std::unique_ptr<fec::Code>>::f(prhs[0], agent);
     std::vector<fec::LlrType, Allocator<fec::LlrType>::type> msgOut;
     std::vector<fec::LlrType, Allocator<fec::LlrType>::type> extrinsicOut;
     code->appDecode(mxArrayTo<std::vector<fec::LlrType,Allocator<fec::LlrType>::type>>::f(prhs[1]), mxArrayTo<std::vector<fec::LlrType,Allocator<fec::LlrType>::type>>::f(prhs[2]), msgOut, extrinsicOut);

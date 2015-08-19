@@ -129,16 +129,6 @@ void appDecode_test(const std::shared_ptr<fec::Code>& code, const std::vector<ui
   }
 }
 
-std::vector<uint8_t> randomBits(size_t n) {
-  uint64_t seed = std::chrono::system_clock::now().time_since_epoch().count();
-  std::independent_bits_engine<std::mt19937,1,uint8_t> bitGenerator((uint32_t(seed)));
-  std::vector<uint8_t> msg(n);
-  for (size_t i = 0; i < msg.size(); i++) {
-    msg[i] = bitGenerator();
-  }
-  return msg;
-}
-
 test_suite*
 init_unit_test_suite( int argc, char* argv[] )
 {

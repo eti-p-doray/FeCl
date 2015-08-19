@@ -32,7 +32,6 @@
 #include <mex.h>
 
 #include "LdpcCode/LdpcCode.h"
-#include "../export.h"
 #include "../MexConversion.h"
 #include "../MexAllocator.h"
 

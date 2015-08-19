@@ -10,9 +10,13 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/libs/serialization)
 set(Boost_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/libs/include/)
 set(Boost_LIBRARIES serialization)
 
-message(${Boost_INCLUDE_DIRS})
+if (UNIX)
+  set(CMAKE_CXX_FLAGS "-std=c++11 -fPIC ${CMAKE_C_FLAGS}")
+elseif( CMAKE_CXX_COMPILER_ID STREQUAL "MSVC" )
+  add_definitions( /wd4996 )
+endif (UNIX)
 
-set(CMAKE_CXX_FLAGS "-std=c++11 -fPIC ${CMAKE_C_FLAGS}")
+ADD_DEFINITIONS("-DBOOST_ALL_NO_LIB")
 
 set(SOURCES
   Code.cpp
@@ -36,14 +40,14 @@ target_include_directories(core PUBLIC ${Boost_INCLUDE_DIRS})
 add_library (fec SHARED $<TARGET_OBJECTS:core>)
 add_library (fecStatic STATIC $<TARGET_OBJECTS:core>)
 
-target_link_libraries(fec PRIVATE ${Boost_LIBRARIES})
+target_link_libraries(fec ${Boost_LIBRARIES})
 target_include_directories(fec PUBLIC ${Boost_INCLUDE_DIRS})
 
-target_link_libraries(fecStatic PRIVATE ${Boost_LIBRARIES})
+target_link_libraries(fecStatic ${Boost_LIBRARIES})
 target_include_directories(fecStatic PUBLIC ${Boost_INCLUDE_DIRS})
 
-install(TARGETS fec LIBRARY DESTINATION lib)
-install(TARGETS fecStatic ARCHIVE DESTINATION lib)
+install(TARGETS fec DESTINATION lib)
+install(TARGETS fecStatic DESTINATION lib)
 install(FILES Code.h DESTINATION include/fec )
 install(DIRECTORY TurboCode ConvolutionalCode LdpcCode CodeStructure DESTINATION include/fec FILES_MATCHING PATTERN "*.h")
 
@@ -63,18 +67,26 @@ endif(DOXYGEN_FOUND)
 enable_testing()
 add_executable(test_code test/code.cpp)
 target_include_directories(test_code PUBLIC ${CMAKE_SOURCE_DIR})
-target_link_libraries(test_code fec)
+target_include_directories(test_code PUBLIC ${Boost_INCLUDE_DIRS})
+target_link_libraries(test_code fecStatic)
+target_link_libraries(test_code ${Boost_LIBRARIES})
 add_test(code test_code)
 
 add_executable(example_Convolutional example/Convolutional.cpp)
 target_include_directories(example_Convolutional PUBLIC ${CMAKE_SOURCE_DIR})
-target_link_libraries(example_Convolutional fec)
+target_include_directories(example_Convolutional PUBLIC ${Boost_INCLUDE_DIRS})
+target_link_libraries(example_Convolutional fecStatic)
+target_link_libraries(example_Convolutional ${Boost_LIBRARIES})
 
 add_executable(example_Turbo example/Turbo.cpp)
 target_include_directories(example_Turbo PUBLIC ${CMAKE_SOURCE_DIR})
-target_link_libraries(example_Turbo fec)
+target_include_directories(example_Turbo PUBLIC ${Boost_INCLUDE_DIRS})
+target_link_libraries(example_Turbo ${Boost_LIBRARIES})
+target_link_libraries(example_Turbo fecStatic)
 
 add_executable(example_Ldpc example/Ldpc.cpp)
 target_include_directories(example_Ldpc PUBLIC ${CMAKE_SOURCE_DIR})
-target_link_libraries(example_Ldpc fec)
+target_include_directories(example_Ldpc PUBLIC ${Boost_INCLUDE_DIRS})
+target_link_libraries(example_Ldpc ${Boost_LIBRARIES})
+target_link_libraries(example_Ldpc fecStatic)
 
