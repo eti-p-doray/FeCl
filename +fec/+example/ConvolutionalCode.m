@@ -3,7 +3,7 @@ function ConvolutionalCode
 
     %We define a trellis structure from a polynomial.
     %   This structure is systematic and recursive.
-    trellis = poly2trellis(4, [13, 15], 13)
+    trellis = poly2trellis([3 4], [5 7; 13, 15], [5 13])
     
     %We define a simple code with the trellis.
     %We want the code to use blocs of size 256 bits.

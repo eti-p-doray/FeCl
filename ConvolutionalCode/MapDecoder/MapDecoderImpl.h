@@ -72,35 +72,34 @@ template <typename A>
 void MapDecoderImpl<A>::parityAPosteriori(std::vector<LlrType>::iterator parityOut)
 {
   auto backwardMetricIt = backwardMetrics_.begin();
-  
   for (size_t i = 0; i < codeStructure().blocSize()+codeStructure().tailSize(); ++i) {
-    for (size_t j = 0; j < codeStructure().trellis().outputSize(); ++j) {
-      auto branchMetricIt = branchMetrics_.begin() + i * codeStructure().trellis().tableSize();
-      auto forwardMetricIt = forwardMetrics_.begin() + i * codeStructure().trellis().stateCount();
-      
+    auto branchMetricIt = branchMetrics_.begin() + i * codeStructure().trellis().tableSize();
+    auto forwardMetricIt = forwardMetrics_.cbegin() + i * codeStructure().trellis().stateCount();
+    
+    for (auto stateIt = codeStructure().trellis().beginState(); stateIt < codeStructure().trellis().endState(); ) {
+      for (BitField<size_t> input = 0; input < codeStructure().trellis().inputCount(); ++input) {
+        *branchMetricIt += *forwardMetricIt + backwardMetricIt[size_t(*stateIt)];
+        ++stateIt;
+        ++branchMetricIt;
+      }
+      ++forwardMetricIt;
+    }
+    
+    for (size_t j = 0; j < codeStructure().trellis().inputSize(); ++j) {
       LlrType oneMetric = -MAX_LLR;
       LlrType zeroMetric = -MAX_LLR;
-      
+      auto branchMetricIt = branchMetrics_.cbegin() + i * codeStructure().trellis().tableSize();
       auto outputIt = codeStructure().trellis().beginOutput();
-      for (auto stateIt = codeStructure().trellis().beginState(); stateIt < codeStructure().trellis().endState();) {
-        for (int l = 0; l < 2; ++l) {
+      for (size_t k = 0; k < codeStructure().trellis().stateCount(); ++k) {
+        for (BitField<size_t> input = 0; input < codeStructure().trellis().inputCount(); ++input) {
           if (outputIt->test(j)) {
-            oneMetric = A::logAdd(
-                               oneMetric,
-                               LlrType(*branchMetricIt + *forwardMetricIt + backwardMetricIt[size_t(*stateIt)])
-                               );
+            oneMetric = A::logAdd(oneMetric,branchMetricIt[size_t(input)]);
           }
           else {
-            zeroMetric = A::logAdd(
-                                zeroMetric,
-                                LlrType(*branchMetricIt + *forwardMetricIt + backwardMetricIt[size_t(*stateIt)])
-                                );
+            zeroMetric = A::logAdd(zeroMetric,branchMetricIt[size_t(input)]);
           }
-          branchMetricIt++;
-          stateIt++;
-          outputIt++;
         }
-        forwardMetricIt++;
+        ++branchMetricIt;
       }
       *parityOut = oneMetric - zeroMetric;
       parityOut++;
@@ -113,37 +112,41 @@ template <typename A>
 void MapDecoderImpl<A>::messageExtrinsic(std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut)
 {
   auto backwardMetricIt = backwardMetrics_.begin();
-  
   for (size_t i = 0; i < codeStructure().blocSize() + codeStructure().tailSize(); ++i) {
+    auto branchMetricIt = branchMetrics_.begin() + i * codeStructure().trellis().tableSize();
+    auto forwardMetricIt = forwardMetrics_.cbegin() + i * codeStructure().trellis().stateCount();
+    
+    for (auto stateIt = codeStructure().trellis().beginState(); stateIt < codeStructure().trellis().endState(); ) {
+      for (BitField<size_t> input = 0; input < codeStructure().trellis().inputCount(); ++input) {
+        *branchMetricIt += *forwardMetricIt + backwardMetricIt[size_t(*stateIt)];
+        ++stateIt;
+        ++branchMetricIt;
+      }
+      ++forwardMetricIt;
+    }
+    
     for (size_t j = 0; j < codeStructure().trellis().inputSize(); ++j) {
-      auto branchMetricIt = branchMetrics_.cbegin() + i * codeStructure().trellis().tableSize();
-      auto forwardMetricIt = forwardMetrics_.cbegin() + i * codeStructure().trellis().stateCount();
-      
       LlrType oneMetric = -MAX_LLR;
       LlrType zeroMetric = -MAX_LLR;
-      
-      for (auto stateIt = codeStructure().trellis().beginState(); stateIt < codeStructure().trellis().endState();) {
-        zeroMetric = A::logAdd(
-                               zeroMetric,
-                               LlrType(*branchMetricIt + *forwardMetricIt + backwardMetricIt[size_t(*stateIt)])
-                               );
-        ++branchMetricIt;
-        ++stateIt;
-        oneMetric = A::logAdd(
-                              oneMetric,
-                              LlrType(*branchMetricIt + *forwardMetricIt + backwardMetricIt[size_t(*stateIt)])
-                              );
-        ++branchMetricIt;
-        ++stateIt;
-        ++forwardMetricIt;
+      auto branchMetricIt = branchMetrics_.cbegin() + i * codeStructure().trellis().tableSize();
+      for (size_t k = 0; k < codeStructure().trellis().stateCount(); ++k) {
+        for (BitField<size_t> input = 0; input < codeStructure().trellis().inputCount(); ++input) {
+          if (input.test(j)) {
+            oneMetric = A::logAdd(oneMetric,*branchMetricIt);
+          }
+          else {
+            zeroMetric = A::logAdd(zeroMetric,*branchMetricIt);
+          }
+          ++branchMetricIt;
+        }
       }
       if (i < codeStructure().blocSize()) {
         *messageOut = oneMetric - zeroMetric;
       }
       *extrinsicOut = oneMetric - zeroMetric - *extrinsicIn;
+      ++messageOut;
       ++extrinsicOut;
       ++extrinsicIn;
-      ++messageOut;
     }
     backwardMetricIt += codeStructure().trellis().stateCount();
   }
@@ -153,29 +156,33 @@ template <typename A>
 void MapDecoderImpl<A>::messageAPosteriori(std::vector<LlrType>::iterator messageOut)
 {
   auto backwardMetricIt = backwardMetrics_.begin();
-  
   for (size_t i = 0; i < codeStructure().blocSize(); ++i) {
+    auto branchMetricIt = branchMetrics_.begin() + i * codeStructure().trellis().tableSize();
+    auto forwardMetricIt = forwardMetrics_.cbegin() + i * codeStructure().trellis().stateCount();
+    
+    for (auto stateIt = codeStructure().trellis().beginState(); stateIt < codeStructure().trellis().endState(); ) {
+      for (BitField<size_t> input = 0; input < codeStructure().trellis().inputCount(); ++input) {
+        *branchMetricIt += *forwardMetricIt + backwardMetricIt[size_t(*stateIt)];
+        ++stateIt;
+        ++branchMetricIt;
+      }
+      ++forwardMetricIt;
+    }
+    
     for (size_t j = 0; j < codeStructure().trellis().inputSize(); ++j) {
-      auto branchMetricIt = branchMetrics_.cbegin() + i * codeStructure().trellis().tableSize();
-      auto forwardMetricIt = forwardMetrics_.cbegin() + i * codeStructure().trellis().stateCount();
-      
       LlrType oneMetric = -MAX_LLR;
       LlrType zeroMetric = -MAX_LLR;
-      
-      for (auto stateIt = codeStructure().trellis().beginState(); stateIt < codeStructure().trellis().endState();) {
-        zeroMetric = A::logAdd(
-                               zeroMetric,
-                               LlrType(*branchMetricIt + *forwardMetricIt + backwardMetricIt[size_t(*stateIt)])
-                               );
-        ++branchMetricIt;
-        ++stateIt;
-        oneMetric = A::logAdd(
-                              oneMetric,
-                              LlrType(*branchMetricIt + *forwardMetricIt + backwardMetricIt[size_t(*stateIt)])
-                              );
-        ++branchMetricIt;
-        ++stateIt;
-        ++forwardMetricIt;
+      auto branchMetricIt = branchMetrics_.cbegin() + i * codeStructure().trellis().tableSize();
+      for (size_t k = 0; k < codeStructure().trellis().stateCount(); ++k) {
+        for (BitField<size_t> input = 0; input < codeStructure().trellis().inputCount(); ++input) {
+          if (input.test(j)) {
+            oneMetric = A::logAdd(oneMetric,*branchMetricIt);
+          }
+          else {
+            zeroMetric = A::logAdd(zeroMetric,*branchMetricIt);
+          }
+          ++branchMetricIt;
+        }
       }
       *messageOut = oneMetric - zeroMetric;
       ++messageOut;
@@ -183,7 +190,7 @@ void MapDecoderImpl<A>::messageAPosteriori(std::vector<LlrType>::iterator messag
     backwardMetricIt += codeStructure().trellis().stateCount();
   }
 }
-
+  
 template <typename A>
 void MapDecoderImpl<A>::appBranchMetrics(std::vector<LlrType>::const_iterator parity, std::vector<LlrType>::const_iterator extrinsic)
 {

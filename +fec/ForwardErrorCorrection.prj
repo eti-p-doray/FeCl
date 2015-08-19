@@ -16,11 +16,19 @@ Implemented fec Codes:
 
 A common interface is offered by every fec codes which makes the API more flexible and easier to use.
 The implementation is optimized to process large amount of data. It profits from data alignement and parallelism.
-Currently, the toolbox is built for the following architectures:
-  win64
-  maci64
-  glnxa64
-For more information and source code, see the github project: https://github.com/eti-p-doray/ForwardErrorCorrection</param.description>
+
+You can build the source files for Matlab with mex. I assume you have a Matlab compatible compiler with c++11 support.
+1. Download the project
+2. Add the directory in your Matlab path
+3. Run `fec.make` in the Matlab command prompt
+
+You can build the source files as a library with cmake.
+For an out-of-place build, run the following from the project directory
+`mkdir build; cd build`
+`cmake ..`
+`make install`
+
+For more information, see the github project: https://github.com/eti-p-doray/ForwardErrorCorrection</param.description>
     <param.screenshot />
     <param.version>1.0</param.version>
     <param.output>${PROJECT_ROOT}/ForwardErrorCorrection.mltbx</param.output>

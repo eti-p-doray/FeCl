@@ -14,7 +14,7 @@ function operation(code)
     symbol = double( -2*double(parity)+1 );
     
     %And we add noise.
-    snrdb = -2.0;
+    snrdb = 0.0;
     snr = 10.0^(snrdb/10.0);
     signal = symbol + randn(size(symbol)) / sqrt(2*snr);
     
@@ -34,5 +34,5 @@ function operation(code)
     [aPosteriori, extrinsic] = code.appDecode(llr, zeros(code.extrinsicSize,5));
     
     %Lets now count the errors in the decoded msg
-    errorCount = sum(sum(msgDecoded-msg) ~= 0);
+    errorCount = sum(sum((((aPosteriori)>0)-double(msg))~=0) ~= 0)
 end

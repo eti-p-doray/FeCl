@@ -79,7 +79,7 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
     throw std::invalid_argument("Wrong argin count in TurboCode_constructor");
   }
   if (nlhs != outputCount) {
-    throw std::invalid_argument("Wrong argout count in TurboCode_destructor");
+    throw std::invalid_argument("Wrong argout count in TurboCode_constructor");
   }
   
   std::vector<fec::TrellisStructure> trellis = mxCellArrayTo<fec::TrellisStructure>::f(prhs[0]);
