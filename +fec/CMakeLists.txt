@@ -1,7 +1,7 @@
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/) # add FindMatlab module
 
 find_package(Matlab REQUIRED)
-add_definitions(/DMATLAB_MEX_FILE) #define matlab macros
+add_definitions(-DMATLAB_MEX_FILE) #define matlab macros
 
 set(Boost_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/libs/include/)
 set(Boost_LIBRARIES serialization)
@@ -12,9 +12,9 @@ function (add_mex_function SRC_NAME)
 	target_include_directories(${FUNCTION_NAME} PRIVATE ${MATLAB_INCLUDE_DIRS})
 	target_include_directories(${FUNCTION_NAME} PRIVATE ${Boost_INCLUDE_DIRS})
  	target_include_directories(${FUNCTION_NAME} PRIVATE ${CMAKE_SOURCE_DIR})
-	target_link_libraries(${FUNCTION_NAME} PRIVATE fecStatic)
-	target_link_libraries(${FUNCTION_NAME} PRIVATE ${Boost_LIBRARIES})
-	target_link_libraries(${FUNCTION_NAME} PRIVATE ${MATLAB_LIBRARIES})
+	target_link_libraries(${FUNCTION_NAME} fecStatic)
+	target_link_libraries(${FUNCTION_NAME} ${Boost_LIBRARIES})
+	target_link_libraries(${FUNCTION_NAME} ${MATLAB_LIBRARIES})
 
 	set_target_properties(${FUNCTION_NAME} PROPERTIES CMAKE_CXX_VISIBILITY_PRESET hidden)
 	set_target_properties(${FUNCTION_NAME} PROPERTIES CMAKE_VISIBILITY_INLINES_HIDDEN 1)

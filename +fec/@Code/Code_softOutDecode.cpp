@@ -63,7 +63,8 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
   
   std::unique_ptr<fec::Code> code;
   try {
-    code = mxArrayTo<std::unique_ptr<fec::Code>>::f(prhs[0]);
+    RegisterAgent<fec::ConvolutionalCode, fec::TurboCode, fec::LdpcCode> agent;
+    code = mxArrayTo<std::unique_ptr<fec::Code>>::f(prhs[0], agent);
     std::vector<fec::LlrType, Allocator<fec::LlrType>::type> decodedMsg;
     code->softOutDecode(mxArrayTo<std::vector<fec::LlrType,Allocator<fec::LlrType>::type>>::f(prhs[1]), decodedMsg);
     plhs[0] = toMxArray(decodedMsg);

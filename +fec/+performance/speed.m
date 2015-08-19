@@ -1,6 +1,6 @@
 function speed
     N = 256;
-    M = 8;
+    M = 128;
     T = 32400;
     trellis = poly2trellis(4, [17, 15], 17);
     turboTrellis = poly2trellis(4, [15], 17);

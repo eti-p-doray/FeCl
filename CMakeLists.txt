@@ -9,14 +9,11 @@ set(Boost_USE_STATIC_RUNTIME   	OFF)
 add_subdirectory(${CMAKE_SOURCE_DIR}/libs/serialization)
 set(Boost_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/libs/include/)
 set(Boost_LIBRARIES serialization)
+add_definitions(-DBOOST_ALL_NO_LIB)
 
 if (UNIX)
   set(CMAKE_CXX_FLAGS "-std=c++11 -fPIC ${CMAKE_C_FLAGS}")
-elseif( CMAKE_CXX_COMPILER_ID STREQUAL "MSVC" )
-  add_definitions( /wd4996 )
 endif (UNIX)
-
-ADD_DEFINITIONS("-DBOOST_ALL_NO_LIB")
 
 set(SOURCES
   Code.cpp
@@ -38,20 +35,19 @@ add_library (core OBJECT ${SOURCES})
 target_include_directories(core PUBLIC ${Boost_INCLUDE_DIRS})
 
 add_library (fec SHARED $<TARGET_OBJECTS:core>)
-add_library (fecStatic STATIC $<TARGET_OBJECTS:core>)
-
 target_link_libraries(fec ${Boost_LIBRARIES})
 target_include_directories(fec PUBLIC ${Boost_INCLUDE_DIRS})
 
+add_library (fecStatic STATIC $<TARGET_OBJECTS:core>)
 target_link_libraries(fecStatic ${Boost_LIBRARIES})
 target_include_directories(fecStatic PUBLIC ${Boost_INCLUDE_DIRS})
+
+add_subdirectory(+fec)
 
 install(TARGETS fec DESTINATION lib)
 install(TARGETS fecStatic DESTINATION lib)
 install(FILES Code.h DESTINATION include/fec )
 install(DIRECTORY TurboCode ConvolutionalCode LdpcCode CodeStructure DESTINATION include/fec FILES_MATCHING PATTERN "*.h")
-
-add_subdirectory(+fec)
 
 find_package(Doxygen)
 if(DOXYGEN_FOUND)

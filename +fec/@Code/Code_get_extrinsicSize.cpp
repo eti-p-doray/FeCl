@@ -63,7 +63,8 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
   
   std::unique_ptr<fec::Code> code;
   try {
-    code = mxArrayTo<std::unique_ptr<fec::Code>>::f(prhs[0]);
+    RegisterAgent<fec::ConvolutionalCode, fec::TurboCode, fec::LdpcCode> agent;
+    code = mxArrayTo<std::unique_ptr<fec::Code>>::f(prhs[0], agent);
     plhs[0] = toMxArray(code->extrinsicSize());
   }
   catch (std::exception& e) {
