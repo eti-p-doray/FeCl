@@ -5,6 +5,10 @@ build
 *.o
 *.obj
 build*
+*.lib
+*.a
+*.dylib
+*.dll
 
 # Precompiled Headers
 *.gch

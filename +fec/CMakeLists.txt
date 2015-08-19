@@ -8,7 +8,7 @@ set(Boost_LIBRARIES serialization)
 
 function (add_mex_function SRC_NAME)
 	get_filename_component(FUNCTION_NAME ${SRC_NAME} NAME_WE)
-	add_library(${FUNCTION_NAME} SHARED ${SRC_NAME} Matlabdef.def)
+	add_library(${FUNCTION_NAME} MODULE ${SRC_NAME} Matlabdef.def)
 	target_include_directories(${FUNCTION_NAME} PRIVATE ${MATLAB_INCLUDE_DIRS})
 	target_include_directories(${FUNCTION_NAME} PRIVATE ${Boost_INCLUDE_DIRS})
  	target_include_directories(${FUNCTION_NAME} PRIVATE ${CMAKE_SOURCE_DIR})

@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.toolbox" plugin-version="1.0">
-  <configuration build-checksum="1177189271" file="/Users/etienne/Documents/INRS/ForwardErrorCorrection/+fec/ForwardErrorCorrection.prj" location="/Users/etienne/Documents/INRS/ForwardErrorCorrection/+fec" name="ForwardErrorCorrection" target="target.toolbox" target-name="Package Toolbox">
+  <configuration build-checksum="4214800975" file="/Users/Etienne/Documents/INRS/ForwardErrorCorrection/+fec/ForwardErrorCorrection.prj" location="/Users/Etienne/Documents/INRS/ForwardErrorCorrection/+fec" name="ForwardErrorCorrection" target="target.toolbox" target-name="Package Toolbox">
     <param.appname>ForwardErrorCorrection</param.appname>
     <param.authnamewatermark>Etienne Pierre-Doray</param.authnamewatermark>
     <param.email>etipdoray@gmail.com</param.email>
@@ -59,10 +59,10 @@ For more information and source code, see the github project: https://github.com
 %
 
 **/*~
-**/*.o
-**/*.obj
 **/*.h
 **/*.cpp
+**/*.o
+**/*.obj
 **/*.mltbx
 **/*.prj
 **/.DS_Store
@@ -70,16 +70,16 @@ For more information and source code, see the github project: https://github.com
 **/.gitignore
 **/CMakeLists.txt
 libs
-CodeStructure
-ConvolutionalCode
-LdpcCode
-TurboCode
 test
 example
+CodeStructure
+TurboCode
+LdpcCode
+ConvolutionalCode
+Doxyfile
 search
 html
-build*
-Doxyfile</param.exclude.filters>
+build*</param.exclude.filters>
     <param.examples>&lt;?xml version="1.0" encoding="utf-8"?&gt;
 &lt;examples/&gt;</param.examples>
     <param.demosxml />
@@ -106,7 +106,7 @@ Doxyfile</param.exclude.filters>
     <fileset.depfun.excluded />
     <fileset.package />
     <build-deliverables>
-      <file location="/Users/etienne/Documents/INRS/ForwardErrorCorrection/+fec" name="ForwardErrorCorrection.mltbx" optional="false">/Users/etienne/Documents/INRS/ForwardErrorCorrection/+fec/ForwardErrorCorrection.mltbx</file>
+      <file location="/Users/Etienne/Documents/INRS/ForwardErrorCorrection/+fec" name="ForwardErrorCorrection.mltbx" optional="false">/Users/Etienne/Documents/INRS/ForwardErrorCorrection/+fec/ForwardErrorCorrection.mltbx</file>
     </build-deliverables>
     <workflow />
     <matlab>
@@ -141,7 +141,7 @@ Doxyfile</param.exclude.filters>
       <vista>false</vista>
       <linux>false</linux>
       <solaris>false</solaris>
-      <osver>10.10.3</osver>
+      <osver>10.10.4</osver>
       <os32>false</os32>
       <os64>true</os64>
       <arch>maci64</arch>

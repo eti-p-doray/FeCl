@@ -44,10 +44,12 @@ target_include_directories(fecStatic PUBLIC ${Boost_INCLUDE_DIRS})
 
 add_subdirectory(+fec)
 
-install(TARGETS fec DESTINATION lib)
-install(TARGETS fecStatic DESTINATION lib)
-install(FILES Code.h DESTINATION include/fec )
-install(DIRECTORY TurboCode ConvolutionalCode LdpcCode CodeStructure DESTINATION include/fec FILES_MATCHING PATTERN "*.h")
+if (UNIX)
+  install(TARGETS fec DESTINATION lib)
+  install(TARGETS fecStatic DESTINATION lib)
+  install(FILES Code.h DESTINATION include/fec )
+  install(DIRECTORY TurboCode ConvolutionalCode LdpcCode CodeStructure DESTINATION include/fec FILES_MATCHING PATTERN "*.h")
+endif (UNIX)
 
 find_package(Doxygen)
 if(DOXYGEN_FOUND)
