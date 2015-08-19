@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.toolbox" plugin-version="1.0">
-  <configuration build-checksum="4214800975" file="/Users/Etienne/Documents/INRS/ForwardErrorCorrection/+fec/ForwardErrorCorrection.prj" location="/Users/Etienne/Documents/INRS/ForwardErrorCorrection/+fec" name="ForwardErrorCorrection" target="target.toolbox" target-name="Package Toolbox">
+  <configuration build-checksum="4214800975" file="/Users/etienne/Documents/INRS/ForwardErrorCorrection/+fec/ForwardErrorCorrection.prj" location="/Users/etienne/Documents/INRS/ForwardErrorCorrection/+fec" name="ForwardErrorCorrection" target="target.toolbox" target-name="Package Toolbox">
     <param.appname>ForwardErrorCorrection</param.appname>
     <param.authnamewatermark>Etienne Pierre-Doray</param.authnamewatermark>
     <param.email>etipdoray@gmail.com</param.email>
@@ -78,7 +78,7 @@ LdpcCode
 ConvolutionalCode
 Doxyfile
 search
-html
+gh-pages
 build*</param.exclude.filters>
     <param.examples>&lt;?xml version="1.0" encoding="utf-8"?&gt;
 &lt;examples/&gt;</param.examples>
@@ -106,7 +106,7 @@ build*</param.exclude.filters>
     <fileset.depfun.excluded />
     <fileset.package />
     <build-deliverables>
-      <file location="/Users/Etienne/Documents/INRS/ForwardErrorCorrection/+fec" name="ForwardErrorCorrection.mltbx" optional="false">/Users/Etienne/Documents/INRS/ForwardErrorCorrection/+fec/ForwardErrorCorrection.mltbx</file>
+      <file location="/Users/etienne/Documents/INRS/ForwardErrorCorrection/+fec" name="ForwardErrorCorrection.mltbx" optional="false">/Users/etienne/Documents/INRS/ForwardErrorCorrection/+fec/ForwardErrorCorrection.mltbx</file>
     </build-deliverables>
     <workflow />
     <matlab>
@@ -141,7 +141,7 @@ build*</param.exclude.filters>
       <vista>false</vista>
       <linux>false</linux>
       <solaris>false</solaris>
-      <osver>10.10.4</osver>
+      <osver>10.10.3</osver>
       <os32>false</os32>
       <os64>true</os64>
       <arch>maci64</arch>

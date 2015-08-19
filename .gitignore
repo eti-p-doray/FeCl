@@ -24,9 +24,10 @@ build*
 *.mexmaci64
 *.mexw64
 *.mexa64
+*.mltbx
 
 # System files
 *.DS_Store
 *~
 
-html/
+gh-pages/

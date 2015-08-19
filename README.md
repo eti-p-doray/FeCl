@@ -17,7 +17,7 @@ The implementation is optimized to process large amount of data. It profits from
 
 Instructions:
 
-To install only the Matlab API from pre-compiled binaries, download and run the [toolbox file](https://github.com/eti-p-doray/ForwardErrorCorrection/blob/master/+fec/ForwardErrorCorrection.mltbx?raw=true) <br/>
+To install only the Matlab API from pre-compiled binaries, download and run the [toolbox file](https://github.com/eti-p-doray/ForwardErrorCorrection/blob/gh-pages/ForwardErrorCorrection.mltbx?raw=true) <br/>
 Currently, the toolbox is built for the following architectures<br/>
 * win64 
 * maci64 
