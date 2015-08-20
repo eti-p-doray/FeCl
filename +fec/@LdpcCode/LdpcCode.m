@@ -46,7 +46,7 @@ classdef LdpcCode < fec.Code
             decoderType = fec.BpType.MinSumBp;
           end
           if (nargin < 4)
-            workGroupSize = 1;
+            workGroupSize = 8;
           end
           this.mexHandle_ = fec.bin.LdpcCode_constructor(H, iterationCount, decoderType.char, workGroupSize);
         end

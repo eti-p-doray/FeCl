@@ -38,4 +38,5 @@ For an out-of-place build, run the following from the project directory<br/>
 
 Documentation:
 
-Refer to the [web documentation](http://eti-p-doray.github.io/ForwardErrorCorrection/)
+For Matlab API, see exampleMatlab folder. You can use `doc` function in matlab after installation.
+For C++ API, refer to the [web documentation](http://eti-p-doray.github.io/ForwardErrorCorrection/)

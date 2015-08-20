@@ -51,6 +51,12 @@ private:
    *  \param  b Second operand
    */
   static inline LlrType logAdd(LlrType a, LlrType b) {return std::max(a,b);}
+  static inline LlrType f(LlrType x) {
+    return x;
+  }
+  static inline LlrType b(LlrType x) {
+    return x;
+  }
 };
   
 }

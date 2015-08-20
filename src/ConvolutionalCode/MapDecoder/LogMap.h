@@ -56,6 +56,13 @@ private:
       return sum;
     }
     return sum + log1pexp(-fabs(a-b));
+    /*if (a+b == MAX_LLR) {
+      return -std::numeric_limits<double>::infinity();
+    }
+    if (isnan(a+b)) {
+      return -std::numeric_limits<double>::infinity();
+    }
+    return a+b;*/
   }
   static inline LlrType log1pexp(LlrType x) {
     if (x < -37.0) {
@@ -70,6 +77,27 @@ private:
     else {
       return x;
     }*/
+  }
+  static inline LlrType f(LlrType x) {
+    /*LlrType ans = exp(x);
+    if (ans == MAX_LLR) {
+      return THRESHOLD_LLR;
+    }
+    if (isnan(exp(x))) {
+      return -std::numeric_limits<double>::infinity();
+    }
+    return ans;*/
+    return x;
+  }
+  static inline LlrType b(LlrType x) {
+    /*if (x == 0.0) {
+      return -MAX_LLR;
+    }
+    if (isnan(log(x))) {
+      return -std::numeric_limits<double>::infinity();
+    }
+    return log(x);*/
+    return x;
   }
 };
   

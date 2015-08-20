@@ -16,19 +16,19 @@ if (UNIX)
 endif (UNIX)
 
 set(SOURCES
-  Code.cpp
-  CodeStructure/CodeStructure.cpp
-  CodeStructure/ConvolutionalCodeStructure.cpp
-  CodeStructure/TurboCodeStructure.cpp
-  CodeStructure/LdpcCodeStructure.cpp
-  CodeStructure/TrellisStructure.cpp
-  ConvolutionalCode/ConvolutionalCode.cpp
-  ConvolutionalCode/MapDecoder/MapDecoder.cpp
-  ConvolutionalCode/ViterbiDecoder/ViterbiDecoder.cpp
-  TurboCode/TurboCode.cpp
-  TurboCode/TurboCodeImpl.cpp
-  LdpcCode/LdpcCode.cpp
-  LdpcCode/BpDecoder/BpDecoder.cpp
+  src/Code.cpp
+  src/CodeStructure/CodeStructure.cpp
+  src/CodeStructure/ConvolutionalCodeStructure.cpp
+  src/CodeStructure/TurboCodeStructure.cpp
+  src/CodeStructure/LdpcCodeStructure.cpp
+  src/CodeStructure/TrellisStructure.cpp
+  src/ConvolutionalCode/ConvolutionalCode.cpp
+  src/ConvolutionalCode/MapDecoder/MapDecoder.cpp
+  src/ConvolutionalCode/ViterbiDecoder/ViterbiDecoder.cpp
+  src/TurboCode/TurboCode.cpp
+  src/TurboCode/TurboCodeImpl.cpp
+  src/LdpcCode/LdpcCode.cpp
+  src/LdpcCode/BpDecoder/BpDecoder.cpp
 )
 
 add_library (core OBJECT ${SOURCES})
@@ -47,13 +47,13 @@ add_subdirectory(+fec)
 if (UNIX)
   install(TARGETS fec DESTINATION lib)
   install(TARGETS fecStatic DESTINATION lib)
-  install(FILES Code.h DESTINATION include/fec )
-  install(DIRECTORY TurboCode ConvolutionalCode LdpcCode CodeStructure DESTINATION include/fec FILES_MATCHING PATTERN "*.h")
+  install(FILES src/Code.h DESTINATION include/fec )
+  install(DIRECTORY TurboCode/src ConvolutionalCode/src LdpcCode/src CodeStructure/src DESTINATION include/fec FILES_MATCHING PATTERN "*.h")
 endif (UNIX)
 
 find_package(Doxygen)
 if(DOXYGEN_FOUND)
-	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile
+	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/Doxyfile
 		${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
 	add_custom_target(doc
 		${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
@@ -63,27 +63,27 @@ if(DOXYGEN_FOUND)
 endif(DOXYGEN_FOUND)
 
 enable_testing()
-add_executable(test_code test/code.cpp)
-target_include_directories(test_code PUBLIC ${CMAKE_SOURCE_DIR})
+add_executable(test_code testCpp/code.cpp)
+target_include_directories(test_code PUBLIC ${CMAKE_SOURCE_DIR}/src)
 target_include_directories(test_code PUBLIC ${Boost_INCLUDE_DIRS})
 target_link_libraries(test_code fecStatic)
 target_link_libraries(test_code ${Boost_LIBRARIES})
 add_test(code test_code)
 
-add_executable(example_Convolutional example/Convolutional.cpp)
-target_include_directories(example_Convolutional PUBLIC ${CMAKE_SOURCE_DIR})
+add_executable(example_Convolutional exampleCpp/Convolutional.cpp)
+target_include_directories(example_Convolutional PUBLIC ${CMAKE_SOURCE_DIR}/src)
 target_include_directories(example_Convolutional PUBLIC ${Boost_INCLUDE_DIRS})
 target_link_libraries(example_Convolutional fecStatic)
 target_link_libraries(example_Convolutional ${Boost_LIBRARIES})
 
-add_executable(example_Turbo example/Turbo.cpp)
-target_include_directories(example_Turbo PUBLIC ${CMAKE_SOURCE_DIR})
+add_executable(example_Turbo exampleCpp/Turbo.cpp)
+target_include_directories(example_Turbo PUBLIC ${CMAKE_SOURCE_DIR}/src)
 target_include_directories(example_Turbo PUBLIC ${Boost_INCLUDE_DIRS})
 target_link_libraries(example_Turbo ${Boost_LIBRARIES})
 target_link_libraries(example_Turbo fecStatic)
 
-add_executable(example_Ldpc example/Ldpc.cpp)
-target_include_directories(example_Ldpc PUBLIC ${CMAKE_SOURCE_DIR})
+add_executable(example_Ldpc exampleCpp/Ldpc.cpp)
+target_include_directories(example_Ldpc PUBLIC ${CMAKE_SOURCE_DIR}/src)
 target_include_directories(example_Ldpc PUBLIC ${Boost_INCLUDE_DIRS})
 target_link_libraries(example_Ldpc ${Boost_LIBRARIES})
 target_link_libraries(example_Ldpc fecStatic)

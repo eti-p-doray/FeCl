@@ -44,7 +44,7 @@ namespace fec {
 
 typedef double LlrType;
 const LlrType MAX_LLR = std::numeric_limits<LlrType>::infinity();
-const LlrType THRESHOLD_LLR = 10000.0;
+const LlrType THRESHOLD_LLR = 1000.0;
   
   /**
    *  Computes the probability (L-value) of a sequence of input L-values

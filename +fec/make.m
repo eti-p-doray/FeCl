@@ -9,7 +9,7 @@ function make
     iPath = {['-I' fullfile('../')], ['-I' fullfile('../libs/include/')]};
     lPath = {['-L' fullfile('../libs/')]};
 
-    srcPath = '../';
+    srcPath = '../src/';
     libsPath = '../libs/';
     trgPath = '';
     

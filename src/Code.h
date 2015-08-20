@@ -181,7 +181,11 @@ void fec::Code::encode(const std::vector<uint8_t,A<uint8_t>>& message, std::vect
   std::vector<std::thread> threadGroup;
   threadGroup.reserve(workGroupSize());
   auto thread = threadGroup.begin();
-  size_t step = (blocCount+workGroupSize()-1)/workGroupSize();
+  int n = std::thread::hardware_concurrency();
+  if (n > workGroupSize() || n == 0) {
+    n = workGroupSize();
+  }
+  size_t step = (blocCount+n-1)/n;
   for (int i = 0; i + step <= blocCount; i += step) {
     threadGroup.push_back( std::thread(&Code::encodeNBloc, this,
                                        messageIt, parityIt, step) );
@@ -233,9 +237,12 @@ void fec::Code::appDecode(const std::vector<LlrType,A<LlrType>>& parityIn, const
   std::vector<LlrType>::iterator extrinsicOutIt = extrinsicOut.begin();
   std::vector<LlrType>::iterator messageOutIt = messageOut.begin();
   
-  
+  int n = std::thread::hardware_concurrency();
+  if (n > workGroupSize() || n == 0) {
+    n = workGroupSize();
+  }
   auto thread = threadGroup.begin();
-  size_t step = (blocCount+workGroupSize()-1)/workGroupSize();
+  size_t step = (blocCount+n-1)/n;
   for (int i = 0; i + step <= blocCount; i += step) {
     threadGroup.push_back( std::thread(&Code::appDecodeNBloc, this,
                                        parityInIt,extrinsicInIt,messageOutIt, extrinsicOutIt, step) );
@@ -279,8 +286,12 @@ void fec::Code::softOutDecode(const std::vector<LlrType,A<LlrType>>& parityIn, s
   std::vector<std::thread> threadGroup;
   threadGroup.reserve(workGroupSize());
   
+  int n = std::thread::hardware_concurrency();
+  if (n > workGroupSize() || n == 0) {
+    n = workGroupSize();
+  }
   auto thread = threadGroup.begin();
-  size_t step = (blocCount+workGroupSize()-1)/workGroupSize();
+  size_t step = (blocCount+n-1)/n;
   for (int i = 0; i + step <= blocCount; i += step) {
     threadGroup.push_back( std::thread(&Code::softOutDecodeNBloc, this,
                                        parityInIt,
@@ -325,8 +336,12 @@ void fec::Code::decode(const std::vector<LlrType,A<LlrType>>& parityIn, std::vec
   std::vector<LlrType>::const_iterator parityInIt = parityIn.begin();
   std::vector<uint8_t>::iterator messageOutIt = messageOut.begin();
   
+  int n = std::thread::hardware_concurrency();
+  if (n > workGroupSize() || n == 0) {
+    n = workGroupSize();
+  }
   auto thread = threadGroup.begin();
-  size_t step = (blocCount+workGroupSize()-1)/workGroupSize();
+  size_t step = (blocCount+n-1)/n;
   for (int i = 0; i + step <= blocCount; i += step) {
     threadGroup.push_back( std::thread(&Code::decodeNBloc, this,
                                        parityInIt, messageOutIt, step) );

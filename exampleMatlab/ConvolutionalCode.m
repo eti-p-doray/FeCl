@@ -24,5 +24,5 @@ function ConvolutionalCode
     %Lets now use the code for some operations. Since all code offer the
     %same interface, we call the operation function which will work on any
     %defined code
-    fec.example.operation(code);
+    operation(code);
 end

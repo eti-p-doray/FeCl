@@ -35,7 +35,7 @@ classdef ConvolutionalCode < fec.Code
             mapDecoderType = fec.MapType.MaxLogMap;
           end
           if (nargin < 5)
-            workGroupSize = 1;
+            workGroupSize = 8;
           end
           this.mexHandle_ = fec.bin.ConvolutionalCode_constructor(trellis, blocSize, trellisEndType.char, mapDecoderType.char, workGroupSize);
         end

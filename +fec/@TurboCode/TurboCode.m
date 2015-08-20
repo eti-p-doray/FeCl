@@ -56,7 +56,7 @@ classdef TurboCode < fec.Code
             mapDecoderType = fec.MapType.MaxLogMap;
           end
           if (nargin < 7)
-            workGroupSize = 1;
+            workGroupSize = 8;
           end
           if (length(trellis) == 1)
             trellis = repmat({trellis}, size(interleaver));
