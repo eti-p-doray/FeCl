@@ -58,12 +58,12 @@ function speed
         llr = -4.0 * signal * snr;
 
         code{i}.workGroupSize = 1;
-        [fecAvEncEt1(i), fecStdEncEt1(i)] = fec.performance.fecEncode(code{i}, msg, M);
-        [fecAvDecEt1(i), fecStdDecEt1(i), ~] = fec.performance.fecDecode(code{i}, msg, llr, M);
+        [fecAvEncEt1(i), fecStdEncEt1(i)] = fecEncode(code{i}, msg, M);
+        [fecAvDecEt1(i), fecStdDecEt1(i), ~] = fecDecode(code{i}, msg, llr, M);
 
         code{i}.workGroupSize = 4;
-        [fecAvEncEt4(i), fecStdEncEt4(i)] = fec.performance.fecEncode(code{i}, msg, M);
-        [fecAvDecEt4(i), fecStdDecEt4(i), ~] = fec.performance.fecDecode(code{i}, msg, llr, M);
+        [fecAvEncEt4(i), fecStdEncEt4(i)] = fecEncode(code{i}, msg, M);
+        [fecAvDecEt4(i), fecStdDecEt4(i), ~] = fecDecode(code{i}, msg, llr, M);
         
         if (~isa(code{i}, 'fec.TurboCode'))
             llr = -llr;
@@ -87,8 +87,8 @@ function speed
             end
         end
         
-        [matlabAvEncEt(i), matlabStdEncEt(i)] = fec.performance.matlabEncode(matlabEncoder{i}, msg, M);
-        [matlabAvDecEt(i), matlabStdDecEt(i), ~] = fec.performance.matlabDecode(matlabDecoder{i}, msg, llr, M); 
+        [matlabAvEncEt(i), matlabStdEncEt(i)] = matlabEncode(matlabEncoder{i}, msg, M);
+        [matlabAvDecEt(i), matlabStdDecEt(i), ~] = matlabDecode(matlabDecoder{i}, msg, llr, M);
     end
     z = 1.96;
     disp(table(matlabStdEncEt * z / sqrt(M), fecStdEncEt1 * z / sqrt(M), fecStdEncEt4 * z / sqrt(M), 'VariableNames', {'matlab', 'fec1', 'fec4'}, 'RowNames', codeDesc));

@@ -15,6 +15,13 @@ The implementation is optimized to process large amount of data. It profits from
 
 =================
 
+Documentation:
+
+For Matlab API, see exampleMatlab folder. You can use `doc` function in matlab after installation.
+For C++ API, refer to the [web documentation](http://eti-p-doray.github.io/ForwardErrorCorrection/)
+
+=================
+
 Instructions:
 
 To install only the Matlab API from pre-compiled binaries, download and run the [toolbox file](https://github.com/eti-p-doray/ForwardErrorCorrection/blob/gh-pages/ForwardErrorCorrection.mltbx?raw=true) <br/>
@@ -33,10 +40,3 @@ For an out-of-place build, run the following from the project directory<br/>
 `mkdir build; cd build` <br/>
 `cmake ..` <br/>
 `make install` <br/>
-
-=================
-
-Documentation:
-
-For Matlab API, see exampleMatlab folder. You can use `doc` function in matlab after installation.
-For C++ API, refer to the [web documentation](http://eti-p-doray.github.io/ForwardErrorCorrection/)

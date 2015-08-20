@@ -1,4 +1,4 @@
-function operation(code)
+function Operation(code)
 %This function shows how to use a code to make operations.
 
     %Lets define a random sequence of message bits.
@@ -23,15 +23,6 @@ function operation(code)
     
     %Now, we decode and hope for success.
     msgDecoded = code.decode(llr);
-    
-    %We can also get the a posteriori values.
-    aPosteriori = code.softOutDecode(llr);
-    
-    %And we can use a priori knowledge about the code state.
-    %This also gives us new extrinsic knowledge.
-    %Here, we are actually giving a sequence of zero as extrinsic
-    %information. This will yield the exact same result as softOutDecode.
-    [aPosteriori, extrinsic] = code.appDecode(llr, zeros(code.extrinsicSize,5));
     
     %Lets now count the errors in the decoded msg
     errorCount = sum(sum((((aPosteriori)>0)-double(msg))~=0) ~= 0)

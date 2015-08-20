@@ -55,7 +55,7 @@ function per
             signal(parityIdx{i},:) = symbol + randn(size(symbol)) / sqrt(2*snr);
             llr = -4.0 * signal * snr;
 
-            [~, ~, fecBer(j)] = fec.performance.fecDecode(code{i}, msg, llr, M);
+            [~, ~, fecBer(j)] = fecDecode(code{i}, msg, llr, M);
             
             if (~isa(code{i}, 'fec.TurboCode'))
                 llr = -llr;
@@ -79,7 +79,7 @@ function per
                 end
             end
             
-            [~, ~, matlabBer(j)] = fec.performance.matlabDecode(matlabDecoder{i}, msg, llr, M);
+            [~, ~, matlabBer(j)] = matlabDecode(matlabDecoder{i}, msg, llr, M);
         end
         [fecBer matlabBer]
         fecAvBer{i} = fecBer;
