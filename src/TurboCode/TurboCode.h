@@ -79,14 +79,14 @@ public:
   virtual size_t paritySize() const {return codeStructure_.paritySize();}
   virtual size_t extrinsicSize() const {
     size_t extrinsicSize = 0;
-    switch (codeStructure_.structureType()) {
+    switch (codeStructure_.schedulingType()) {
       default:
       case TurboCodeStructure::Serial:
         return codeStructure_.msgSize() + codeStructure_.msgTailSize();
         break;
         
       case TurboCodeStructure::Parallel:
-        for (auto & i : codeStructure_.structures()) {
+        for (auto & i : codeStructure_.constituents()) {
           extrinsicSize += i.msgSize() + i.msgTailSize();
         }
         return extrinsicSize;
@@ -134,40 +134,35 @@ void fec::TurboCode::pack(typename std::vector<T>::const_iterator parityIn, type
 {
   auto parityOutIt = parityOut;
   auto msgInIt = parityIn;
-  auto parityInIt = parityIn;
-  size_t step = 0;
+  auto parityInIt = parityIn + codeStructure_.msgSize() + codeStructure_.msgTailSize();
   for (size_t i = 0; i < codeStructure_.msgSize(); ++i) {
     *parityOut = *msgInIt;
-    step = 0;
-    for (size_t j = 0; j < codeStructure_.structureCount(); ++j) {
-      if (i < codeStructure_.structure(i).blocSize() - codeStructure_.structure(i).tailSize()) {
-        for (size_t k = 0; k < codeStructure_.structure(i).trellis().outputSize(); ++k) {
+    ++msgInIt;
+    ++parityOut;
+    for (size_t j = 0; j < codeStructure_.constituentCount(); ++j) {
+      if (i < codeStructure_.constituent(i).blocSize()) {
+        for (size_t k = 0; k < codeStructure_.constituent(i).trellis().outputSize(); ++k) {
           *parityOutIt = *parityInIt;
           ++parityOutIt;
         }
       }
-      parityOutIt += (i < codeStructure_.msgSize());
     }
-    ++msgInIt;
   }
   parityInIt = parityIn + codeStructure_.msgSize() + codeStructure_.msgTailSize();
-  for (size_t i = 0; i < codeStructure_.structureCount(); ++i) {
-    parityInIt += codeStructure_.structure(i).paritySize() - codeStructure_.structure(i).tailSize() * codeStructure_.structure(i).trellis().outputSize();
-    for (size_t j = 0; j < codeStructure_.structure(i).tailSize(); ++j) {
-      for (size_t k = 0; k < codeStructure_.structure(i).trellis().inputSize(); ++k) {
+  for (size_t i = 0; i < codeStructure_.constituentCount(); ++i) {
+    parityInIt += codeStructure_.constituent(i).paritySize() - codeStructure_.constituent(i).tailSize() * codeStructure_.constituent(i).trellis().outputSize();
+    for (size_t j = 0; j < codeStructure_.constituent(i).tailSize(); ++j) {
+      for (size_t k = 0; k < codeStructure_.constituent(i).trellis().inputSize(); ++k) {
         *parityOutIt = *msgInIt;
         ++parityOutIt;
         ++msgInIt;
       }
-      for (size_t k = 0; k < codeStructure_.structure(i).trellis().outputSize(); ++k) {
+      for (size_t k = 0; k < codeStructure_.constituent(i).trellis().outputSize(); ++k) {
         *parityOutIt = *parityInIt;
         ++parityOutIt;
         ++parityInIt;
       }
     }
-  }
-  for (size_t j = 0; j < codeStructure_.structureCount(); ++j) {
-    *parityOutIt = *parityOutIt;
   }
 }
 

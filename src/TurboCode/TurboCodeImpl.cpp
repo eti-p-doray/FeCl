@@ -32,7 +32,7 @@ using namespace fec;
 
 void TurboCodeImpl::appDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n) const
 {
-  switch (codeStructure_.structureType()) {
+  switch (codeStructure_.schedulingType()) {
     case TurboCodeStructure::Serial:
       for (size_t i = 0; i < n; ++i) {
         serialDecodeBloc(parityIn, extrinsicIn, messageOut, extrinsicOut);
@@ -66,40 +66,40 @@ void TurboCodeImpl::serialDecodeBloc(std::vector<LlrType>::const_iterator parity
   for (size_t i = 0; i < codeStructure_.iterationCount() - 1; ++i) {
     auto parityIt = parityIn + codeStructure_.msgSize() + codeStructure_.msgTailSize();
     auto parityTailIt = parityIn + codeStructure_.msgSize();
-    for (size_t j = 0; j < codeStructure_.structureCount(); ++j) {
-      auto extrinsicInterlTailIt = extrinsicInterl.begin() + codeStructure_.structure(j).msgSize();
-      for (size_t k = 0; k < codeStructure_.structure(j).msgSize(); ++k) {
-        extrinsicInterl[k] = extrinsicOut[codeStructure_.interleaver(j)[k]] + parityIn[codeStructure_.interleaver(j)[k]];
+    for (size_t j = 0; j < codeStructure_.constituentCount(); ++j) {
+      auto extrinsicInterlTailIt = extrinsicInterl.begin() + codeStructure_.constituent(j).msgSize();
+      for (size_t k = 0; k < codeStructure_.constituent(j).msgSize(); ++k) {
+        extrinsicInterl[k] = extrinsicOut[codeStructure_.interleaver(j)[k]] * codeStructure_.gain() + parityIn[codeStructure_.interleaver(j)[k]];
       }
-      std::copy(parityTailIt, parityTailIt+codeStructure_.structure(j).msgTailSize(), extrinsicInterlTailIt);
+      std::copy(parityTailIt, parityTailIt+codeStructure_.constituent(j).msgTailSize(), extrinsicInterlTailIt);
       
       code_[j]->appDecodeBloc(parityIt, extrinsicInterl.begin(), msg.begin(), extrinsicInterl.begin());
       std::fill(extrinsicOut, extrinsicOut + codeStructure_.msgSize() + codeStructure_.msgTailSize(), 0);
       codeStructure_.interleaver(j).deInterleaveBloc<LlrType>(extrinsicInterl.begin(), extrinsicOut);
 
-      parityIt += codeStructure_.structure(j).paritySize();
-      parityTailIt += codeStructure_.structure(j).msgTailSize();
+      parityIt += codeStructure_.constituent(j).paritySize();
+      parityTailIt += codeStructure_.constituent(j).msgTailSize();
     }
   }
   auto parityIt = parityIn + codeStructure_.msgSize() + codeStructure_.msgTailSize();
   auto parityTailIt = parityIn + codeStructure_.msgSize();
   std::copy(parityIn, parityIn + codeStructure_.msgSize(), messageOut);
-  for (size_t i = 0; i < codeStructure_.structureCount(); ++i) {
-    auto extrinsicInterlTailIt = extrinsicInterl.begin() + codeStructure_.structure(i).msgSize();
-    for (size_t k = 0; k < codeStructure_.structure(i).msgSize(); ++k) {
+  for (size_t i = 0; i < codeStructure_.constituentCount(); ++i) {
+    auto extrinsicInterlTailIt = extrinsicInterl.begin() + codeStructure_.constituent(i).msgSize();
+    for (size_t k = 0; k < codeStructure_.constituent(i).msgSize(); ++k) {
       extrinsicInterl[k] = extrinsicOut[codeStructure_.interleaver(i)[k]] + parityIn[codeStructure_.interleaver(i)[k]];
     }
-    std::copy(parityTailIt, parityTailIt+codeStructure_.structure(i).msgTailSize(), extrinsicInterlTailIt);
+    std::copy(parityTailIt, parityTailIt+codeStructure_.constituent(i).msgTailSize(), extrinsicInterlTailIt);
     
     code_[i]->appDecodeBloc(parityIt, extrinsicInterl.begin(), msg.begin(), extrinsicInterl.begin());
     std::fill(extrinsicOut, extrinsicOut + codeStructure_.msgSize() + codeStructure_.msgTailSize(), 0);
 
-    for (size_t k = 0; k < codeStructure_.structure(i).msgSize(); ++k) {
+    for (size_t k = 0; k < codeStructure_.constituent(i).msgSize(); ++k) {
       messageOut[codeStructure_.interleaver(i)[k]] += extrinsicInterl[k];
       extrinsicOut[codeStructure_.interleaver(i)[k]] = extrinsicInterl[k];
     }
-    parityIt += codeStructure_.structure(i).paritySize();
-    parityTailIt += codeStructure_.structure(i).msgTailSize();
+    parityIt += codeStructure_.constituent(i).paritySize();
+    parityTailIt += codeStructure_.constituent(i).msgTailSize();
   }
 }
 
@@ -109,56 +109,56 @@ void TurboCodeImpl::parallelDecodeBloc(std::vector<LlrType>::const_iterator pari
   auto extrinsicOutIt = extrinsicOut;
   auto extrinsicInIt = extrinsicIn;
   auto parityTail = parityIn + codeStructure_.msgSize();
-  for (size_t i = 0; i < codeStructure_.structureCount(); ++i) {
-    for (size_t k = 0; k < codeStructure_.structure(i).msgSize(); ++k) {
-      extrinsicOutIt[k] = parityIn[codeStructure_.interleaver(i)[k]] + extrinsicInIt[k];
+  for (size_t i = 0; i < codeStructure_.constituentCount(); ++i) {
+    for (size_t k = 0; k < codeStructure_.constituent(i).msgSize(); ++k) {
+      extrinsicOutIt[k] = parityIn[codeStructure_.interleaver(i)[k]] + extrinsicInIt[k] * codeStructure_.gain();
     }
-    extrinsicOutIt += codeStructure_.structure(i).msgSize();
-    extrinsicInIt += codeStructure_.structure(i).msgSize();
-    for (size_t k = 0; k < codeStructure_.structure(i).msgTailSize(); ++k) {
-      extrinsicOutIt[k] = parityTail[k] + extrinsicInIt[k];
+    extrinsicOutIt += codeStructure_.constituent(i).msgSize();
+    extrinsicInIt += codeStructure_.constituent(i).msgSize();
+    for (size_t k = 0; k < codeStructure_.constituent(i).msgTailSize(); ++k) {
+      extrinsicOutIt[k] = parityTail[k] + extrinsicInIt[k] * codeStructure_.gain();
     }
-    extrinsicOutIt += codeStructure_.structure(i).msgTailSize();
-    extrinsicInIt += codeStructure_.structure(i).msgTailSize();
-    parityTail += codeStructure_.structure(i).msgTailSize();
+    extrinsicOutIt += codeStructure_.constituent(i).msgTailSize();
+    extrinsicInIt += codeStructure_.constituent(i).msgTailSize();
+    parityTail += codeStructure_.constituent(i).msgTailSize();
   }
   
   std::vector<LlrType> parityBuffer(extrinsicSize());
   for (size_t i = 0; i < codeStructure_.iterationCount(); ++i) {
     auto parityIt = parityIn + codeStructure_.msgSize() + codeStructure_.msgTailSize();
     auto extrinsicOutIt = extrinsicOut;
-    for (size_t j = 0; j < codeStructure_.structureCount(); ++j) {
+    for (size_t j = 0; j < codeStructure_.constituentCount(); ++j) {
 
       code_[j]->appDecodeBloc(parityIt, extrinsicOutIt, msg.begin(), extrinsicOutIt);
 
-      extrinsicOutIt += codeStructure_.structure(j).msgSize() + codeStructure_.structure(j).msgTailSize();
-      parityIt += codeStructure_.structure(j).paritySize();
+      extrinsicOutIt += codeStructure_.constituent(j).msgSize() + codeStructure_.constituent(j).msgTailSize();
+      parityIt += codeStructure_.constituent(j).paritySize();
     }
     
     extrinsicOutIt = extrinsicOut;
     auto parityTmp = parityBuffer.begin();
     auto parityTail = parityIn + codeStructure_.msgSize();
     std::fill(messageOut, messageOut + codeStructure_.msgSize(), 0);
-    for (size_t j = 0; j < codeStructure_.structureCount(); ++j) {
-      for (size_t k = 0; k < codeStructure_.structure(j).msgSize(); ++k) {
-        parityTmp[k] = extrinsicOutIt[k];
+    for (size_t j = 0; j < codeStructure_.constituentCount(); ++j) {
+      for (size_t k = 0; k < codeStructure_.constituent(j).msgSize(); ++k) {
+        parityTmp[k] = extrinsicOutIt[k] * codeStructure_.gain();
         extrinsicOutIt[k] = messageOut[codeStructure_.interleaver(j)[k]];
         messageOut[codeStructure_.interleaver(j)[k]] += parityTmp[k];
       }
-      extrinsicOutIt += codeStructure_.structure(j).msgSize();
-      parityTmp += codeStructure_.structure(j).msgSize();
-      for (size_t k = 0; k < codeStructure_.structure(j).msgTailSize(); ++k) {
+      extrinsicOutIt += codeStructure_.constituent(j).msgSize();
+      parityTmp += codeStructure_.constituent(j).msgSize();
+      for (size_t k = 0; k < codeStructure_.constituent(j).msgTailSize(); ++k) {
         extrinsicOutIt[k] += parityTail[k];
       }
-      extrinsicOutIt += codeStructure_.structure(j).msgTailSize();
-      parityTail += codeStructure_.structure(j).msgTailSize();
+      extrinsicOutIt += codeStructure_.constituent(j).msgTailSize();
+      parityTail += codeStructure_.constituent(j).msgTailSize();
     }
     std::copy(parityIn, parityIn + codeStructure_.msgSize(), messageOut);
     
-    for (int64_t j = codeStructure_.structureCount()-1; j >= 0; --j) {
-      extrinsicOutIt -= codeStructure_.structure(j).msgSize() + codeStructure_.structure(j).msgTailSize();
-      parityTmp -= codeStructure_.structure(j).msgSize();
-      for (size_t k = 0; k < codeStructure_.structure(j).msgSize(); ++k) {
+    for (int64_t j = codeStructure_.constituentCount()-1; j >= 0; --j) {
+      extrinsicOutIt -= codeStructure_.constituent(j).msgSize() + codeStructure_.constituent(j).msgTailSize();
+      parityTmp -= codeStructure_.constituent(j).msgSize();
+      for (size_t k = 0; k < codeStructure_.constituent(j).msgSize(); ++k) {
         extrinsicOutIt[k] += messageOut[codeStructure_.interleaver(j)[k]];
         messageOut[codeStructure_.interleaver(j)[k]] += parityTmp[k];
       }

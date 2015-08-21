@@ -74,6 +74,7 @@ public:
   inline size_t iterationCount() const {return iterationCount_;}
   
   inline void setIterationCount(size_t count) {iterationCount_ = count;}
+  inline void setDecoderType(DecoderType type) {decoderType_ = type;}
   
   void syndrome(std::vector<uint8_t>::const_iterator parity, std::vector<uint8_t>::iterator syndrome) const;
   bool check(std::vector<uint8_t>::const_iterator parity) const;

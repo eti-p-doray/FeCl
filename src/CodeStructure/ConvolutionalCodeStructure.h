@@ -68,36 +68,16 @@ public:
   
   virtual CodeStructure::Type type() const {return CodeStructure::Convolutional;}
   
-  /** 
-   *  Access the number of branches in one code bloc.
-   *  \return Bloc size
-   */
   inline size_t blocSize() const {return blocSize_;}
-  /** 
-   *  Access the size of added msg bit for the trellis termination.
-   *  This is zero in the cas of trunction.
-   *  \return Tail size
-   */
   inline size_t tailSize() const {return tailSize_;}
   inline size_t msgTailSize() const {return tailSize_ * trellis().inputSize();}
-  /** 
-   *  Access the type of the trellis termination.
-   *  \return Trellis end type
-   */
   inline TrellisEndType endType() const {return trellisEndType_;}
-  /** 
-   *  Access the algorithm used for app decoding.
-   *  \return Decoder type
-   */
   inline DecoderType decoderType() const {return decoderType_;}
-  /** 
-   *  Access the trellis structure object used by the code.
-   *  \return Trellis structure
-   */
   inline const TrellisStructure& trellis() const {return trellis_;}
   
+  inline void setDecoderType(DecoderType type) {decoderType_ = type;}
+  
   BitField<uint64_t> encode(std::vector<uint8_t>::const_iterator msg, std::vector<uint8_t>::iterator parity) const;
-  bool check(std::vector<uint8_t>::const_iterator parity) const;
   
 private:
   template <typename Archive>

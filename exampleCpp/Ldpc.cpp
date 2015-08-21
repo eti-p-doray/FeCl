@@ -33,7 +33,7 @@
 
 #include "LdpcCode/LdpcCode.h"
 
-#include "Operation.h"
+#include "operations.h"
 
 int main( int argc, char* argv[] )
 {

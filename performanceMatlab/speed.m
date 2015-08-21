@@ -1,6 +1,6 @@
 function speed
-    N = 256;
-    M = 128;
+    N = 2;
+    M = 2;
     T = 32400;
     trellis = poly2trellis(4, [17, 15], 17);
     turboTrellis = poly2trellis(4, [15], 17);
@@ -8,8 +8,8 @@ function speed
     code{1} = fec.ConvolutionalCode(trellis, T);
     pi = randperm(T);
     H = dvbs2ldpc(1/2);
-    code{2} = fec.TurboCode(turboTrellis, {[1:T], pi}, fec.TrellisEndType.PaddingTail, 4, fec.StructureType.Serial, fec.MapType.LogMap);
-    code{3} = fec.TurboCode(turboTrellis, {[1:T], pi}, fec.TrellisEndType.PaddingTail, 4, fec.StructureType.Serial, fec.MapType.MaxLogMap);
+    code{2} = fec.TurboCode(turboTrellis, {[1:T], pi}, fec.TrellisEndType.PaddingTail, 4, fec.SchedulingType.Serial, fec.MapType.LogMap);
+    code{3} = fec.TurboCode(turboTrellis, {[1:T], pi}, fec.TrellisEndType.PaddingTail, 4, fec.SchedulingType.Serial, fec.MapType.MaxLogMap);
     code{4} = fec.LdpcCode(H, 20, fec.BpType.TrueBp);
     code{5} = fec.LdpcCode(H, 20, fec.BpType.MinSumBp);
     
@@ -91,9 +91,17 @@ function speed
         [matlabAvDecEt(i), matlabStdDecEt(i), ~] = matlabDecode(matlabDecoder{i}, msg, llr, M);
     end
     z = 1.96;
-    disp(table(matlabStdEncEt * z / sqrt(M), fecStdEncEt1 * z / sqrt(M), fecStdEncEt4 * z / sqrt(M), 'VariableNames', {'matlab', 'fec1', 'fec4'}, 'RowNames', codeDesc));
-    disp(table(matlabStdDecEt * z / sqrt(M), fecStdDecEt1 * z / sqrt(M), fecStdDecEt4 * z / sqrt(M), 'VariableNames', {'matlab', 'fec1', 'fec4'}, 'RowNames', codeDesc));
+    disp('Encode');
+    disp(table(...
+        matlabAvEncEt,matlabStdEncEt * z / sqrt(M),...
+        fecAvEncEt1, fecStdEncEt1 * z / sqrt(M),...
+        fecAvEncEt4, fecStdEncEt4 * z / sqrt(M),...
+        'VariableNames', {'matlab', 'Minc', 'fec1','f1inc', 'fec4', 'f4inc'}, 'RowNames', codeDesc));
     
-    disp(table(matlabAvEncEt, fecAvEncEt1, fecAvEncEt4, 'VariableNames', {'matlab', 'fec1', 'fec4'}, 'RowNames', codeDesc));
-    disp(table(matlabAvDecEt, fecAvDecEt1, fecAvDecEt4, 'VariableNames', {'matlab', 'fec1', 'fec4'}, 'RowNames', codeDesc));
+    disp('Decode');
+    disp(table(...
+        matlabAvDecEt,matlabStdDecEt * z / sqrt(M),...
+        fecAvDecEt1, fecStdDecEt1 * z / sqrt(M),...
+        fecAvDecEt4, fecStdDecEt4 * z / sqrt(M),...
+        'VariableNames', {'matlab', 'Minc', 'fec1','f1inc', 'fec4', 'f4inc'}, 'RowNames', codeDesc));
 end

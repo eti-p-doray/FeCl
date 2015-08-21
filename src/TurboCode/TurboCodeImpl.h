@@ -45,8 +45,8 @@ class TurboCodeImpl
   friend class TurboCode;
 public:
   TurboCodeImpl(const TurboCodeStructure& codeStructure) : codeStructure_(codeStructure) {
-    for (size_t i = 0; i < codeStructure_.structureCount(); ++i) {
-      code_.push_back(MapDecoder::create(codeStructure_.structure(i)));
+    for (size_t i = 0; i < codeStructure_.constituentCount(); ++i) {
+      code_.push_back(MapDecoder::create(codeStructure_.constituent(i)));
     }
   }
   virtual ~TurboCodeImpl() = default;
@@ -54,14 +54,14 @@ public:
   
   size_t extrinsicSize() const {
     size_t extrinsicSize = 0;
-    switch (codeStructure_.structureType()) {
+    switch (codeStructure_.schedulingType()) {
       default:
       case TurboCodeStructure::Serial:
         return codeStructure_.msgSize() + codeStructure_.msgTailSize();
         break;
         
       case TurboCodeStructure::Parallel:
-        for (auto & i : codeStructure_.structures()) {
+        for (auto & i : codeStructure_.constituents()) {
           extrinsicSize += i.msgSize() + i.msgTailSize();
         }
         return extrinsicSize;

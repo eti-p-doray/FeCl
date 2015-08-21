@@ -1,4 +1,4 @@
-classdef StructureType
+classdef SchedulingType
     enumeration
         Serial, Parallel
     end

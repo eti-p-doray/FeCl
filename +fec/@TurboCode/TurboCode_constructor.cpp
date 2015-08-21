@@ -45,8 +45,8 @@ const char* const TrellisEndTypeEnumeration[TrellisEndTypeCount] = {
   "Truncation"
 };
 
-const int StructureTypeCount = 2;
-const char* const StructureTypeEnumeration[StructureTypeCount] = {
+const int SchedulingTypeCount = 2;
+const char* const SchedulingTypeEnumeration[SchedulingTypeCount] = {
   "Serial",
   "Parallel",
 };
@@ -88,7 +88,7 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
   mxCellArrayTo<fec::ConvolutionalCodeStructure::TrellisEndType>::f(prhs[2], TrellisEndTypeEnumeration, TrellisEndTypeCount);
   
   fec::TurboCodeStructure codeStructure(trellis, interleavers, endType, mxArrayTo<size_t>::f(prhs[3]),
-                                        mxArrayTo<fec::TurboCodeStructure::DecoderType>::f(prhs[4], StructureTypeEnumeration, StructureTypeCount),
+                                        mxArrayTo<fec::TurboCodeStructure::SchedulingType>::f(prhs[4], SchedulingTypeEnumeration, SchedulingTypeCount),
                                         mxArrayTo<fec::ConvolutionalCodeStructure::DecoderType>::f(prhs[5],MapTypeEnumeration, MapTypeCount));
   std::unique_ptr<fec::Code> code = fec::Code::create(codeStructure, mxArrayTo<size_t>::f(prhs[6]));
   

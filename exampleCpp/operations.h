@@ -33,7 +33,6 @@
 
 #include "Code.h"
 
-const size_t N = 1024;
 
 std::vector<uint8_t> randomBits(size_t n) {
   uint64_t seed = std::chrono::system_clock::now().time_since_epoch().count();
@@ -65,7 +64,7 @@ std::vector<fec::LlrType> distort(const std::vector<uint8_t>& input, double snrd
 
 int per(const std::unique_ptr<fec::Code>& code, double snrdb)
 {
-  std::vector<uint8_t> msg = randomBits(code->msgSize()*N);
+  std::vector<uint8_t> msg = randomBits(code->msgSize()*5);
   std::vector<uint8_t> parity;
   
   code->encode(msg, parity);

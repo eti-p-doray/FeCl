@@ -30,10 +30,10 @@
 
 using namespace fec;
 
-TurboCodeStructure::TurboCodeStructure(const std::vector<TrellisStructure>& trellis, const std::vector<Interleaver>& interleaver, const std::vector<ConvolutionalCodeStructure::TrellisEndType>& endType, size_t iterationCount, DecoderType structureType, ConvolutionalCodeStructure::DecoderType mapType) :
+TurboCodeStructure::TurboCodeStructure(const std::vector<TrellisStructure>& trellis, const std::vector<Interleaver>& interleaver, const std::vector<ConvolutionalCodeStructure::TrellisEndType>& endType, size_t iterationCount, SchedulingType schedulingType, ConvolutionalCodeStructure::DecoderType mapType, double gain) :
   interleaver_(interleaver)
 {
-  structureType_ = structureType;
+  schedulingType_ = schedulingType;
   if (trellis.size() != interleaver.size() || interleaver.size() != endType.size()) {
     throw std::invalid_argument("Trellis count, Interleaver count and trellis termination count don't match");
   }
@@ -42,7 +42,7 @@ TurboCodeStructure::TurboCodeStructure(const std::vector<TrellisStructure>& trel
     if (blocSize * trellis[i].inputSize() != interleaver[i].dstSize()) {
       throw std::invalid_argument("Invalid size for interleaver");
     }
-    structure_.push_back(ConvolutionalCodeStructure(trellis[i], blocSize, endType[i], mapType));
+    constituents_.push_back(ConvolutionalCodeStructure(trellis[i], blocSize, endType[i], mapType));
   }
   
   iterationCount_ = iterationCount;
@@ -50,14 +50,23 @@ TurboCodeStructure::TurboCodeStructure(const std::vector<TrellisStructure>& trel
   messageSize_ = 0;
   paritySize_ = 0;
   tailSize_ = 0;
-  for (size_t i = 0; i < structure_.size(); ++i) {
-    tailSize_ += structure(i).msgTailSize();
-    paritySize_ += structure_[i].paritySize();
+  for (size_t i = 0; i < constituents_.size(); ++i) {
+    tailSize_ += constituent(i).msgTailSize();
+    paritySize_ += constituents_[i].paritySize();
     if (interleaver_[i].srcSize() > msgSize()) {
       messageSize_ = interleaver_[i].srcSize();
     }
   }
   paritySize_ += msgSize() + msgTailSize();
+  
+  gain_ = gain;
+}
+
+void TurboCodeStructure::setDecoderType(ConvolutionalCodeStructure::DecoderType type)
+{
+  for (auto & constituent : constituents_) {
+    constituent.setDecoderType(type);
+  }
 }
 
 void TurboCodeStructure::encode(std::vector<uint8_t>::const_iterator msg, std::vector<uint8_t>::iterator parity) const
@@ -66,15 +75,15 @@ void TurboCodeStructure::encode(std::vector<uint8_t>::const_iterator msg, std::v
   parity += msgSize();
   auto parityIt = parity + msgTailSize();
   std::vector<uint8_t> messageInterl;
-  for (size_t i = 0; i < structureCount(); ++i) {
-    messageInterl.resize(structure(i).msgSize());
+  for (size_t i = 0; i < constituentCount(); ++i) {
+    messageInterl.resize(constituent(i).msgSize());
     interleaver(i).interleaveBloc<uint8_t>(msg, messageInterl.begin());
-    BitField<uint64_t> tail = structure(i).encode(messageInterl.begin(), parityIt);
-    for (size_t j = 0; j < structure(i).msgTailSize(); ++j) {
+    BitField<uint64_t> tail = constituent(i).encode(messageInterl.begin(), parityIt);
+    for (size_t j = 0; j < constituent(i).msgTailSize(); ++j) {
       parity[j] = tail.test(j);
     }
-    parity += structure(i).msgTailSize();
-    parityIt += structure(i).paritySize();
+    parity += constituent(i).msgTailSize();
+    parityIt += constituent(i).paritySize();
   }
 }
 

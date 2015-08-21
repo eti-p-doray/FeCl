@@ -51,7 +51,7 @@ public:
    *  This defines the scheduling of extrinsic communication between code
    *    constituents.
    */
-  enum DecoderType {
+  enum SchedulingType {
     Serial,/**< Each constituent tries to decode and gives its extrinsic
               information to the next constituent in a serial behavior. */
     Parallel,/**< Each constituent tries to decode in parallel.
@@ -60,7 +60,7 @@ public:
   };
   
   TurboCodeStructure() = default;
-  TurboCodeStructure(const std::vector<TrellisStructure>& trellis, const std::vector<Interleaver>& interleaver, const std::vector<ConvolutionalCodeStructure::TrellisEndType>& endType, size_t iterationCount = 5, DecoderType structureType = Serial, ConvolutionalCodeStructure::DecoderType mapType = ConvolutionalCodeStructure::MaxLogMap);
+  TurboCodeStructure(const std::vector<TrellisStructure>& trellis, const std::vector<Interleaver>& interleaver, const std::vector<ConvolutionalCodeStructure::TrellisEndType>& endType, size_t iterationCount = 5, SchedulingType schedulingType = Serial, ConvolutionalCodeStructure::DecoderType decoderType = ConvolutionalCodeStructure::MaxLogMap, double gain = 1.0);
   virtual ~TurboCodeStructure() = default;
   
   virtual CodeStructure::Type type() const {return CodeStructure::Turbo;}
@@ -71,15 +71,19 @@ public:
    *  \return Tail size
    */
   inline size_t msgTailSize() const {return tailSize_;}
-  inline size_t structureCount() const {return structure_.size();}
-  inline const std::vector<ConvolutionalCodeStructure>& structures() const {return structure_;}
+  inline size_t constituentCount() const {return constituents_.size();}
+  inline const std::vector<ConvolutionalCodeStructure>& constituents() const {return constituents_;}
   inline const std::vector<Interleaver>& interleavers() const {return interleaver_;}
-  inline const ConvolutionalCodeStructure& structure(size_t i) const {return structure_[i];}
+  inline const ConvolutionalCodeStructure& constituent(size_t i) const {return constituents_[i];}
   inline const Interleaver& interleaver(size_t i) const {return interleaver_[i];}
   inline size_t iterationCount() const {return iterationCount_;}
-  inline DecoderType structureType() const {return structureType_;}
+  inline double gain() const {return gain_;}
+  inline SchedulingType schedulingType() const {return schedulingType_;}
   
   inline void setIterationCount(size_t count) {iterationCount_ = count;}
+  inline void setGain(double gain) {gain_ = gain;}
+  inline void setSchedulingType(SchedulingType type) {schedulingType_ = type;}
+  void setDecoderType(ConvolutionalCodeStructure::DecoderType type);
   
   void encode(std::vector<uint8_t>::const_iterator msg, std::vector<uint8_t>::iterator parity) const;
   bool check(std::vector<uint8_t>::const_iterator parity) const;
@@ -89,18 +93,20 @@ private:
   void serialize(Archive & ar, const unsigned int version) {
     using namespace boost::serialization;
     ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(CodeStructure);
-    ar & ::BOOST_SERIALIZATION_NVP(structure_);
+    ar & ::BOOST_SERIALIZATION_NVP(constituents_);
     ar & ::BOOST_SERIALIZATION_NVP(tailSize_);
     ar & ::BOOST_SERIALIZATION_NVP(interleaver_);
-    ar & ::BOOST_SERIALIZATION_NVP(structureType_);
+    ar & ::BOOST_SERIALIZATION_NVP(schedulingType_);
     ar & ::BOOST_SERIALIZATION_NVP(iterationCount_);
+    ar & ::BOOST_SERIALIZATION_NVP(gain_);
   }
   
-  std::vector<ConvolutionalCodeStructure> structure_;
+  std::vector<ConvolutionalCodeStructure> constituents_;
   std::vector<Interleaver> interleaver_;
   size_t tailSize_;
-  DecoderType structureType_;
+  SchedulingType schedulingType_;
   size_t iterationCount_;
+  double gain_;
 };
   
 }

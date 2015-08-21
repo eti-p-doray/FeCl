@@ -26,7 +26,7 @@ classdef TurboCode < fec.Code
             fec.bin.TurboCode_set_iterationCount(this, count);
         end
         
-        function this = TurboCode(trellis, interleaver, endType, iterationCount, structureType, mapDecoderType, workGroupSize)
+        function this = TurboCode(trellis, interleaver, endType, iterationCount, schedulingType, mapDecoderType, workGroupSize)
         % TurboCode constructor
         %   Configures the object internally and allocate cpp ressources
         %
@@ -50,7 +50,7 @@ classdef TurboCode < fec.Code
               iterationCount = 5;
           end
           if (nargin < 5)
-            structureType = fec.StructureType.Serial;
+            schedulingType = fec.SchedulingType.Serial;
           end
           if (nargin < 6)
             mapDecoderType = fec.MapType.MaxLogMap;
@@ -68,7 +68,7 @@ classdef TurboCode < fec.Code
           for i = 1:length(endType)
               endTypeChar{i} = endType{i}.char;
           end
-          this.mexHandle_ = fec.bin.TurboCode_constructor(trellis, interleaver, endTypeChar, iterationCount, structureType.char, mapDecoderType.char, workGroupSize);
+          this.mexHandle_ = fec.bin.TurboCode_constructor(trellis, interleaver, endTypeChar, iterationCount, schedulingType.char, mapDecoderType.char, workGroupSize);
         end
     end
 end

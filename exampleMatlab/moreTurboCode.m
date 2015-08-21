@@ -8,8 +8,8 @@ function moreTurboCode
     %   turbo code implicitly use it.
     %The code is generalized to any number of constituents. Different trellis structures can be used.
     trellis{1} = poly2trellis(4, [15], 13);
-    trellis{2} = poly2trellis(4, [15], 13);
-    trellis{3} = poly2trellis([3, 4], [3, 15], [7, 13]);
+    trellis{2} = poly2trellis(4, [15 17], 13);
+    trellis{3} = poly2trellis([3, 4], [3; 15], [7, 13]);
 
     %We define interleaved sequences of indices
     %These sequences will be used as interleaver for the first and
@@ -47,19 +47,19 @@ function moreTurboCode
     %   The extrinsic information is then combined and shared to every
     %   constituents.
     %   Serial | Parallel default = Serial
-    code = fec.TurboCode(trellis, interl, term, 5, fec.StructureType.Parallel, fec.MapType.LogMap)
+    code = fec.TurboCode(trellis, interl, term, 5, fec.SchedulingType.Parallel, fec.MapType.LogMap)
 
     %We can also specify the decoder algorithm.:
     %   LogMap | MaxLogMap default = MaxLogMap
-    code = fec.TurboCode(trellis, interl, term, 5, fec.StructureType.Parallel, fec.MapType.LogMap)
+    code = fec.TurboCode(trellis, interl, term, 5, fec.SchedulingType.Parallel, fec.MapType.LogMap)
 
     %And as all codes, with can change the number of thread used for
     %operations. In this case, we are using 2 threads.
-    code = fec.TurboCode(trellis, interl, term, 5, fec.StructureType.Parallel, fec.MapType.LogMap, 2)
+    code = fec.TurboCode(trellis, interl, term, 5, fec.SchedulingType.Parallel, fec.MapType.LogMap, 2)
 
     %Lets now use the code for some operations. Since all code offer the
     %same interface, we call the operation function which will work on any
     %defined code
-    operation(code);
+    operations(code);
 
 end
