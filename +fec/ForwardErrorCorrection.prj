@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.toolbox" plugin-version="1.0">
-  <configuration build-checksum="4214800975" file="/Users/etienne/Documents/INRS/ForwardErrorCorrection/+fec/ForwardErrorCorrection.prj" location="/Users/etienne/Documents/INRS/ForwardErrorCorrection/+fec" name="ForwardErrorCorrection" target="target.toolbox" target-name="Package Toolbox">
+  <configuration build-checksum="3223555626" file="/Users/Etienne/Documents/INRS/ForwardErrorCorrection/+fec/ForwardErrorCorrection.prj" location="/Users/Etienne/Documents/INRS/ForwardErrorCorrection/+fec" name="ForwardErrorCorrection" target="target.toolbox" target-name="Package Toolbox">
     <param.appname>ForwardErrorCorrection</param.appname>
     <param.authnamewatermark>Etienne Pierre-Doray</param.authnamewatermark>
     <param.email>etipdoray@gmail.com</param.email>
@@ -109,12 +109,18 @@ build*</param.exclude.filters>
       <file>/Users/Etienne/Documents/INRS/ForwardErrorCorrection/+fec</file>
       <file>/Users/Etienne/Documents/INRS/ForwardErrorCorrection/LICENSE</file>
       <file>/Users/Etienne/Documents/INRS/ForwardErrorCorrection/README.md</file>
+      <file>/Users/Etienne/Documents/INRS/ForwardErrorCorrection/exampleCpp</file>
+      <file>/Users/Etienne/Documents/INRS/ForwardErrorCorrection/exampleMatlab</file>
+      <file>/Users/Etienne/Documents/INRS/ForwardErrorCorrection/performanceCpp</file>
+      <file>/Users/Etienne/Documents/INRS/ForwardErrorCorrection/performanceMatlab</file>
+      <file>/Users/Etienne/Documents/INRS/ForwardErrorCorrection/src</file>
+      <file>/Users/Etienne/Documents/INRS/ForwardErrorCorrection/testCpp</file>
     </fileset.rootfiles>
     <fileset.depfun.included />
     <fileset.depfun.excluded />
     <fileset.package />
     <build-deliverables>
-      <file location="/Users/etienne/Documents/INRS/ForwardErrorCorrection/+fec" name="ForwardErrorCorrection.mltbx" optional="false">/Users/etienne/Documents/INRS/ForwardErrorCorrection/+fec/ForwardErrorCorrection.mltbx</file>
+      <file location="/Users/Etienne/Documents/INRS/ForwardErrorCorrection/+fec" name="ForwardErrorCorrection.mltbx" optional="false">/Users/Etienne/Documents/INRS/ForwardErrorCorrection/+fec/ForwardErrorCorrection.mltbx</file>
     </build-deliverables>
     <workflow />
     <matlab>
@@ -149,7 +155,7 @@ build*</param.exclude.filters>
       <vista>false</vista>
       <linux>false</linux>
       <solaris>false</solaris>
-      <osver>10.10.3</osver>
+      <osver>10.10.4</osver>
       <os32>false</os32>
       <os64>true</os64>
       <arch>maci64</arch>
