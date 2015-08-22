@@ -42,19 +42,18 @@ const char * TurboCode::get_key() const {
  *  \param  workGroupSize Number of thread used for decoding
  ******************************************************************************/
 TurboCode::TurboCode(const TurboCodeStructure& codeStructure, int workGroupdSize) :
-  Code(workGroupdSize),
-  codeStructure_(codeStructure)
+  Code(std::unique_ptr<CodeStructure>(new TurboCodeStructure(codeStructure)), workGroupdSize)
 {
 }
 
 void TurboCode::encodeBloc(std::vector<uint8_t>::const_iterator messageIn, std::vector<uint8_t>::iterator parityOut) const
 {
-  codeStructure_.encode(messageIn, parityOut);
+  structure<TurboCodeStructure>().encode(messageIn, parityOut);
 }
 
 void TurboCode::appDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n) const
 {
-  TurboCodeImpl worker(codeStructure_);
+  TurboCodeImpl worker(structure<TurboCodeStructure>());
   worker.appDecodeNBloc(parityIn, extrinsicIn, messageOut, extrinsicOut, n);
 }
 
@@ -66,7 +65,7 @@ void TurboCode::softOutDecodeNBloc(std::vector<LlrType>::const_iterator parityIn
 
 void TurboCode::decodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<uint8_t>::iterator messageOut, size_t n) const
 {
-  std::vector<LlrType> messageAPosteriori(n * codeStructure_.msgSize());
+  std::vector<LlrType> messageAPosteriori(n * msgSize());
   softOutDecodeNBloc(parityIn, messageAPosteriori.begin(), n);
 
   for (auto messageIt = messageAPosteriori.begin(); messageIt < messageAPosteriori.end(); ++messageIt, ++messageOut) {

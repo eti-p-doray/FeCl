@@ -258,26 +258,26 @@ mxArray* toMxArray(const V<T, MexAllocator<T>>& vec) {
 }
 
 template <class ... Childs>
-struct RegisterAgent {
+struct DerivedTypeHolder {
 };
 
 template <class Child, class ... Childs>
-struct RegisterAgent<Child, Childs...> : RegisterAgent<Childs...> {
+struct DerivedTypeHolder<Child, Childs...> : DerivedTypeHolder<Childs...> {
   template <typename Archive>
   void register_type(Archive& archive) const
   {
     archive.template register_type<Child>();
-    RegisterAgent<Childs...>::register_type(archive);
+    DerivedTypeHolder<Childs...>::register_type(archive);
   }
   void register_type() const
   {
     boost::serialization::type_info_implementation<Child>::type::get_const_instance();
-    RegisterAgent<Childs...>::register_type();
+    DerivedTypeHolder<Childs...>::register_type();
   }
 };
 
 template <>
-struct RegisterAgent<> {
+struct DerivedTypeHolder<> {
   template <typename Archive>
   void register_type(Archive& archive) const {}
   void register_type() const {}
@@ -286,9 +286,9 @@ struct RegisterAgent<> {
 template <class T>
 class mxArrayTo<std::unique_ptr<T>> {
 public:
-  template <class RegisterAgent>
-  static std::unique_ptr<T> f(const mxArray* in, RegisterAgent registerAgent) {
-    registerAgent.register_type();
+  template <class DerivedTypeHolder>
+  static std::unique_ptr<T> f(const mxArray* in, DerivedTypeHolder derived) {
+    derived.register_type();
     return f(in);
   }
   static std::unique_ptr<T> f(const mxArray* in) {
@@ -362,8 +362,8 @@ private:
 
 const char* saveStructFieldNames[] = {"data"};
 
-template <class T, class RegisterAgent>
-mxArray* save(const std::unique_ptr<T>& u, RegisterAgent registerAgent)
+template <class T, class DerivedTypeHolder>
+mxArray* save(const std::unique_ptr<T>& u, DerivedTypeHolder derived)
 {
   mxArray* save = mxCreateStructMatrix(1, 1, 1, {saveStructFieldNames});
   const T* base_pointer = u.get();
@@ -372,7 +372,7 @@ mxArray* save(const std::unique_ptr<T>& u, RegisterAgent registerAgent)
   sink_counter countSr(serialSize);
   boost::iostreams::stream< sink_counter > countSource(countSr);
   boost::archive::binary_oarchive countOa(countSource);
-  registerAgent.register_type(countOa);
+  derived.register_type(countOa);
   
   countOa & BOOST_SERIALIZATION_NVP(base_pointer);
   
@@ -381,7 +381,7 @@ mxArray* save(const std::unique_ptr<T>& u, RegisterAgent registerAgent)
   boost::iostreams::basic_array_sink<char> sr(reinterpret_cast<char*>(mxGetData(data)), serialSize + 4096);
   boost::iostreams::stream< boost::iostreams::basic_array_sink<char> > source(sr);
   boost::archive::binary_oarchive oa(source);
-  registerAgent.register_type(oa);
+  derived.register_type(oa);
   oa & BOOST_SERIALIZATION_NVP(base_pointer);
   
   mxSetField(save, 0, "data", data);
@@ -389,8 +389,8 @@ mxArray* save(const std::unique_ptr<T>& u, RegisterAgent registerAgent)
   return save;
 }
 
-template <class T, class RegisterAgent>
-std::unique_ptr<T> load(const mxArray* in, RegisterAgent registerAgent)
+template <class T, class DerivedTypeHolder>
+std::unique_ptr<T> load(const mxArray* in, DerivedTypeHolder derived)
 {
   mxArray* data = mxGetField(in, 0, "data");
   if (data == nullptr) {
@@ -404,7 +404,7 @@ std::unique_ptr<T> load(const mxArray* in, RegisterAgent registerAgent)
   boost::iostreams::basic_array_source<char> sr(reinterpret_cast<char*>(mxGetData(data)), serialSize);
   boost::iostreams::stream< boost::iostreams::basic_array_source<char> > source(sr);
   boost::archive::binary_iarchive ia(source);
-  registerAgent.register_type(ia);
+  derived.register_type(ia);
   
   std::unique_ptr<T> u(nullptr);
   T* base_ptr;

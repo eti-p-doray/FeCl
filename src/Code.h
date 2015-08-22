@@ -34,6 +34,7 @@
 
 #include <vector>
 #include <boost/serialization/nvp.hpp>
+#include <boost/serialization/unique_ptr.hpp>
 #include <boost/serialization/utility.hpp>
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/assume_abstract.hpp>
@@ -61,18 +62,21 @@ public:
    *  Access size of the message in one bloc.
    *  \return Message size
    */
-  virtual size_t msgSize() const = 0;
+  inline size_t msgSize() const {return structure_->msgSize();}
   /**
    *  Access size of one parity bloc.
    *  \return Parity size
    */
-  virtual size_t paritySize() const = 0;
+  inline size_t paritySize() const {return structure_->paritySize();}
   /**
    *  Access size of extrinsic information in one bloc.
    *  \return Extrinsic size
    */
-  virtual size_t extrinsicSize() const = 0;
-  virtual const CodeStructure& structure() const = 0;
+  inline size_t extrinsicSize() const {return structure_->extrinsicSize();}
+  template <class T = CodeStructure>
+  inline const T& structure() const {return *reinterpret_cast<T*>(structure_.get());};
+  template <class T = CodeStructure>
+  inline T& structure() {return *reinterpret_cast<T*>(structure_.get());};
   
   int getWorkGroupSize() const {return workGroupSize_;}
   void setWorkGroupSize(int size) {workGroupSize_ = size;}
@@ -84,7 +88,8 @@ public:
   template <template <typename> class A> void appDecode(const std::vector<LlrType,A<LlrType>>& parityIn, const std::vector<LlrType,A<LlrType>>& extrinsicIn, std::vector<LlrType,A<LlrType>>& msgOut, std::vector<LlrType,A<LlrType>>& extrinsicOut) const;
 
 protected:
-  Code(int workGroupdSize = 4);
+  Code() = default;
+  Code(std::unique_ptr<CodeStructure>&& structure, int workGroupdSize = 4);
   
   inline int workGroupSize() const {return workGroupSize_;}
   
@@ -140,11 +145,15 @@ protected:
    */
   virtual void decodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<uint8_t>::iterator messageOut, size_t n) const = 0;
   
+  std::unique_ptr<CodeStructure> structure_;
+  
+  
 private:
   template <typename Archive>
   void serialize(Archive & ar, const unsigned int version) {
     using namespace boost::serialization;
     ar & ::BOOST_SERIALIZATION_NVP(workGroupSize_);
+    ar & ::BOOST_SERIALIZATION_NVP(structure_);
   }
   
   int workGroupSize_;

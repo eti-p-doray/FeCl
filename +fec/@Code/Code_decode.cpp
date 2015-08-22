@@ -52,7 +52,7 @@ const int outputCount = 1;
  *  \param  prhs[0] [in]  ErrorCorrectinCode object
  *  \param  prhs[1] [in]  parity L-values
  */
-void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
+void Code_decode( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 {
   if (nrhs != inputCount) {
     throw std::invalid_argument("Wrong argin count in Code_decode");
@@ -63,8 +63,8 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
   
   std::unique_ptr<fec::Code> code;
   try {
-    RegisterAgent<fec::ConvolutionalCode, fec::TurboCode, fec::LdpcCode> agent;
-    code = mxArrayTo<std::unique_ptr<fec::Code>>::f(prhs[0], agent);
+    DerivedTypeHolder<fec::ConvolutionalCode, fec::TurboCode, fec::LdpcCode> derived;
+    code = mxArrayTo<std::unique_ptr<fec::Code>>::f(prhs[0], derived);
     std::vector<uint8_t, Allocator<uint8_t>::type> decodedMsg;
     code->decode(mxArrayTo<std::vector<fec::LlrType,Allocator<fec::LlrType>::type>>::f(prhs[1]), decodedMsg);
     plhs[0] = toMxArray(decodedMsg);

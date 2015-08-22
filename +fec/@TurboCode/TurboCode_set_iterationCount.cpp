@@ -49,7 +49,7 @@ const int outputCount = 0;
  *  \param  prhs    [in]  Array of output mxArray
  *  \param  prhs[0] [in]  ErrorCorrectingCode object
  */
-void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
+void TurboCode_set_iterationCount( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 {
   if (nrhs != inputCount) {
     throw std::invalid_argument("Wrong argin count in Code_get_msgSize");

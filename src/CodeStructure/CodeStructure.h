@@ -81,7 +81,7 @@ public:
   };
   
   CodeStructure() = default;
-  CodeStructure(size_t messageSize, size_t paritySize);
+  CodeStructure(size_t messageSize, size_t paritySize, size_t extrinsicSize);
   virtual ~CodeStructure() = default;
   
   /**
@@ -100,6 +100,9 @@ public:
    *  \return Parity size
    */
   inline size_t paritySize() const {return paritySize_;}
+  inline size_t extrinsicSize() const {return extrinsicSize_;}
+  
+  //virtual void encode(std::vector<uint8_t>::const_iterator msg, std::vector<uint8_t>::iterator parity) const = 0;
   
 protected:
   template <typename Archive>
@@ -107,10 +110,12 @@ protected:
     using namespace boost::serialization;
     ar & BOOST_SERIALIZATION_NVP(messageSize_);
     ar & BOOST_SERIALIZATION_NVP(paritySize_);
+    ar & BOOST_SERIALIZATION_NVP(extrinsicSize_);
   }
   
   size_t messageSize_;/**< Size of the parity bloc in each code bloc. */
   size_t paritySize_;/**< Size of the parity bloc in each code bloc. */
+  size_t extrinsicSize_;
 };
   
 }

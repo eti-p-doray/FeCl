@@ -66,15 +66,10 @@ public:
   
   virtual const char * get_key() const;
   
-  virtual size_t msgSize() const {return codeStructure_.msgSize();}
-  virtual size_t paritySize() const {return codeStructure_.paritySize();}
-  virtual size_t extrinsicSize() const {return codeStructure_.parityCheck().size();}
-  virtual const CodeStructure& structure() const {return codeStructure_;}
-  
   //virtual void syndrome(const std::vector<uint8_t>& parity, std::vector<uint8_t>& syndrome) const;
   
-  inline size_t getIterationCount() const {return codeStructure_.iterationCount();}
-  inline void setIterationCount(size_t count) {codeStructure_.setIterationCount(count);}
+  inline size_t getIterationCount() const {return structure<LdpcCodeStructure>().iterationCount();}
+  inline void setIterationCount(size_t count) {structure<LdpcCodeStructure>().setIterationCount(count);}
   
 protected:
   LdpcCode() = default;
@@ -89,10 +84,7 @@ private:
   void serialize(Archive & ar, const unsigned int version) {
     using namespace boost::serialization;
     ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(Code);
-    ar & ::BOOST_SERIALIZATION_NVP(codeStructure_);
   }
-  
-  LdpcCodeStructure codeStructure_;
 };
   
 }

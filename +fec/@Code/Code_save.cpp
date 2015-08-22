@@ -54,7 +54,7 @@ const int outputCount = 1;
  *  \param  prhs    [in]  Array of output mxArray
  *  \param  prhs[0] [in]  ErrorCorrectingCode object
  */
-void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
+void Code_save( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 {
   if (nrhs != inputCount) {
     throw std::invalid_argument("Wrong argin count in Code_save");
@@ -65,9 +65,9 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
   
   std::unique_ptr<fec::Code> code;
   try {
-    RegisterAgent<fec::ConvolutionalCode, fec::TurboCode, fec::LdpcCode> agent;
-    code = mxArrayTo<std::unique_ptr<fec::Code>>::f(prhs[0], agent);
-    plhs[0] = save(code, agent);
+    DerivedTypeHolder<fec::ConvolutionalCode, fec::TurboCode, fec::LdpcCode> derived;
+    code = mxArrayTo<std::unique_ptr<fec::Code>>::f(prhs[0], derived);
+    plhs[0] = save(code, derived);
   }
   catch (std::exception& e) {
     mexPrintf(e.what());

@@ -86,7 +86,7 @@ SparseBitMatrix LdpcCodeStructure::gallagerConstruction(size_t n, size_t wc, siz
  *    The decoder can stop before the maximum number of iteration if the msg is consistent.
  *  \param  type  Decoder algorithm used
  */
-LdpcCodeStructure::LdpcCodeStructure(const SparseBitMatrix& H, size_t iterationCount, DecoderType type) : CodeStructure(H.cols()-H.rows(), H.cols())
+LdpcCodeStructure::LdpcCodeStructure(const SparseBitMatrix& H, size_t iterationCount, DecoderType type) : CodeStructure(H.cols()-H.rows(), H.cols(), H.size())
 {
   computeGeneratorMatrix(SparseBitMatrix(H));
   
@@ -106,7 +106,7 @@ LdpcCodeStructure::LdpcCodeStructure(const SparseBitMatrix& H, size_t iterationC
  *    The decoder can stop before the maximum number of iteration if the parities are consistent.
  *  \param  type  Decoder algorithm used
  */
-LdpcCodeStructure::LdpcCodeStructure(SparseBitMatrix&& H, size_t iterationCount, DecoderType type) : CodeStructure(H.cols()-H.rows(), H.cols())
+LdpcCodeStructure::LdpcCodeStructure(SparseBitMatrix&& H, size_t iterationCount, DecoderType type) : CodeStructure(H.cols()-H.rows(), H.cols(), H.size())
 {
   computeGeneratorMatrix(std::move(H));
   

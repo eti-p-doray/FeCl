@@ -22,56 +22,13 @@
  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- 
- Definition of ErrorCorrectingCode_load mex function
  ******************************************************************************/
-
-#include <memory>
-#include <stdexcept>
 
 #include <mex.h>
 
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
+void MEX_FUNCTION(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]);
 
-#include "Code.h"
-#include "ConvolutionalCode/ConvolutionalCode.h"
-#include "TurboCode/TurboCode.h"
-#include "LdpcCode/LdpcCode.h"
-#include "../MexConversion.h"
-#include "../MexAllocator.h"
-
-const int inputCount = 1;
-const int outputCount = 1;
-
-/**
- *  This is the implementation of the load method in the Code class.
- *
- *  \param  nlhs    [in]  Number of output
- *  \param  plhs    [out] Array of output mxArray
- *  \param  plhs[0] [out] ErrorCorrectingCode object
- *  \param  nrhs    [in]  Number of input
- *  \param  prhs    [in]  Array of output mxArray
- *  \param  prhs[0] [in]  Serialized object
- */
-void Code_load( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
+void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 {
-  if (nrhs != inputCount) {
-    throw std::invalid_argument("Wrong argin count in Code_load");
-  }
-  if (nlhs != outputCount) {
-    throw std::invalid_argument("Wrong argout count in Code_load");
-  }
-  
-  std::unique_ptr<fec::Code> code;
-  try {
-    DerivedTypeHolder<fec::ConvolutionalCode, fec::TurboCode, fec::LdpcCode> derived;
-    code = load<fec::Code>(prhs[0], derived);
-    plhs[0] = toMxArray(std::move(code));
-  }
-  catch (std::exception& e) {
-    mexPrintf(e.what());
-  }
-  
-  code.release();
+  MEX_FUNCTION(nlhs, plhs, nrhs, prhs);
 }

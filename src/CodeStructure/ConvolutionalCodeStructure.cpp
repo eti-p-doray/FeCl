@@ -40,7 +40,7 @@ using namespace fec;
  *  \param  endType Trellis termination type
  *  \param  type  Algorithm use in app decoding
  */
-ConvolutionalCodeStructure::ConvolutionalCodeStructure(TrellisStructure trellis, size_t blocSize, TrellisEndType endType, DecoderType type) : CodeStructure(blocSize * trellis.inputSize(), blocSize * trellis.outputSize()), trellis_(trellis)
+ConvolutionalCodeStructure::ConvolutionalCodeStructure(TrellisStructure trellis, size_t blocSize, TrellisEndType endType, DecoderType type) : CodeStructure(blocSize * trellis.inputSize(), blocSize * trellis.outputSize(), blocSize * trellis.inputSize()), trellis_(trellis)
 {
   blocSize_ = blocSize;
   trellisEndType_ = endType;
@@ -49,6 +49,7 @@ ConvolutionalCodeStructure::ConvolutionalCodeStructure(TrellisStructure trellis,
   switch (trellisEndType_) {
     case PaddingTail:
       paritySize_ += trellis_.stateSize() * trellis.outputSize();
+      extrinsicSize_ += trellis_.stateSize() * trellis.inputSize();
       tailSize_ = trellis_.stateSize();
       break;
       

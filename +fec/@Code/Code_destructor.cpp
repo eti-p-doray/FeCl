@@ -50,7 +50,7 @@ const int outputCount = 1;
  *  \param  prhs    [in]  Array of output mxArray
  *  \param  prhs[0] [in]  ErrorCorrectingCode object to be deleted
  */
-void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
+void Code_destructor( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 {
   if (nrhs != inputCount) {
     throw std::invalid_argument("Wrong argin count in Code_destructor");
@@ -59,8 +59,8 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
     throw std::invalid_argument("Wrong argout count in Code_destructor");
   }
   try {
-    RegisterAgent<fec::ConvolutionalCode, fec::TurboCode, fec::LdpcCode> agent;
-    std::unique_ptr<fec::Code> code = mxArrayTo<std::unique_ptr<fec::Code>>::f(prhs[0], agent);
+    DerivedTypeHolder<fec::ConvolutionalCode, fec::TurboCode, fec::LdpcCode> derived;
+    std::unique_ptr<fec::Code> code = mxArrayTo<std::unique_ptr<fec::Code>>::f(prhs[0], derived);
     code.reset();
     plhs[0] = toMxArray(std::move(code));
   }

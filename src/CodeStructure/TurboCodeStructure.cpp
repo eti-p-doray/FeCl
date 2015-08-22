@@ -59,6 +59,20 @@ TurboCodeStructure::TurboCodeStructure(const std::vector<TrellisStructure>& trel
   }
   paritySize_ += msgSize() + msgTailSize();
   
+  extrinsicSize_ = 0;
+  switch (this->schedulingType()) {
+    default:
+    case TurboCodeStructure::Serial:
+      extrinsicSize_ = msgSize() + msgTailSize();
+      break;
+      
+    case TurboCodeStructure::Parallel:
+      for (auto & i : constituents()) {
+        extrinsicSize_ += i.msgSize() + i.msgTailSize();
+      }
+      break;
+  }
+  
   gain_ = gain;
 }
 

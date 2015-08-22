@@ -54,7 +54,7 @@ const int outputCount = 2;
  *  \param  prhs[1] [in]  parity L-values
  *  \param  prhs[2] [in]  msg extrinsic L-values
  */
-void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
+void Code_appDecode( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 {
   if (nrhs != inputCount) {
     throw std::invalid_argument("Wrong argin count in Code_appDecode");
@@ -65,8 +65,8 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
   
   std::unique_ptr<fec::Code> code;
   try {
-    RegisterAgent<fec::ConvolutionalCode, fec::TurboCode, fec::LdpcCode> agent;
-    code = mxArrayTo<std::unique_ptr<fec::Code>>::f(prhs[0], agent);
+    DerivedTypeHolder<fec::ConvolutionalCode, fec::TurboCode, fec::LdpcCode> derived;
+    code = mxArrayTo<std::unique_ptr<fec::Code>>::f(prhs[0], derived);
     std::vector<fec::LlrType, Allocator<fec::LlrType>::type> msgOut;
     std::vector<fec::LlrType, Allocator<fec::LlrType>::type> extrinsicOut;
     code->appDecode(mxArrayTo<std::vector<fec::LlrType,Allocator<fec::LlrType>::type>>::f(prhs[1]), mxArrayTo<std::vector<fec::LlrType,Allocator<fec::LlrType>::type>>::f(prhs[2]), msgOut, extrinsicOut);

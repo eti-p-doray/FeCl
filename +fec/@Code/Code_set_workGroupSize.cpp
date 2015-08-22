@@ -52,7 +52,7 @@ const int outputCount = 0;
  *  \param  prhs    [in]  Array of output mxArray
  *  \param  prhs[0] [in]  ErrorCorrectingCode object
  */
-void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
+void Code_set_workGroupSize( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 {
   if (nrhs != inputCount) {
     throw std::invalid_argument("Wrong argin count in Code_set_workGroupSize");
@@ -63,8 +63,8 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
   
   std::unique_ptr<fec::Code> code;
   try {
-    RegisterAgent<fec::ConvolutionalCode, fec::TurboCode, fec::LdpcCode> agent;
-    code = mxArrayTo<std::unique_ptr<fec::Code>>::f(prhs[0], agent);
+    DerivedTypeHolder<fec::ConvolutionalCode, fec::TurboCode, fec::LdpcCode> derived;
+    code = mxArrayTo<std::unique_ptr<fec::Code>>::f(prhs[0], derived);
     code->setWorkGroupSize(mxArrayTo<int>::f(prhs[1]));
   }
   catch (std::exception& e) {

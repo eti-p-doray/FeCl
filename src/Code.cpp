@@ -63,7 +63,7 @@ std::unique_ptr<Code> Code::create(const CodeStructure& codeStructure, int workG
   return std::unique_ptr<Code>();
 }
 
-Code::Code(int workGroupSize)
+Code::Code(std::unique_ptr<CodeStructure>&& structure, int workGroupSize) : structure_(std::move(structure))
 {
   workGroupSize_ = workGroupSize;
 }

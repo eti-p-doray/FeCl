@@ -65,7 +65,7 @@ const char* const TrellisEndTypeEnumeration[TrellisEndTypeCount] = {
  *  \param  prhs[3] [in]  decoder algorithm type
  *  \param  prhs[4] [in]  work group size - for parralelisation
  */
-void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
+void ConvolutionalCode_constructor( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 {
   if (nrhs != inputCount) {
     throw std::invalid_argument("Wrong argin count in ConvolutionalCode_constructor");

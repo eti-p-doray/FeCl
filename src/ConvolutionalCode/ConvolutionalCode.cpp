@@ -43,30 +43,29 @@ const char * ConvolutionalCode::get_key() const {
  *  \param  workGroupSize Number of thread used for decoding
  */
 ConvolutionalCode::ConvolutionalCode(const ConvolutionalCodeStructure& codeStructure, int workGroupSize) :
-  Code(workGroupSize),
-  codeStructure_(codeStructure)
+Code(std::unique_ptr<CodeStructure>(new ConvolutionalCodeStructure(codeStructure)), workGroupSize)
 {
 }
 
 void ConvolutionalCode::encodeBloc(std::vector<uint8_t>::const_iterator messageIt, std::vector<uint8_t>::iterator parityIt) const
 {
-  codeStructure_.encode(messageIt, parityIt);
+  structure<ConvolutionalCodeStructure>().encode(messageIt, parityIt);
 }
 
 void ConvolutionalCode::appDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n) const
 {
-  auto worker = MapDecoder::create(codeStructure_);
+  auto worker = MapDecoder::create(structure<ConvolutionalCodeStructure>());
   worker->appDecodeNBloc(parityIn, extrinsicIn, messageOut, extrinsicOut, n);
 }
 
 void ConvolutionalCode::softOutDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::iterator messageOut, size_t n) const
 {
-  auto worker = MapDecoder::create(codeStructure_);
+  auto worker = MapDecoder::create(structure<ConvolutionalCodeStructure>());
   worker->softOutDecodeNBloc(parityIn, messageOut, n);
 }
 
 void ConvolutionalCode::decodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<uint8_t>::iterator messageOut, size_t n) const
 {
-  auto worker = std::unique_ptr<ViterbiDecoder>(new ViterbiDecoder(codeStructure_));
+  auto worker = std::unique_ptr<ViterbiDecoder>(new ViterbiDecoder(structure<ConvolutionalCodeStructure>()));
   worker->decodeNBloc(parityIn, messageOut, n);
 }

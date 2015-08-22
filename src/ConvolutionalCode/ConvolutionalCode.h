@@ -70,10 +70,7 @@ public:
   
   virtual const char * get_key() const;
   
-  virtual size_t msgSize() const {return codeStructure_.msgSize();}
-  virtual size_t paritySize() const {return codeStructure_.paritySize();}
-  virtual size_t extrinsicSize() const {return codeStructure_.msgSize()+codeStructure_.msgTailSize();}
-  virtual const CodeStructure& structure() const {return codeStructure_;}
+  inline void setDecoderType(ConvolutionalCodeStructure::DecoderType type) {structure<ConvolutionalCodeStructure>().setDecoderType(type);}
 
 protected:
   
@@ -88,9 +85,7 @@ private:
   void serialize(Archive & ar, const unsigned int version) {
     using namespace boost::serialization;
     ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(Code);
-    ar & ::BOOST_SERIALIZATION_NVP(codeStructure_);
   }
-  ConvolutionalCodeStructure codeStructure_;
 };
   
 }

@@ -42,8 +42,7 @@ const char * LdpcCode::get_key() const {
  *  \param  workGroupSize Number of thread used for decoding
  */
 LdpcCode::LdpcCode(const LdpcCodeStructure& codeStructure, int workGroupdSize) :
-  Code(workGroupdSize),
-  codeStructure_(codeStructure)
+  Code(std::unique_ptr<CodeStructure>(new LdpcCodeStructure(codeStructure)), workGroupdSize)
 {
 }
 
@@ -68,25 +67,25 @@ LdpcCode::LdpcCode(const LdpcCodeStructure& codeStructure, int workGroupdSize) :
 
 void LdpcCode::encodeBloc(std::vector<uint8_t>::const_iterator messageIt, std::vector<uint8_t>::iterator parityIt) const
 {
-  codeStructure_.encode(messageIt, parityIt);
+  structure<LdpcCodeStructure>().encode(messageIt, parityIt);
 }
 
 void LdpcCode::appDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n) const
 {
-  auto worker = BpDecoder::create(codeStructure_);
+  auto worker = BpDecoder::create(structure<LdpcCodeStructure>());
   worker->appDecodeNBloc(parityIn, extrinsicIn, messageOut, extrinsicOut, n);
 }
 
 void LdpcCode::softOutDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::iterator messageOut, size_t n) const
 {
-  auto worker = BpDecoder::create(codeStructure_);
+  auto worker = BpDecoder::create(structure<LdpcCodeStructure>());
   worker->softOutDecodeNBloc(parityIn, messageOut, n);
 }
 
 void LdpcCode::decodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<uint8_t>::iterator messageOut, size_t n) const
 {
-  auto worker = BpDecoder::create(codeStructure_);
-  std::vector<LlrType> messageAPosteriori(n * codeStructure_.msgSize());
+  auto worker = BpDecoder::create(structure<LdpcCodeStructure>());
+  std::vector<LlrType> messageAPosteriori(n * msgSize());
   worker->softOutDecodeNBloc(parityIn, messageAPosteriori.begin(), n);
   
   for (auto messageIt = messageAPosteriori.begin(); messageIt < messageAPosteriori.end(); ++messageIt, ++messageOut) {

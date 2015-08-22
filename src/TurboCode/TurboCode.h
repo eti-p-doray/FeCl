@@ -75,28 +75,8 @@ public:
   
   virtual const char * get_key() const;
   
-  virtual size_t msgSize() const {return codeStructure_.msgSize();}
-  virtual size_t paritySize() const {return codeStructure_.paritySize();}
-  virtual size_t extrinsicSize() const {
-    size_t extrinsicSize = 0;
-    switch (codeStructure_.schedulingType()) {
-      default:
-      case TurboCodeStructure::Serial:
-        return codeStructure_.msgSize() + codeStructure_.msgTailSize();
-        break;
-        
-      case TurboCodeStructure::Parallel:
-        for (auto & i : codeStructure_.constituents()) {
-          extrinsicSize += i.msgSize() + i.msgTailSize();
-        }
-        return extrinsicSize;
-        break;
-    }
-  }
-  virtual const CodeStructure& structure() const {return codeStructure_;}
-  
-  inline size_t getIterationCount() const {return codeStructure_.iterationCount();}
-  inline void setIterationCount(size_t count) {codeStructure_.setIterationCount(count);}
+  inline size_t getIterationCount() const {return structure<TurboCodeStructure>().iterationCount();}
+  inline void setIterationCount(size_t count) {structure<TurboCodeStructure>().setIterationCount(count);}
   
 protected:
   TurboCode() = default;
@@ -118,10 +98,7 @@ private:
   void serialize(Archive & ar, const unsigned int version) {
     using namespace boost::serialization;
     ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(Code);
-    ar & ::BOOST_SERIALIZATION_NVP(codeStructure_);
   }
-  
-  TurboCodeStructure codeStructure_;
 };
   
 }
@@ -132,9 +109,9 @@ BOOST_CLASS_TYPE_INFO(fec::TurboCode,extended_type_info_no_rtti<fec::TurboCode>)
 template <typename T>
 void fec::TurboCode::pack(typename std::vector<T>::const_iterator parityIn, typename std::vector<T>::iterator parityOut)
 {
-  auto parityOutIt = parityOut;
+  /*auto parityOutIt = parityOut;
   auto msgInIt = parityIn;
-  auto parityInIt = parityIn + codeStructure_.msgSize() + codeStructure_.msgTailSize();
+  auto parityInIt = parityIn + codeStructure_->msgSize() + codeStructure_->msgTailSize();
   for (size_t i = 0; i < codeStructure_.msgSize(); ++i) {
     *parityOut = *msgInIt;
     ++msgInIt;
@@ -163,7 +140,7 @@ void fec::TurboCode::pack(typename std::vector<T>::const_iterator parityIn, type
         ++parityInIt;
       }
     }
-  }
+  }*/
 }
 
 template <typename T>

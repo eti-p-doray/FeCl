@@ -35,9 +35,10 @@ using namespace fec;
  *  \param  messageSize Size of the msg in each code bloc
  *  \param  paritySize Size of the parity code in each code bloc
  */
-CodeStructure::CodeStructure(size_t messageSize, size_t paritySize)
+CodeStructure::CodeStructure(size_t messageSize, size_t paritySize, size_t extrinsicSize)
 {
   messageSize_ = messageSize;
   paritySize_ = paritySize;
+  extrinsicSize_ = extrinsicSize;
 }
 
