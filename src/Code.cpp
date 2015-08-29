@@ -35,6 +35,7 @@
 using namespace fec;
 
 BOOST_CLASS_EXPORT_IMPLEMENT(Code);
+BOOST_CLASS_EXPORT_IMPLEMENT(Code::Structure);
 
 /**
  *  Code creator function.
@@ -42,19 +43,19 @@ BOOST_CLASS_EXPORT_IMPLEMENT(Code);
  *  \param codeStructure Code object structure
  *  \workGroupSize Number of thread used in encoding and decoding.
  */
-std::unique_ptr<Code> Code::create(const CodeStructure& codeStructure, int workGroupdSize)
+std::unique_ptr<Code> Code::create(const Code::Structure& codeStructure, int workGroupdSize)
 {
   switch (codeStructure.type()) {
-    case CodeStructure::Convolutional:
-      return std::unique_ptr<Code>(new ConvolutionalCode(dynamic_cast<const ConvolutionalCodeStructure&>(codeStructure), workGroupdSize));
+    case Code::Structure::Convolutional:
+      return std::unique_ptr<Code>(new ConvolutionalCode(dynamic_cast<const ConvolutionalCode::Structure&>(codeStructure), workGroupdSize));
       break;
       
-    case CodeStructure::Turbo:
-      return std::unique_ptr<Code>(new TurboCode(dynamic_cast<const TurboCodeStructure&>(codeStructure), workGroupdSize));
+    case Code::Structure::Turbo:
+      return std::unique_ptr<Code>(new TurboCode(dynamic_cast<const TurboCode::Structure&>(codeStructure), workGroupdSize));
       break;
       
-    case CodeStructure::Ldpc:
-      return std::unique_ptr<Code>(new LdpcCode(dynamic_cast<const LdpcCodeStructure&>(codeStructure), workGroupdSize));
+    case Code::Structure::Ldpc:
+      return std::unique_ptr<Code>(new LdpcCode(dynamic_cast<const LdpcCode::Structure&>(codeStructure), workGroupdSize));
       break;
       
     default:
@@ -63,7 +64,7 @@ std::unique_ptr<Code> Code::create(const CodeStructure& codeStructure, int workG
   return std::unique_ptr<Code>();
 }
 
-Code::Code(std::unique_ptr<CodeStructure>&& structure, int workGroupSize) : structure_(std::move(structure))
+Code::Code(Code::Structure* structure, int workGroupSize) : structureRef_(structure)
 {
   workGroupSize_ = workGroupSize;
 }
@@ -75,4 +76,16 @@ void Code::encodeNBloc(std::vector<uint8_t>::const_iterator messageIt, std::vect
     messageIt += msgSize();
     parityIt += paritySize();
   }
+}
+
+/**
+ *  Code stucture constructor.
+ *  \param  messageSize Size of the msg in each code bloc
+ *  \param  paritySize Size of the parity code in each code bloc
+ */
+Code::Structure::Structure(size_t messageSize, size_t paritySize, size_t extrinsicSize)
+{
+  messageSize_ = messageSize;
+  paritySize_ = paritySize;
+  extrinsicSize_ = extrinsicSize;
 }

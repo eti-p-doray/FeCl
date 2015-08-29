@@ -33,7 +33,7 @@
 #include <math.h>
 
 #include "BpDecoderImpl.h"
-#include "../../CodeStructure/CodeStructure.h"
+#include "../LdpcCode.h"
 
 namespace fec {
 
@@ -64,6 +64,19 @@ public:
       prod *= *tmp;
     }
     *first = -2.0*atanh(prod);
+  }
+  
+  static inline LlrType f(LlrType x)
+  {
+    return tanh(-x/2.0);
+  }
+  static inline LlrType b(LlrType x)
+  {
+    return -2.0*atanh(x);
+  }
+  static inline LlrType step(LlrType a, LlrType b)
+  {
+    return a*b;
   }
 };
   

@@ -47,7 +47,7 @@ namespace fec {
 template <typename A>
 class MapDecoderImpl : public MapDecoder {
 public:
-  MapDecoderImpl(const ConvolutionalCodeStructure& codeStructure);
+  MapDecoderImpl(const ConvolutionalCode::Structure& codeStructure);
   ~MapDecoderImpl() = default;
   
 protected:
@@ -63,7 +63,7 @@ protected:
 };
 
 template <typename A>
-MapDecoderImpl<A>::MapDecoderImpl(const ConvolutionalCodeStructure& codeStructure) : MapDecoder(codeStructure)
+MapDecoderImpl<A>::MapDecoderImpl(const ConvolutionalCode::Structure& codeStructure) : MapDecoder(codeStructure)
 {
   
 }
@@ -199,12 +199,30 @@ void MapDecoderImpl<A>::appBranchMetrics(std::vector<LlrType>::const_iterator pa
 {
   int i = 0;
   for (auto branchMetricIt = branchMetrics_.begin(); branchMetricIt < branchMetrics_.end(); ++i) {
+    LlrType max = -MAX_LLR;
     for (BitField<size_t> j = 0; j < codeStructure().trellis().outputCount(); ++j) {
       branchOutputMetrics_[j] = correlationProbability(j, parity, codeStructure().trellis().outputSize());
+      if (branchOutputMetrics_[j] > max) {
+        max = branchOutputMetrics_[j];
+      }
     }
+    if (max > THRESHOLD_LLR && max != MAX_LLR) {
+      for (BitField<size_t> j = 0; j < codeStructure().trellis().outputCount(); ++j) {
+        branchOutputMetrics_[j] -= max;
+      }
+    }
+    LlrType max = -MAX_LLR;
     if (i < codeStructure().blocSize() + codeStructure().tailSize()) {
       for (BitField<size_t> j = 0; j < codeStructure().trellis().inputCount(); ++j) {
         branchInputMetrics_[j] = correlationProbability(j, extrinsic, codeStructure().trellis().inputSize());
+        if (branchInputMetrics_[j] > max) {
+          max = branchInputMetrics_[j];
+        }
+      }
+    }
+    if (max > THRESHOLD_LLR && max != MAX_LLR) {
+      for (BitField<size_t> j = 0; j < codeStructure().trellis().outputCount(); ++j) {
+        branchInputMetrics_[j] -= max;
       }
     }
     
@@ -217,6 +235,7 @@ void MapDecoderImpl<A>::appBranchMetrics(std::vector<LlrType>::const_iterator pa
         ++outputIt;
       }
     }
+    
     parity += codeStructure().trellis().outputSize();
     extrinsic += codeStructure().trellis().inputSize();
   }
@@ -227,13 +246,31 @@ void MapDecoderImpl<A>::parityAppBranchMetrics(std::vector<LlrType>::const_itera
 {
   int i = 0;
   for (auto branchMetricIt = branchMetrics_.begin(); branchMetricIt < branchMetrics_.end(); ++i) {
+    LlrType max = -MAX_LLR;
     for (BitField<size_t> j = 0; j < codeStructure().trellis().outputCount(); ++j) {
       branchOutputMetrics_[j] = correlationProbability(j, parity, codeStructure().trellis().outputSize()) +
       correlationProbability(j, extrinsic, codeStructure().trellis().outputSize());
+      if (branchOutputMetrics_[j] > max) {
+        max = branchOutputMetrics_[j];
+      }
     }
+    if (max > THRESHOLD_LLR && max != MAX_LLR) {
+      for (BitField<size_t> j = 0; j < codeStructure().trellis().outputCount(); ++j) {
+        branchOutputMetrics_[j] -= max;
+      }
+    }
+    LlrType max = -MAX_LLR;
     if (i < codeStructure().blocSize()) {
       for (BitField<size_t> j = 0; j < codeStructure().trellis().inputCount(); ++j) {
         branchInputMetrics_[j] = correlationProbability(j, extrinsic, codeStructure().trellis().inputSize());
+        if (branchInputMetrics_[j] > max) {
+          max = branchInputMetrics_[j];
+        }
+      }
+    }
+    if (max > THRESHOLD_LLR && max != MAX_LLR) {
+      for (BitField<size_t> j = 0; j < codeStructure().trellis().outputCount(); ++j) {
+        branchInputMetrics_[j] -= max;
       }
     }
     
@@ -255,8 +292,17 @@ void MapDecoderImpl<A>::branchMetrics(std::vector<LlrType>::const_iterator parit
 {
   int i = 0;
   for (auto branchMetricIt = branchMetrics_.begin(); branchMetricIt < branchMetrics_.end(); ++i) {
+    LlrType max = -MAX_LLR;
     for (BitField<size_t> j = 0; j < codeStructure().trellis().outputCount(); ++j) {
       branchOutputMetrics_[j] = correlationProbability(j, parity, codeStructure().trellis().outputSize());
+      if (branchOutputMetrics_[j] > max) {
+        max = branchOutputMetrics_[j];
+      }
+    }
+    if (max > THRESHOLD_LLR && max != MAX_LLR) {
+      for (BitField<size_t> j = 0; j < codeStructure().trellis().outputCount(); ++j) {
+        branchOutputMetrics_[j] -= max;
+      }
     }
     
     for (auto outputIt = codeStructure().trellis().beginOutput(); outputIt < codeStructure().trellis().endOutput();) {
@@ -316,15 +362,15 @@ void MapDecoderImpl<A>::backwardMetrics()
 {
   auto backwardMetricIt = backwardMetrics_.end()-codeStructure().trellis().stateCount();
   
-  switch (codeStructure().endType()) {
-    case ConvolutionalCodeStructure::PaddingTail:
+  switch (codeStructure().terminationType()) {
+    case ConvolutionalCode::Tail:
       *backwardMetricIt = 0;
       std::fill(backwardMetricIt+1, backwardMetricIt + codeStructure().trellis().stateCount(), -MAX_LLR);
       backwardMetricIt -= codeStructure().trellis().stateCount();
       break;
       
     default:
-    case ConvolutionalCodeStructure::Truncation:
+    case ConvolutionalCode::Truncation:
       std::fill(backwardMetricIt, backwardMetricIt + codeStructure().trellis().stateCount(), 0.0);
       backwardMetricIt -= codeStructure().trellis().stateCount();
       break;

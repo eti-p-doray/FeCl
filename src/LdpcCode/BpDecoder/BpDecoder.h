@@ -32,7 +32,7 @@
 #include <vector>
 #include <memory>
 
-#include "../../CodeStructure/LdpcCodeStructure.h"
+#include "../LdpcCode.h"
 
 namespace fec {
 
@@ -46,14 +46,14 @@ namespace fec {
 class BpDecoder
 {
 public:
-  static std::unique_ptr<BpDecoder> create(const LdpcCodeStructure&);
+  static std::unique_ptr<BpDecoder> create(const LdpcCode::Structure&);
   virtual ~BpDecoder() = default;
   
   void appDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n);
   void softOutDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::iterator messageOut, size_t n);
   
 protected:
-  BpDecoder(const LdpcCodeStructure& codeStructure);
+  BpDecoder(const LdpcCode::Structure& codeStructure);
   
   void appDecodeBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut);
   void softOutDecodeBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::iterator messageOut);
@@ -61,7 +61,7 @@ protected:
   virtual void checkUpdate() = 0;
   virtual void bitUpdate(std::vector<LlrType>::const_iterator parity) = 0;
   
-  inline const LdpcCodeStructure& codeStructure() const {return codeStructure_;}
+  inline const LdpcCode::Structure& codeStructure() const {return codeStructure_;}
  
   std::vector<uint8_t> hardParity_;
   
@@ -71,7 +71,7 @@ protected:
 
 private:
   
-  const LdpcCodeStructure codeStructure_;
+  const LdpcCode::Structure codeStructure_;
 };
   
 }

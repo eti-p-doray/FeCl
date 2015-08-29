@@ -103,8 +103,8 @@ void ViterbiDecoder::decodeBloc(std::vector<LlrType>::const_iterator parityIn, s
   inputTraceBackIt -= codeStructure().trellis().stateCount();
   
   BitField<size_t> bestState = 0;
-  switch (codeStructure().endType()) {
-    case ConvolutionalCodeStructure::Truncation:
+  switch (codeStructure().terminationType()) {
+    case ConvolutionalCode::Truncation:
       for (BitField<size_t> i = 0; i < codeStructure().trellis().stateCount(); ++i) {
         if (previousPathMetrics[i] > previousPathMetrics[bestState]) {
           bestState = i;
@@ -113,7 +113,7 @@ void ViterbiDecoder::decodeBloc(std::vector<LlrType>::const_iterator parityIn, s
       break;
       
     default:
-    case ConvolutionalCodeStructure::PaddingTail:
+    case ConvolutionalCode::Tail:
       break;
   }
   
@@ -136,7 +136,7 @@ void ViterbiDecoder::decodeBloc(std::vector<LlrType>::const_iterator parityIn, s
  *  Allocates metric buffers based on the given code structure.
  *  \param  codeStructure Convolutional code structure describing the code
  */
-ViterbiDecoder::ViterbiDecoder(const ConvolutionalCodeStructure& codeStructure) : codeStructure_(codeStructure)
+ViterbiDecoder::ViterbiDecoder(const ConvolutionalCode::Structure& codeStructure) : codeStructure_(codeStructure)
 {
   nextPathMetrics.resize(codeStructure.trellis().stateCount());
   previousPathMetrics.resize(codeStructure.trellis().stateCount());

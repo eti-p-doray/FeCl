@@ -32,7 +32,7 @@
 #include <vector>
 #include <memory>
 
-#include "../../CodeStructure/ConvolutionalCodeStructure.h"
+#include "../ConvolutionalCode.h"
 
 namespace fec {
 
@@ -43,7 +43,7 @@ namespace fec {
 class ViterbiDecoder
 {
 public:
-  ViterbiDecoder(const ConvolutionalCodeStructure& codeStructure);
+  ViterbiDecoder(const ConvolutionalCode::Structure& codeStructure);
   ~ViterbiDecoder() = default;
   
   void decodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<uint8_t>::iterator messageOut, size_t n);
@@ -51,7 +51,7 @@ public:
   
 protected:
   
-  inline const ConvolutionalCodeStructure& codeStructure() const {return codeStructure_;}
+  inline const ConvolutionalCode::Structure& codeStructure() const {return codeStructure_;}
   
   std::vector<LlrType> previousPathMetrics;
   std::vector<LlrType> nextPathMetrics;
@@ -61,7 +61,7 @@ protected:
 
 private:
   
-  const ConvolutionalCodeStructure codeStructure_;
+  const ConvolutionalCode::Structure codeStructure_;
 };
   
 }

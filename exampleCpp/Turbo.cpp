@@ -47,7 +47,7 @@ int main( int argc, char* argv[] )
    There is one output bits, with generator 5 (in octal) associated
    with the input bit.
    */
-  fec::TrellisStructure trellis({3}, {{05}});
+  fec::Trellis trellis({3}, {{05}});
   //! [Creating a trellis]
   
   uint64_t seed = std::chrono::system_clock::now().time_since_epoch().count();
@@ -63,7 +63,7 @@ int main( int argc, char* argv[] )
   /*
    The trellis and interleaver indices are used to create a code structure.
    */
-  fec::TurboCodeStructure structure({trellis, trellis}, {systIdx, permIdx}, {fec::ConvolutionalCodeStructure::PaddingTail,fec::ConvolutionalCodeStructure::PaddingTail}, 5, fec::TurboCodeStructure::Serial, fec::ConvolutionalCodeStructure::LogMap);
+  fec::TurboCode::Structure structure({trellis, trellis}, {systIdx, permIdx}, {fec::ConvolutionalCode::Tail,fec::ConvolutionalCode::Tail}, 5, fec::TurboCode::Serial, fec::ConvolutionalCode::LogMap);
   //! [Creating a Turbo code structure]
   
   

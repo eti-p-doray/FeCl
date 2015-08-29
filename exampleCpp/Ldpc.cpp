@@ -43,13 +43,13 @@ int main( int argc, char* argv[] )
   /*
    We are creating an ldpc matrix
    */
-  auto checkMatrix = fec::LdpcCodeStructure::gallagerConstruction(4096, 8, 16);
+  auto checkMatrix = fec::LdpcCode::Structure::gallagerConstruction(4096, 8, 16);
   //! [Creating an ldpcMatrix]
   
   /*
    The matrix is used to create a code structure.
    */
-  fec::LdpcCodeStructure structure(checkMatrix, 50, fec::LdpcCodeStructure::TrueBp);
+  fec::LdpcCode::Structure structure(checkMatrix, 50, fec::LdpcCode::TrueBp);
   //! [Creating a Turbo code structure]
   
   /*

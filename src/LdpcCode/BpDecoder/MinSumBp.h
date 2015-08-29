@@ -33,7 +33,7 @@
 #include <cmath>
 
 #include "BpDecoderImpl.h"
-#include "../../CodeStructure/CodeStructure.h"
+#include "../LdpcCode.h"
 
 namespace fec {
 
@@ -74,6 +74,24 @@ private:
       else {
         *metricIt = -currentMin;
       }
+    }
+  }
+  
+  static inline LlrType f(LlrType x)
+  {
+    return x;
+  }
+  static inline LlrType b(LlrType x)
+  {
+    return x;
+  }
+  static inline LlrType step(LlrType a, LlrType b)
+  {
+    if (std::signbit(a) ^ std::signbit(b)) {
+      return std::min(fabs(a), fabs(b));
+    }
+    else {
+      return -std::min(fabs(a), fabs(b));
     }
   }
 };

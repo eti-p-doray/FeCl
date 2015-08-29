@@ -33,7 +33,6 @@
 #include <cmath>
 
 #include "MapDecoderImpl.h"
-#include "../../CodeStructure/CodeStructure.h"
 
 namespace fec {
 
@@ -51,23 +50,20 @@ private:
    *  \param  b Second operand
    */
   static inline LlrType logAdd(LlrType a, LlrType b) {
-    LlrType sum = std::max(a,b);
+   /* LlrType sum = std::max(a,b);
     if (sum == -MAX_LLR) {
       return sum;
     }
-    return sum + log1pexp(-fabs(a-b));
-    /*if (a+b == MAX_LLR) {
+    return sum + log1pexp(-fabs(a-b));*/
+    if (a+b == MAX_LLR) {
       return -std::numeric_limits<double>::infinity();
     }
     if (isnan(a+b)) {
       return -std::numeric_limits<double>::infinity();
     }
-    return a+b;*/
+    return a+b;
   }
   static inline LlrType log1pexp(LlrType x) {
-    if (x < -37.0) {
-      return exp(x);
-    }
     //else if (x < 18.0) {
       return log1p(exp(x));
     //}
@@ -79,25 +75,25 @@ private:
     }*/
   }
   static inline LlrType f(LlrType x) {
-    /*LlrType ans = exp(x);
+    LlrType ans = exp(x);
     if (ans == MAX_LLR) {
       return THRESHOLD_LLR;
     }
     if (isnan(exp(x))) {
       return -std::numeric_limits<double>::infinity();
     }
-    return ans;*/
-    return x;
+    return ans;
+    //return x;
   }
   static inline LlrType b(LlrType x) {
-    /*if (x == 0.0) {
+    if (x == 0.0) {
       return -MAX_LLR;
     }
     if (isnan(log(x))) {
       return -std::numeric_limits<double>::infinity();
     }
-    return log(x);*/
-    return x;
+    return log(x);
+    //return x;
   }
 };
   

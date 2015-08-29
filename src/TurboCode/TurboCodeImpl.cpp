@@ -33,7 +33,7 @@ using namespace fec;
 void TurboCodeImpl::appDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n) const
 {
   switch (codeStructure_.schedulingType()) {
-    case TurboCodeStructure::Serial:
+    case TurboCode::Serial:
       for (size_t i = 0; i < n; ++i) {
         serialDecodeBloc(parityIn, extrinsicIn, messageOut, extrinsicOut);
         parityIn += codeStructure_.paritySize();
@@ -43,7 +43,7 @@ void TurboCodeImpl::appDecodeNBloc(std::vector<LlrType>::const_iterator parityIn
       }
       break;
       
-    case TurboCodeStructure::Parallel:
+    case TurboCode::Parallel:
       for (size_t i = 0; i < n; ++i) {
         parallelDecodeBloc(parityIn, extrinsicIn, messageOut, extrinsicOut);
         parityIn += codeStructure_.paritySize();

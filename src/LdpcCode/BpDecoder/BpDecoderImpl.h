@@ -46,7 +46,7 @@ namespace fec {
 template <typename A>
 class BpDecoderImpl : public BpDecoder {
 public:
-  BpDecoderImpl(const LdpcCodeStructure& codeStructure);
+  BpDecoderImpl(const LdpcCode::Structure& codeStructure);
   ~BpDecoderImpl() = default;
   
 protected:
@@ -55,7 +55,7 @@ protected:
 };
 
 template <typename A>
-BpDecoderImpl<A>::BpDecoderImpl(const LdpcCodeStructure& codeStructure) : BpDecoder(codeStructure)
+BpDecoderImpl<A>::BpDecoderImpl(const LdpcCode::Structure& codeStructure) : BpDecoder(codeStructure)
 {
   
 }
@@ -66,7 +66,31 @@ void BpDecoderImpl<A>::checkUpdate()
   auto check = codeStructure().parityCheck().begin();
   auto checkMetricTmp = checkMetricsBuffer_.begin();
   for (auto checkMetric = checkMetrics_.begin(); checkMetric < checkMetrics_.end();  ++check) {
-    A::checkMetric(checkMetric, checkMetric + check->size(), checkMetricTmp);
+    
+    
+    auto tmp = checkMetricTmp;
+    for (auto metric = checkMetric; metric < checkMetric + check->size(); ++metric, ++tmp) {
+      *tmp = A::f(*metric);
+    }
+    
+    LlrType prod = *checkMetricTmp;
+    tmp = checkMetricTmp + 1;
+    for (auto metric = checkMetric+1; metric < checkMetric + check->size()-1; ++metric, ++tmp) {
+      *metric = prod;
+      prod = A::step(prod, *tmp);
+    }
+    *(checkMetric + check->size()-1) = A::b(prod);
+    prod = *tmp;
+    --tmp;
+    for (auto metric = checkMetric + check->size()-2; metric > checkMetric; --metric, --tmp) {
+      *metric = A::step(*metric, prod);
+      *metric = A::b(*metric);
+      prod = A::step(prod, *tmp);
+    }
+    *checkMetric = A::b(prod);
+    
+    
+    //A::checkMetric(checkMetric, checkMetric + check->size(), checkMetricTmp);
     checkMetric += check->size();
   }
 }

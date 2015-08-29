@@ -30,7 +30,7 @@
 #define TURBO_CODE_IMPL_H
 
 #include "../Code.h"
-#include "../CodeStructure/TurboCodeStructure.h"
+#include "TurboCode.h"
 #include "../ConvolutionalCode/ConvolutionalCode.h"
 #include "../ConvolutionalCode/MapDecoder/MapDecoder.h"
 
@@ -44,7 +44,7 @@ class TurboCodeImpl
 {
   friend class TurboCode;
 public:
-  TurboCodeImpl(const TurboCodeStructure& codeStructure) : codeStructure_(codeStructure) {
+  TurboCodeImpl(const TurboCode::Structure& codeStructure) : codeStructure_(codeStructure) {
     for (size_t i = 0; i < codeStructure_.constituentCount(); ++i) {
       code_.push_back(MapDecoder::create(codeStructure_.constituent(i)));
     }
@@ -52,23 +52,8 @@ public:
   virtual ~TurboCodeImpl() = default;
   
   
-  size_t extrinsicSize() const {
-    size_t extrinsicSize = 0;
-    switch (codeStructure_.schedulingType()) {
-      default:
-      case TurboCodeStructure::Serial:
-        return codeStructure_.msgSize() + codeStructure_.msgTailSize();
-        break;
-        
-      case TurboCodeStructure::Parallel:
-        for (auto & i : codeStructure_.constituents()) {
-          extrinsicSize += i.msgSize() + i.msgTailSize();
-        }
-        return extrinsicSize;
-        break;
-    }
-  }
-  const CodeStructure& structure() const {return codeStructure_;}
+  inline size_t extrinsicSize() const {return codeStructure_.extrinsicSize();}
+  inline const TurboCode::Structure& structure() const {return codeStructure_;}
   
 protected:
   TurboCodeImpl() = default;
@@ -81,7 +66,7 @@ private:
   void parallelDecodeBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut) const;
   
   std::vector<std::unique_ptr<MapDecoder>> code_;
-  TurboCodeStructure codeStructure_;
+  TurboCode::Structure codeStructure_;
 };
   
 }

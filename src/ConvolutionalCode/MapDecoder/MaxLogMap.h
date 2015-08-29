@@ -33,7 +33,6 @@
 #include <math.h>
 
 #include "MapDecoderImpl.h"
-#include "../../CodeStructure/CodeStructure.h"
 
 namespace fec {
 

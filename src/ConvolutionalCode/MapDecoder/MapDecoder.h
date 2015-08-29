@@ -32,7 +32,7 @@
 #include <vector>
 #include <memory>
 
-#include "../../CodeStructure/ConvolutionalCodeStructure.h"
+#include "../ConvolutionalCode.h"
 
 namespace fec {
 
@@ -47,7 +47,7 @@ namespace fec {
 class MapDecoder
 {
 public:
-  static std::unique_ptr<MapDecoder> create(const ConvolutionalCodeStructure&);
+  static std::unique_ptr<MapDecoder> create(const ConvolutionalCode::Structure&);
   virtual ~MapDecoder() = default; /**< Default destructor */
   
   void softOutDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::iterator messageOut, size_t n);
@@ -57,7 +57,7 @@ public:
   void appDecodeBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut);
   
 protected:
-  MapDecoder(const ConvolutionalCodeStructure& codeStructure);
+  MapDecoder(const ConvolutionalCode::Structure& codeStructure);
 
   virtual void appBranchMetrics(std::vector<LlrType>::const_iterator parity, std::vector<LlrType>::const_iterator extrinsic) = 0;/**< Branch metric calculation with app (msg) L-values. */
   virtual void parityAppBranchMetrics(std::vector<LlrType>::const_iterator parity, std::vector<LlrType>::const_iterator extrinsic) = 0;/**< Branch metric calculation with app (parity) L-values. */
@@ -69,7 +69,7 @@ protected:
   virtual void messageAPosteriori(std::vector<LlrType>::iterator parityOut) = 0;
   virtual void messageExtrinsic(std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinscOut) = 0;/**< Final (msg) L-values calculation. */
   
-  inline const ConvolutionalCodeStructure& codeStructure() const {return codeStructure_;} /**< Access the code structure */
+  inline const ConvolutionalCode::Structure& codeStructure() const {return codeStructure_;} /**< Access the code structure */
   
   std::vector<LlrType> branchOutputMetrics_;/**< Output branch metric buffer */
   std::vector<LlrType> branchInputMetrics_;/**< Input branch metric buffer */
@@ -80,7 +80,7 @@ protected:
 
 private:
   
-  const ConvolutionalCodeStructure codeStructure_;
+  const ConvolutionalCode::Structure codeStructure_;
 };
   
 }

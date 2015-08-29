@@ -41,9 +41,31 @@
 #include <boost/serialization/type_info_implementation.hpp>
 #include <boost/serialization/extended_type_info_no_rtti.hpp>
 
-#include "CodeStructure/CodeStructure.h"
+#include "Structure/BitField.h"
 
 namespace fec {
+  
+  typedef double LlrType;
+  const LlrType MAX_LLR = std::numeric_limits<LlrType>::infinity();
+  const LlrType THRESHOLD_LLR = 37.0;
+  
+  /**
+   *  Computes the probability (L-value) of a sequence of input L-values
+   *  related to a sequence of bits.
+   *  The answer is defined as the correlations between the two inputs.
+   *  \param  a Sequence of bits as a BitField
+   *  \param  b Random access input iterator associated with the sequence of L-values
+   *  \return Correlation between the two inputs
+   */
+  inline LlrType correlationProbability(const BitField<size_t>& a, std::vector<LlrType>::const_iterator b, size_t size) {
+    LlrType x = 0;
+    for (size_t i = 0; i < size; ++i) {
+      if (a.test(i)) {
+        x += b[i];
+      }
+    }
+    return x;
+  }
 
 /**
  *  This class represents a general encoder / decoder.
@@ -53,7 +75,65 @@ class Code
 {
   friend class boost::serialization::access;
 public:
-  static std::unique_ptr<Code> create(const CodeStructure& codeStructure, int workGroupdSize = 4);
+  
+  /**
+   *  This class represents a general code structure
+   *  It provides a usefull interface to store and acces the code information.
+   */
+  class Structure {
+    friend class boost::serialization::access;
+  public:
+    /**
+     *  This enum lists the implemented code structures.
+     */
+    enum Type {
+      Convolutional, /**< Convolutional code following a trellis structure */
+      Turbo,  /**< Parallel concatenated convolutional codes */
+      Ldpc  /**< Low-density parity check code */
+    };
+    
+    Structure() = default;
+    Structure(size_t messageSize, size_t paritySize, size_t extrinsicSize);
+    virtual ~Structure() = default;
+    
+    virtual const char * get_key() const = 0;
+    
+    /**
+     *  Access the code structure type as an enumerated type.
+     *  \return Code structure type
+     */
+    virtual Type type() const = 0;
+    
+    /**
+     *  Access the size of the msg in each code bloc.
+     *  \return Message size
+     */
+    inline size_t msgSize() const {return messageSize_;}
+    /**
+     *  Access the size of the parity bloc in each code bloc.
+     *  \return Parity size
+     */
+    inline size_t paritySize() const {return paritySize_;}
+    inline size_t extrinsicSize() const {return extrinsicSize_;}
+    
+    //virtual void encode(std::vector<uint8_t>::const_iterator msg, std::vector<uint8_t>::iterator parity) const = 0;
+    
+  protected:
+    template <typename Archive>
+    void serialize(Archive & ar, const unsigned int version) {
+      using namespace boost::serialization;
+      ar & BOOST_SERIALIZATION_NVP(messageSize_);
+      ar & BOOST_SERIALIZATION_NVP(paritySize_);
+      ar & BOOST_SERIALIZATION_NVP(extrinsicSize_);
+    }
+    
+    size_t messageSize_;/**< Size of the parity bloc in each code bloc. */
+    size_t paritySize_;/**< Size of the parity bloc in each code bloc. */
+    size_t extrinsicSize_;
+  };
+  
+  
+  static std::unique_ptr<Code> create(const Structure& Structure, int workGroupdSize = 4);
   virtual ~Code() = default;
   
   virtual const char * get_key() const = 0;
@@ -62,21 +142,19 @@ public:
    *  Access size of the message in one bloc.
    *  \return Message size
    */
-  inline size_t msgSize() const {return structure_->msgSize();}
+  inline size_t msgSize() const {return structureRef_->msgSize();}
   /**
    *  Access size of one parity bloc.
    *  \return Parity size
    */
-  inline size_t paritySize() const {return structure_->paritySize();}
+  inline size_t paritySize() const {return structureRef_->paritySize();}
   /**
    *  Access size of extrinsic information in one bloc.
    *  \return Extrinsic size
    */
-  inline size_t extrinsicSize() const {return structure_->extrinsicSize();}
-  template <class T = CodeStructure>
-  inline const T& structure() const {return *reinterpret_cast<T*>(structure_.get());};
-  template <class T = CodeStructure>
-  inline T& structure() {return *reinterpret_cast<T*>(structure_.get());};
+  inline size_t extrinsicSize() const {return structureRef_->extrinsicSize();}
+  inline const typename Code::Structure& structure() const {return *(structureRef_);}
+  inline const typename Code::Structure& structure() {return *(structureRef_);}
   
   int getWorkGroupSize() const {return workGroupSize_;}
   void setWorkGroupSize(int size) {workGroupSize_ = size;}
@@ -89,7 +167,7 @@ public:
 
 protected:
   Code() = default;
-  Code(std::unique_ptr<CodeStructure>&& structure, int workGroupdSize = 4);
+  Code(Structure* structure, int workGroupdSize = 4);
   
   inline int workGroupSize() const {return workGroupSize_;}
   
@@ -145,22 +223,25 @@ protected:
    */
   virtual void decodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<uint8_t>::iterator messageOut, size_t n) const = 0;
   
-  std::unique_ptr<CodeStructure> structure_;
-  
   
 private:
   template <typename Archive>
   void serialize(Archive & ar, const unsigned int version) {
     using namespace boost::serialization;
     ar & ::BOOST_SERIALIZATION_NVP(workGroupSize_);
-    ar & ::BOOST_SERIALIZATION_NVP(structure_);
+    
+    ar & ::BOOST_SERIALIZATION_NVP(structureRef_);
   }
   
   int workGroupSize_;
+  Structure* structureRef_;
 };
   
 }
 
+BOOST_SERIALIZATION_ASSUME_ABSTRACT(fec::Code::Structure);
+BOOST_CLASS_TYPE_INFO(fec::Code::Structure,extended_type_info_no_rtti<fec::Code::Structure>);
+BOOST_CLASS_EXPORT_KEY(fec::Code::Structure);
 BOOST_SERIALIZATION_ASSUME_ABSTRACT(fec::Code);
 BOOST_CLASS_TYPE_INFO(fec::Code,extended_type_info_no_rtti<fec::Code>);
 BOOST_CLASS_EXPORT_KEY(fec::Code);

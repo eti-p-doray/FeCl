@@ -33,15 +33,15 @@
 
 using namespace fec;
 
-std::unique_ptr<BpDecoder> BpDecoder::create(const LdpcCodeStructure& codeStructure)
+std::unique_ptr<BpDecoder> BpDecoder::create(const LdpcCode::Structure& codeStructure)
 {
   switch (codeStructure.decoderType()) {
     default:
-    case LdpcCodeStructure::MinSumBp:
+    case LdpcCode::MinSumBp:
       return std::unique_ptr<BpDecoder>(new BpDecoderImpl<MinSumBp>(codeStructure));
       break;
       
-    case LdpcCodeStructure::TrueBp:
+    case LdpcCode::TrueBp:
       return std::unique_ptr<BpDecoder>(new BpDecoderImpl<TrueBp>(codeStructure));
       break;
   }
@@ -142,7 +142,7 @@ void BpDecoder::softOutDecodeBloc(std::vector<LlrType>::const_iterator parityIn,
   }
 }
 
-BpDecoder::BpDecoder(const LdpcCodeStructure& codeStructure) : codeStructure_(codeStructure)
+BpDecoder::BpDecoder(const LdpcCode::Structure& codeStructure) : codeStructure_(codeStructure)
 {
   hardParity_.resize(codeStructure_.paritySize());
   

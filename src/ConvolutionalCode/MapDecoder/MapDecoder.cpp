@@ -40,15 +40,15 @@ using namespace fec;
  *  \param  codeStructure Convolutional code structure describing the code
  *  \return MacDecoder specialization suitable for the algorithm in use
  */
-std::unique_ptr<MapDecoder> MapDecoder::create(const ConvolutionalCodeStructure& codeStructure)
+std::unique_ptr<MapDecoder> MapDecoder::create(const ConvolutionalCode::Structure& codeStructure)
 {
   switch (codeStructure.decoderType()) {
     default:
-    case ConvolutionalCodeStructure::MaxLogMap:
+    case ConvolutionalCode::MaxLogMap:
       return std::unique_ptr<MapDecoder>(new MapDecoderImpl<MaxLogMap>(codeStructure));
       break;
       
-    case ConvolutionalCodeStructure::LogMap:
+    case ConvolutionalCode::LogMap:
       return std::unique_ptr<MapDecoder>(new MapDecoderImpl<LogMap>(codeStructure));
       break;
   }
@@ -128,7 +128,7 @@ void MapDecoder::appDecodeBloc(std::vector<LlrType>::const_iterator parityIn, st
  *  Allocates metric buffers based on the given code structure.
  *  \param  codeStructure Convolutional code structure describing the code
  */
-MapDecoder::MapDecoder(const ConvolutionalCodeStructure& codeStructure) : codeStructure_(codeStructure)
+MapDecoder::MapDecoder(const ConvolutionalCode::Structure& codeStructure) : codeStructure_(codeStructure)
 {
   branchMetrics_.resize((codeStructure.blocSize()+codeStructure.tailSize())*codeStructure.trellis().inputCount()*codeStructure.trellis().stateCount());
   forwardMetrics_.resize((codeStructure.blocSize()+codeStructure.tailSize())*codeStructure.trellis().stateCount());
