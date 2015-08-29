@@ -26,7 +26,7 @@ classdef TurboCode < fec.Code
             fec.bin.TurboCode_set_iterationCount(this, count);
         end
         
-        function this = TurboCode(trellis, interleaver, endType, iterationCount, schedulingType, mapDecoderType, workGroupSize)
+        function this = TurboCode(trellis, interleaver, terminationType, iterationCount, schedulingType, mapDecoderType, workGroupSize)
         % TurboCode constructor
         %   Configures the object internally and allocate cpp ressources
         %
@@ -44,7 +44,7 @@ classdef TurboCode < fec.Code
               return;
           end
           if (nargin < 3)
-              endType = fec.TrellisEndType.PaddingTail;
+              endType = fec.TerminationType.Tail;
           end
           if (nargin < 4)
               iterationCount = 5;
@@ -61,14 +61,14 @@ classdef TurboCode < fec.Code
           if (length(trellis) == 1)
             trellis = repmat({trellis}, size(interleaver));
           end
-          if (length(endType) == 1)
-            endType = repmat({endType}, size(interleaver));
+          if (length(terminationType) == 1)
+            terminationType = repmat({terminationType}, size(interleaver));
           end
-          endTypeChar = cell(size(endType));
-          for i = 1:length(endType)
-              endTypeChar{i} = endType{i}.char;
+          terminationTypeChar = cell(size(terminationType));
+          for i = 1:length(terminationType)
+              terminationTypeChar{i} = terminationType{i}.char;
           end
-          this.mexHandle_ = fec.bin.TurboCode_constructor(trellis, interleaver, endTypeChar, iterationCount, schedulingType.char, mapDecoderType.char, workGroupSize);
+          this.mexHandle_ = fec.bin.TurboCode_constructor(trellis, interleaver, terminationTypeChar, iterationCount, schedulingType.char, mapDecoderType.char, workGroupSize);
         end
     end
 end

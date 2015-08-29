@@ -43,6 +43,14 @@ namespace fec {
 class ViterbiDecoder
 {
 public:
+  
+  class Structure {
+  public:
+    
+  private:
+    
+  };
+  
   ViterbiDecoder(const ConvolutionalCode::Structure& codeStructure);
   ~ViterbiDecoder() = default;
   

@@ -129,15 +129,19 @@ void appDecode_test(const std::shared_ptr<fec::Code>& code, const std::vector<ui
   }
 }
 
+void save_test(const std::shared_ptr<fec::Code>& code) {
+  
+}
+
 test_suite*
 init_unit_test_suite( int argc, char* argv[] )
 {
   std::vector<std::shared_ptr<fec::Code>> codes;
-  codes.push_back( fec::Code::create(fec::ConvolutionalCodeStructure(fec::TrellisStructure({3}, {{04, 05}}), 8, fec::ConvolutionalCodeStructure::Truncation,  fec::ConvolutionalCodeStructure::MaxLogMap), 4) );
-  codes.push_back( fec::Code::create(fec::ConvolutionalCodeStructure(fec::TrellisStructure({3}, {{04, 05}}), 8, fec::ConvolutionalCodeStructure::Truncation,  fec::ConvolutionalCodeStructure::LogMap), 4) );
-  codes.push_back( fec::Code::create(fec::ConvolutionalCodeStructure(fec::TrellisStructure({3}, {{04, 05}}), 8, fec::ConvolutionalCodeStructure::PaddingTail,  fec::ConvolutionalCodeStructure::LogMap), 4) );
+  codes.push_back( fec::Code::create(fec::ConvolutionalCode::Structure(fec::Trellis({3}, {{04, 05}}), 8, fec::ConvolutionalCode::Truncation,  fec::ConvolutionalCode::MaxLogMap), 4) );
+  codes.push_back( fec::Code::create(fec::ConvolutionalCode::Structure(fec::Trellis({3}, {{04, 05}}), 8, fec::ConvolutionalCode::Truncation,  fec::ConvolutionalCode::LogMap), 4) );
+  codes.push_back( fec::Code::create(fec::ConvolutionalCode::Structure(fec::Trellis({3}, {{04, 05}}), 8, fec::ConvolutionalCode::Tail,  fec::ConvolutionalCode::LogMap), 4) );
   
-  codes.push_back( fec::Code::create(fec::LdpcCodeStructure(fec::LdpcCodeStructure::gallagerConstruction(1024, 3, 5)), 4) );
+  codes.push_back( fec::Code::create(fec::LdpcCode::Structure(fec::LdpcCode::Structure::gallagerConstruction(1024, 3, 5)), 4) );
   
   uint64_t seed = std::chrono::system_clock::now().time_since_epoch().count();
   std::srand ( unsigned (seed ) );
@@ -149,11 +153,11 @@ init_unit_test_suite( int argc, char* argv[] )
   }
   std::random_shuffle (randPerm2.begin(), randPerm2.end());
   
-  auto trellis = fec::TrellisStructure({3}, {{05}});
-  codes.push_back( fec::Code::create(fec::TurboCodeStructure({trellis, trellis}, {randPerm1,randPerm2}, {fec::ConvolutionalCodeStructure::Truncation,fec::ConvolutionalCodeStructure::Truncation}, 5, fec::TurboCodeStructure::Parallel,  fec::ConvolutionalCodeStructure::MaxLogMap), 4 ));
-  codes.push_back( fec::Code::create(fec::TurboCodeStructure({trellis, trellis}, {randPerm1,randPerm2}, {fec::ConvolutionalCodeStructure::Truncation,fec::ConvolutionalCodeStructure::Truncation}, 5, fec::TurboCodeStructure::Serial,  fec::ConvolutionalCodeStructure::MaxLogMap), 4 ));
-  codes.push_back( fec::Code::create(fec::TurboCodeStructure({trellis, trellis}, {randPerm1,randPerm2}, {fec::ConvolutionalCodeStructure::PaddingTail,fec::ConvolutionalCodeStructure::PaddingTail}, 5, fec::TurboCodeStructure::Parallel,  fec::ConvolutionalCodeStructure::MaxLogMap), 4 ));
-  codes.push_back( fec::Code::create(fec::TurboCodeStructure({trellis, trellis}, {randPerm1,randPerm2}, {fec::ConvolutionalCodeStructure::Truncation,fec::ConvolutionalCodeStructure::PaddingTail}, 5, fec::TurboCodeStructure::Serial,  fec::ConvolutionalCodeStructure::MaxLogMap), 4 ));
+  auto trellis = fec::Trellis({3}, {{05}});
+  codes.push_back( fec::Code::create(fec::TurboCode::Structure({trellis, trellis}, {randPerm1,randPerm2}, {fec::ConvolutionalCode::Truncation,fec::ConvolutionalCode::Truncation}, 5, fec::TurboCode::Parallel,  fec::ConvolutionalCode::MaxLogMap), 4 ));
+  codes.push_back( fec::Code::create(fec::TurboCode::Structure({trellis, trellis}, {randPerm1,randPerm2}, {fec::ConvolutionalCode::Truncation,fec::ConvolutionalCode::Truncation}, 5, fec::TurboCode::Serial,  fec::ConvolutionalCode::MaxLogMap), 4 ));
+  codes.push_back( fec::Code::create(fec::TurboCode::Structure({trellis, trellis}, {randPerm1,randPerm2}, {fec::ConvolutionalCode::Tail,fec::ConvolutionalCode::Tail}, 5, fec::TurboCode::Parallel,  fec::ConvolutionalCode::MaxLogMap), 4 ));
+  codes.push_back( fec::Code::create(fec::TurboCode::Structure({trellis, trellis}, {randPerm1,randPerm2}, {fec::ConvolutionalCode::Truncation,fec::ConvolutionalCode::Tail}, 5, fec::TurboCode::Serial,  fec::ConvolutionalCode::MaxLogMap), 4 ));
   
   for (auto& code : codes) {
     framework::master_test_suite().
@@ -173,6 +177,9 @@ init_unit_test_suite( int argc, char* argv[] )
     add( BOOST_TEST_CASE( std::bind( &appDecode_test, code, std::vector<uint8_t>(code->msgSize()*5, 0) )));
     framework::master_test_suite().
     add( BOOST_TEST_CASE( std::bind( &appDecode_test, code, std::vector<uint8_t>(code->msgSize()*5, 1) )));
+    
+    framework::master_test_suite().
+    add( BOOST_TEST_CASE( std::bind( &save_test, code )));
   }
   return 0;
 }

@@ -36,7 +36,7 @@
 #include <matrix.h>
 
 #include "MexConversion.h"
-#include "CodeStructure/BitMatrix.h"
+#include "Structure/BitMatrix.h"
 
 using namespace fec;
 

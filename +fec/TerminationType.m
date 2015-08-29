@@ -1,5 +1,5 @@
-classdef TrellisEndType
+classdef TerminationType
     enumeration
-        PaddingTail, Truncation
+        Tail, Truncation
     end
 end

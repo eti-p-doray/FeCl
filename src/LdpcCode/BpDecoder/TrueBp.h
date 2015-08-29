@@ -30,7 +30,7 @@
 #define TRUE_BP_H
 
 #include <algorithm>
-#include <math.h>
+#include <cmath>
 
 #include "BpDecoderImpl.h"
 #include "../LdpcCode.h"
@@ -68,11 +68,11 @@ public:
   
   static inline LlrType f(LlrType x)
   {
-    return tanh(-x/2.0);
+    return std::tanh(-x/2.0);
   }
   static inline LlrType b(LlrType x)
   {
-    return -2.0*atanh(x);
+    return -2.0*std::atanh(x);
   }
   static inline LlrType step(LlrType a, LlrType b)
   {

@@ -35,7 +35,7 @@
 #include <mex.h>
 
 #include "MexConversion.h"
-#include "CodeStructure/Interleaver.h"
+#include "Structure/Interleaver.h"
 
 using namespace fec;
 

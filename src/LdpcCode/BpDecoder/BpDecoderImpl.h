@@ -30,7 +30,7 @@
 #define BP_DECODER_IMPL_H
 
 #include <algorithm>
-#include <math.h>
+#include <cmath>
 
 #include "BpDecoder.h"
 
@@ -63,35 +63,28 @@ BpDecoderImpl<A>::BpDecoderImpl(const LdpcCode::Structure& codeStructure) : BpDe
 template <typename A>
 void BpDecoderImpl<A>::checkUpdate()
 {
-  auto check = codeStructure().parityCheck().begin();
+  auto checkMetric = checkMetrics_.begin();
   auto checkMetricTmp = checkMetricsBuffer_.begin();
-  for (auto checkMetric = checkMetrics_.begin(); checkMetric < checkMetrics_.end();  ++check) {
+  for (auto check = codeStructure().checks().begin(); check < codeStructure().checks().end();  ++check) {
+    auto first = checkMetric;
+    size_t size = check->size();
     
-    
-    auto tmp = checkMetricTmp;
-    for (auto metric = checkMetric; metric < checkMetric + check->size(); ++metric, ++tmp) {
-      *tmp = A::f(*metric);
+    LlrType prod = A::f(*first);
+    for (size_t j = 1; j < size-1; ++j) {
+      checkMetricTmp[j] = A::f(first[j]);
+      first[j] = prod;
+      prod = A::step(prod, checkMetricTmp[j]);
     }
-    
-    LlrType prod = *checkMetricTmp;
-    tmp = checkMetricTmp + 1;
-    for (auto metric = checkMetric+1; metric < checkMetric + check->size()-1; ++metric, ++tmp) {
-      *metric = prod;
-      prod = A::step(prod, *tmp);
+    checkMetricTmp[size-1] = A::f(first[size-1]);
+    first[size-1] = A::b(prod);
+    prod = checkMetricTmp[size-1];
+    for (size_t j = size-2; j > 0; --j) {
+      first[j] = A::b( A::step(first[j], prod) );
+      prod = A::step(prod, checkMetricTmp[j]);
     }
-    *(checkMetric + check->size()-1) = A::b(prod);
-    prod = *tmp;
-    --tmp;
-    for (auto metric = checkMetric + check->size()-2; metric > checkMetric; --metric, --tmp) {
-      *metric = A::step(*metric, prod);
-      *metric = A::b(*metric);
-      prod = A::step(prod, *tmp);
-    }
-    *checkMetric = A::b(prod);
+    *first = A::b(prod);
     
-    
-    //A::checkMetric(checkMetric, checkMetric + check->size(), checkMetricTmp);
-    checkMetric += check->size();
+    checkMetric += size;
   }
 }
 
@@ -99,27 +92,19 @@ template <typename A>
 void BpDecoderImpl<A>::bitUpdate(std::vector<LlrType>::const_iterator parity)
 {
   std::fill(bitMetrics_.begin(), bitMetrics_.end(), 0);
-  auto check = codeStructure().parityCheck().begin();
-  auto checkMetricTmp = checkMetricsBuffer_.begin();
-  for (auto checkMetric = checkMetrics_.begin(); checkMetric < checkMetrics_.end();  ++check) {
-    for (auto checkBit = check->begin(); checkBit < check->end(); ++checkMetric, ++checkMetricTmp, ++checkBit) {
-      *checkMetricTmp = *checkMetric;
-      LlrType& metricRef = bitMetrics_[*checkBit];
-      *checkMetric = metricRef;
-      metricRef += *checkMetricTmp;
-    }
+  for (size_t i = 0; i < codeStructure().checks().size(); ++i) {
+    checkMetricsBuffer_[i] = checkMetrics_[i];
+    LlrType& ref = bitMetrics_[codeStructure().checks().at(i)];
+    checkMetrics_[i] = ref;
+    ref += checkMetricsBuffer_[i];
   }
   
   std::copy(parity, parity + bitMetrics_.size(), bitMetrics_.begin());
   
-  check = codeStructure().parityCheck().end() - 1;
-  checkMetricTmp = checkMetricsBuffer_.end() - 1;
-  for (auto checkMetric = checkMetrics_.end() - 1; checkMetric >= checkMetrics_.begin();  --check) {
-    for (auto checkBit = check->end()-1; checkBit >= check->begin(); --checkMetric, --checkMetricTmp, --checkBit) {
-      LlrType& metricRef = bitMetrics_[*checkBit];
-      *checkMetric += metricRef;
-      metricRef += *checkMetricTmp;
-    }
+  for (int64_t i = codeStructure().checks().size() - 1; i >= 0; --i) {
+    LlrType& ref = bitMetrics_[codeStructure().checks().at(i)];
+    checkMetrics_[i] += ref;
+    ref += checkMetricsBuffer_[i];
   }
 }
   

@@ -534,6 +534,7 @@ public:
   
   inline ConstRowRef operator[] (size_t i) const {return ConstRowRef(elementIdx_.begin() + rowIdx_[i].begin, elementIdx_.begin() + rowIdx_[i].end);}
   inline RowRef operator[] (size_t i) {return RowRef(elementIdx_.begin(), rowIdx_[i]);}
+  inline size_t at(size_t i) const {return elementIdx_[i];}
   
   /**
    *  Computes the column sizes in the matrix.

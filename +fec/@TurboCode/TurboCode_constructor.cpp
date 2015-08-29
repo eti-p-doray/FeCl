@@ -39,9 +39,9 @@
 const int inputCount = 7;
 const int outputCount = 1;
 
-const int TrellisEndTypeCount = 2;
-const char* const TrellisEndTypeEnumeration[TrellisEndTypeCount] = {
-  "PaddingTail",
+const int TerminationTypeCount = 2;
+const char* const TerminationTypeEnumeration[TerminationTypeCount] = {
+  "Tail",
   "Truncation"
 };
 
@@ -82,15 +82,15 @@ void TurboCode_constructor( int nlhs, mxArray *plhs[], int nrhs, const mxArray *
     throw std::invalid_argument("Wrong argout count in TurboCode_constructor");
   }
   
-  std::vector<fec::TrellisStructure> trellis = mxCellArrayTo<fec::TrellisStructure>::f(prhs[0]);
+  std::vector<fec::Trellis> trellis = mxCellArrayTo<fec::Trellis>::f(prhs[0]);
   std::vector<fec::Interleaver> interleavers = mxCellArrayTo<fec::Interleaver>::f(prhs[1]);
-  std::vector<fec::ConvolutionalCodeStructure::TrellisEndType> endType =
-  mxCellArrayTo<fec::ConvolutionalCodeStructure::TrellisEndType>::f(prhs[2], TrellisEndTypeEnumeration, TrellisEndTypeCount);
+  std::vector<fec::ConvolutionalCode::TerminationType> endType =
+  mxCellArrayTo<fec::ConvolutionalCode::TerminationType>::f(prhs[2], TerminationTypeEnumeration, TerminationTypeCount);
   
-  fec::TurboCodeStructure codeStructure(trellis, interleavers, endType, mxArrayTo<size_t>::f(prhs[3]),
-                                        mxArrayTo<fec::TurboCodeStructure::SchedulingType>::f(prhs[4], SchedulingTypeEnumeration, SchedulingTypeCount),
-                                        mxArrayTo<fec::ConvolutionalCodeStructure::DecoderType>::f(prhs[5],MapTypeEnumeration, MapTypeCount));
-  std::unique_ptr<fec::Code> code = fec::Code::create(codeStructure, mxArrayTo<size_t>::f(prhs[6]));
+  fec::TurboCode::Structure structure(trellis, interleavers, endType, mxArrayTo<size_t>::f(prhs[3]),
+                                        mxArrayTo<fec::TurboCode::SchedulingType>::f(prhs[4], SchedulingTypeEnumeration, SchedulingTypeCount),
+                                        mxArrayTo<fec::ConvolutionalCode::DecoderType>::f(prhs[5],MapTypeEnumeration, MapTypeCount));
+  std::unique_ptr<fec::Code> code = fec::Code::create(structure, mxArrayTo<size_t>::f(prhs[6]));
   
   plhs[0] = toMxArray(std::move(code));
 }

@@ -31,6 +31,7 @@
 
 #include <iostream>
 #include <stdint.h>
+#include <vector>
 
 #include <boost/serialization/utility.hpp>
 #include <boost/serialization/nvp.hpp>
@@ -135,6 +136,25 @@ bool parity(fec::BitField<T> a) {
   bool x = false;
   for (int i = 0; i < a.size(); ++i) {
     x ^= a[i];
+  }
+  return x;
+}
+
+/**
+ *  Computes the probability (L-value) of a sequence of input L-values
+ *  related to a sequence of bits.
+ *  The answer is defined as the correlations between the two inputs.
+ *  \param  a Sequence of bits as a BitField
+ *  \param  b Random access input iterator associated with the sequence of L-values
+ *  \return Correlation between the two inputs
+ */
+template <typename T>
+inline T correlation(const fec::BitField<size_t>& a, typename std::vector<T>::const_iterator b, size_t size) {
+  T x = 0;
+  for (size_t i = 0; i < size; ++i) {
+    if (a.test(i)) {
+      x += b[i];
+    }
   }
   return x;
 }

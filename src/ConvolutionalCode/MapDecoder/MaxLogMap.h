@@ -30,9 +30,7 @@
 #define MAX_LOG_MAP_H
 
 #include <algorithm>
-#include <math.h>
-
-#include "MapDecoderImpl.h"
+#include <cmath>
 
 namespace fec {
 
@@ -40,16 +38,15 @@ namespace fec {
    *  This class contains implementation of the max approximation for log add operation.
    */
 class MaxLogMap {
-  friend class MapDecoderImpl<MaxLogMap>;
 public:
-  
-private:
+  static LlrType threshold() {return 100.0;}
+
   /**
    * Computes log add operation with max approximation.
    *  \param  a First operand
    *  \param  b Second operand
    */
-  static inline LlrType logAdd(LlrType a, LlrType b) {return std::max(a,b);}
+  static inline LlrType step(LlrType a, LlrType b) {return std::max(a,b);}
   static inline LlrType f(LlrType x) {
     return x;
   }

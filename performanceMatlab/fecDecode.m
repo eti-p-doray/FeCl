@@ -1,4 +1,5 @@
 function [avElapsedTime, stdElapsedTime, avBer] = fecDecode(code, msg, llr, N)
+    decodedMsg = int8(code.decode(llr));
     elapsedTime = zeros(N,1);
     errorCount = zeros(N,1);
     for i = 1:N

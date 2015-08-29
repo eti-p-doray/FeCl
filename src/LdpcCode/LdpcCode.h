@@ -91,7 +91,7 @@ public:
     
     virtual Code::Structure::Type type() const {return Code::Structure::Ldpc;}
     
-    inline const SparseBitMatrix& parityCheck() const {return H_;}
+    inline const SparseBitMatrix& checks() const {return H_;}
     
     inline DecoderType decoderType() const {return decoderType_;}
     inline size_t iterationCount() const {return iterationCount_;}

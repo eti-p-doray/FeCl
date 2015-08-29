@@ -14,7 +14,7 @@ classdef ConvolutionalCode < fec.Code
   
     methods
 
-        function this = ConvolutionalCode(trellis, blocSize, trellisEndType, mapDecoderType, workGroupSize)
+        function this = ConvolutionalCode(trellis, blocSize, terminationType, mapDecoderType, workGroupSize)
         % ConvolutionalCode constructore
         %   Configures the object internally and allocate cpp ressources
         %
@@ -29,7 +29,7 @@ classdef ConvolutionalCode < fec.Code
               return;
           end
           if (nargin < 3)
-            trellisEndType = fec.TrellisEndType.Truncation;
+            terminationType = fec.TerminationType.Truncation;
           end
           if (nargin < 4)
             mapDecoderType = fec.MapType.MaxLogMap;
@@ -37,7 +37,7 @@ classdef ConvolutionalCode < fec.Code
           if (nargin < 5)
             workGroupSize = 8;
           end
-          this.mexHandle_ = fec.bin.ConvolutionalCode_constructor(trellis, blocSize, trellisEndType.char, mapDecoderType.char, workGroupSize);
+          this.mexHandle_ = fec.bin.ConvolutionalCode_constructor(trellis, blocSize, terminationType.char, mapDecoderType.char, workGroupSize);
         end
     end
 end

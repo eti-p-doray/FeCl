@@ -34,7 +34,7 @@
 #include <vector>
 #include <mex.h>
 
-#include "CodeStructure/TrellisStructure.h"
+#include "Structure/Trellis.h"
 #include "MexConversion.h"
 
 using namespace fec;
@@ -42,13 +42,13 @@ using namespace fec;
 const char* const trellisProperties[] = {"nextStates", "outputs", "numInputSymbols", "numOutputSymbols", "numStates"};
 
 template<>
-class mxArrayTo<TrellisStructure> {
+class mxArrayTo<Trellis> {
 public:
-  static TrellisStructure f(const mxArray* in) {
+  static Trellis f(const mxArray* in) {
     if (in == nullptr) {
       throw std::invalid_argument("Null mxArray");
     }
-    return TrellisStructure(mxArrayTo<std::vector<size_t>>::f(mxGetField(in, 0, trellisProperties[0])),
+    return Trellis(mxArrayTo<std::vector<size_t>>::f(mxGetField(in, 0, trellisProperties[0])),
                             mxArrayTo<std::vector<size_t>>::f(mxGetField(in, 0, trellisProperties[1])),
                             log2(mxArrayTo<size_t>::f(mxGetField(in, 0, trellisProperties[2]))),
                             log2(mxArrayTo<size_t>::f(mxGetField(in, 0, trellisProperties[3]))),

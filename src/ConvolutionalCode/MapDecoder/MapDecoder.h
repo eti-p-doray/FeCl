@@ -47,6 +47,13 @@ namespace fec {
 class MapDecoder
 {
 public:
+  class Structure {
+  public:
+    
+  private:
+    
+  };
+  
   static std::unique_ptr<MapDecoder> create(const ConvolutionalCode::Structure&);
   virtual ~MapDecoder() = default; /**< Default destructor */
   

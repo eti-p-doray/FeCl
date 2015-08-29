@@ -47,14 +47,14 @@ int main( int argc, char* argv[] )
    There are two output bits, the first one with generator 4 (in octal) associated
    with the input bit.
    */
-  fec::TrellisStructure trellis({3}, {{04, 05}});
+  fec::Trellis trellis({3}, {{04, 05}});
   //! [Creating a trellis]
   
   /*
    The trellis is used to create a code structure.
    We specify that one bloc will conatins 256 branch before being terminated.
    */
-  fec::ConvolutionalCodeStructure structure(trellis, 256);
+  fec::ConvolutionalCode::Structure structure(trellis, 256);
   //! [Creating a Convolutional code structure]
   
   /*

@@ -70,7 +70,7 @@ void BpDecoder::softOutDecodeNBloc(std::vector<LlrType>::const_iterator parityIn
 void BpDecoder::appDecodeBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut)
 {
   if (codeStructure().iterationCount() == 0) {
-    std::copy(extrinsicIn, extrinsicIn+codeStructure_.parityCheck().size(), extrinsicOut);
+    std::copy(extrinsicIn, extrinsicIn+codeStructure_.checks().size(), extrinsicOut);
     std::copy(parityIn, parityIn+codeStructure().msgSize(), messageOut);
     return;
   }
@@ -92,7 +92,7 @@ void BpDecoder::appDecodeBloc(std::vector<LlrType>::const_iterator parityIn, std
   checkUpdate();
   
   std::copy(parityIn, parityIn+codeStructure().msgSize(), messageOut);
-  auto check = codeStructure().parityCheck().cbegin();
+  auto check = codeStructure().checks().cbegin();
   for (auto checkMetric = checkMetrics_.begin(); checkMetric < checkMetrics_.end();  ++check) {
     for (auto checkBit = check->begin(); checkBit < check->end(); ++checkMetric, ++checkBit) {
       if (*checkBit < codeStructure().msgSize()) {
@@ -111,7 +111,7 @@ void BpDecoder::softOutDecodeBloc(std::vector<LlrType>::const_iterator parityIn,
     return;
   }
   
-  auto check = codeStructure().parityCheck().cbegin();
+  auto check = codeStructure().checks().cbegin();
   for (auto checkMetric = checkMetrics_.begin(); checkMetric < checkMetrics_.end();  ++check) {
     for (auto checkBit = check->begin(); checkBit < check->end(); ++checkMetric, ++checkBit) {
       *checkMetric = parityIn[*checkBit];
@@ -132,8 +132,8 @@ void BpDecoder::softOutDecodeBloc(std::vector<LlrType>::const_iterator parityIn,
   checkUpdate();
   
   std::copy(parityIn, parityIn+codeStructure().msgSize(), messageOut);
-  check = codeStructure().parityCheck().cbegin();
-  for (auto checkMetric = checkMetrics_.begin(); checkMetric < checkMetrics_.end();  ++check) {
+  check = codeStructure().checks().cbegin();
+  for (auto checkMetric = checkMetrics_.begin(); checkMetric < checkMetrics_.end(); ++check) {
     for (auto checkBit = check->begin(); checkBit < check->end(); ++checkMetric, ++checkBit) {
       if (*checkBit < codeStructure().msgSize()) {
         messageOut[*checkBit] += *checkMetric;
@@ -146,8 +146,8 @@ BpDecoder::BpDecoder(const LdpcCode::Structure& codeStructure) : codeStructure_(
 {
   hardParity_.resize(codeStructure_.paritySize());
   
-  checkMetrics_.resize(codeStructure_.parityCheck().size());
-  checkMetricsBuffer_.resize(codeStructure_.parityCheck().size());
+  checkMetrics_.resize(codeStructure_.checks().size());
+  checkMetricsBuffer_.resize(codeStructure_.checks().size());
   bitMetrics_.resize(codeStructure_.paritySize());
 
 }

@@ -12,16 +12,12 @@ set(Boost_LIBRARIES serialization)
 add_definitions(-DBOOST_ALL_NO_LIB)
 
 if (UNIX)
-  set(CMAKE_CXX_FLAGS "-std=c++11 -fPIC ${CMAKE_C_FLAGS}")
+  set(CMAKE_CXX_FLAGS " -std=c++11 -fPIC ${CMAKE_C_FLAGS}")
 endif (UNIX)
 
 set(SOURCES
   src/Code.cpp
-  src/CodeStructure/CodeStructure.cpp
-  src/CodeStructure/ConvolutionalCodeStructure.cpp
-  src/CodeStructure/TurboCodeStructure.cpp
-  src/CodeStructure/LdpcCodeStructure.cpp
-  src/CodeStructure/TrellisStructure.cpp
+  src/Structure/Trellis.cpp
   src/ConvolutionalCode/ConvolutionalCode.cpp
   src/ConvolutionalCode/MapDecoder/MapDecoder.cpp
   src/ConvolutionalCode/ViterbiDecoder/ViterbiDecoder.cpp

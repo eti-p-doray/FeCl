@@ -44,7 +44,6 @@ const int BpTypeCount = 3;
 const char* const BpTypeEnumeration[BpTypeCount] = {
   "TrueBp",
   "MinSumBp",
-  "ScoreBp",
 };
 
 template <typename T>
@@ -78,8 +77,8 @@ void LdpcCode_constructor( int nlhs, mxArray *plhs[], int nrhs, const mxArray *p
     throw std::invalid_argument("Wrong argout count in LdpcCode_constructor");
   }
   
-  fec::LdpcCodeStructure codeStructure(mxArrayTo<SparseBitMatrix>::f(prhs[0]), mxArrayTo<size_t>::f(prhs[1]), mxArrayTo<LdpcCodeStructure::DecoderType>::f(prhs[2],BpTypeEnumeration, BpTypeCount));
-  std::unique_ptr<fec::Code> code = fec::Code::create(codeStructure,mxArrayTo<size_t>::f(prhs[3]));
+  fec::LdpcCode::Structure structure(mxArrayTo<SparseBitMatrix>::f(prhs[0]), mxArrayTo<size_t>::f(prhs[1]), mxArrayTo<LdpcCode::DecoderType>::f(prhs[2],BpTypeEnumeration, BpTypeCount));
+  std::unique_ptr<fec::Code> code = fec::Code::create(structure,mxArrayTo<size_t>::f(prhs[3]));
   
   plhs[0] = toMxArray(std::move(code));
 }

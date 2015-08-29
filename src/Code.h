@@ -47,25 +47,12 @@ namespace fec {
   
   typedef double LlrType;
   const LlrType MAX_LLR = std::numeric_limits<LlrType>::infinity();
-  const LlrType THRESHOLD_LLR = 37.0;
   
-  /**
-   *  Computes the probability (L-value) of a sequence of input L-values
-   *  related to a sequence of bits.
-   *  The answer is defined as the correlations between the two inputs.
-   *  \param  a Sequence of bits as a BitField
-   *  \param  b Random access input iterator associated with the sequence of L-values
-   *  \return Correlation between the two inputs
-   */
-  inline LlrType correlationProbability(const BitField<size_t>& a, std::vector<LlrType>::const_iterator b, size_t size) {
-    LlrType x = 0;
-    for (size_t i = 0; i < size; ++i) {
-      if (a.test(i)) {
-        x += b[i];
-      }
-    }
-    return x;
-  }
+  enum DecoderType {
+    Exact, /**< No approximation is used and the L-values are computed in logarithmic domain. */
+    Table,
+    Approximation,  /**< The maxlog approximation is used */
+  };
 
 /**
  *  This class represents a general encoder / decoder.

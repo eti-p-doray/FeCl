@@ -70,10 +70,10 @@ int main( int argc, char* argv[] )
   /*
    A code is created and ready to operate
    */
-  std::unique_ptr<fec::Code> code = fec::Code::create(structure);
+  std::unique_ptr<fec::Code> code = fec::Code::create(structure, 1);
   //! [Creating a Turbo code]
   
-  std::cout << per(code, -2.0) << std::endl;
+  std::cout << per(code, -5.0) << std::endl;
   
   return 0;
 }

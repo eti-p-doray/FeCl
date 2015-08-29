@@ -302,7 +302,6 @@ public:
       throw std::invalid_argument("Invalid data");
     }
     
-    
     T* ptr = reinterpret_cast<T*>(*((uint64_t *)mxGetData(mxGetProperty(in, 0, "mexHandle_"))));
     ptr = dynamic_cast<T*>(ptr);
     

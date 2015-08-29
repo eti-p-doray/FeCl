@@ -45,9 +45,9 @@ const char* const MapTypeEnumeration[MapTypeCount] = {
   "MaxLogMap",
 };
 
-const int TrellisEndTypeCount = 2;
-const char* const TrellisEndTypeEnumeration[TrellisEndTypeCount] = {
-  "PaddingTail",
+const int TerminationTypeCount = 2;
+const char* const TerminationTypeEnumeration[TerminationTypeCount] = {
+  "Tail",
   "Truncation"
 };
 
@@ -74,10 +74,10 @@ void ConvolutionalCode_constructor( int nlhs, mxArray *plhs[], int nrhs, const m
     throw std::invalid_argument("Wrong argout count in ConvolutionalCode_destructor");
   }
 
-  fec::TrellisStructure trellis = mxArrayTo<TrellisStructure>::f(prhs[0]);
-  fec::ConvolutionalCodeStructure codeStructure(trellis, mxArrayTo<size_t>::f(prhs[1]), mxArrayTo<fec::ConvolutionalCodeStructure::TrellisEndType>::f(prhs[2],TrellisEndTypeEnumeration, TrellisEndTypeCount),
-                                                mxArrayTo<fec::ConvolutionalCodeStructure::DecoderType>::f(prhs[3],MapTypeEnumeration, MapTypeCount));
-  std::unique_ptr<fec::Code> code = fec::Code::create(codeStructure, mxArrayTo<size_t>::f(prhs[4]));
+  fec::Trellis trellis = mxArrayTo<Trellis>::f(prhs[0]);
+  fec::ConvolutionalCode::Structure structure(trellis, mxArrayTo<size_t>::f(prhs[1]), mxArrayTo<fec::ConvolutionalCode::TerminationType>::f(prhs[2],TerminationTypeEnumeration, TerminationTypeCount),
+                                                mxArrayTo<fec::ConvolutionalCode::DecoderType>::f(prhs[3],MapTypeEnumeration, MapTypeCount));
+  std::unique_ptr<fec::Code> code = fec::Code::create(structure, mxArrayTo<size_t>::f(prhs[4]));
   
   plhs[0] = toMxArray(std::move(code));
 }

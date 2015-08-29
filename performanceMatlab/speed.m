@@ -8,15 +8,15 @@ function speed
     code{1} = fec.ConvolutionalCode(trellis, T);
     pi = randperm(T);
     H = dvbs2ldpc(1/2);
-    code{2} = fec.TurboCode(turboTrellis, {[1:T], pi}, fec.TrellisEndType.PaddingTail, 4, fec.SchedulingType.Serial, fec.MapType.LogMap);
-    code{3} = fec.TurboCode(turboTrellis, {[1:T], pi}, fec.TrellisEndType.PaddingTail, 4, fec.SchedulingType.Serial, fec.MapType.MaxLogMap);
+    code{2} = fec.TurboCode(turboTrellis, {[1:T], pi}, fec.TerminationType.Tail, 4, fec.SchedulingType.Serial, fec.MapType.LogMap);
+    code{3} = fec.TurboCode(turboTrellis, {[1:T], pi}, fec.TerminationType.Tail, 4, fec.SchedulingType.Serial, fec.MapType.MaxLogMap);
     code{4} = fec.LdpcCode(H, 20, fec.BpType.TrueBp);
     code{5} = fec.LdpcCode(H, 20, fec.BpType.MinSumBp);
     
     matlabEncoder{1} = comm.ConvolutionalEncoder('TrellisStructure', trellis, 'TerminationMethod', 'Truncated');
     matlabDecoder{1} = comm.ViterbiDecoder('TrellisStructure', trellis, 'TerminationMethod', 'Truncated', 'TracebackDepth', T);
     matlabEncoder{2} = comm.TurboEncoder('TrellisStructure', trellis, 'InterleaverIndices', pi);
-    matlabDecoder{2} = comm.TurboDecoder('TrellisStructure', trellis, 'InterleaverIndices', pi, 'Algorithm', 'Max*', 'NumIterations', 4);
+    matlabDecoder{2} = comm.TurboDecoder('TrellisStructure', trellis, 'InterleaverIndices', pi, 'Algorithm', 'True APP', 'NumIterations', 4);
     matlabEncoder{3} = comm.TurboEncoder('TrellisStructure', trellis, 'InterleaverIndices', pi);
     matlabDecoder{3} = comm.TurboDecoder('TrellisStructure', trellis, 'InterleaverIndices', pi, 'Algorithm', 'Max', 'NumIterations', 4);
     matlabEncoder{4} = comm.LDPCEncoder(H);

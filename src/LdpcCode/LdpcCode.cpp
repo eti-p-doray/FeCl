@@ -60,7 +60,7 @@ Code(&structure_, workGroupSize)
     throw std::invalid_argument("Invalid size for message");
   }
   
-  syndrome.resize(blocCount * codeStructure_.parityCheck().rows());
+  syndrome.resize(blocCount * codeStructure_.checks().rows());
   
   auto syndromeIt = syndrome.begin();
   auto parityIt = parity.begin();
@@ -68,7 +68,7 @@ Code(&structure_, workGroupSize)
   for (size_t i = 0; i < blocCount; ++i) {
     codeStructure_.syndrome(parityIt, syndromeIt);
     parityIt += codeStructure_.paritySize();
-    syndromeIt += codeStructure_.parityCheck().rows();
+    syndromeIt += codeStructure_.checks().rows();
   }
 }*/
 
@@ -192,7 +192,7 @@ LdpcCode::Structure::Structure(SparseBitMatrix&& H, size_t iterationCount, Decod
  */
 void LdpcCode::Structure::syndrome(std::vector<uint8_t>::const_iterator parity, std::vector<uint8_t>::iterator syndrome) const
 {
-  for (auto parityEq = parityCheck().begin(); parityEq < parityCheck().end(); ++parityEq, ++syndrome) {
+  for (auto parityEq = checks().begin(); parityEq < checks().end(); ++parityEq, ++syndrome) {
     for (auto parityBit = parityEq->begin(); parityBit < parityEq->end(); ++parityBit) {
       *syndrome ^= parity[*parityBit];
     }
@@ -206,7 +206,7 @@ void LdpcCode::Structure::syndrome(std::vector<uint8_t>::const_iterator parity, 
  */
 bool LdpcCode::Structure::check(std::vector<uint8_t>::const_iterator parity) const
 {
-  for (auto parityEq = parityCheck().begin(); parityEq < parityCheck().end(); ++parityEq) {
+  for (auto parityEq = checks().begin(); parityEq < checks().end(); ++parityEq) {
     bool syndrome;
     for (auto parityBit = parityEq->begin(); parityBit < parityEq->end(); ++parityBit) {
       syndrome ^= parity[*parityBit];

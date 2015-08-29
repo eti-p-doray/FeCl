@@ -46,6 +46,13 @@ namespace fec {
 class BpDecoder
 {
 public:
+  class Structure {
+  public:
+    
+  private:
+    
+  };
+  
   static std::unique_ptr<BpDecoder> create(const LdpcCode::Structure&);
   virtual ~BpDecoder() = default;
   

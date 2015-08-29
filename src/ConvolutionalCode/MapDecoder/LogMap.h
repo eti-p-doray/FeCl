@@ -32,35 +32,30 @@
 #include <algorithm>
 #include <cmath>
 
-#include "MapDecoderImpl.h"
-
 namespace fec {
 
 /**
  *  This class contains implementation of log add operation.
  */
 class LogMap {
-  friend class MapDecoderImpl<LogMap>;
 public:
+  static LlrType threshold() {return 0.0;}
   
-private:
   /**
    * Computes log add operation.
    *  \param  a First operand
    *  \param  b Second operand
    */
-  static inline LlrType logAdd(LlrType a, LlrType b) {
+  static inline LlrType step(LlrType a, LlrType b) {
    /* LlrType sum = std::max(a,b);
     if (sum == -MAX_LLR) {
       return sum;
     }
     return sum + log1pexp(-fabs(a-b));*/
-    if (a+b == MAX_LLR) {
+
+    /*if (isnan(a+b)) {
       return -std::numeric_limits<double>::infinity();
-    }
-    if (isnan(a+b)) {
-      return -std::numeric_limits<double>::infinity();
-    }
+    }*/
     return a+b;
   }
   static inline LlrType log1pexp(LlrType x) {
@@ -75,23 +70,20 @@ private:
     }*/
   }
   static inline LlrType f(LlrType x) {
-    LlrType ans = exp(x);
-    if (ans == MAX_LLR) {
-      return THRESHOLD_LLR;
-    }
-    if (isnan(exp(x))) {
+    return exp(x);
+    /*if (isnan(exp(x))) {
       return -std::numeric_limits<double>::infinity();
-    }
-    return ans;
+    }*/
+    //return ans;
     //return x;
   }
   static inline LlrType b(LlrType x) {
-    if (x == 0.0) {
+    /*if (x == 0.0) {
       return -MAX_LLR;
-    }
-    if (isnan(log(x))) {
+    }*/
+    /*if (isnan(log(x))) {
       return -std::numeric_limits<double>::infinity();
-    }
+    }*/
     return log(x);
     //return x;
   }
