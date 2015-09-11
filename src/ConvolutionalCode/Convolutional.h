@@ -29,13 +29,10 @@
 #ifndef CONVOLUTIONAL_CODE_H
 #define CONVOLUTIONAL_CODE_H
 
-#include <thread>
-
-#include <boost/serialization/export.hpp>
-
 #include "../Code.h"
-#include "../Structure/Trellis.h"
-#include "../Structure/BitField.h"
+#include "ConvolutionalStructure.h"
+#include "MapDecoder/MapStructure.h"
+#include "ViterbiDecoder/ViterbiStructure.h"
 
 namespace fec {
 
@@ -72,25 +69,17 @@ public:
     Tail, /**< The state is brought to zero by implicitly adding new msg bit */
     Truncation /**< The state is forced to zero by truncating the trellis */
   };
-  /**
-   *  Decoder type
-   *  This specifies the decode algorithm used in app decoding.
-   */
-  enum DecoderType {
-    LogMap, /**< No approximation is used and the L-values are computed in logarithmic domain. */
-    MaxLogMap,  /**< The maxlog approximation is used */
-  };
   
   /**
    *  This class represents a convolutional code structure.
    *  It provides a usefull interface to store and acces the structure information.
    */
-  class Structure : public Code::Structure {
+  Structure : public Code::Structure {
     friend class ::boost::serialization::access;
   public:
     
     Structure() = default;
-    Structure(Trellis trellis, size_t blocSize, TerminationType terminationType = Truncation, DecoderType type = MaxLogMap);
+    Structure(Trellis trellis, size_t blocSize, TerminationType terminationType = Truncation);
     virtual ~Structure() = default;
     
     virtual const char * get_key() const;
@@ -101,10 +90,7 @@ public:
     inline size_t tailSize() const {return tailSize_;}
     inline size_t msgTailSize() const {return tailSize_ * trellis().inputSize();}
     inline TerminationType terminationType() const {return terminationType_;}
-    inline DecoderType decoderType() const {return decoderType_;}
     inline const Trellis& trellis() const {return trellis_;}
-    
-    inline void setDecoderType(DecoderType type) {decoderType_ = type;}
     
     BitField<uint64_t> encode(std::vector<uint8_t>::const_iterator msg, std::vector<uint8_t>::iterator parity) const;
     
@@ -115,29 +101,48 @@ public:
       ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(Code::Structure);
       ar & ::BOOST_SERIALIZATION_NVP(trellis_);
       ar & ::BOOST_SERIALIZATION_NVP(terminationType_);
-      ar & ::BOOST_SERIALIZATION_NVP(decoderType_);
       ar & ::BOOST_SERIALIZATION_NVP(tailSize_);
       ar & ::BOOST_SERIALIZATION_NVP(blocSize_);
     }
     
     Trellis trellis_;
     TerminationType terminationType_;
-    DecoderType decoderType_;
     size_t tailSize_;
     size_t blocSize_;
   };
   
+  class Decoder {
+    friend class ::boost::serialization::access;
+  public:
+    Decoder(DecoderType type);
+    
+    LlrType threshold() const {return 100.0;}
+    LlrType max() const {return std::numeric_limits<LlrType>::infinity();}
+    
+  private:
+    template <typename Archive>
+    void serialize(Archive & ar, const unsigned int version) {
+      using namespace boost::serialization;
+      ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(Code::Decoder);
+    }
+  };
   
   ConvolutionalCode() = default;
-  ConvolutionalCode(const Structure& structure, int workGroupdSize = 4);
+  ConvolutionalCode(const Structure& structure, const Decoder& decoder, int workGroupdSize = 4);
   virtual ~ConvolutionalCode() = default;
   
   virtual const char * get_key() const;
   
-  inline void setDecoderType(DecoderType type) {structure_.setDecoderType(type);}
-
-protected:
+  inline const Structure& structure() const {return structure_;}
+  inline Structure& structure() {return structure_;}
   
+  MapDecoder::Structure& mapDecoder();
+  const MapDecoder::Structure& mapDecoder() const;
+  
+  ViterbiDecoder::Structure& viterbiDecoder();
+  const ViterbiDecoder::Structure& viterbiDecoder() const;
+  
+protected:
   virtual void encodeBloc(std::vector<uint8_t>::const_iterator messageIt, std::vector<uint8_t>::iterator parityIt) const;
 
   virtual void appDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n) const;
@@ -149,17 +154,20 @@ private:
   void serialize(Archive & ar, const unsigned int version) {
     using namespace boost::serialization;
     ar & ::BOOST_SERIALIZATION_NVP(structure_);
-    ar.template register_type<Structure>();
     ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(Code);
+    ar & ::BOOST_SERIALIZATION_NVP(mapStructure_);
+    ar & ::BOOST_SERIALIZATION_NVP(viterbiStructure_);
   }
   
   Structure structure_;
+  MapDecoder::Structure mapStructure_;
+  ViterbiDecoder::Structure viterbiStructure_;
 };
   
 }
 
-BOOST_CLASS_TYPE_INFO(fec::ConvolutionalCode,extended_type_info_no_rtti<fec::ConvolutionalCode>);
-BOOST_CLASS_EXPORT_KEY(fec::ConvolutionalCode);
+BOOST_CLASS_TYPE_INFO(fec::ConvolutionalCode::Structure,extended_type_info_no_rtti<fec::ConvolutionalCode::Structure>);
+BOOST_CLASS_EXPORT_KEY(fec::ConvolutionalCode::Structure);
 BOOST_CLASS_TYPE_INFO(fec::ConvolutionalCode::Structure,extended_type_info_no_rtti<fec::ConvolutionalCode::Structure>);
 BOOST_CLASS_EXPORT_KEY(fec::ConvolutionalCode::Structure);
 

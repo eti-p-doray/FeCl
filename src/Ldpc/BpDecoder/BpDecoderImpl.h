@@ -43,70 +43,31 @@ namespace fec {
    *  while allowing the compiler to inline implementation specific functions
    *  by using templates instead of polymorphism.
    */
-template <typename A>
-class BpDecoderImpl : public BpDecoder {
-public:
-  BpDecoderImpl(const LdpcCode::Structure& codeStructure);
-  ~BpDecoderImpl() = default;
-  
-protected:
-  virtual void checkUpdate();
-  virtual void bitUpdate(std::vector<LlrType>::const_iterator parity);
-};
-
-template <typename A>
-BpDecoderImpl<A>::BpDecoderImpl(const LdpcCode::Structure& codeStructure) : BpDecoder(codeStructure)
-{
-  
-}
-
-template <typename A>
-void BpDecoderImpl<A>::checkUpdate()
-{
-  auto checkMetric = checkMetrics_.begin();
-  auto checkMetricTmp = checkMetricsBuffer_.begin();
-  for (auto check = codeStructure().checks().begin(); check < codeStructure().checks().end();  ++check) {
-    auto first = checkMetric;
-    size_t size = check->size();
+  template <class LlrMetrics, template <class> class BoxSumAlg>
+  class BpDecoderImpl : public BpDecoder {
+  public:
+    BpDecoderImpl(const Ldpc::Structure& structure);
+    ~BpDecoderImpl() = default;
     
-    LlrType prod = A::f(*first);
-    for (size_t j = 1; j < size-1; ++j) {
-      checkMetricTmp[j] = A::f(first[j]);
-      first[j] = prod;
-      prod = A::step(prod, checkMetricTmp[j]);
-    }
-    checkMetricTmp[size-1] = A::f(first[size-1]);
-    first[size-1] = A::b(prod);
-    prod = checkMetricTmp[size-1];
-    for (size_t j = size-2; j > 0; --j) {
-      first[j] = A::b( A::step(first[j], prod) );
-      prod = A::step(prod, checkMetricTmp[j]);
-    }
-    *first = A::b(prod);
+  protected:
+    virtual void decodeBlock(std::vector<LlrType>::const_iterator parity, std::vector<BitField<bool>>::iterator msg);
+    virtual void soDecodeBlock(Code::InputIterator input, Code::
+                               OutputIterator output);
     
-    checkMetric += size;
-  }
-}
-
-template <typename A>
-void BpDecoderImpl<A>::bitUpdate(std::vector<LlrType>::const_iterator parity)
-{
-  std::fill(bitMetrics_.begin(), bitMetrics_.end(), 0);
-  for (size_t i = 0; i < codeStructure().checks().size(); ++i) {
-    checkMetricsBuffer_[i] = checkMetrics_[i];
-    LlrType& ref = bitMetrics_[codeStructure().checks().at(i)];
-    checkMetrics_[i] = ref;
-    ref += checkMetricsBuffer_[i];
-  }
-  
-  std::copy(parity, parity + bitMetrics_.size(), bitMetrics_.begin());
-  
-  for (int64_t i = codeStructure().checks().size() - 1; i >= 0; --i) {
-    LlrType& ref = bitMetrics_[codeStructure().checks().at(i)];
-    checkMetrics_[i] += ref;
-    ref += checkMetricsBuffer_[i];
-  }
-}
+  private:
+    void checkUpdate();
+    void bitUpdate();
+    
+    std::vector<uint8_t> hardParity_;
+    
+    std::vector<typename LlrMetrics::Type> parity_;
+    std::vector<typename LlrMetrics::Type> bitMetrics_;
+    std::vector<typename LlrMetrics::Type> checkMetrics_;
+    std::vector<typename LlrMetrics::Type> checkMetricsBuffer_;
+    
+    LlrMetrics llrMetrics_;
+    BoxSumAlg<LlrMetrics> boxSum_;
+  };
   
 }
 

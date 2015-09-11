@@ -1,5 +1,6 @@
 /*******************************************************************************
  Copyright (c) 2015, Etienne Pierre-Doray, INRS
+ Copyright (c) 2015, Leszek Szczecinski, INRS
  All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
@@ -26,10 +27,11 @@
  Declaration of TurboCodeImpl class
  ******************************************************************************/
 
-#ifndef TURBO_CODE_IMPL_H
-#define TURBO_CODE_IMPL_H
+#ifndef TURBO_DECODER_H
+#define TURBO_DECODER_H
 
-#include "../TurboCode.h"
+#include "../Turbo.h"
+#include "../../Convolutional/MapDecoder/MapDecoder.h"
 
 namespace fec {
 
@@ -37,41 +39,34 @@ namespace fec {
    *  This class contains the implementation of iterative decoder.
    *  This algorithm is used for decoding in a TurboCode.
    */
-class TurboDecoder
-{
-public:
-  class Structure {
+  class TurboDecoder
+  {
   public:
+    static std::unique_ptr<TurboDecoder> create(const Turbo::Structure&);
+    virtual ~TurboDecoder() = default;
+    
+    inline const Turbo::Structure& structure() const {return structure_;}
+    
+    void decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<bool>>::iterator msg, size_t n);
+    void soDecodeBlocks(Code::InputIterator input, Code::OutputIterator output, size_t n);
+    
+  protected:
+    TurboDecoder(const Turbo::Structure& codeStructure);
+    TurboDecoder() = default;
+    
+    virtual void decodeBlock(std::vector<LlrType>::const_iterator parity, std::vector<BitField<bool>>::iterator msg) = 0;
+    virtual void soDecodeBlock(Code::InputIterator input, Code::OutputIterator output) = 0;
+    
+    std::vector<std::unique_ptr<MapDecoder>> code_;
+    
+    std::vector<LlrType> extrinsic_;
+    std::vector<LlrType> extrinsicBuffer_;
+    std::vector<LlrType> systIn_;
+    std::vector<LlrType> systOut_;
     
   private:
-    
+    Turbo::Structure structure_;
   };
-  
-  TurboDecoder(const TurboCode::Structure& codeStructure) : codeStructure_(codeStructure) {
-    for (size_t i = 0; i < codeStructure_.constituentCount(); ++i) {
-      code_.push_back(MapDecoder::create(codeStructure_.constituent(i)));
-    }
-  }
-  virtual ~TurboCodeImpl() = default;
-  
-  
-  inline size_t extrinsicSize() const {return codeStructure_.extrinsicSize();}
-  inline const TurboCode::Structure& structure() const {return codeStructure_;}
-  
-  void appDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n) const;
-  
-protected:
-  TurboDecoder() = default;
-
-private:
-  virtual void appDecodeBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n) const;
-  
-  //void serialDecodeBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut) const;
-  //void parallelDecodeBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut) const;
-  
-  std::vector<std::unique_ptr<MapDecoder>> code_;
-  TurboCode::Structure codeStructure_;
-};
   
 }
 

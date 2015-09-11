@@ -97,7 +97,6 @@ ConvolutionalCode::Structure::Structure(Trellis trellis, size_t blocSize, Termin
   switch (terminationType_) {
     case Tail:
       paritySize_ += trellis_.stateSize() * trellis.outputSize();
-      extrinsicSize_ += trellis_.stateSize() * trellis.inputSize();
       tailSize_ = trellis_.stateSize();
       break;
       

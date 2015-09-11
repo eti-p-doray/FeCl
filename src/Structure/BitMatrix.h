@@ -403,6 +403,8 @@ public:
   public:
     inline void operator++() {++rowIdx_;}
     inline void operator--() {--rowIdx_;}
+    inline void operator++(int) {++rowIdx_;}
+    inline void operator--(int) {--rowIdx_;}
     
     inline void operator+=(size_t x) {rowIdx_ += x;}
     inline void operator-=(size_t x) {rowIdx_ -= x;}

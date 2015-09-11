@@ -23,53 +23,32 @@
  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  
- Convolutional code example
+ Declaration of MaxLogMapDecoder abstract class
  ******************************************************************************/
 
-#include <vector>
-#include <random>
-#include <memory>
-#include <iostream>
+#ifndef MAX_LOG_MAP_H
+#define MAX_LOG_MAP_H
 
-#include "Convolutional/Convolutional.h"
+#include <algorithm>
+#include <cmath>
 
-#include "operations.h"
+namespace fec {
 
-int main( int argc, char* argv[] )
-{
-  //! [Creating a Convolutional code]
-  //! [Creating a Convolutional code structure]
-  //! [Creating a trellis]
-  /*
-   We are creating a trellis structure with 1 input bit.
-   The constraint length is 3, which means there are 2 registers associated
-   with the input bit.
-   There are two output bits, the first one with generator 4 (in octal) associated
-   with the input bit.
+  /**
+   *  This class contains implementation of the max approximation for log add operation.
    */
-  fec::Trellis trellis({3}, {{05, 07}}, {05});
-  //! [Creating a trellis]
-  
-  /*
-   The trellis is used to create a code structure.
-   We specify that one bloc will conatins 256 branches before being terminated.
+class MaxLogSum {
+public:
+  /**
+   * Computes log add operation with max approximation.
+   *  \param  a First operand
+   *  \param  b Second operand
    */
-  auto encoder = fec::Convolutional::EncoderOptions(trellis, 32400).termination(fec::Convolutional::Truncation);
-  auto decoder = fec::Convolutional::DecoderOptions().decoderType(fec::Code::Exact).metricType(fec::Code::Floating);
-  //! [Creating a Convolutional code structure]
+  static inline LlrType updateStep(LlrType a, LlrType b) {return std::max(a,b);}
+  static inline LlrType priorStep(LlrType x) {return x;}
+  static inline LlrType postStep(LlrType x) {return x;}
+};
   
-  /*
-   A code is created and ready to operate
-   */
-  std::unique_ptr<fec::Code> code = fec::Code::create(fec::Convolutional::Structure(encoder, decoder), 1);
-  //! [Creating a Convolutional code]
-  
-  std::cout << per(code, 0.0) << std::endl;
-  
-  decoder.decoderType(fec::Code::Table);
-  code = fec::Code::create(fec::Convolutional::Structure(encoder, decoder), 1);
-  
-  std::cout << per(code, 0.0) << std::endl;
-  
-  return 0;
 }
+
+#endif

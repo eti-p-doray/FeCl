@@ -23,72 +23,46 @@
  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  
- Declaration of LogMapDecoder abstract class
+ Declaration of BpDecoder abstract class
  ******************************************************************************/
 
-#ifndef LOG_MAP_H
-#define LOG_MAP_H
+#include "BpDecoder.h"
+#include "BpDecoderImpl.h"
 
-#include <algorithm>
-#include <cmath>
+using namespace fec;
 
-namespace fec {
-
-/**
- *  This class contains implementation of log add operation.
- */
-class LogMap {
-public:
-  static LlrType threshold() {return 0.0;}
-  
-  /**
-   * Computes log add operation.
-   *  \param  a First operand
-   *  \param  b Second operand
-   */
-  static inline LlrType step(LlrType a, LlrType b) {
-   /* LlrType sum = std::max(a,b);
-    if (sum == -MAX_LLR) {
-      return sum;
-    }
-    return sum + log1pexp(-fabs(a-b));*/
-
-    /*if (isnan(a+b)) {
-      return -std::numeric_limits<double>::infinity();
-    }*/
-    return a+b;
+std::unique_ptr<BpDecoder> BpDecoder::create(const Ldpc::Structure& structure)
+{
+  switch (structure.decoderType()) {
+    default:
+    case Code::Exact:
+      return std::unique_ptr<BpDecoder>(new BpDecoderImpl<FloatLlrMetrics,BoxSum>(structure));
+      break;
+      
+    case Code::Approximate:
+      return std::unique_ptr<BpDecoder>(new BpDecoderImpl<FloatLlrMetrics,MinBoxSum>(structure));
+      break;
   }
-  static inline LlrType log1pexp(LlrType x) {
-    //else if (x < 18.0) {
-      return log1p(exp(x));
-    //}
-    /*else if (x < 33.3) {
-      return x+exp(-x);
-    }
-    else {
-      return x;
-    }*/
-  }
-  static inline LlrType f(LlrType x) {
-    return exp(x);
-    /*if (isnan(exp(x))) {
-      return -std::numeric_limits<double>::infinity();
-    }*/
-    //return ans;
-    //return x;
-  }
-  static inline LlrType b(LlrType x) {
-    /*if (x == 0.0) {
-      return -MAX_LLR;
-    }*/
-    /*if (isnan(log(x))) {
-      return -std::numeric_limits<double>::infinity();
-    }*/
-    return log(x);
-    //return x;
-  }
-};
-  
 }
 
-#endif
+void BpDecoder::decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<bool>>::iterator msg, size_t n)
+{
+  for (size_t i = 0; i < n; ++i) {
+    decodeBlock(parity, msg);
+    parity += structure().paritySize();
+    msg += structure().msgSize();
+  }
+}
+
+void BpDecoder::soDecodeBlocks(Code::InputIterator input, Code::OutputIterator output, size_t n)
+{
+  for (size_t i = 0; i < n; ++i) {
+    soDecodeBlock(input, output);
+    ++input;
+    ++output;
+  }
+}
+
+BpDecoder::BpDecoder(const Ldpc::Structure& structure) : structure_(structure)
+{
+}

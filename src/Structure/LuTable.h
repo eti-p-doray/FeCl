@@ -1,5 +1,6 @@
 /*******************************************************************************
  Copyright (c) 2015, Etienne Pierre-Doray, INRS
+ Copyright (c) 2015, Leszek Szczecinski, INRS
  All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
@@ -23,46 +24,44 @@
  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  
- Ldpc code example
+ Declaration of LlrMetrics class
  ******************************************************************************/
 
-#include <vector>
-#include <random>
-#include <memory>
-#include <iostream>
+#ifndef LU_TABLE_H
+#define LU_TABLE_H
 
-#include "Ldpc/Ldpc.h"
+#include <type_traits>
+#include <cmath>
+#include <array>
 
-#include "operations.h"
-
-int main( int argc, char* argv[] )
-{
-  //! [Creating an ldpc code]
-  //! [Creating an ldpc code structure]
-  //! [Creating an ldpcMatrix]
-  /*
-   We are creating an ldpc matrix
-   */
-  auto checkMatrix = fec::Ldpc::Structure::gallagerConstruction(1024, 8, 16);
-  //! [Creating an ldpcMatrix]
+//chanco
+namespace fec {
   
+  template <typename T, size_t N>
+  class LuTable {
+  public:
+    template <class F>
+    LuTable(F f) {
+      for (size_t i = 0; i < N; ++i) {
+        y[i] = f(i);
+      }
+      for (size_t i = 0; i < N-1; ++i) {
+        dy[i] = y[i+1] - y[i];
+        y[i] -= dy[i] * i;
+      }
+      dy[N-1] = 0;
+    }
+    
+    T operator () (T x) const {
+      size_t i = x;
+      return dy[i] * x + y[i];
+    }
+    
+  private:
+    std::array<T,N> dy;
+    std::array<T,N> y;
+  };
   
-  auto encoder = fec::Ldpc::EncoderOptions(checkMatrix);
-  auto decoder = fec::Ldpc::DecoderOptions().iterations(50).decoderType(fec::Code::Approximate);
-  
-  /*
-   The matrix is used to create a code structure.
-   */
-  fec::Ldpc::Structure structure(encoder, decoder);
-  //! [Creating a Turbo code structure]
-  
-  /*
-   A code is created and ready to operate
-   */
-  std::unique_ptr<fec::Code> code = fec::Code::create(structure, 1);
-  //! [Creating an ldpc code]
-  
-  std::cout << per(code, 0.5) << std::endl;
-  
-  return 0;
 }
+
+#endif

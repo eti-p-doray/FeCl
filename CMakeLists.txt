@@ -18,13 +18,17 @@ endif (UNIX)
 set(SOURCES
   src/Code.cpp
   src/Structure/Trellis.cpp
-  src/ConvolutionalCode/ConvolutionalCode.cpp
-  src/ConvolutionalCode/MapDecoder/MapDecoder.cpp
-  src/ConvolutionalCode/ViterbiDecoder/ViterbiDecoder.cpp
-  src/TurboCode/TurboCode.cpp
-  src/TurboCode/TurboCodeImpl.cpp
-  src/LdpcCode/LdpcCode.cpp
-  src/LdpcCode/BpDecoder/BpDecoder.cpp
+  src/Convolutional/Convolutional.cpp
+  src/Convolutional/MapDecoder/MapDecoder.cpp
+  src/Convolutional/MapDecoder/MapDecoderImpl.cpp
+  src/Convolutional/ViterbiDecoder/ViterbiDecoder.cpp
+  src/Convolutional/ViterbiDecoder/ViterbiDecoderImpl.cpp
+  src/Turbo/Turbo.cpp
+  src/Turbo/TurboDecoder/TurboDecoder.cpp
+  src/Turbo/TurboDecoder/TurboDecoderImpl.cpp
+  src/Ldpc/Ldpc.cpp
+  src/Ldpc/BpDecoder/BpDecoder.cpp
+  src/Ldpc/BpDecoder/BpDecoderImpl.cpp
 )
 
 add_library (core OBJECT ${SOURCES})
@@ -38,7 +42,7 @@ add_library (fecStatic STATIC $<TARGET_OBJECTS:core>)
 target_link_libraries(fecStatic ${Boost_LIBRARIES})
 target_include_directories(fecStatic PUBLIC ${Boost_INCLUDE_DIRS})
 
-add_subdirectory(+fec)
+#add_subdirectory(+fec)
 
 if (UNIX)
   install(TARGETS fec DESTINATION lib)
@@ -59,12 +63,12 @@ if(DOXYGEN_FOUND)
 endif(DOXYGEN_FOUND)
 
 enable_testing()
-add_executable(test_code testCpp/code.cpp)
-target_include_directories(test_code PUBLIC ${CMAKE_SOURCE_DIR}/src)
-target_include_directories(test_code PUBLIC ${Boost_INCLUDE_DIRS})
-target_link_libraries(test_code fecStatic)
-target_link_libraries(test_code ${Boost_LIBRARIES})
-add_test(code test_code)
+#add_executable(test_code testCpp/code.cpp)
+#target_include_directories(test_code PUBLIC ${CMAKE_SOURCE_DIR}/src)
+#target_include_directories(test_code PUBLIC ${Boost_INCLUDE_DIRS})
+#target_link_libraries(test_code fecStatic)
+#target_link_libraries(test_code ${Boost_LIBRARIES})
+#add_test(code test_code)
 
 add_executable(example_Convolutional exampleCpp/Convolutional.cpp)
 target_include_directories(example_Convolutional PUBLIC ${CMAKE_SOURCE_DIR}/src)

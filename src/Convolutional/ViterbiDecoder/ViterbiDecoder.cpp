@@ -23,38 +23,44 @@
  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  
- Declaration of MaxLogMapDecoder abstract class
+ Declaration of MapDecoder abstract class
  ******************************************************************************/
 
-#ifndef MAX_LOG_MAP_H
-#define MAX_LOG_MAP_H
+#include "ViterbiDecoder.h"
+#include "ViterbiDecoderImpl.h"
 
-#include <algorithm>
-#include <cmath>
+using namespace fec;
 
-namespace fec {
-
-  /**
-   *  This class contains implementation of the max approximation for log add operation.
-   */
-class MaxLogMap {
-public:
-  static LlrType threshold() {return 100.0;}
-
-  /**
-   * Computes log add operation with max approximation.
-   *  \param  a First operand
-   *  \param  b Second operand
-   */
-  static inline LlrType step(LlrType a, LlrType b) {return std::max(a,b);}
-  static inline LlrType f(LlrType x) {
-    return x;
-  }
-  static inline LlrType b(LlrType x) {
-    return x;
-  }
-};
-  
+/**
+ *  MapDecoder creator function.
+ *  Construct in a factory behavior a MapCode object corresponding to the algorithm
+ *  version in use.
+ *  \param  codeStructure Convolutional code structure describing the code
+ *  \return MacDecoder specialization suitable for the algorithm in use
+ */
+std::unique_ptr<ViterbiDecoder> ViterbiDecoder::create(const Convolutional::Structure& structure)
+{
+  return std::unique_ptr<ViterbiDecoder>(new ViterbiDecoderImpl<FloatLlrMetrics>(structure));
 }
 
-#endif
+/**
+ *  Implementation of Code#decodeNBloc
+ */
+void ViterbiDecoder::decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<bool>>::iterator msg, size_t n)
+{
+  for (size_t i = 0; i < n; i++) {
+    decodeBlock(parity, msg);
+    parity += structure().trellis().outputSize() * (structure().length() + structure().tailSize());
+    msg += structure().trellis().inputSize() * structure().length();
+  }
+}
+
+/**
+ *  Constructor.
+ *  Allocates metric buffers based on the given code structure.
+ *  \param  codeStructure Convolutional code structure describing the code
+ */
+ViterbiDecoder::ViterbiDecoder(const Convolutional::Structure& structure) :
+structure_(structure)
+{
+}

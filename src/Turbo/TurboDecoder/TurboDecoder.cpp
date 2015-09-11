@@ -1,5 +1,6 @@
 /*******************************************************************************
  Copyright (c) 2015, Etienne Pierre-Doray, INRS
+ Copyright (c) 2015, Leszek Szczecinski, INRS
  All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
@@ -23,63 +24,44 @@
  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  
- Declaration of TrueBp class
+ Definition of TurboCodeImpl class
  ******************************************************************************/
 
-#ifndef TRUE_BP_H
-#define TRUE_BP_H
+#include "TurboDecoder.h"
+#include "TurboDecoderImpl.h"
 
-#include <algorithm>
-#include <cmath>
+using namespace fec;
 
-#include "BpDecoderImpl.h"
-#include "../LdpcCode.h"
-
-namespace fec {
-
-/**
- *  This class contains implementation of boxplus operation.
- */
-class TrueBp {
-public:
-  static inline void checkMetric(std::vector<LlrType>::iterator first, std::vector<LlrType>::iterator last, std::vector<LlrType>::iterator buffer)
-  {
-    auto tmp = buffer;
-    for (auto metric = first; metric < last; ++metric, ++tmp) {
-      *tmp = tanh(-*metric/2.0);
-    }
-    
-    LlrType prod = *buffer;
-    tmp = buffer + 1;
-    for (auto metric = first+1; metric < last-1; ++metric, ++tmp) {
-      *metric = prod;
-      prod *= *tmp;
-    }
-    *(last-1) = -2.0*atanh(prod);
-    prod = *tmp;
-    --tmp;
-    for (auto metric = last-2; metric > first; --metric, --tmp) {
-      *metric *= prod;
-      *metric = -2.0*atanh(*metric);
-      prod *= *tmp;
-    }
-    *first = -2.0*atanh(prod);
-  }
-  
-  static inline LlrType f(LlrType x)
-  {
-    return std::tanh(-x/2.0);
-  }
-  static inline LlrType b(LlrType x)
-  {
-    return -2.0*std::atanh(x);
-  }
-  static inline LlrType step(LlrType a, LlrType b)
-  {
-    return a*b;
-  }
-};
-  
+std::unique_ptr<TurboDecoder> TurboDecoder::create(const Turbo::Structure& structure)
+{
+  return std::unique_ptr<TurboDecoder>(new TurboDecoderImpl(structure));
 }
 
-#endif
+TurboDecoder::TurboDecoder(const Turbo::Structure& structure) : structure_(structure)
+{
+  for (size_t i = 0; i < this->structure().constituentCount(); ++i) {
+    code_.push_back(MapDecoder::create(this->structure().constituent(i)));
+  }
+  extrinsic_.resize(this->structure().stateSize());
+  extrinsicBuffer_.resize(this->structure().stateSize());;
+  systIn_.resize(this->structure().systSize());
+  systOut_.resize(this->structure().systSize());
+}
+
+void TurboDecoder::decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<bool>>::iterator msg, size_t n)
+{
+  for (size_t i = 0; i < n; ++i) {
+    decodeBlock(parity, msg);
+    parity += structure().paritySize();
+    msg += structure().msgSize();
+  }
+}
+
+void TurboDecoder::soDecodeBlocks(Code::InputIterator input, Code::OutputIterator output, size_t n)
+{
+  for (size_t i = 0; i < n; ++i) {
+    soDecodeBlock(input, output);
+    ++input;
+    ++output;
+  }
+}

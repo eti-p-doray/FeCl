@@ -1,5 +1,6 @@
 /*******************************************************************************
  Copyright (c) 2015, Etienne Pierre-Doray, INRS
+ Copyright (c) 2015, Leszek Szczecinski, INRS
  All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
@@ -26,13 +27,13 @@
  Declaration of ViterbiDecoder class
  ******************************************************************************/
 
-#ifndef VITERBI_DECODER_H
-#define VITERBI_DECODER_H
+#ifndef VITERBI_DECODER_IMPL_H
+#define VITERBI_DECODER_IMPL_H
 
 #include <vector>
 #include <memory>
 
-#include "../ConvolutionalCode.h"
+#include "ViterbiDecoder.h"
 
 namespace fec {
 
@@ -40,37 +41,25 @@ namespace fec {
  *  This class contains the implementation of the viterbi decoder.
  *  This algorithm is used for simple decoding in a ConvolutionalCode.
  */
-class ViterbiDecoder
-{
-public:
-  
-  class Structure {
+  template <class LlrMetrics>
+  class ViterbiDecoderImpl : public ViterbiDecoder
+  {
   public:
+    ViterbiDecoderImpl(const Convolutional::Structure&);
+    ~ViterbiDecoderImpl() = default;
     
-  private:
+    virtual void decodeBlock(std::vector<LlrType>::const_iterator parity, std::vector<BitField<bool>>::iterator msg);
     
-  };
-  
-  ViterbiDecoder(const ConvolutionalCode::Structure& codeStructure);
-  ~ViterbiDecoder() = default;
-  
-  void decodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<uint8_t>::iterator messageOut, size_t n);
-  void decodeBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<uint8_t>::iterator messageOut);
-  
-protected:
-  
-  inline const ConvolutionalCode::Structure& codeStructure() const {return codeStructure_;}
-  
-  std::vector<LlrType> previousPathMetrics;
-  std::vector<LlrType> nextPathMetrics;
-  std::vector<LlrType> branchMetrics;
-  std::vector<BitField<uint16_t>> stateTraceBack;
-  std::vector<BitField<uint16_t>> inputTraceBack;
+  protected:
+    std::vector<typename LlrMetrics::Type> previousPathMetrics_;
+    std::vector<typename LlrMetrics::Type> nextPathMetrics_;
+    std::vector<typename LlrMetrics::Type> branchMetrics_;
+    std::vector<BitField<uint16_t>> stateTraceBack_;
+    std::vector<BitField<uint16_t>> inputTraceBack_;
 
-private:
-  
-  const ConvolutionalCode::Structure codeStructure_;
-};
+  private:    
+    FloatLlrMetrics llrMetrics_;
+  };
   
 }
 

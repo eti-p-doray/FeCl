@@ -23,53 +23,48 @@
  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  
- Convolutional code example
+ Declaration of BpDecoder class
  ******************************************************************************/
 
+#ifndef BP_DECODER_H
+#define BP_DECODER_H
+
 #include <vector>
-#include <random>
 #include <memory>
-#include <iostream>
 
-#include "Convolutional/Convolutional.h"
+#include "../Ldpc.h"
 
-#include "operations.h"
+namespace fec {
 
-int main( int argc, char* argv[] )
+  /**
+   *  This class contains the abstract implementation of the belief propagation decoder.
+   *  This algorithm is used for decoding in an LdpcCode.
+   *  The reason for this class is to offer an common interface of bp decoders
+   *  while allowing the compiler to inline implementation specific functions
+   *  by using templates instead of polymorphism.
+   */
+class BpDecoder
 {
-  //! [Creating a Convolutional code]
-  //! [Creating a Convolutional code structure]
-  //! [Creating a trellis]
-  /*
-   We are creating a trellis structure with 1 input bit.
-   The constraint length is 3, which means there are 2 registers associated
-   with the input bit.
-   There are two output bits, the first one with generator 4 (in octal) associated
-   with the input bit.
-   */
-  fec::Trellis trellis({3}, {{05, 07}}, {05});
-  //! [Creating a trellis]
+public:
+  static std::unique_ptr<BpDecoder> create(const Ldpc::Structure&);
+  virtual ~BpDecoder() = default;
   
-  /*
-   The trellis is used to create a code structure.
-   We specify that one bloc will conatins 256 branches before being terminated.
-   */
-  auto encoder = fec::Convolutional::EncoderOptions(trellis, 32400).termination(fec::Convolutional::Truncation);
-  auto decoder = fec::Convolutional::DecoderOptions().decoderType(fec::Code::Exact).metricType(fec::Code::Floating);
-  //! [Creating a Convolutional code structure]
+  void decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<bool>>::iterator msg, size_t n);
+  void soDecodeBlocks(Code::InputIterator input, Code::OutputIterator output, size_t n);
   
-  /*
-   A code is created and ready to operate
-   */
-  std::unique_ptr<fec::Code> code = fec::Code::create(fec::Convolutional::Structure(encoder, decoder), 1);
-  //! [Creating a Convolutional code]
+protected:
+  BpDecoder(const Ldpc::Structure& codeStructure);
   
-  std::cout << per(code, 0.0) << std::endl;
+  virtual void decodeBlock(std::vector<LlrType>::const_iterator parity, std::vector<BitField<bool>>::iterator msg) = 0;
+  virtual void soDecodeBlock(Code::InputIterator input, Code::OutputIterator output) = 0;
   
-  decoder.decoderType(fec::Code::Table);
-  code = fec::Code::create(fec::Convolutional::Structure(encoder, decoder), 1);
+  inline const Ldpc::Structure& structure() const {return structure_;}
+
+private:
   
-  std::cout << per(code, 0.0) << std::endl;
+  const Ldpc::Structure structure_;
+};
   
-  return 0;
 }
+
+#endif

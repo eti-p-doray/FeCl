@@ -23,62 +23,43 @@
  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  
- Declaration of BpDecoder class
+ Declaration of MapDecoder class
  ******************************************************************************/
 
-#ifndef BP_DECODER_H
-#define BP_DECODER_H
+#ifndef MAP_DECODER_H
+#define MAP_DECODER_H
 
 #include <vector>
 #include <memory>
 
-#include "../LdpcCode.h"
+#include "../Convolutional.h"
 
 namespace fec {
 
   /**
-   *  This class contains the abstract implementation of the belief propagation decoder.
-   *  This algorithm is used for decoding in an LdpcCode.
-   *  The reason for this class is to offer an common interface of bp decoders
+   *  This class contains the abstract implementation of the map decoder.
+   *  This algorithm is used for decoding with a-priori information
+   *  in a ConvolutionalCode.
+   *  The reason for this class is to offer an common interface of map decoders
    *  while allowing the compiler to inline implementation specific functions
    *  by using templates instead of polymorphism.
    */
-class BpDecoder
+class MapDecoder
 {
-public:
-  class Structure {
-  public:
-    
-  private:
-    
-  };
+public:  
+  static std::unique_ptr<MapDecoder> create(const Convolutional::Structure&); /**< Creating function */
+  virtual ~MapDecoder() = default; /**< Default destructor */
   
-  static std::unique_ptr<BpDecoder> create(const LdpcCode::Structure&);
-  virtual ~BpDecoder() = default;
-  
-  void appDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n);
-  void softOutDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::iterator messageOut, size_t n);
+  void soDecodeBlocks(Code::InputIterator input, Code::OutputIterator output, size_t n);
+  virtual void soDecodeBlock(Code::InputIterator input, Code::OutputIterator output) = 0;
   
 protected:
-  BpDecoder(const LdpcCode::Structure& codeStructure);
+  MapDecoder(const Convolutional::Structure&); /**< Constructor */
   
-  void appDecodeBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut);
-  void softOutDecodeBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::iterator messageOut);
-  
-  virtual void checkUpdate() = 0;
-  virtual void bitUpdate(std::vector<LlrType>::const_iterator parity) = 0;
-  
-  inline const LdpcCode::Structure& codeStructure() const {return codeStructure_;}
- 
-  std::vector<uint8_t> hardParity_;
-  
-  std::vector<LlrType> bitMetrics_;
-  std::vector<LlrType> checkMetrics_;
-  std::vector<LlrType> checkMetricsBuffer_;
+  inline const Convolutional::Structure& structure() const {return structure_;} /**< Access the code structure */
 
 private:
-  
-  const LdpcCode::Structure codeStructure_;
+  const Convolutional::Structure structure_;
 };
   
 }

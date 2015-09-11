@@ -28,9 +28,9 @@
 
 #include "Code.h"
 
-#include "ConvolutionalCode/ConvolutionalCode.h"
-#include "TurboCode/TurboCode.h"
-#include "LdpcCode/LdpcCode.h"
+#include "Convolutional/Convolutional.h"
+#include "Turbo/Turbo.h"
+#include "Ldpc/Ldpc.h"
 
 using namespace fec;
 
@@ -41,21 +41,23 @@ BOOST_CLASS_EXPORT_IMPLEMENT(Code::Structure);
  *  Code creator function.
  *  Construct in a factory behavior a code object corresponding to the structure.
  *  \param codeStructure Code object structure
- *  \workGroupSize Number of thread used in encoding and decoding.
+ *  \param codeStructure Decoder parameters
+ *  \param workGroupSize Number of thread used in encoding and decoding.
  */
-std::unique_ptr<Code> Code::create(const Code::Structure& codeStructure, int workGroupdSize)
+std::unique_ptr<Code> Code::create(const Code::Structure& structure, int workGroupSize)
 {
-  switch (codeStructure.type()) {
+  switch (structure.type()) {
     case Code::Structure::Convolutional:
-      return std::unique_ptr<Code>(new ConvolutionalCode(dynamic_cast<const ConvolutionalCode::Structure&>(codeStructure), workGroupdSize));
+      return std::unique_ptr<Code>(new Convolutional(dynamic_cast<const Convolutional::Structure&>(structure),
+                                                     workGroupSize));
       break;
       
     case Code::Structure::Turbo:
-      return std::unique_ptr<Code>(new TurboCode(dynamic_cast<const TurboCode::Structure&>(codeStructure), workGroupdSize));
+      return std::unique_ptr<Code>(new Turbo(dynamic_cast<const Turbo::Structure&>(structure), workGroupSize));
       break;
       
     case Code::Structure::Ldpc:
-      return std::unique_ptr<Code>(new LdpcCode(dynamic_cast<const LdpcCode::Structure&>(codeStructure), workGroupdSize));
+      return std::unique_ptr<Code>(new Ldpc(dynamic_cast<const Ldpc::Structure&>(structure), workGroupSize));
       break;
       
     default:
@@ -69,23 +71,11 @@ Code::Code(Code::Structure* structure, int workGroupSize) : structureRef_(struct
   workGroupSize_ = workGroupSize;
 }
 
-void Code::encodeNBloc(std::vector<uint8_t>::const_iterator messageIt, std::vector<uint8_t>::iterator parityIt, size_t n) const
+void Code::encodeBlocks(std::vector<BitField<bool>>::const_iterator msg, std::vector<BitField<uint8_t>>::iterator parity, size_t n) const
 {
   for (size_t i = 0; i < n; ++i) {
-    encodeBloc(messageIt, parityIt);
-    messageIt += msgSize();
-    parityIt += paritySize();
+    structure().encode(msg, parity);
+    msg += msgSize();
+    parity += paritySize();
   }
-}
-
-/**
- *  Code stucture constructor.
- *  \param  messageSize Size of the msg in each code bloc
- *  \param  paritySize Size of the parity code in each code bloc
- */
-Code::Structure::Structure(size_t messageSize, size_t paritySize, size_t extrinsicSize)
-{
-  messageSize_ = messageSize;
-  paritySize_ = paritySize;
-  extrinsicSize_ = extrinsicSize;
 }

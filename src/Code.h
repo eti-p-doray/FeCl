@@ -31,8 +31,8 @@
 
 #include <memory>
 #include <thread>
-
 #include <vector>
+
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/unique_ptr.hpp>
 #include <boost/serialization/utility.hpp>
@@ -42,18 +42,10 @@
 #include <boost/serialization/extended_type_info_no_rtti.hpp>
 
 #include "Structure/BitField.h"
+#include "Structure/LlrMetrics.h"
 
+//chanco
 namespace fec {
-  
-  typedef double LlrType;
-  const LlrType MAX_LLR = std::numeric_limits<LlrType>::infinity();
-  
-  enum DecoderType {
-    Exact, /**< No approximation is used and the L-values are computed in logarithmic domain. */
-    Table,
-    Approximation,  /**< The maxlog approximation is used */
-  };
-
 /**
  *  This class represents a general encoder / decoder.
  *  It offers methods to encode and to decode data given a code structure.
@@ -62,6 +54,17 @@ class Code
 {
   friend class boost::serialization::access;
 public:
+
+  enum DecoderType {
+    Exact, /**< No approximation is used and the L-values are computed in logarithmic domain. */
+    Table, /**< A lookup table is used  */
+    Approximate,  /**< An approximation is used */
+  };
+  
+  enum MetricType {
+    Floating, /**< Floating point is used in decoding. */
+    Fixed, /**< Fixed type */
+  };
   
   /**
    *  This class represents a general code structure
@@ -79,78 +82,177 @@ public:
       Ldpc  /**< Low-density parity check code */
     };
     
-    Structure() = default;
-    Structure(size_t messageSize, size_t paritySize, size_t extrinsicSize);
     virtual ~Structure() = default;
     
-    virtual const char * get_key() const = 0;
+    virtual const char * get_key() const = 0; /**< Access the type info key. */
+    virtual Type type() const = 0; /**< Access the code structure type as an enumerated type. */
     
-    /**
-     *  Access the code structure type as an enumerated type.
-     *  \return Code structure type
-     */
-    virtual Type type() const = 0;
+    inline size_t msgSize() const {return msgSize_;} /**< Access the size of the msg in each code bloc. */
+    inline size_t systSize() const {return systSize_;} /**< Access the size of the msg in each code bloc. */
+    inline size_t paritySize() const {return paritySize_;} /**< Access the size of the parity in each code bloc. */
+    inline size_t stateSize() const {return stateSize_;} /**< Access the size of the extrinsic in each code bloc. */
+    DecoderType decoderType() const {return decoderType_;}
+    MetricType metricType() const {return metricType_;}
+    uint8_t scalingFactor() const {return scalingFactor_;}
+    uint8_t resolutionBits() const {return resolutionBits_;}
     
-    /**
-     *  Access the size of the msg in each code bloc.
-     *  \return Message size
-     */
-    inline size_t msgSize() const {return messageSize_;}
-    /**
-     *  Access the size of the parity bloc in each code bloc.
-     *  \return Parity size
-     */
-    inline size_t paritySize() const {return paritySize_;}
-    inline size_t extrinsicSize() const {return extrinsicSize_;}
-    
-    //virtual void encode(std::vector<uint8_t>::const_iterator msg, std::vector<uint8_t>::iterator parity) const = 0;
+    virtual void encode(std::vector<BitField<bool>>::const_iterator msg, std::vector<BitField<uint8_t>>::iterator parity) const = 0;
     
   protected:
+    Structure() = default;
     template <typename Archive>
     void serialize(Archive & ar, const unsigned int version) {
       using namespace boost::serialization;
-      ar & BOOST_SERIALIZATION_NVP(messageSize_);
+      ar & BOOST_SERIALIZATION_NVP(msgSize_);
+      ar & BOOST_SERIALIZATION_NVP(systSize_);
       ar & BOOST_SERIALIZATION_NVP(paritySize_);
-      ar & BOOST_SERIALIZATION_NVP(extrinsicSize_);
+      ar & BOOST_SERIALIZATION_NVP(stateSize_);
+      ar & BOOST_SERIALIZATION_NVP(decoderType_);
     }
     
-    size_t messageSize_;/**< Size of the parity bloc in each code bloc. */
-    size_t paritySize_;/**< Size of the parity bloc in each code bloc. */
-    size_t extrinsicSize_;
+    size_t msgSize_;/**< Size of the msg in each code bloc. */
+    size_t systSize_;/**< Size of the msg in each code bloc. */
+    size_t paritySize_;/**< Size of the parity in each code bloc. */
+    size_t stateSize_;/**< Size of the extrinsic in each code bloc. */
+    DecoderType decoderType_;
+    MetricType metricType_;
+    uint8_t scalingFactor_;
+    uint8_t resolutionBits_;
+  };
+  template <class Iterator>
+  class InfoIterator {
+  public:
+    InfoIterator(const Structure* structureRef) : structureRef_(structureRef) {}
+    
+    InfoIterator& syst(Iterator syst) {syst_ = syst; hasSyst_ = true; return *this;}
+    InfoIterator& parity(Iterator parity) {parity_ = parity; hasParity_ = true; return *this;}
+    InfoIterator& state(Iterator state) {state_ = state; hasState_ = true; return *this;}
+    
+    inline void operator++() {
+      syst_ += structureRef_->systSize();
+      parity_ += structureRef_->paritySize();
+      state_ += structureRef_->stateSize();
+    }
+    inline void operator+=(size_t x) {
+      syst_ += structureRef_->systSize() * x;
+      parity_ += structureRef_->paritySize() * x;
+      state_ += structureRef_->stateSize() * x;
+    }
+    inline bool operator != (const InfoIterator& b) {
+      if (structureRef_ != b.structureRef_) {
+        return true;
+      }
+      if (hasSyst() && (syst_ != b.syst_)) {
+        return true;
+      }
+      else if (hasParity() && (parity_ != b.parity_)) {
+        return true;
+      }
+      else if (hasState() && (state_ != b.state_)) {
+        return true;
+      }
+      return false;
+    }
+    
+    Iterator syst() const {return syst_;}
+    Iterator parity() const {return parity_;}
+    Iterator state() const {return state_;}
+    
+    bool hasSyst() const {return hasSyst_;}
+    bool hasParity() const {return hasParity_;}
+    bool hasState() const {return hasState_;}
+    
+  private:
+    Iterator syst_;
+    Iterator parity_;
+    Iterator state_;
+    bool hasSyst_ = false;
+    bool hasParity_ = false;
+    bool hasState_ = false;
+    const Structure* structureRef_;
+  };
+  using InputIterator = InfoIterator<std::vector<LlrType>::const_iterator>;
+  using OutputIterator = InfoIterator<std::vector<LlrType>::iterator>;
+  
+  template <class Vector>
+  class Info {
+  public:
+    using Iterator = InfoIterator<decltype(std::declval<Vector>().begin())>;
+    
+    Info() = default;
+    
+    Info& syst(Vector& syst) {syst_ = &syst; return *this;}
+    Info& parity(Vector& parity) {parity_ = &parity; return *this;}
+    Info& state(Vector& state) {state_ = &state; return *this;}
+    
+    Vector& syst() const {return *syst_;}
+    Vector& parity() const {return *parity_;}
+    Vector& state() const {return *state_;}
+    
+    bool hasSyst() const {return syst_ != nullptr;}
+    bool hasParity() const {return parity_ != nullptr;}
+    bool hasState() const {return state_ != nullptr;}
+    
+    Iterator begin(const Structure& structure) const {
+      auto it = Iterator(&structure);
+      if (hasSyst()) {
+        it.syst(syst().begin());
+      }
+      if (hasParity()) {
+        it.parity(parity().begin());
+      }
+      if (hasState()) {
+        it.state(state().begin());
+      }
+      return it;
+    }
+    Iterator end(const Structure& structure) const {
+      auto it = Iterator(&structure);
+      if (hasSyst()) {
+        it.syst(syst().end());
+      }
+      if (hasParity()) {
+        it.parity(parity().end());
+      }
+      if (hasState()) {
+        it.state(state().end());
+      }
+      return it;
+    }
+    
+  private:
+    Vector* syst_ = nullptr;
+    Vector* parity_ = nullptr;
+    Vector* state_ = nullptr;
   };
   
+  template <template <typename> class A = std::allocator>
+  using Input = Info<const std::vector<LlrType,A<LlrType>>>;
+  template <template <typename> class A = std::allocator>
+  using Output = Info<std::vector<LlrType,A<LlrType>>>;
   
   static std::unique_ptr<Code> create(const Structure& Structure, int workGroupdSize = 4);
   virtual ~Code() = default;
   
-  virtual const char * get_key() const = 0;
+  virtual const char * get_key() const = 0; /**< Access the type info key. */
   
-  /**
-   *  Access size of the message in one bloc.
-   *  \return Message size
-   */
-  inline size_t msgSize() const {return structureRef_->msgSize();}
-  /**
-   *  Access size of one parity bloc.
-   *  \return Parity size
-   */
-  inline size_t paritySize() const {return structureRef_->paritySize();}
-  /**
-   *  Access size of extrinsic information in one bloc.
-   *  \return Extrinsic size
-   */
-  inline size_t extrinsicSize() const {return structureRef_->extrinsicSize();}
-  inline const typename Code::Structure& structure() const {return *(structureRef_);}
-  inline const typename Code::Structure& structure() {return *(structureRef_);}
+  inline const Structure& structure() const {return *(structureRef_);}
+  
+  inline size_t msgSize() const {return structure().msgSize();} /**< Access the size of the msg in each code bloc. */
+  inline size_t systSize() const {return structure().systSize();} /**< Access the size of the msg in each code bloc. */
+  inline size_t paritySize() const {return structure().paritySize();} /**< Access the size of the parity in each code bloc. */
+  inline size_t stateSize() const {return structure().stateSize();} /**< Access the size of the extrinsic in each code bloc. */
   
   int getWorkGroupSize() const {return workGroupSize_;}
   void setWorkGroupSize(int size) {workGroupSize_ = size;}
   
-  template <template <typename> class A> void encode(const std::vector<uint8_t,A<uint8_t>>& message, std::vector<uint8_t,A<uint8_t>>& parity) const;
+  template <template <typename> class A> void encode(const std::vector<BitField<bool>,A<BitField<bool>>>& message, std::vector<BitField<uint8_t>,A<BitField<uint8_t>>>& parity) const;
   
-  template <template <typename> class A> void decode(const std::vector<LlrType,A<LlrType>>& parityIn, std::vector<uint8_t,A<uint8_t>>& msgOut) const;
-  template <template <typename> class A> void softOutDecode(const std::vector<LlrType,A<LlrType>>& parityIn, std::vector<LlrType,A<LlrType>>& msgOut) const;
-  template <template <typename> class A> void appDecode(const std::vector<LlrType,A<LlrType>>& parityIn, const std::vector<LlrType,A<LlrType>>& extrinsicIn, std::vector<LlrType,A<LlrType>>& msgOut, std::vector<LlrType,A<LlrType>>& extrinsicOut) const;
+  template <template <typename> class A>
+  void decode(const std::vector<LlrType,A<LlrType>>& parityIn, std::vector<BitField<bool>,A<BitField<bool>>>& msgOut) const;
+  
+  template <template <typename> class A>
+  void soDecode(Input<A> input, Output<A> output) const;
 
 protected:
   Code() = default;
@@ -164,34 +266,19 @@ protected:
    *  \param  parityIt[out] Output iterator pointing to the first element in the parity bit sequence.
    *    The output neeeds to be pre-allocated.
    */
-  virtual void encodeNBloc(std::vector<uint8_t>::const_iterator messageIt, std::vector<uint8_t>::iterator parityIt, size_t n) const;
-  /**
-   *  Encodes one bloc of msg bits.
-   *  \param  messageIt  Input iterator pointing to the first element in the msg bit sequence.
-   *  \param  parityIt[out] Output iterator pointing to the first element in the parity bit sequence.
-   *    The output neeeds to be pre-allocated.
-   */
-  virtual void encodeBloc(std::vector<uint8_t>::const_iterator messageIt, std::vector<uint8_t>::iterator parityIt) const = 0;
+  virtual void encodeBlocks(std::vector<BitField<bool>>::const_iterator msg, std::vector<BitField<uint8_t>>::iterator parity, size_t n) const;
   
   /**
-   *  Decodes several blocs of information bits.
-   *  A priori information about the decoder state is provided and extrinsic
-   *  information is output, following the same structure. These informations
-   *  can be transfered sequencially to multiple decoding attempts.
-   *  \param  parityIn  Input iterator pointing to the first element 
+   *  Decodes several blocks of information bits.
+   *  \param  parityIn  Input iterator pointing to the first element
    *    in the parity L-value sequence
-   *  \param  extrinsicIn  Input iterator pointing to the first element 
-   *    in the a-priori extrinsic L-value sequence
-   *  \param  messageOut[out] Output iterator pointing to the first element 
-   *    in the a posteriori information L-value sequence. 
-   *    Output needs to be pre-allocated.
-   *  \param  extrinsicOut[out]  Output iterator pointing to the first element
-   *    in the extrinsic L-value sequence.
+   *  \param  messageOut[out] Output iterator pointing to the first element
+   *    in the decoded msg sequence.
    *    Output needs to be pre-allocated.
    */
-  virtual void appDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::const_iterator extrinsicIn, std::vector<LlrType>::iterator messageOut, std::vector<LlrType>::iterator extrinsicOut, size_t n) const = 0;
+  virtual void decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<bool>>::iterator msg, size_t n) const = 0;
   /**
-   *  Decodes several blocs of information bits.
+   *  Decodes several blocks of information bits.
    *  A posteriori information about the msg is output instead of the decoded bit sequence.
    *  \param  parityIn  Input iterator pointing to the first element
    *    in the parity L-value sequence
@@ -199,25 +286,27 @@ protected:
    *    in the a posteriori information L-value sequence.
    *    Output needs to be pre-allocated.
    */
-  virtual void softOutDecodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::iterator messageOut, size_t n) const = 0;
-  /**
-   *  Decodes several blocs of information bits.
-   *  \param  parityIn  Input iterator pointing to the first element
-   *    in the parity L-value sequence
-   *  \param  messageOut[out] Output iterator pointing to the first element
-   *    in the decoded msg sequence.
-   *    Output needs to be pre-allocated.
-   */
-  virtual void decodeNBloc(std::vector<LlrType>::const_iterator parityIn, std::vector<uint8_t>::iterator messageOut, size_t n) const = 0;
-  
+  virtual void soDecodeBlocks(InputIterator input, OutputIterator output, size_t n) const = 0;
   
 private:
   template <typename Archive>
   void serialize(Archive & ar, const unsigned int version) {
     using namespace boost::serialization;
     ar & ::BOOST_SERIALIZATION_NVP(workGroupSize_);
-    
     ar & ::BOOST_SERIALIZATION_NVP(structureRef_);
+  }
+  
+  std::vector<std::thread> createWorkGroup() const {
+    std::vector<std::thread> threadGroup;
+    threadGroup.reserve(workGroupSize());
+    return threadGroup;
+  }
+  size_t taskSize(size_t blockCount) const {
+    int n = std::thread::hardware_concurrency();
+    if (n > workGroupSize() || n == 0) {
+      n = workGroupSize();
+    }
+    return (blockCount+n-1)/n;
   }
   
   int workGroupSize_;
@@ -226,7 +315,6 @@ private:
   
 }
 
-BOOST_SERIALIZATION_ASSUME_ABSTRACT(fec::Code::Structure);
 BOOST_CLASS_TYPE_INFO(fec::Code::Structure,extended_type_info_no_rtti<fec::Code::Structure>);
 BOOST_CLASS_EXPORT_KEY(fec::Code::Structure);
 BOOST_SERIALIZATION_ASSUME_ABSTRACT(fec::Code);
@@ -234,7 +322,7 @@ BOOST_CLASS_TYPE_INFO(fec::Code,extended_type_info_no_rtti<fec::Code>);
 BOOST_CLASS_EXPORT_KEY(fec::Code);
 
 /**
- *  Encodes several blocs of information bits.
+ *  Encodes several blocks of information bits.
  *  Chunks of blocs are encded in parallel.
  *  \param  message  Vector containing information bits
  *  \param  parity[out] Vector containing parity bits
@@ -242,37 +330,30 @@ BOOST_CLASS_EXPORT_KEY(fec::Code);
  *    the matlab API to use a custom mex allocator
  */
 template <template <typename> class A>
-void fec::Code::encode(const std::vector<uint8_t,A<uint8_t>>& message, std::vector<uint8_t,A<uint8_t>>& parity) const
+void fec::Code::encode(const std::vector<BitField<bool>,A<BitField<bool>>>& msg, std::vector<BitField<uint8_t>,A<BitField<uint8_t>>>& parity) const
 {
-  uint64_t blocCount = message.size() / (msgSize());
-  if (message.size() != blocCount * msgSize()) {
+  uint64_t blockCount = msg.size() / (msgSize());
+  if (msg.size() != blockCount * msgSize()) {
     throw std::invalid_argument("Invalid size for message");
   }
   
-  parity.resize(blocCount * paritySize());
+  parity.resize(blockCount * paritySize());
   std::fill(parity.begin(), parity.end(), 0);
   
-  std::vector<uint8_t>::const_iterator messageIt = message.begin();
-  std::vector<uint8_t>::iterator parityIt = parity.begin();
+  auto msgIt = msg.begin(); auto parityIt = parity.begin();
   
-  std::vector<std::thread> threadGroup;
-  threadGroup.reserve(workGroupSize());
+  auto threadGroup = createWorkGroup();
   auto thread = threadGroup.begin();
-  int n = std::thread::hardware_concurrency();
-  if (n > workGroupSize() || n == 0) {
-    n = workGroupSize();
-  }
-  size_t step = (blocCount+n-1)/n;
-  for (int i = 0; i + step <= blocCount; i += step) {
-    threadGroup.push_back( std::thread(&Code::encodeNBloc, this,
-                                       messageIt, parityIt, step) );
-    messageIt += msgSize() * step;
-    parityIt += paritySize() * step;
+  size_t step = taskSize(blockCount);
+  for (int i = 0; i + step <= blockCount; i += step) {
+    threadGroup.push_back( std::thread(&Code::encodeBlocks, this, msgIt, parityIt, step) );
+    msgIt += structureRef_->msgSize() * step;
+    parityIt += structureRef_->paritySize() * step;
     
-    thread++;
+    ++thread;
   }
-  if (messageIt != message.end()) {
-    encodeNBloc(messageIt, parityIt, blocCount % step);
+  if (msgIt != msg.end()) {
+    encodeBlocks(msgIt, parityIt, blockCount % step);
   }
   for (auto & thread : threadGroup) {
     thread.join();
@@ -280,115 +361,7 @@ void fec::Code::encode(const std::vector<uint8_t,A<uint8_t>>& message, std::vect
 }
 
 /**
- *  Decodes several blocs of information bits.
- *  A priori information about the decoder state is provided and extrinsic
- *  information is output, following the same structure. These informations
- *  can be transfered sequencially to multiple decoding attempts.
- *  Chunks of blocs are encded in parallel.
- *  \param  parityIn  Vector containing parity L-values
- *  \param  extrinsicIn  Vector containing a-priori extrinsic L-values
- *  \param  messageOut[out] Vector containing a posteriori information L-values
- *  \param  extrinsicOut[out] Vector containing a extrinsic L-values
- *  \tparam A Container allocator. The reason for different allocator is to allow
- *    the matlab API to use a custom mex allocator
- */
-template <template <typename> class A>
-void fec::Code::appDecode(const std::vector<LlrType,A<LlrType>>& parityIn, const std::vector<LlrType,A<LlrType>>& extrinsicIn, std::vector<LlrType,A<LlrType>>& messageOut, std::vector<LlrType,A<LlrType>>& extrinsicOut) const
-{
-  size_t blocCount = parityIn.size() / paritySize();
-  if (parityIn.size() != blocCount * paritySize()) {
-    throw std::invalid_argument("Invalid size for parity");
-  }
-  if (extrinsicIn.size() != blocCount * extrinsicSize()) {
-    throw std::invalid_argument("Invalid size for extrinsic");
-  }
-  
-  std::vector<std::thread> threadGroup;
-  threadGroup.reserve(workGroupSize());
-  
-  messageOut.resize(blocCount * msgSize());
-  extrinsicOut.resize(extrinsicIn.size());
-  
-  std::vector<LlrType>::const_iterator extrinsicInIt = extrinsicIn.begin();
-  std::vector<LlrType>::const_iterator  parityInIt = parityIn.begin();
-  std::vector<LlrType>::iterator extrinsicOutIt = extrinsicOut.begin();
-  std::vector<LlrType>::iterator messageOutIt = messageOut.begin();
-  
-  int n = std::thread::hardware_concurrency();
-  if (n > workGroupSize() || n == 0) {
-    n = workGroupSize();
-  }
-  auto thread = threadGroup.begin();
-  size_t step = (blocCount+n-1)/n;
-  for (int i = 0; i + step <= blocCount; i += step) {
-    threadGroup.push_back( std::thread(&Code::appDecodeNBloc, this,
-                                       parityInIt,extrinsicInIt,messageOutIt, extrinsicOutIt, step) );
-    parityInIt += paritySize() * step;
-    extrinsicInIt += extrinsicSize() * step;
-    extrinsicOutIt += extrinsicSize() * step;
-    messageOutIt += msgSize() * step;
-    
-    thread++;
-  }
-  if (parityInIt != parityIn.end()) {
-    appDecodeNBloc(parityInIt, extrinsicInIt, messageOutIt, extrinsicOutIt, blocCount % step);
-  }
-  for (auto & thread : threadGroup) {
-    thread.join();
-  }
-}
-
-/**
- *  Decodes several blocs of information bits.
- *  A posteriori information about the msg is output instead of the decoded bit sequence.
- *  Chunks of blocs are encded in parallel.
- *  \param  parityIn  Vector containing parity L-values
- *  \param  messageOut[out] Vector containing a posteriori information L-values
- *  \tparam A Container allocator. The reason for different allocator is to allow
- *    the matlab API to use a custom mex allocator
- */
-template <template <typename> class A>
-void fec::Code::softOutDecode(const std::vector<LlrType,A<LlrType>>& parityIn, std::vector<LlrType,A<LlrType>>& messageOut) const
-{
-  size_t blocCount = parityIn.size() / paritySize();
-  if (parityIn.size() != blocCount * paritySize()) {
-    throw std::invalid_argument("Invalid size for parity");
-  }
-  
-  messageOut.resize(blocCount * msgSize());
-  
-  std::vector<LlrType>::const_iterator parityInIt = parityIn.begin();
-  std::vector<LlrType>::iterator messageOutIt = messageOut.begin();
-  
-  std::vector<std::thread> threadGroup;
-  threadGroup.reserve(workGroupSize());
-  
-  int n = std::thread::hardware_concurrency();
-  if (n > workGroupSize() || n == 0) {
-    n = workGroupSize();
-  }
-  auto thread = threadGroup.begin();
-  size_t step = (blocCount+n-1)/n;
-  for (int i = 0; i + step <= blocCount; i += step) {
-    threadGroup.push_back( std::thread(&Code::softOutDecodeNBloc, this,
-                                       parityInIt,
-                                       messageOutIt, step
-                                       ) );
-    parityInIt += paritySize() * step;
-    messageOutIt += msgSize() * step;
-    
-    thread++;
-  }
-  if (messageOutIt != messageOut.end()) {
-    softOutDecodeNBloc(parityInIt, messageOutIt, blocCount % step);
-  }
-  for (auto & thread : threadGroup) {
-    thread.join();
-  }
-}
-
-/**
- *  Decodes several blocs of information bits.
+ *  Decodes several blocks of information bits.
  *  Chunks of blocs are encded in parallel.
  *  \param  parityIn  Vector containing parity L-values
  *    Given a signal y and a parity bit x, we define the correspondig L-value as
@@ -398,37 +371,92 @@ void fec::Code::softOutDecode(const std::vector<LlrType,A<LlrType>>& parityIn, s
  *    the matlab API to use a custom mex allocator
  */
 template <template <typename> class A>
-void fec::Code::decode(const std::vector<LlrType,A<LlrType>>& parityIn, std::vector<uint8_t,A<uint8_t>>& messageOut) const
+void fec::Code::decode(const std::vector<LlrType,A<LlrType>>& parity, std::vector<BitField<bool>,A<BitField<bool>>>& msg) const
 {
-  size_t blocCount = parityIn.size() / paritySize();
-  if (parityIn.size() != blocCount * paritySize()) {
+  size_t blockCount = parity.size() / paritySize();
+  if (parity.size() != blockCount * paritySize()) {
     throw std::invalid_argument("Invalid size for parity");
   }
   
-  std::vector<std::thread> threadGroup;
-  threadGroup.reserve(workGroupSize());
+  msg.resize(blockCount * msgSize());
+  auto parityInIt = parity.begin(); auto msgOutIt = msg.begin();
   
-  messageOut.resize(blocCount * msgSize());
-  
-  std::vector<LlrType>::const_iterator parityInIt = parityIn.begin();
-  std::vector<uint8_t>::iterator messageOutIt = messageOut.begin();
-  
-  int n = std::thread::hardware_concurrency();
-  if (n > workGroupSize() || n == 0) {
-    n = workGroupSize();
-  }
+  auto threadGroup = createWorkGroup();
   auto thread = threadGroup.begin();
-  size_t step = (blocCount+n-1)/n;
-  for (int i = 0; i + step <= blocCount; i += step) {
-    threadGroup.push_back( std::thread(&Code::decodeNBloc, this,
-                                       parityInIt, messageOutIt, step) );
+  size_t step = taskSize(blockCount);
+  for (int i = 0; i + step <= blockCount; i += step) {
+    threadGroup.push_back( std::thread(&Code::decodeBlocks, this,
+                                       parityInIt, msgOutIt, step) );
     parityInIt += paritySize() * step;
-    messageOutIt += msgSize() * step;
+    msgOutIt += msgSize() * step;
+    
+    ++thread;
+  }
+  if (msgOutIt != msg.end()) {
+    decodeBlocks(parityInIt, msgOutIt, blockCount % step);
+  }
+  for (auto & thread : threadGroup) {
+    thread.join();
+  }
+}
+
+/**
+ *  Decodes several blocks of information bits.
+ *  A posteriori information about the msg is output instead of the decoded bit sequence.
+ *  Chunks of blocs are encded in parallel.
+ *  \param  parityIn  Vector containing parity L-values
+ *  \param  messageOut[out] Vector containing a posteriori information L-values
+ *  \tparam A Container allocator. The reason for different allocator is to allow
+ *    the matlab API to use a custom mex allocator
+ */
+template <template <typename> class A>
+void fec::Code::soDecode(Input<A> input, Output<A> output) const
+{
+  if (!input.hasParity()) {
+    throw std::invalid_argument("Input must contains parities");
+  }
+  size_t blockCount = input.parity().size() / paritySize();
+  if (input.parity().size() != blockCount * paritySize()) {
+    throw std::invalid_argument("Invalid size for parity");
+  }
+  if (input.hasSyst()) {
+    if (input.syst().size() != blockCount * systSize()) {
+      throw std::invalid_argument("Invalid size for msg");
+    }
+  }
+  if (input.hasState()) {
+    if (input.state().size() != blockCount * stateSize()) {
+      throw std::invalid_argument("Invalid size for state");
+    }
+  }
+  
+  if (output.hasParity()) {
+    output.parity().resize(blockCount * paritySize());
+  }
+  if (output.hasSyst()) {
+    output.syst().resize(blockCount * systSize());
+  }
+  if (output.hasState()) {
+    output.state().resize(blockCount * stateSize());
+  }
+  auto inputIt = input.begin(structure());
+  auto outputIt = output.begin(structure());
+  
+  auto threadGroup = createWorkGroup();
+  auto thread = threadGroup.begin();
+  size_t step = taskSize(blockCount);
+  for (int i = 0; i + step <= blockCount; i += step) {
+    threadGroup.push_back( std::thread(&Code::soDecodeBlocks, this,
+                                       inputIt,
+                                       outputIt, step
+                                       ) );
+    inputIt += step;
+    outputIt += step;
     
     thread++;
   }
-  if (messageOutIt != messageOut.end()) {
-    decodeNBloc(parityInIt, messageOutIt, blocCount % step);
+  if (outputIt != output.end(structure())) {
+    soDecodeBlocks(inputIt, outputIt, blockCount % step);
   }
   for (auto & thread : threadGroup) {
     thread.join();
