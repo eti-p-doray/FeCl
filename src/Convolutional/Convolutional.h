@@ -76,7 +76,7 @@ namespace fec {
       
     private:
       Trellis trellis_;
-      size_t   length_;
+      size_t length_;
       TerminationType terminationType_ = Truncation;
     };
     class DecoderOptions {
@@ -98,7 +98,9 @@ namespace fec {
     class Structure : public Code::Structure {
       friend class ::boost::serialization::access;
     public:
-      Structure(const EncoderOptions& encode, const DecoderOptions& decode);
+      Structure() = default;
+      Structure(const EncoderOptions& encoder, const DecoderOptions& decoder);
+      Structure(const EncoderOptions& encoder);
       virtual ~Structure() = default;
       
       virtual const char * get_key() const;
@@ -110,11 +112,13 @@ namespace fec {
       inline TerminationType terminationType() const {return terminationType_;}
       inline const Trellis& trellis() const {return trellis_;}
       
+      void setDecoderOptions(const DecoderOptions& decoder);
+      void setEncoderOptions(const EncoderOptions& encoder);
+      DecoderOptions getDecoderOptions();
+      
+      virtual bool check(std::vector<BitField<uint8_t>>::const_iterator parity) const;
       virtual void encode(std::vector<BitField<bool>>::const_iterator msg, std::vector<BitField<uint8_t>>::iterator parity) const;
       void encode(std::vector<BitField<bool>>::const_iterator msg, std::vector<BitField<uint8_t>>::iterator parity, std::vector<BitField<uint8_t>>::iterator tail) const;
-      
-    protected:
-      Structure() = default;
       
     private:
       template <typename Archive>
@@ -134,7 +138,10 @@ namespace fec {
     };
     
     Convolutional() = default;
-    Convolutional(const Structure& structure, int workGroupdSize = 4);
+    Convolutional(const Structure& structure, int workGroupSize = 4);
+    Convolutional(const EncoderOptions& encoder, const DecoderOptions& decoder, int workGroupSize = 8);
+    Convolutional(const EncoderOptions& encoder, int workGroupSize = 8);
+    Convolutional(const Convolutional& other) : Code(&structure_) {*this = other;}
     virtual ~Convolutional() = default;
     
     virtual const char * get_key() const;

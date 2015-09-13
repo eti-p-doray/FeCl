@@ -97,6 +97,7 @@ public:
     uint8_t resolutionBits() const {return resolutionBits_;}
     
     virtual void encode(std::vector<BitField<bool>>::const_iterator msg, std::vector<BitField<uint8_t>>::iterator parity) const = 0;
+    virtual bool check(std::vector<BitField<uint8_t>>::const_iterator parity) const = 0;
     
   protected:
     Structure() = default;
@@ -246,6 +247,7 @@ public:
   int getWorkGroupSize() const {return workGroupSize_;}
   void setWorkGroupSize(int size) {workGroupSize_ = size;}
   
+  template <template <typename> class A> bool check(std::vector<BitField<uint8_t>,A<BitField<uint8_t>>>& parity) const;
   template <template <typename> class A> void encode(const std::vector<BitField<bool>,A<BitField<bool>>>& message, std::vector<BitField<uint8_t>,A<BitField<uint8_t>>>& parity) const;
   
   template <template <typename> class A>
@@ -257,9 +259,12 @@ public:
 protected:
   Code() = default;
   Code(Structure* structure, int workGroupdSize = 4);
+  Code(const Code& other) {*this = other;}
+  Code& operator=(const Code& other) {workGroupSize_ = other.workGroupSize(); return *this;}
   
   inline int workGroupSize() const {return workGroupSize_;}
   
+  virtual bool checkBlocks(std::vector<BitField<uint8_t>>::const_iterator parity, size_t n) const;
   /**
    *  Encodes several blocs of msg bits.
    *  \param  messageIt  Input iterator pointing to the first element in the msg bit sequence.
@@ -321,6 +326,16 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(fec::Code);
 BOOST_CLASS_TYPE_INFO(fec::Code,extended_type_info_no_rtti<fec::Code>);
 BOOST_CLASS_EXPORT_KEY(fec::Code);
 
+template <template <typename> class A>
+bool fec::Code::check(std::vector<BitField<uint8_t>,A<BitField<uint8_t>>>& parity) const
+{
+  uint64_t blockCount = parity.size() / (paritySize());
+  if (parity.size() != blockCount * paritySize()) {
+    throw std::invalid_argument("Invalid size for parity");
+  }
+  return checkBlocks(parity.begin(), blockCount);
+}
+
 /**
  *  Encodes several blocks of information bits.
  *  Chunks of blocs are encded in parallel.
@@ -337,9 +352,7 @@ void fec::Code::encode(const std::vector<BitField<bool>,A<BitField<bool>>>& msg,
     throw std::invalid_argument("Invalid size for message");
   }
   
-  parity.resize(blockCount * paritySize());
-  std::fill(parity.begin(), parity.end(), 0);
-  
+  parity.resize(blockCount * paritySize(), 0);
   auto msgIt = msg.begin(); auto parityIt = parity.begin();
   
   auto threadGroup = createWorkGroup();
@@ -347,8 +360,8 @@ void fec::Code::encode(const std::vector<BitField<bool>,A<BitField<bool>>>& msg,
   size_t step = taskSize(blockCount);
   for (int i = 0; i + step <= blockCount; i += step) {
     threadGroup.push_back( std::thread(&Code::encodeBlocks, this, msgIt, parityIt, step) );
-    msgIt += structureRef_->msgSize() * step;
-    parityIt += structureRef_->paritySize() * step;
+    msgIt += msgSize() * step;
+    parityIt += paritySize() * step;
     
     ++thread;
   }

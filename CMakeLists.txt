@@ -63,28 +63,20 @@ if(DOXYGEN_FOUND)
 endif(DOXYGEN_FOUND)
 
 enable_testing()
-#add_executable(test_code testCpp/code.cpp)
-#target_include_directories(test_code PUBLIC ${CMAKE_SOURCE_DIR}/src)
-#target_include_directories(test_code PUBLIC ${Boost_INCLUDE_DIRS})
-#target_link_libraries(test_code fecStatic)
-#target_link_libraries(test_code ${Boost_LIBRARIES})
-#add_test(code test_code)
 
-add_executable(example_Convolutional exampleCpp/Convolutional.cpp)
-target_include_directories(example_Convolutional PUBLIC ${CMAKE_SOURCE_DIR}/src)
-target_include_directories(example_Convolutional PUBLIC ${Boost_INCLUDE_DIRS})
-target_link_libraries(example_Convolutional fecStatic)
-target_link_libraries(example_Convolutional ${Boost_LIBRARIES})
+set(TESTS
+  testCpp/Convolutional.cpp
+)
 
-add_executable(example_Turbo exampleCpp/Turbo.cpp)
-target_include_directories(example_Turbo PUBLIC ${CMAKE_SOURCE_DIR}/src)
-target_include_directories(example_Turbo PUBLIC ${Boost_INCLUDE_DIRS})
-target_link_libraries(example_Turbo ${Boost_LIBRARIES})
-target_link_libraries(example_Turbo fecStatic)
+foreach(TEST ${TESTS})
+  get_filename_component(TEST_NAME ${TEST} NAME_WE)
+  add_executable(test_${TEST_NAME} ${TEST})
+  target_include_directories(test_${TEST_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/src)
+  target_include_directories(test_${TEST_NAME} PUBLIC ${Boost_INCLUDE_DIRS})
+  target_link_libraries(test_${TEST_NAME} fecStatic)
+  target_link_libraries(test_${TEST_NAME} ${Boost_LIBRARIES})
+  add_test(${TEST_NAME} test_${TEST_NAME})
+endforeach()
 
-add_executable(example_Ldpc exampleCpp/Ldpc.cpp)
-target_include_directories(example_Ldpc PUBLIC ${CMAKE_SOURCE_DIR}/src)
-target_include_directories(example_Ldpc PUBLIC ${Boost_INCLUDE_DIRS})
-target_link_libraries(example_Ldpc ${Boost_LIBRARIES})
-target_link_libraries(example_Ldpc fecStatic)
+
 

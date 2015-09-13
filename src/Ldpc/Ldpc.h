@@ -63,6 +63,8 @@ class Ldpc : public Code
 {
   friend class boost::serialization::access;
 public:
+  static SparseBitMatrix gallagerConstruction(size_t n, size_t wc, size_t wr);
+  
   class Structure;
   class EncoderOptions
   {
@@ -93,9 +95,7 @@ public:
   class Structure : public Code::Structure {
     friend class ::boost::serialization::access;
   public:
-    
-    static SparseBitMatrix gallagerConstruction(size_t n, size_t wc, size_t wr);
-    
+    Structure() = default;
     Structure(const EncoderOptions&, const DecoderOptions&);
     virtual ~Structure() = default;
     
@@ -108,12 +108,10 @@ public:
     inline size_t iterationCount() const {return iterationCount_;}
     
     void syndrome(std::vector<uint8_t>::const_iterator parity, std::vector<uint8_t>::iterator syndrome) const;
-    bool check(std::vector<uint8_t>::const_iterator parity) const;
+    virtual bool check(std::vector<BitField<uint8_t>>::const_iterator parity) const;
     virtual void encode(std::vector<BitField<bool>>::const_iterator msg, std::vector<BitField<uint8_t>>::iterator parity) const;
     
   private:
-    Structure() = default;
-    
     template <typename Archive>
     void serialize(Archive & ar, const unsigned int version) {
       using namespace boost::serialization;
@@ -143,9 +141,6 @@ public:
   virtual const char * get_key() const;
   
   inline const Structure& structure() const {return structure_;}
-  
-  //inline size_t getIterationCount() const {return structure_.iterationCount();}
-  //inline void setIterationCount(size_t count) {structure_.setIterationCount(count);}
   
 protected:
   Ldpc() = default;

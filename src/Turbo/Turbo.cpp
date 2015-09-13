@@ -131,6 +131,31 @@ void Turbo::Structure::encode(std::vector<BitField<bool>>::const_iterator msg, s
   }
 }
 
+bool Turbo::Structure::check(std::vector<BitField<uint8_t>>::const_iterator parity) const
+{
+  std::vector<BitField<bool>> messageInterl;
+  std::vector<BitField<uint8_t>> parityTest;
+  std::vector<BitField<uint8_t>> tailTest;
+  auto parityIt = parity + systSize();
+  auto tailIt = parity + msgSize();
+  for (size_t i = 0; i < constituentCount(); ++i) {
+    messageInterl.resize(constituent(i).msgSize());
+    parityTest.resize(constituent(i).paritySize());
+    tailTest.resize(constituent(i).msgTailSize());
+    interleaver(i).interleaveBlock<BitField<uint8_t>,BitField<bool>>(parity+systSize(), messageInterl.begin());
+    constituent(i).encode(messageInterl.begin(), parityTest.begin(), tailTest.begin());
+    if (!std::equal(parityTest.begin(), parityTest.end(), parityIt)) {
+      return false;
+    }
+    if (!std::equal(tailTest.begin(), tailTest.end(), tailIt)) {
+      return false;
+    }
+    parityIt += constituent(i).paritySize();
+    tailIt += constituent(i).msgTailSize();
+  }
+  return true;
+}
+
 template <typename T>
 void fec::Turbo::Structure::alternate(typename std::vector<T>::const_iterator parityIn, typename std::vector<T>::iterator parityOut)
 {

@@ -89,7 +89,7 @@ void Ldpc::decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector
  *  \param  wc Number of branch connected to every check nodes.
  *  \param  wr Number of branch connected to every bit nodes
  */
-SparseBitMatrix Ldpc::Structure::gallagerConstruction(size_t n, size_t wc, size_t wr)
+SparseBitMatrix Ldpc::gallagerConstruction(size_t n, size_t wc, size_t wr)
 {
   SparseBitMatrix H(n/wr * wc, n, wr);
   
@@ -105,7 +105,7 @@ SparseBitMatrix Ldpc::Structure::gallagerConstruction(size_t n, size_t wc, size_
     ++row;
   }
   
-  uint64_t seed = std::chrono::system_clock::now().time_since_epoch().count();
+  uint64_t seed = 0;//std::chrono::system_clock::now().time_since_epoch().count();
   std::mt19937 generator((int)seed);
   for (size_t j = 0; j < H.cols(); j++) {
     std::uniform_int_distribution<int> distribution(int(j),int(H.cols()-1));
@@ -162,7 +162,7 @@ void Ldpc::Structure::syndrome(std::vector<uint8_t>::const_iterator parity, std:
  *  \param  parity  Input iterator pointing to the first element of the parity sequence.
  *  \return True if the parity sequence is consistent. False otherwise.
  */
-bool Ldpc::Structure::check(std::vector<uint8_t>::const_iterator parity) const
+bool Ldpc::Structure::check(std::vector<BitField<uint8_t>>::const_iterator parity) const
 {
   for (auto parityEq = checks().begin(); parityEq < checks().end(); ++parityEq) {
     bool syndrome;

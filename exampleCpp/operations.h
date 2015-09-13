@@ -26,13 +26,15 @@
  Operation code example
  ******************************************************************************/
 
+#ifndef OPERATIONS_H
+#define OPERATIONS_H
+
 #include <vector>
 #include <random>
 #include <memory>
 #include <cstdint>
 
 #include "Code.h"
-
 
 std::vector<fec::BitField<bool>> randomBits(size_t n) {
   uint64_t seed = std::chrono::system_clock::now().time_since_epoch().count();
@@ -64,7 +66,7 @@ std::vector<fec::LlrType> distort(const std::vector<fec::BitField<uint8_t>>& inp
 
 int per(const std::unique_ptr<fec::Code>& code, double snrdb)
 {
-  std::vector<fec::BitField<bool>> msg = randomBits(code->msgSize()*256);
+  std::vector<fec::BitField<bool>> msg = randomBits(code->msgSize());
   std::vector<fec::BitField<uint8_t>> parity;
 
   std::vector<fec::LlrType> msgPost;
@@ -85,3 +87,5 @@ int per(const std::unique_ptr<fec::Code>& code, double snrdb)
   
   return errorCount;
 }
+
+#endif

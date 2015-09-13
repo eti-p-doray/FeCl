@@ -53,6 +53,19 @@ Convolutional::Convolutional(const Structure& structure,  int workGroupSize) :
 structure_(structure),
 Code(&structure_, workGroupSize)
 {
+  int bou = 0;
+}
+Convolutional::Convolutional(const EncoderOptions& encoder, const DecoderOptions& decoder, int workGroupSize) :
+structure_(encoder, decoder),
+Code(&structure_, workGroupSize)
+{
+  int bou = 0;
+}
+Convolutional::Convolutional(const EncoderOptions& encoder, int workGroupSize) :
+structure_(encoder),
+Code(&structure_, workGroupSize)
+{
+  int bou = 0;
 }
 
 void Convolutional::soDecodeBlocks(InputIterator input, OutputIterator output, size_t n) const
@@ -76,13 +89,22 @@ void Convolutional::decodeBlocks(std::vector<LlrType>::const_iterator parity, st
  *  \param  endType Trellis termination type
  *  \param  type  Algorithm use in app decoding
  */
-Convolutional::Structure::Structure(const EncoderOptions& encode, const DecoderOptions& decode)
+Convolutional::Structure::Structure(const EncoderOptions& encoder, const DecoderOptions& decoder)
 {
-  trellis_ = encode.trellis_;
-  length_ = encode.length_;
-  terminationType_ = encode.terminationType_;
-  decoderType_ = decode.decoderType_;
-  metricType_ = decode.metricType_;
+  setEncoderOptions(encoder);
+  setDecoderOptions(decoder);
+}
+Convolutional::Structure::Structure(const EncoderOptions& encoder)
+{
+  setEncoderOptions(encoder);
+  setDecoderOptions(DecoderOptions());
+}
+
+void Convolutional::Structure::setEncoderOptions(const EncoderOptions& encoder)
+{
+  trellis_ = encoder.trellis_;
+  length_ = encoder.length_;
+  terminationType_ = encoder.terminationType_;
   
   msgSize_ = length_ * trellis_.inputSize();
   systSize_ = length_ * trellis_.inputSize();
@@ -100,6 +122,17 @@ Convolutional::Structure::Structure(const EncoderOptions& encode, const DecoderO
       tailSize_ = 0;
       break;
   }
+}
+
+void Convolutional::Structure::setDecoderOptions(const DecoderOptions& decoder)
+{
+  decoderType_ = decoder.decoderType_;
+  metricType_ = decoder.metricType_;
+}
+
+Convolutional::DecoderOptions Convolutional::Structure::getDecoderOptions()
+{
+  return DecoderOptions().decoderType(decoderType_).metricType(metricType_);
 }
 
 void Convolutional::Structure::encode(std::vector<BitField<bool>>::const_iterator msg, std::vector<BitField<uint8_t>>::iterator parity) const
@@ -144,6 +177,41 @@ void Convolutional::Structure::encode(std::vector<BitField<bool>>::const_iterato
     case Convolutional::Truncation:
       state = 0;
       break;
+  }
+}
+
+bool Convolutional::Structure::check(std::vector<BitField<uint8_t>>::const_iterator parity) const
+{
+  size_t state = 0;
+  for (int j = 0; j < length()+tailSize(); ++j) {
+    bool found = false;
+    for (BitField<size_t> input = 0; input < trellis().inputCount(); ++input) {
+      BitField<size_t> output = trellis().getOutput(state, input);
+      bool equal = true;
+      for (int k = 0; k < trellis().outputSize(); ++k) {
+        if (output[k] != parity[k]) {
+          equal = false;
+          break;
+        }
+      }
+      if (equal == true) {
+        found = true;
+        state = trellis().getNextState(state, input);
+        break;
+      }
+    }
+    if (found == false) {
+      return false;
+    }
+    parity += trellis().outputSize();
+  }
+  switch (terminationType()) {
+    case Convolutional::Tail:
+      return (state == 0);
+      
+    default:
+    case Convolutional::Truncation:
+      return true;
   }
 }
 

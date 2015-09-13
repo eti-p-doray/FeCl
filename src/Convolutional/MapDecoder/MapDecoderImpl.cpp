@@ -206,12 +206,13 @@ void MapDecoderImpl<LlrMetrics, LogSumAlg>::aPosterioriUpdate(Code::InfoIterator
         typename LlrMetrics::Type tmp = msgUpdateImpl<LogSumAlg<LlrMetrics>::isRecursive::value>(branchMetric, j);
 
         if (input.hasSyst()) {
-          systOut[i] = tmp - systIn[i];
+          systOut[j] = tmp - systIn[j];
         }
         else {
-          systOut[i] = tmp;
+          systOut[j] = tmp;
         }
       }
+      systOut += structure().trellis().inputSize();
     }
     if (output.hasParity()) {
       for (size_t j = 0; j < structure().trellis().outputSize(); ++j) {
@@ -219,12 +220,13 @@ void MapDecoderImpl<LlrMetrics, LogSumAlg>::aPosterioriUpdate(Code::InfoIterator
         typename LlrMetrics::Type tmp = parityUpdateImpl<LogSumAlg<LlrMetrics>::isRecursive::value>(branchMetric, j);
         
         if (input.hasParity()) {
-          parityOut[i] = tmp - parityIn[i];
+          parityOut[j] = tmp - parityIn[j];
         }
         else {
-          parityOut[i] = tmp;
+          parityOut[j] = tmp;
         }
       }
+      parityOut += structure().trellis().outputSize();
     }
   }
 }

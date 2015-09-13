@@ -257,32 +257,6 @@ mxArray* toMxArray(const V<T, MexAllocator<T>>& vec) {
   return out;
 }
 
-template <class ... Childs>
-struct DerivedTypeHolder {
-};
-
-template <class Child, class ... Childs>
-struct DerivedTypeHolder<Child, Childs...> : DerivedTypeHolder<Childs...> {
-  template <typename Archive>
-  void register_type(Archive& archive) const
-  {
-    archive.template register_type<Child>();
-    DerivedTypeHolder<Childs...>::register_type(archive);
-  }
-  void register_type() const
-  {
-    boost::serialization::type_info_implementation<Child>::type::get_const_instance();
-    DerivedTypeHolder<Childs...>::register_type();
-  }
-};
-
-template <>
-struct DerivedTypeHolder<> {
-  template <typename Archive>
-  void register_type(Archive& archive) const {}
-  void register_type() const {}
-};
-
 template <class T>
 class mxArrayTo<std::unique_ptr<T>> {
 public:

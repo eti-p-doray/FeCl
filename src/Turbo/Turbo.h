@@ -126,7 +126,7 @@ public:
   class Structure : public Code::Structure {
     friend class ::boost::serialization::access;
   public:
-    
+    Structure() = default;
     Structure(const EncoderOptions&, const DecoderOptions&);
     virtual ~Structure() = default;
     
@@ -149,8 +149,8 @@ public:
     inline BitOrdering bitOrdering() const {return bitOrdering_;}
     inline SchedulingType scheduling() const {return schedulingType_;}
     
+    virtual bool check(std::vector<BitField<uint8_t>>::const_iterator parity) const;
     virtual void encode(std::vector<BitField<bool>>::const_iterator msg, std::vector<BitField<uint8_t>>::iterator parity) const;
-    //bool check(std::vector<uint8_t>::const_iterator parity) const;
     
     template <typename T>
     void alternate(typename std::vector<T>::const_iterator parityIn, typename std::vector<T>::iterator parityOut);
@@ -159,8 +159,6 @@ public:
     void pack(typename std::vector<T>::const_iterator parityIn, typename std::vector<T>::iterator parityOut);
     
   private:
-    Structure() = default;
-    
     template <typename Archive>
     void serialize(Archive & ar, const unsigned int version) {
       using namespace boost::serialization;

@@ -160,7 +160,7 @@ namespace fec {
     constexpr static size_t tableSize = 4;
     struct nlog1pexpImpl {
       typename LlrMetrics::Type operator()(typename LlrMetrics::Type x) {
-        return log(1+exp(-double(x)/tableScale));
+        return std::log(1+std::exp(-double(x)/tableScale));
       }
     };
     static LuTable<typename LlrMetrics::Type, tableSize> nlog1pexpTable;

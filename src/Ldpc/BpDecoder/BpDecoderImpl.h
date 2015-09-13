@@ -58,7 +58,7 @@ namespace fec {
     void checkUpdate();
     void bitUpdate();
     
-    std::vector<uint8_t> hardParity_;
+    std::vector<BitField<uint8_t>> hardParity_;
     
     std::vector<typename LlrMetrics::Type> parity_;
     std::vector<typename LlrMetrics::Type> bitMetrics_;

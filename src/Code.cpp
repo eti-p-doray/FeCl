@@ -71,6 +71,18 @@ Code::Code(Code::Structure* structure, int workGroupSize) : structureRef_(struct
   workGroupSize_ = workGroupSize;
 }
 
+bool Code::checkBlocks(std::vector<BitField<uint8_t>>::const_iterator parity, size_t n) const
+{
+  for (size_t i = 0; i < n; ++i) {
+    bool check = structure().check(parity);
+    if (!check) {
+      return false;
+    }
+    parity += paritySize();
+  }
+  return true;
+}
+
 void Code::encodeBlocks(std::vector<BitField<bool>>::const_iterator msg, std::vector<BitField<uint8_t>>::iterator parity, size_t n) const
 {
   for (size_t i = 0; i < n; ++i) {
