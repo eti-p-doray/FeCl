@@ -24,7 +24,7 @@ For C++ API, refer to the [web documentation](http://eti-p-doray.github.io/Forwa
 
 Instructions:
 
-To install only the Matlab API from pre-compiled binaries, download and run the [toolbox file](https://github.com/eti-p-doray/ForwardErrorCorrection/blob/gh-pages/ForwardErrorCorrection.mltbx?raw=true) <br/>
+To install only the Matlab API from pre-compiled binaries, download and run the toolbox file <br/>
 Currently, the toolbox is built for the following architectures<br/>
 * win64 
 * maci64 
