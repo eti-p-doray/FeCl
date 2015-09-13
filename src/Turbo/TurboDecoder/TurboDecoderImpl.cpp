@@ -37,14 +37,23 @@ TurboDecoderImpl::TurboDecoderImpl(const Turbo::Structure& structure) : TurboDec
 
 void TurboDecoderImpl::decodeBlock(std::vector<LlrType>::const_iterator parity, std::vector<BitField<bool>>::iterator msg)
 {
-  std::copy(parity, parity + structure().systSize(), systIn_.begin());
+  switch (structure().bitOrdering()) {
+    case Turbo::Alternate:
+      structure().pack<LlrType>(parity, parityIn_.begin());
+      break;
+      
+    default:
+    case Turbo::Pack:
+      std::copy(parity, parity + structure().paritySize(), parityIn_.begin());
+      break;
+  }
   std::fill(extrinsic_.begin(), extrinsic_.end(), 0);
   for (size_t i = 0; i < structure().iterationCount(); ++i) {
     if (structure().scheduling() == Turbo::Parallel) {
       parallelSharingUpdate();
     }
     
-    auto parityIt = parity + structure().systSize();
+    auto parityIt = parityIn_.begin() + structure().systSize();
     auto extrinsic = extrinsic_.begin();
     for (size_t j = 0; j < structure().constituentCount(); ++j) {
       if (structure().scheduling() == Turbo::Serial) {
@@ -59,7 +68,7 @@ void TurboDecoderImpl::decodeBlock(std::vector<LlrType>::const_iterator parity, 
       parityIt += structure().constituent(j).paritySize();
     }
   }
-  std::copy(parity, parity+structure().msgSize(), systOut_.begin());
+  std::copy(parityIn_.begin(), parityIn_.begin()+structure().msgSize(), systOut_.begin());
   aPosterioriUpdate();
   
   for (size_t i = 0; i < structure().msgSize(); ++i) {
@@ -70,10 +79,19 @@ void TurboDecoderImpl::decodeBlock(std::vector<LlrType>::const_iterator parity, 
 
 void TurboDecoderImpl::soDecodeBlock(Codec::InputIterator input, Codec::OutputIterator output)
 {
-  std::copy(input.parity(), input.parity() + structure().systSize(), systIn_.begin());
+  switch (structure().bitOrdering()) {
+    case Turbo::Alternate:
+      structure().pack<LlrType>(input.parity(), parityIn_.begin());
+      break;
+      
+    default:
+    case Turbo::Pack:
+      std::copy(input.parity(), input.parity() + structure().paritySize(), parityIn_.begin());
+      break;
+  }
   if (input.hasSyst()) {
     for (size_t i = 0; i < structure().systSize(); ++i) {
-      systIn_[i] += input.syst()[i];
+      parityIn_[i] += input.syst()[i];
     }
   }
   
@@ -95,7 +113,7 @@ void TurboDecoderImpl::soDecodeBlock(Codec::InputIterator input, Codec::OutputIt
       parallelSharingUpdate();
     }
     
-    auto parityIn = input.parity() + structure().systSize();
+    auto parityIn = parityIn_.begin() + structure().systSize();
     auto parityOut = output.parity() + structure().systSize();
     auto extrinsic = extrinsic_.begin();
     for (size_t j = 0; j < structure().constituentCount(); ++j) {
@@ -151,7 +169,7 @@ void TurboDecoderImpl::parallelSharingUpdate()
   auto extrinsic = extrinsic_.begin();
   auto extrinsicTmp = extrinsicBuffer_.begin();
   
-  auto systTail = systIn_.begin() + structure().msgSize();
+  auto systTail = parityIn_.begin() + structure().msgSize();
   auto syst = systOut_.begin();
   std::fill(systOut_.begin(), systOut_.begin() + structure().msgSize(), 0);
   for (size_t j = 0; j < structure().constituentCount(); ++j) {
@@ -168,7 +186,7 @@ void TurboDecoderImpl::parallelSharingUpdate()
     extrinsic += structure().constituent(j).msgTailSize();
     systTail += structure().constituent(j).msgTailSize();
   }
-  std::copy(systIn_.begin(), systIn_.begin() + structure().msgSize(), systOut_.begin());
+  std::copy(parityIn_.begin(), parityIn_.begin() + structure().msgSize(), systOut_.begin());
   
   for (int64_t j = structure().constituentCount()-1; j >= 0; --j) {
     extrinsic -= structure().constituent(j).systSize();
@@ -183,9 +201,9 @@ void TurboDecoderImpl::parallelSharingUpdate()
 void TurboDecoderImpl::serialSharingUpdate(size_t i)
 {
   auto extrinsic = extrinsic_.begin();
-  auto systTail = systIn_.begin() + structure().msgSize();
+  auto systTail = parityIn_.begin() + structure().msgSize();
   auto syst = systOut_.begin();
-  std::copy(systIn_.begin(), systIn_.begin() + structure().msgSize(), systOut_.begin());
+  std::copy(parityIn_.begin(), parityIn_.begin() + structure().msgSize(), systOut_.begin());
   for (size_t j = 0; j < i; ++j) {
     for (size_t k = 0; k < structure().constituent(j).msgSize(); ++k) {
       syst[structure().interleaver(j)[k]] += extrinsic[k];

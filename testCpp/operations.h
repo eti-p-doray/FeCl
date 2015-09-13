@@ -36,6 +36,15 @@
 #include "Ldpc/Ldpc.h"
 
 template <typename T>
+std::ostream& operator<<(std::ostream& os, const std::vector<T>& a)
+{
+  for (uint64_t i = 0; i < a.size(); i++) {
+    os << float(a[i]) << " ";
+  }
+  return os;
+}
+
+template <typename T>
 std::vector<fec::LlrType> distort(const std::vector<fec::BitField<T>>& input, double snrdb)
 {
   const int8_t bpsk[2] = {-1, 1};
@@ -160,7 +169,7 @@ void test_soDecodeBlock_parityOut(const fec::Codec& code, double snr)
     BOOST_REQUIRE(msg[i] == (systOut[i]>0));
   }
   for (size_t i = 0; i < parity.size(); ++i) {
-    BOOST_REQUIRE(parity[i] == ((parityOut[i]+parityIn[i])>0));
+    BOOST_REQUIRE(parity[i] == ((parityIn[i]+parityOut[i])>0));
   }
 }
 
@@ -178,7 +187,7 @@ void test_soDecodeBlock_systIn(const fec::Codec& code, double snr)
   code.soDecode(fec::Codec::Input<>().parity(parityIn).syst(systIn), fec::Codec::Output<>().syst(systOut).parity(parityOut));
   
   for (size_t i = 0; i < msg.size(); ++i) {
-    BOOST_REQUIRE(msg[i] == (systOut[i]>0));
+    BOOST_REQUIRE(msg[i] == ((systOut[i]+systIn[i])>0));
   }
 }
 

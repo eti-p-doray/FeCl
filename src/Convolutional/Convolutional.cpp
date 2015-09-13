@@ -53,19 +53,16 @@ Convolutional::Convolutional(const Structure& structure,  int workGroupSize) :
 structure_(structure),
 Codec(&structure_, workGroupSize)
 {
-  int bou = 0;
 }
 Convolutional::Convolutional(const EncoderOptions& encoder, const DecoderOptions& decoder, int workGroupSize) :
 structure_(encoder, decoder),
 Codec(&structure_, workGroupSize)
 {
-  int bou = 0;
 }
 Convolutional::Convolutional(const EncoderOptions& encoder, int workGroupSize) :
 structure_(encoder),
 Codec(&structure_, workGroupSize)
 {
-  int bou = 0;
 }
 
 void Convolutional::soDecodeBlocks(InputIterator input, OutputIterator output, size_t n) const
@@ -127,12 +124,11 @@ void Convolutional::Structure::setEncoderOptions(const EncoderOptions& encoder)
 void Convolutional::Structure::setDecoderOptions(const DecoderOptions& decoder)
 {
   decoderType_ = decoder.decoderType_;
-  metricType_ = decoder.metricType_;
 }
 
 Convolutional::DecoderOptions Convolutional::Structure::getDecoderOptions()
 {
-  return DecoderOptions().decoderType(decoderType_).metricType(metricType_);
+  return DecoderOptions().decoderType(decoderType_);
 }
 
 void Convolutional::Structure::encode(std::vector<BitField<bool>>::const_iterator msg, std::vector<BitField<uint8_t>>::iterator parity) const

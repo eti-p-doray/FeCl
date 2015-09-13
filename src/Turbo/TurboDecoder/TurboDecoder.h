@@ -61,7 +61,7 @@ namespace fec {
     
     std::vector<LlrType> extrinsic_;
     std::vector<LlrType> extrinsicBuffer_;
-    std::vector<LlrType> systIn_;
+    std::vector<LlrType> parityIn_;
     std::vector<LlrType> systOut_;
     
   private:

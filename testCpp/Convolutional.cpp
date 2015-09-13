@@ -40,7 +40,7 @@ test_suite*
 init_unit_test_suite( int argc, char* argv[] )
 {
   fec::Trellis trellis({4}, {{015, 017}}, {015});
-  size_t length = 512;
+  size_t length = 64;
   auto encoder = fec::Convolutional::EncoderOptions(trellis, length).termination(fec::Convolutional::Truncation);
   auto decoder = fec::Convolutional::DecoderOptions().decoderType(fec::Codec::Approximate);
   

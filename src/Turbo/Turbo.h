@@ -153,10 +153,10 @@ public:
     virtual void encode(std::vector<BitField<bool>>::const_iterator msg, std::vector<BitField<uint8_t>>::iterator parity) const;
     
     template <typename T>
-    void alternate(typename std::vector<T>::const_iterator parityIn, typename std::vector<T>::iterator parityOut);
+    void alternate(typename std::vector<T>::const_iterator parityIn, typename std::vector<T>::iterator parityOut) const;
     
     template <typename T>
-    void pack(typename std::vector<T>::const_iterator parityIn, typename std::vector<T>::iterator parityOut);
+    void pack(typename std::vector<T>::const_iterator parityIn, typename std::vector<T>::iterator parityOut) const;
     
   private:
     template <typename Archive>

@@ -85,11 +85,9 @@ namespace fec {
       DecoderOptions() = default;
       
       DecoderOptions& decoderType(Codec::DecoderType type) {decoderType_ = type; return *this;}
-      DecoderOptions& metricType(Codec::MetricType type) {metricType_ = type; return *this;}
       
     private:
       Codec::DecoderType decoderType_ = Approximate;
-      Codec::MetricType metricType_ = Floating;
     };
     /**
      *  This class represents a convolutional code structure.

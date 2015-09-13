@@ -34,7 +34,7 @@
 #include <memory>
 #include <cstdint>
 
-#include "Code.h"
+#include "Codec.h"
 
 std::vector<fec::BitField<bool>> randomBits(size_t n) {
   uint64_t seed = std::chrono::system_clock::now().time_since_epoch().count();
@@ -52,7 +52,7 @@ std::vector<fec::LlrType> distort(const std::vector<fec::BitField<uint8_t>>& inp
   
   double snr = pow(10.0, snrdb/10.0);
   
-  uint64_t seed = std::chrono::system_clock::now().time_since_epoch().count();
+  uint64_t seed = 0;//std::chrono::system_clock::now().time_since_epoch().count();
   std::default_random_engine randomGenerator;
   randomGenerator.seed(uint32_t(seed));
   std::normal_distribution<double> normalDistribution(snr*4.0, 4.0*sqrt(snr/2.0));
@@ -64,7 +64,7 @@ std::vector<fec::LlrType> distort(const std::vector<fec::BitField<uint8_t>>& inp
   return llr;
 }
 
-int per(const std::unique_ptr<fec::Code>& code, double snrdb)
+int per(const std::unique_ptr<fec::Codec>& code, double snrdb)
 {
   std::vector<fec::BitField<bool>> msg = randomBits(code->msgSize());
   std::vector<fec::BitField<uint8_t>> parity;

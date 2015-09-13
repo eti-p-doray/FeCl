@@ -43,25 +43,13 @@ std::unique_ptr<MapDecoder> MapDecoder::create(const Convolutional::Structure& s
   switch (structure.decoderType()) {
     default:
     case Codec::Exact:
-      switch (structure.metricType()) {
-        default:
-        case Codec::Floating:
-          return std::unique_ptr<MapDecoder>(new MapDecoderImpl<FloatLlrMetrics, LogSum>(structure));
-        case Codec::Fixed:
-          return std::unique_ptr<MapDecoder>(new MapDecoderImpl<FixLlrMetrics, LogSum>(structure));
-      }
+      return std::unique_ptr<MapDecoder>(new MapDecoderImpl<FloatLlrMetrics, LogSum>(structure));
 
     case Codec::Table:
       return std::unique_ptr<MapDecoder>(new MapDecoderImpl<FloatLlrMetrics, TableLogSum>(structure));
 
     case Codec::Approximate:
-      switch (structure.metricType()) {
-        default:
-        case Codec::Floating:
-          return std::unique_ptr<MapDecoder>(new MapDecoderImpl<FloatLlrMetrics, MaxLogSum>(structure));
-        case Codec::Fixed:
-          return std::unique_ptr<MapDecoder>(new MapDecoderImpl<FixLlrMetrics, MaxLogSum>(structure));
-      }
+      return std::unique_ptr<MapDecoder>(new MapDecoderImpl<FloatLlrMetrics, MaxLogSum>(structure));
   }
 }
 

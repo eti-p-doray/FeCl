@@ -90,9 +90,6 @@ public:
     inline size_t paritySize() const {return paritySize_;} /**< Access the size of the parity in each code bloc. */
     inline size_t stateSize() const {return stateSize_;} /**< Access the size of the extrinsic in each code bloc. */
     DecoderType decoderType() const {return decoderType_;}
-    MetricType metricType() const {return metricType_;}
-    uint8_t scalingFactor() const {return scalingFactor_;}
-    uint8_t resolutionBits() const {return resolutionBits_;}
     
     virtual void encode(std::vector<BitField<bool>>::const_iterator msg, std::vector<BitField<uint8_t>>::iterator parity) const = 0;
     virtual bool check(std::vector<BitField<uint8_t>>::const_iterator parity) const = 0;
@@ -114,9 +111,6 @@ public:
     size_t paritySize_;/**< Size of the parity in each code bloc. */
     size_t stateSize_;/**< Size of the extrinsic in each code bloc. */
     DecoderType decoderType_;
-    MetricType metricType_;
-    uint8_t scalingFactor_;
-    uint8_t resolutionBits_;
   };
   template <class Iterator>
   class InfoIterator {
