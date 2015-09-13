@@ -24,7 +24,7 @@
  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  
- Declaration of TurboCodeImpl class
+ Declaration of TurboCodecImpl class
  ******************************************************************************/
 
 #ifndef TURBO_DECODER_H
@@ -37,7 +37,7 @@ namespace fec {
 
   /**
    *  This class contains the implementation of iterative decoder.
-   *  This algorithm is used for decoding in a TurboCode.
+   *  This algorithm is used for decoding in a TurboCodec.
    */
   class TurboDecoder
   {
@@ -48,14 +48,14 @@ namespace fec {
     inline const Turbo::Structure& structure() const {return structure_;}
     
     void decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<bool>>::iterator msg, size_t n);
-    void soDecodeBlocks(Code::InputIterator input, Code::OutputIterator output, size_t n);
+    void soDecodeBlocks(Codec::InputIterator input, Codec::OutputIterator output, size_t n);
     
   protected:
     TurboDecoder(const Turbo::Structure& codeStructure);
     TurboDecoder() = default;
     
     virtual void decodeBlock(std::vector<LlrType>::const_iterator parity, std::vector<BitField<bool>>::iterator msg) = 0;
-    virtual void soDecodeBlock(Code::InputIterator input, Code::OutputIterator output) = 0;
+    virtual void soDecodeBlock(Codec::InputIterator input, Codec::OutputIterator output) = 0;
     
     std::vector<std::unique_ptr<MapDecoder>> code_;
     

@@ -51,8 +51,8 @@ void TurboDecoderImpl::decodeBlock(std::vector<LlrType>::const_iterator parity, 
         serialSharingUpdate(j);
       }
       
-      auto inputInfo = Code::InputIterator(&structure()).parity(parityIt).syst(extrinsic);
-      auto outputInfo = Code::OutputIterator(&structure()).syst(extrinsic);
+      auto inputInfo = Codec::InputIterator(&structure()).parity(parityIt).syst(extrinsic);
+      auto outputInfo = Codec::OutputIterator(&structure()).syst(extrinsic);
       code_[j]->soDecodeBlock(inputInfo, outputInfo);
       
       extrinsic += structure().constituent(j).systSize();
@@ -68,7 +68,7 @@ void TurboDecoderImpl::decodeBlock(std::vector<LlrType>::const_iterator parity, 
 }
 
 
-void TurboDecoderImpl::soDecodeBlock(Code::InputIterator input, Code::OutputIterator output)
+void TurboDecoderImpl::soDecodeBlock(Codec::InputIterator input, Codec::OutputIterator output)
 {
   std::copy(input.parity(), input.parity() + structure().systSize(), systIn_.begin());
   if (input.hasSyst()) {
@@ -103,8 +103,8 @@ void TurboDecoderImpl::soDecodeBlock(Code::InputIterator input, Code::OutputIter
         serialSharingUpdate(j);
       }
       
-      auto inputInfo = Code::InputIterator(&structure()).parity(parityIn).syst(extrinsic);
-      auto outputInfo = Code::OutputIterator(&structure()).syst(extrinsic);
+      auto inputInfo = Codec::InputIterator(&structure()).parity(parityIn).syst(extrinsic);
+      auto outputInfo = Codec::OutputIterator(&structure()).syst(extrinsic);
       if (i == structure().iterationCount()-1 && output.hasParity()) {
         outputInfo.parity(parityOut);
       }

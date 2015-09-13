@@ -79,7 +79,7 @@ void BpDecoderImpl<LlrMetrics, BoxSumAlg>::decodeBlock(std::vector<LlrType>::con
 }
 
 template <class LlrMetrics, template <class> class BoxSumAlg>
-void BpDecoderImpl<LlrMetrics, BoxSumAlg>::soDecodeBlock(Code::InputIterator input, Code::OutputIterator output)
+void BpDecoderImpl<LlrMetrics, BoxSumAlg>::soDecodeBlock(Codec::InputIterator input, Codec::OutputIterator output)
 {
   std::copy(input.parity(), input.parity()+structure().paritySize(), parity_.begin());
   if (input.hasSyst()) {

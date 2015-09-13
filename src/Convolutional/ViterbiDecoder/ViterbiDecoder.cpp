@@ -33,7 +33,7 @@ using namespace fec;
 
 /**
  *  MapDecoder creator function.
- *  Construct in a factory behavior a MapCode object corresponding to the algorithm
+ *  Construct in a factory behavior a MapCodec object corresponding to the algorithm
  *  version in use.
  *  \param  codeStructure Convolutional code structure describing the code
  *  \return MacDecoder specialization suitable for the algorithm in use
@@ -44,7 +44,7 @@ std::unique_ptr<ViterbiDecoder> ViterbiDecoder::create(const Convolutional::Stru
 }
 
 /**
- *  Implementation of Code#decodeNBloc
+ *  Implementation of Codec#decodeNBloc
  */
 void ViterbiDecoder::decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<bool>>::iterator msg, size_t n)
 {

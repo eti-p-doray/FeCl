@@ -33,7 +33,7 @@ using namespace fec;
 
 /**
  *  MapDecoder creator function.
- *  Construct in a factory behavior a MapCode object corresponding to the algorithm
+ *  Construct in a factory behavior a MapCodec object corresponding to the algorithm
  *  version in use.
  *  \param  codeStructure Convolutional code structure describing the code
  *  \return MacDecoder specialization suitable for the algorithm in use
@@ -42,33 +42,33 @@ std::unique_ptr<MapDecoder> MapDecoder::create(const Convolutional::Structure& s
 {
   switch (structure.decoderType()) {
     default:
-    case Code::Exact:
+    case Codec::Exact:
       switch (structure.metricType()) {
         default:
-        case Code::Floating:
+        case Codec::Floating:
           return std::unique_ptr<MapDecoder>(new MapDecoderImpl<FloatLlrMetrics, LogSum>(structure));
-        case Code::Fixed:
+        case Codec::Fixed:
           return std::unique_ptr<MapDecoder>(new MapDecoderImpl<FixLlrMetrics, LogSum>(structure));
       }
 
-    case Code::Table:
+    case Codec::Table:
       return std::unique_ptr<MapDecoder>(new MapDecoderImpl<FloatLlrMetrics, TableLogSum>(structure));
 
-    case Code::Approximate:
+    case Codec::Approximate:
       switch (structure.metricType()) {
         default:
-        case Code::Floating:
+        case Codec::Floating:
           return std::unique_ptr<MapDecoder>(new MapDecoderImpl<FloatLlrMetrics, MaxLogSum>(structure));
-        case Code::Fixed:
+        case Codec::Fixed:
           return std::unique_ptr<MapDecoder>(new MapDecoderImpl<FixLlrMetrics, MaxLogSum>(structure));
       }
   }
 }
 
 /**
- *  Implementation of Code#softOutDecodeNBloc.
+ *  Implementation of Codec#softOutDecodeNBloc.
  */
-void MapDecoder::soDecodeBlocks(Code::InputIterator input, Code::OutputIterator output, size_t n)
+void MapDecoder::soDecodeBlocks(Codec::InputIterator input, Codec::OutputIterator output, size_t n)
 {
   for (size_t i = 0; i < n; ++i) {
     soDecodeBlock(input,output);

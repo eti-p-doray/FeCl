@@ -24,7 +24,7 @@
  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  
- Definition of TurboCodeImpl class
+ Definition of TurboCodecImpl class
  ******************************************************************************/
 
 #include "TurboDecoder.h"
@@ -57,7 +57,7 @@ void TurboDecoder::decodeBlocks(std::vector<LlrType>::const_iterator parity, std
   }
 }
 
-void TurboDecoder::soDecodeBlocks(Code::InputIterator input, Code::OutputIterator output, size_t n)
+void TurboDecoder::soDecodeBlocks(Codec::InputIterator input, Codec::OutputIterator output, size_t n)
 {
   for (size_t i = 0; i < n; ++i) {
     soDecodeBlock(input, output);

@@ -31,7 +31,7 @@
 
 #include <boost/serialization/export.hpp>
 
-#include "../Code.h"
+#include "../Codec.h"
 #include "../Convolutional/Convolutional.h"
 #include "../Structure/Interleaver.h"
 
@@ -65,7 +65,7 @@ namespace fec {
  *  and systTailX are the tail bit added to the msg 
  *  for termination of the constituent X.
  */
-class Turbo : public Code
+class Turbo : public Codec
 {
   friend class boost::serialization::access;
 public:
@@ -112,18 +112,18 @@ public:
     
     DecoderOptions& iterations(size_t count) {iterationCount_ = count; return *this;}
     DecoderOptions& scheduling(SchedulingType type) {schedulingType_ = type; return *this;}
-    DecoderOptions& decoderType(Code::DecoderType type) {decoderType_ = type; return *this;}
+    DecoderOptions& decoderType(Codec::DecoderType type) {decoderType_ = type; return *this;}
     
   private:
     size_t iterationCount_ = 6;
     SchedulingType schedulingType_ = Serial;
-    Code::DecoderType decoderType_ = Approximate;
+    Codec::DecoderType decoderType_ = Approximate;
   };
   /**
    *  This class represents a convolutional code structure.
    *  It provides a usefull interface to store and acces the structure information.
    */
-  class Structure : public Code::Structure {
+  class Structure : public Codec::Structure {
     friend class ::boost::serialization::access;
   public:
     Structure() = default;
@@ -131,7 +131,7 @@ public:
     virtual ~Structure() = default;
     
     virtual const char * get_key() const;
-    virtual Code::Structure::Type type() const {return Code::Structure::Turbo;}
+    virtual Codec::Structure::Type type() const {return Codec::Structure::Turbo;}
     
     /**
      *  Access the size of added msg bit for the trellis termination.
@@ -162,7 +162,7 @@ public:
     template <typename Archive>
     void serialize(Archive & ar, const unsigned int version) {
       using namespace boost::serialization;
-      ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(Code::Structure);
+      ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(Codec::Structure);
       ar & ::BOOST_SERIALIZATION_NVP(constituents_);
       ar & ::BOOST_SERIALIZATION_NVP(interleaver_);
       ar & ::BOOST_SERIALIZATION_NVP(tailSize_);
@@ -197,7 +197,7 @@ private:
     using namespace boost::serialization;
     ar & ::BOOST_SERIALIZATION_NVP(structure_);
     ar.template register_type<Structure>();
-    ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(Code);
+    ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(Codec);
   }
   
   Structure structure_;

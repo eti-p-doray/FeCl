@@ -35,11 +35,11 @@ std::unique_ptr<BpDecoder> BpDecoder::create(const Ldpc::Structure& structure)
 {
   switch (structure.decoderType()) {
     default:
-    case Code::Exact:
+    case Codec::Exact:
       return std::unique_ptr<BpDecoder>(new BpDecoderImpl<FloatLlrMetrics,BoxSum>(structure));
       break;
       
-    case Code::Approximate:
+    case Codec::Approximate:
       return std::unique_ptr<BpDecoder>(new BpDecoderImpl<FloatLlrMetrics,MinBoxSum>(structure));
       break;
   }
@@ -54,7 +54,7 @@ void BpDecoder::decodeBlocks(std::vector<LlrType>::const_iterator parity, std::v
   }
 }
 
-void BpDecoder::soDecodeBlocks(Code::InputIterator input, Code::OutputIterator output, size_t n)
+void BpDecoder::soDecodeBlocks(Codec::InputIterator input, Codec::OutputIterator output, size_t n)
 {
   for (size_t i = 0; i < n; ++i) {
     soDecodeBlock(input, output);

@@ -36,7 +36,7 @@ namespace fec {
   
   /**
    *  This class contains the implementation of iterative decoder.
-   *  This algorithm is used for decoding in a TurboCode.
+   *  This algorithm is used for decoding in a TurboCodec.
    */
   
   class TurboDecoderImpl : public TurboDecoder
@@ -49,7 +49,7 @@ namespace fec {
     TurboDecoderImpl() = default;
     
     virtual void decodeBlock(std::vector<LlrType>::const_iterator parity, std::vector<BitField<bool>>::iterator msg);
-    virtual void soDecodeBlock(Code::InputIterator input, Code::OutputIterator output);
+    virtual void soDecodeBlock(Codec::InputIterator input, Codec::OutputIterator output);
     
   private:
     void aPosterioriUpdate();

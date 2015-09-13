@@ -23,10 +23,10 @@
  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  
- Definition of Code class
+ Definition of Codec class
  ******************************************************************************/
 
-#include "Code.h"
+#include "Codec.h"
 
 #include "Convolutional/Convolutional.h"
 #include "Turbo/Turbo.h"
@@ -34,44 +34,44 @@
 
 using namespace fec;
 
-BOOST_CLASS_EXPORT_IMPLEMENT(Code);
-BOOST_CLASS_EXPORT_IMPLEMENT(Code::Structure);
+BOOST_CLASS_EXPORT_IMPLEMENT(Codec);
+BOOST_CLASS_EXPORT_IMPLEMENT(Codec::Structure);
 
 /**
- *  Code creator function.
+ *  Codec creator function.
  *  Construct in a factory behavior a code object corresponding to the structure.
- *  \param codeStructure Code object structure
+ *  \param codeStructure Codec object structure
  *  \param codeStructure Decoder parameters
  *  \param workGroupSize Number of thread used in encoding and decoding.
  */
-std::unique_ptr<Code> Code::create(const Code::Structure& structure, int workGroupSize)
+std::unique_ptr<Codec> Codec::create(const Codec::Structure& structure, int workGroupSize)
 {
   switch (structure.type()) {
-    case Code::Structure::Convolutional:
-      return std::unique_ptr<Code>(new Convolutional(dynamic_cast<const Convolutional::Structure&>(structure),
+    case Codec::Structure::Convolutional:
+      return std::unique_ptr<Codec>(new Convolutional(dynamic_cast<const Convolutional::Structure&>(structure),
                                                      workGroupSize));
       break;
       
-    case Code::Structure::Turbo:
-      return std::unique_ptr<Code>(new Turbo(dynamic_cast<const Turbo::Structure&>(structure), workGroupSize));
+    case Codec::Structure::Turbo:
+      return std::unique_ptr<Codec>(new Turbo(dynamic_cast<const Turbo::Structure&>(structure), workGroupSize));
       break;
       
-    case Code::Structure::Ldpc:
-      return std::unique_ptr<Code>(new Ldpc(dynamic_cast<const Ldpc::Structure&>(structure), workGroupSize));
+    case Codec::Structure::Ldpc:
+      return std::unique_ptr<Codec>(new Ldpc(dynamic_cast<const Ldpc::Structure&>(structure), workGroupSize));
       break;
       
     default:
       break;
   }
-  return std::unique_ptr<Code>();
+  return std::unique_ptr<Codec>();
 }
 
-Code::Code(Code::Structure* structure, int workGroupSize) : structureRef_(structure)
+Codec::Codec(Codec::Structure* structure, int workGroupSize) : structureRef_(structure)
 {
   workGroupSize_ = workGroupSize;
 }
 
-bool Code::checkBlocks(std::vector<BitField<uint8_t>>::const_iterator parity, size_t n) const
+bool Codec::checkBlocks(std::vector<BitField<uint8_t>>::const_iterator parity, size_t n) const
 {
   for (size_t i = 0; i < n; ++i) {
     bool check = structure().check(parity);
@@ -83,7 +83,7 @@ bool Code::checkBlocks(std::vector<BitField<uint8_t>>::const_iterator parity, si
   return true;
 }
 
-void Code::encodeBlocks(std::vector<BitField<bool>>::const_iterator msg, std::vector<BitField<uint8_t>>::iterator parity, size_t n) const
+void Codec::encodeBlocks(std::vector<BitField<bool>>::const_iterator msg, std::vector<BitField<uint8_t>>::iterator parity, size_t n) const
 {
   for (size_t i = 0; i < n; ++i) {
     structure().encode(msg, parity);

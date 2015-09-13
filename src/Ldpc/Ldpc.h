@@ -36,7 +36,7 @@
 
 #include <boost/serialization/export.hpp>
 
-#include "../Code.h"
+#include "../Codec.h"
 #include "../Structure/BitMatrix.h"
 
 namespace fec {
@@ -59,7 +59,7 @@ namespace fec {
  *  where checkX are the messages at the last iteration from the check node X 
  *  that would be transmitted to the connected bit nodes at the next iteration.
  */
-class Ldpc : public Code
+class Ldpc : public Codec
 {
   friend class boost::serialization::access;
 public:
@@ -81,18 +81,18 @@ public:
   public:
     DecoderOptions() = default;
     
-    DecoderOptions& decoderType(Code::DecoderType type) {decoderType_ = type; return *this;}
+    DecoderOptions& decoderType(Codec::DecoderType type) {decoderType_ = type; return *this;}
     DecoderOptions& iterations(size_t n) {iterationCount_ = n; return *this;}
     
   private:
-    Code::DecoderType decoderType_ = Approximate;
+    Codec::DecoderType decoderType_ = Approximate;
     size_t iterationCount_;
   };
   /**
    *  This class represents a ldpc code structure.
    *  It provides a usefull interface to store and acces the structure information.
    */
-  class Structure : public Code::Structure {
+  class Structure : public Codec::Structure {
     friend class ::boost::serialization::access;
   public:
     Structure() = default;
@@ -101,7 +101,7 @@ public:
     
     virtual const char * get_key() const;
     
-    virtual Code::Structure::Type type() const {return Code::Structure::Ldpc;}
+    virtual Codec::Structure::Type type() const {return Codec::Structure::Ldpc;}
     
     inline const SparseBitMatrix& checks() const {return H_;}
     
@@ -115,7 +115,7 @@ public:
     template <typename Archive>
     void serialize(Archive & ar, const unsigned int version) {
       using namespace boost::serialization;
-      ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(Code::Structure);
+      ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(Codec::Structure);
       ar & ::BOOST_SERIALIZATION_NVP(H_);
       ar & ::BOOST_SERIALIZATION_NVP(DC_);
       ar & ::BOOST_SERIALIZATION_NVP(T_);
@@ -154,7 +154,7 @@ private:
     using namespace boost::serialization;
     ar & ::BOOST_SERIALIZATION_NVP(structure_);
     ar.template register_type<Structure>();
-    ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(Code);
+    ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(Codec);
   }
   
   Structure structure_;

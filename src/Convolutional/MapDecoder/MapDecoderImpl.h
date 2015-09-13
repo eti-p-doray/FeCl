@@ -39,7 +39,7 @@ namespace fec {
   /**
    *  This class contains the abstract implementation of the map decoder.
    *  This algorithm is used for decoding with a-priori information
-   *  in a ConvolutionalCode.
+   *  in a ConvolutionalCodec.
    *  The reason for this class is to offer an common interface of map decoders
    *  while allowing the compiler to inline implementation specific functions
    *  by using templates instead of polymorphism.
@@ -51,14 +51,14 @@ namespace fec {
     MapDecoderImpl(const Convolutional::Structure&); /**< Constructor */
     virtual ~MapDecoderImpl() = default; /**< Default destructor */
     
-    virtual void soDecodeBlock(Code::InputIterator input, Code::OutputIterator output);
-    template <class T> void soDecodeBlockImpl(Code::InfoIterator<typename std::vector<T>::const_iterator> input, Code::InfoIterator<typename std::vector<T>::iterator> output);
+    virtual void soDecodeBlock(Codec::InputIterator input, Codec::OutputIterator output);
+    template <class T> void soDecodeBlockImpl(Codec::InfoIterator<typename std::vector<T>::const_iterator> input, Codec::InfoIterator<typename std::vector<T>::iterator> output);
     
   protected:
-    template <class T> void branchUpdate(Code::InfoIterator<typename std::vector<T>::const_iterator> input);/**< Branch metric calculation. */
+    template <class T> void branchUpdate(Codec::InfoIterator<typename std::vector<T>::const_iterator> input);/**< Branch metric calculation. */
     void forwardUpdate();/**< Forward metric calculation. */
     void backwardUpdate();/**< Backard metric calculation. */
-    template <class T> void aPosterioriUpdate(Code::InfoIterator<typename std::vector<T>::const_iterator> input, Code::InfoIterator<typename std::vector<T>::iterator> output);/**< Final (msg) L-values calculation. */
+    template <class T> void aPosterioriUpdate(Codec::InfoIterator<typename std::vector<T>::const_iterator> input, Codec::InfoIterator<typename std::vector<T>::iterator> output);/**< Final (msg) L-values calculation. */
     
   private:
     template <bool isRecursive>

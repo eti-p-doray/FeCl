@@ -23,7 +23,7 @@
  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  
- Definition of MapCode class
+ Definition of MapCodec class
  ******************************************************************************/
 
 #include "Ldpc.h"
@@ -44,12 +44,12 @@ const char * Ldpc::Structure::get_key() const {
 
 /**
  *  Ldpc constructor
- *  \param  codeStructure Code structure used for encoding and decoding
+ *  \param  codeStructure Codec structure used for encoding and decoding
  *  \param  workGroupSize Number of thread used for decoding
  */
 Ldpc::Ldpc(const Ldpc::Structure& structure, int workGroupSize) :
 structure_(structure),
-Code(&structure_, workGroupSize)
+Codec(&structure_, workGroupSize)
 {
 }
 

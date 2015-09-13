@@ -16,7 +16,7 @@ if (UNIX)
 endif (UNIX)
 
 set(SOURCES
-  src/Code.cpp
+  src/Codec.cpp
   src/Structure/Trellis.cpp
   src/Convolutional/Convolutional.cpp
   src/Convolutional/MapDecoder/MapDecoder.cpp
@@ -66,6 +66,7 @@ enable_testing()
 
 set(TESTS
   testCpp/Convolutional.cpp
+  testCpp/Turbo.cpp
 )
 
 foreach(TEST ${TESTS})

@@ -38,7 +38,7 @@ namespace fec {
 
   /**
    *  This class contains the concrete implementation of the belief propagation decoder.
-   *  This algorithm is used for decoding in an LdpcCode.
+   *  This algorithm is used for decoding in an LdpcCodec.
    *  The reason for this class is to offer an common interface of bp decoders
    *  while allowing the compiler to inline implementation specific functions
    *  by using templates instead of polymorphism.
@@ -51,7 +51,7 @@ namespace fec {
     
   protected:
     virtual void decodeBlock(std::vector<LlrType>::const_iterator parity, std::vector<BitField<bool>>::iterator msg);
-    virtual void soDecodeBlock(Code::InputIterator input, Code::
+    virtual void soDecodeBlock(Codec::InputIterator input, Codec::
                                OutputIterator output);
     
   private:

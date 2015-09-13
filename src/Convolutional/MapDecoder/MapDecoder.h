@@ -39,7 +39,7 @@ namespace fec {
   /**
    *  This class contains the abstract implementation of the map decoder.
    *  This algorithm is used for decoding with a-priori information
-   *  in a ConvolutionalCode.
+   *  in a ConvolutionalCodec.
    *  The reason for this class is to offer an common interface of map decoders
    *  while allowing the compiler to inline implementation specific functions
    *  by using templates instead of polymorphism.
@@ -50,8 +50,8 @@ public:
   static std::unique_ptr<MapDecoder> create(const Convolutional::Structure&); /**< Creating function */
   virtual ~MapDecoder() = default; /**< Default destructor */
   
-  void soDecodeBlocks(Code::InputIterator input, Code::OutputIterator output, size_t n);
-  virtual void soDecodeBlock(Code::InputIterator input, Code::OutputIterator output) = 0;
+  void soDecodeBlocks(Codec::InputIterator input, Codec::OutputIterator output, size_t n);
+  virtual void soDecodeBlock(Codec::InputIterator input, Codec::OutputIterator output) = 0;
   
 protected:
   MapDecoder(const Convolutional::Structure&); /**< Constructor */

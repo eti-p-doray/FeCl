@@ -34,13 +34,13 @@
 #include <boost/test/included/unit_test.hpp>
 using namespace boost::unit_test;
 
-#include "Code.h"
+#include "Codec.h"
 
-#include "ConvolutionalCode/ConvolutionalCode.h"
-#include "TurboCode/TurboCode.h"
-#include "LdpcCode/LdpcCode.h"
+#include "ConvolutionalCodec/ConvolutionalCodec.h"
+#include "TurboCodec/TurboCodec.h"
+#include "LdpcCodec/LdpcCodec.h"
 
-void encode_badMsgSize_test(const std::shared_ptr<fec::Code>& code)
+void encode_badMsgSize_test(const std::shared_ptr<fec::Codec>& code)
 {
   std::vector<uint8_t> msg(code->msgSize()+1);
   
@@ -53,7 +53,7 @@ void encode_badMsgSize_test(const std::shared_ptr<fec::Code>& code)
   BOOST_ERROR("Wrong msg size exception not thrown");
 }
 
-void decode_test(const std::shared_ptr<fec::Code>& code, const std::vector<uint8_t>& msg)
+void decode_test(const std::shared_ptr<fec::Codec>& code, const std::vector<uint8_t>& msg)
 {
   std::vector<uint8_t> parity;
   code->encode(msg, parity);
@@ -71,7 +71,7 @@ void decode_test(const std::shared_ptr<fec::Code>& code, const std::vector<uint8
   }
 }
 
-/*void decode_badParitySize_test(const std::shared_ptr<fec::Code>& code)
+/*void decode_badParitySize_test(const std::shared_ptr<fec::Codec>& code)
 {
   std::vector<fec::LlrType> codeL(parity.size()+1);
   
@@ -84,7 +84,7 @@ void decode_test(const std::shared_ptr<fec::Code>& code, const std::vector<uint8
   BOOST_ERROR("Wrong parity size exception not thrown");
 }*/
 
-void softOutDecode_test(const std::shared_ptr<fec::Code>& code, const std::vector<uint8_t>& msg)
+void softOutDecode_test(const std::shared_ptr<fec::Codec>& code, const std::vector<uint8_t>& msg)
 {
   std::vector<uint8_t> parity;
   code->encode(msg, parity);
@@ -102,7 +102,7 @@ void softOutDecode_test(const std::shared_ptr<fec::Code>& code, const std::vecto
   }
 }
 
-void appDecode_test(const std::shared_ptr<fec::Code>& code, const std::vector<uint8_t>& msg)
+void appDecode_test(const std::shared_ptr<fec::Codec>& code, const std::vector<uint8_t>& msg)
 {
   std::vector<uint8_t> parity;
   code->encode(msg, parity);
@@ -129,19 +129,19 @@ void appDecode_test(const std::shared_ptr<fec::Code>& code, const std::vector<ui
   }
 }
 
-void save_test(const std::shared_ptr<fec::Code>& code) {
+void save_test(const std::shared_ptr<fec::Codec>& code) {
   
 }
 
 test_suite*
 init_unit_test_suite( int argc, char* argv[] )
 {
-  std::vector<std::shared_ptr<fec::Code>> codes;
-  codes.push_back( fec::Code::create(fec::ConvolutionalCode::Structure(fec::Trellis({3}, {{04, 05}}), 8, fec::ConvolutionalCode::Truncation,  fec::ConvolutionalCode::MaxLogMap), 4) );
-  codes.push_back( fec::Code::create(fec::ConvolutionalCode::Structure(fec::Trellis({3}, {{04, 05}}), 8, fec::ConvolutionalCode::Truncation,  fec::ConvolutionalCode::LogMap), 4) );
-  codes.push_back( fec::Code::create(fec::ConvolutionalCode::Structure(fec::Trellis({3}, {{04, 05}}), 8, fec::ConvolutionalCode::Tail,  fec::ConvolutionalCode::LogMap), 4) );
+  std::vector<std::shared_ptr<fec::Codec>> codes;
+  codes.push_back( fec::Codec::create(fec::ConvolutionalCodec::Structure(fec::Trellis({3}, {{04, 05}}), 8, fec::ConvolutionalCodec::Truncation,  fec::ConvolutionalCodec::MaxLogMap), 4) );
+  codes.push_back( fec::Codec::create(fec::ConvolutionalCodec::Structure(fec::Trellis({3}, {{04, 05}}), 8, fec::ConvolutionalCodec::Truncation,  fec::ConvolutionalCodec::LogMap), 4) );
+  codes.push_back( fec::Codec::create(fec::ConvolutionalCodec::Structure(fec::Trellis({3}, {{04, 05}}), 8, fec::ConvolutionalCodec::Tail,  fec::ConvolutionalCodec::LogMap), 4) );
   
-  codes.push_back( fec::Code::create(fec::LdpcCode::Structure(fec::LdpcCode::Structure::gallagerConstruction(1024, 3, 5)), 4) );
+  codes.push_back( fec::Codec::create(fec::LdpcCodec::Structure(fec::LdpcCodec::Structure::gallagerConstruction(1024, 3, 5)), 4) );
   
   uint64_t seed = std::chrono::system_clock::now().time_since_epoch().count();
   std::srand ( unsigned (seed ) );
@@ -154,10 +154,10 @@ init_unit_test_suite( int argc, char* argv[] )
   std::random_shuffle (randPerm2.begin(), randPerm2.end());
   
   auto trellis = fec::Trellis({3}, {{05}});
-  codes.push_back( fec::Code::create(fec::TurboCode::Structure({trellis, trellis}, {randPerm1,randPerm2}, {fec::ConvolutionalCode::Truncation,fec::ConvolutionalCode::Truncation}, 5, fec::TurboCode::Parallel,  fec::ConvolutionalCode::MaxLogMap), 4 ));
-  codes.push_back( fec::Code::create(fec::TurboCode::Structure({trellis, trellis}, {randPerm1,randPerm2}, {fec::ConvolutionalCode::Truncation,fec::ConvolutionalCode::Truncation}, 5, fec::TurboCode::Serial,  fec::ConvolutionalCode::MaxLogMap), 4 ));
-  codes.push_back( fec::Code::create(fec::TurboCode::Structure({trellis, trellis}, {randPerm1,randPerm2}, {fec::ConvolutionalCode::Tail,fec::ConvolutionalCode::Tail}, 5, fec::TurboCode::Parallel,  fec::ConvolutionalCode::MaxLogMap), 4 ));
-  codes.push_back( fec::Code::create(fec::TurboCode::Structure({trellis, trellis}, {randPerm1,randPerm2}, {fec::ConvolutionalCode::Truncation,fec::ConvolutionalCode::Tail}, 5, fec::TurboCode::Serial,  fec::ConvolutionalCode::MaxLogMap), 4 ));
+  codes.push_back( fec::Codec::create(fec::TurboCodec::Structure({trellis, trellis}, {randPerm1,randPerm2}, {fec::ConvolutionalCodec::Truncation,fec::ConvolutionalCodec::Truncation}, 5, fec::TurboCodec::Parallel,  fec::ConvolutionalCodec::MaxLogMap), 4 ));
+  codes.push_back( fec::Codec::create(fec::TurboCodec::Structure({trellis, trellis}, {randPerm1,randPerm2}, {fec::ConvolutionalCodec::Truncation,fec::ConvolutionalCodec::Truncation}, 5, fec::TurboCodec::Serial,  fec::ConvolutionalCodec::MaxLogMap), 4 ));
+  codes.push_back( fec::Codec::create(fec::TurboCodec::Structure({trellis, trellis}, {randPerm1,randPerm2}, {fec::ConvolutionalCodec::Tail,fec::ConvolutionalCodec::Tail}, 5, fec::TurboCodec::Parallel,  fec::ConvolutionalCodec::MaxLogMap), 4 ));
+  codes.push_back( fec::Codec::create(fec::TurboCodec::Structure({trellis, trellis}, {randPerm1,randPerm2}, {fec::ConvolutionalCodec::Truncation,fec::ConvolutionalCodec::Tail}, 5, fec::TurboCodec::Serial,  fec::ConvolutionalCodec::MaxLogMap), 4 ));
   
   for (auto& code : codes) {
     framework::master_test_suite().

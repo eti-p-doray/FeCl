@@ -23,11 +23,11 @@
  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  
- Declaration of Code class
+ Declaration of Codec class
  ******************************************************************************/
 
-#ifndef CODE_H
-#define CODE_H
+#ifndef CODEC_H
+#define CODEC_H
 
 #include <memory>
 #include <thread>
@@ -44,13 +44,12 @@
 #include "Structure/BitField.h"
 #include "Structure/LlrMetrics.h"
 
-//chanco
 namespace fec {
 /**
  *  This class represents a general encoder / decoder.
  *  It offers methods to encode and to decode data given a code structure.
  */
-class Code
+class Codec
 {
   friend class boost::serialization::access;
 public:
@@ -60,7 +59,6 @@ public:
     Table, /**< A lookup table is used  */
     Approximate,  /**< An approximation is used */
   };
-  
   enum MetricType {
     Floating, /**< Floating point is used in decoding. */
     Fixed, /**< Fixed type */
@@ -232,8 +230,8 @@ public:
   template <template <typename> class A = std::allocator>
   using Output = Info<std::vector<LlrType,A<LlrType>>>;
   
-  static std::unique_ptr<Code> create(const Structure& Structure, int workGroupdSize = 4);
-  virtual ~Code() = default;
+  static std::unique_ptr<Codec> create(const Structure& Structure, int workGroupdSize = 4);
+  virtual ~Codec() = default;
   
   virtual const char * get_key() const = 0; /**< Access the type info key. */
   
@@ -257,10 +255,10 @@ public:
   void soDecode(Input<A> input, Output<A> output) const;
 
 protected:
-  Code() = default;
-  Code(Structure* structure, int workGroupdSize = 4);
-  Code(const Code& other) {*this = other;}
-  Code& operator=(const Code& other) {workGroupSize_ = other.workGroupSize(); return *this;}
+  Codec() = default;
+  Codec(Structure* structure, int workGroupdSize = 4);
+  Codec(const Codec& other) {*this = other;}
+  Codec& operator=(const Codec& other) {workGroupSize_ = other.workGroupSize(); return *this;}
   
   inline int workGroupSize() const {return workGroupSize_;}
   
@@ -320,14 +318,14 @@ private:
   
 }
 
-BOOST_CLASS_TYPE_INFO(fec::Code::Structure,extended_type_info_no_rtti<fec::Code::Structure>);
-BOOST_CLASS_EXPORT_KEY(fec::Code::Structure);
-BOOST_SERIALIZATION_ASSUME_ABSTRACT(fec::Code);
-BOOST_CLASS_TYPE_INFO(fec::Code,extended_type_info_no_rtti<fec::Code>);
-BOOST_CLASS_EXPORT_KEY(fec::Code);
+BOOST_CLASS_TYPE_INFO(fec::Codec::Structure,extended_type_info_no_rtti<fec::Codec::Structure>);
+BOOST_CLASS_EXPORT_KEY(fec::Codec::Structure);
+BOOST_SERIALIZATION_ASSUME_ABSTRACT(fec::Codec);
+BOOST_CLASS_TYPE_INFO(fec::Codec,extended_type_info_no_rtti<fec::Codec>);
+BOOST_CLASS_EXPORT_KEY(fec::Codec);
 
 template <template <typename> class A>
-bool fec::Code::check(std::vector<BitField<uint8_t>,A<BitField<uint8_t>>>& parity) const
+bool fec::Codec::check(std::vector<BitField<uint8_t>,A<BitField<uint8_t>>>& parity) const
 {
   uint64_t blockCount = parity.size() / (paritySize());
   if (parity.size() != blockCount * paritySize()) {
@@ -345,7 +343,7 @@ bool fec::Code::check(std::vector<BitField<uint8_t>,A<BitField<uint8_t>>>& parit
  *    the matlab API to use a custom mex allocator
  */
 template <template <typename> class A>
-void fec::Code::encode(const std::vector<BitField<bool>,A<BitField<bool>>>& msg, std::vector<BitField<uint8_t>,A<BitField<uint8_t>>>& parity) const
+void fec::Codec::encode(const std::vector<BitField<bool>,A<BitField<bool>>>& msg, std::vector<BitField<uint8_t>,A<BitField<uint8_t>>>& parity) const
 {
   uint64_t blockCount = msg.size() / (msgSize());
   if (msg.size() != blockCount * msgSize()) {
@@ -359,7 +357,7 @@ void fec::Code::encode(const std::vector<BitField<bool>,A<BitField<bool>>>& msg,
   auto thread = threadGroup.begin();
   size_t step = taskSize(blockCount);
   for (int i = 0; i + step <= blockCount; i += step) {
-    threadGroup.push_back( std::thread(&Code::encodeBlocks, this, msgIt, parityIt, step) );
+    threadGroup.push_back( std::thread(&Codec::encodeBlocks, this, msgIt, parityIt, step) );
     msgIt += msgSize() * step;
     parityIt += paritySize() * step;
     
@@ -384,7 +382,7 @@ void fec::Code::encode(const std::vector<BitField<bool>,A<BitField<bool>>>& msg,
  *    the matlab API to use a custom mex allocator
  */
 template <template <typename> class A>
-void fec::Code::decode(const std::vector<LlrType,A<LlrType>>& parity, std::vector<BitField<bool>,A<BitField<bool>>>& msg) const
+void fec::Codec::decode(const std::vector<LlrType,A<LlrType>>& parity, std::vector<BitField<bool>,A<BitField<bool>>>& msg) const
 {
   size_t blockCount = parity.size() / paritySize();
   if (parity.size() != blockCount * paritySize()) {
@@ -398,7 +396,7 @@ void fec::Code::decode(const std::vector<LlrType,A<LlrType>>& parity, std::vecto
   auto thread = threadGroup.begin();
   size_t step = taskSize(blockCount);
   for (int i = 0; i + step <= blockCount; i += step) {
-    threadGroup.push_back( std::thread(&Code::decodeBlocks, this,
+    threadGroup.push_back( std::thread(&Codec::decodeBlocks, this,
                                        parityInIt, msgOutIt, step) );
     parityInIt += paritySize() * step;
     msgOutIt += msgSize() * step;
@@ -423,7 +421,7 @@ void fec::Code::decode(const std::vector<LlrType,A<LlrType>>& parity, std::vecto
  *    the matlab API to use a custom mex allocator
  */
 template <template <typename> class A>
-void fec::Code::soDecode(Input<A> input, Output<A> output) const
+void fec::Codec::soDecode(Input<A> input, Output<A> output) const
 {
   if (!input.hasParity()) {
     throw std::invalid_argument("Input must contains parities");
@@ -459,7 +457,7 @@ void fec::Code::soDecode(Input<A> input, Output<A> output) const
   auto thread = threadGroup.begin();
   size_t step = taskSize(blockCount);
   for (int i = 0; i + step <= blockCount; i += step) {
-    threadGroup.push_back( std::thread(&Code::soDecodeBlocks, this,
+    threadGroup.push_back( std::thread(&Codec::soDecodeBlocks, this,
                                        inputIt,
                                        outputIt, step
                                        ) );

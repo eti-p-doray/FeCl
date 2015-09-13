@@ -46,24 +46,24 @@ const char * Convolutional::Structure::get_key() const {
 /**
  *  Constructor.
  *  \snippet Convolutional.cpp Creating a Convolutional code
- *  \param  structure Code structure used for encoding and decoding
+ *  \param  structure Codec structure used for encoding and decoding
  *  \param  workGroupSize Number of thread used for decoding
  */
 Convolutional::Convolutional(const Structure& structure,  int workGroupSize) :
 structure_(structure),
-Code(&structure_, workGroupSize)
+Codec(&structure_, workGroupSize)
 {
   int bou = 0;
 }
 Convolutional::Convolutional(const EncoderOptions& encoder, const DecoderOptions& decoder, int workGroupSize) :
 structure_(encoder, decoder),
-Code(&structure_, workGroupSize)
+Codec(&structure_, workGroupSize)
 {
   int bou = 0;
 }
 Convolutional::Convolutional(const EncoderOptions& encoder, int workGroupSize) :
 structure_(encoder),
-Code(&structure_, workGroupSize)
+Codec(&structure_, workGroupSize)
 {
   int bou = 0;
 }

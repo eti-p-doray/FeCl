@@ -44,12 +44,12 @@ const char * Turbo::Structure::get_key() const {
 
 /*******************************************************************************
  *  Turbo constructor
- *  \param  codeStructure Code structure used for encoding and decoding
+ *  \param  codeStructure Codec structure used for encoding and decoding
  *  \param  workGroupSize Number of thread used for decoding
  ******************************************************************************/
 Turbo::Turbo(const Turbo::Structure& structure, int workGroupSize) :
 structure_(structure),
-Code(&structure_, workGroupSize)
+Codec(&structure_, workGroupSize)
 {
 }
 

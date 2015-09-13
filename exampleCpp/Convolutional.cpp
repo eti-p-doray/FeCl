@@ -54,7 +54,7 @@ int main( int argc, char* argv[] )
    The trellis is used to create a code structure.
    We specify that one bloc will conatins 256 branches before being terminated.
    */
-  auto encoder = fec::Convolutional::EncoderOptions(trellis, 8).termination(fec::Convolutional::Truncation);
+  auto encoder = fec::Convolutional::EncoderOptions(trellis, 32).termination(fec::Convolutional::Truncation);
   auto decoder = fec::Convolutional::DecoderOptions().decoderType(fec::Code::Exact).metricType(fec::Code::Floating);
   //! [Creating a Convolutional code structure]
   
@@ -64,7 +64,7 @@ int main( int argc, char* argv[] )
   std::unique_ptr<fec::Code> code(new fec::Convolutional(encoder, decoder, 1));
   //! [Creating a Convolutional code]
   
-  std::cout << per(code, -2.0) << std::endl;
+  std::cout << per(code, 2.0) << std::endl;
   
   
   return 0;

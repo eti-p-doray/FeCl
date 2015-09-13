@@ -39,7 +39,7 @@ namespace fec {
 
 /**
  *  This class contains the implementation of the viterbi decoder.
- *  This algorithm is used for simple decoding in a ConvolutionalCode.
+ *  This algorithm is used for simple decoding in a ConvolutionalCodec.
  */
   class ViterbiDecoder
   {
