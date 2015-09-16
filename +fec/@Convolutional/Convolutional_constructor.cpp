@@ -29,7 +29,7 @@
 
 #include <mex.h>
 
-#include "Turbo/Turbo.h"
+#include "Convolutional/Convolutional.h"
 #include "../MexConversion.h"
 #include "MexDecoderOptions.h"
 #include "MexEncoderOptions.h"
@@ -39,15 +39,15 @@ using namespace fec;
 const int inputCount = 2;
 const int outputCount = 1;
 
-void Turbo_constructor( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
+void Convolutional_constructor( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 {
   if (nrhs != inputCount || nlhs != outputCount) {
     throw std::invalid_argument("Wrong arg count");
   }
-  Turbo::EncoderOptions encoderOptions = mxArrayTo<Turbo::EncoderOptions>::f(prhs[0]);
-  Turbo::DecoderOptions decoderOptions = mxArrayTo<Turbo::DecoderOptions>::f(prhs[1]);
+  Convolutional::EncoderOptions encoderOptions = mxArrayTo<Convolutional::EncoderOptions>::f(prhs[0]);
+  Convolutional::DecoderOptions decoderOptions = mxArrayTo<Convolutional::DecoderOptions>::f(prhs[1]);
 
-  Turbo::Structure structure(encoderOptions, decoderOptions);
-  MexHandle<Codec> codec(new Turbo(structure));
+  Convolutional::Structure structure(encoderOptions, decoderOptions);
+  MexHandle<Codec> codec(new Convolutional(structure));
   plhs[0] = toMxArray(std::move(codec));
 }

@@ -42,8 +42,16 @@ class mxArrayTo<fec::Ldpc::DecoderOptions> {
 public:
   static fec::Ldpc::DecoderOptions f(const mxArray* in) {
     fec::Ldpc::DecoderOptions decoderOptions;
-    decoderOptions.iterations(  mxArrayTo<size_t>::f(mxGetField(in, 0, "iterations")) );
-    decoderOptions.algorithm(  mxArrayTo<fec::Codec::DecoderAlgorithm>::f(mxGetField(in, 0, "algorithm")) );
+    try {
+      decoderOptions.iterations(  mxArrayTo<size_t>::f(mxGetField(in, 0, "iterations")) );
+    } catch (...) {
+      throw std::invalid_argument("Invalid iterations");
+    }
+    try {
+      decoderOptions.algorithm(  mxArrayTo<fec::Codec::DecoderAlgorithm>::f(mxGetField(in, 0, "algorithm")) );
+    } catch (...) {
+      throw std::invalid_argument("Invalid algorithm");
+    }
     
     return decoderOptions;
   }
@@ -53,7 +61,7 @@ public:
 inline mxArray* toMxArray(fec::Ldpc::DecoderOptions decoder)
 {
   const char* fieldnames[] = {"iterations", "algorithm"};
-  mxArray* out = mxCreateStructMatrix(1,1, 3, fieldnames);
+  mxArray* out = mxCreateStructMatrix(1,1,2, fieldnames);
   
   mxSetField(out, 0, "iterations", toMxArray(decoder.iterations_));
   mxSetField(out, 0, "algorithm", toMxArray(decoder.algorithm_));

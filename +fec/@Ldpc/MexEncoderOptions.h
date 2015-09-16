@@ -42,10 +42,13 @@ template <>
 class mxArrayTo<fec::Ldpc::EncoderOptions> {
 public:
   static fec::Ldpc::EncoderOptions f(const mxArray* in) {
-    auto checkMatrix = mxArrayTo<std::vector<fec::SparseBitMatrix>>::f(mxGetField(in, 0, "checkMatrix"));
-    fec::Ldpc::EncoderOptions encoderOptions(checkMatrix);
-    
-    return encoderOptions;
+    try {
+      auto checkMatrix = mxArrayTo<fec::SparseBitMatrix>::f(mxGetField(in, 0, "checkMatrix"));
+      fec::Ldpc::EncoderOptions encoderOptions(checkMatrix);
+      return encoderOptions;
+    } catch (...) {
+      throw std::invalid_argument("Invalid check matrix");
+    }
   }
 };
 

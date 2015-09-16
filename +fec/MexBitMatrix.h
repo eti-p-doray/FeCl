@@ -39,9 +39,9 @@
 #include "Structure/BitMatrix.h"
 
 template <>
-class mxArrayTo<SparseBitMatrix> {
+class mxArrayTo<fec::SparseBitMatrix> {
 public:
-  static SparseBitMatrix f(const mxArray* in) {
+  static fec::SparseBitMatrix f(const mxArray* in) {
     if (in == nullptr) {
       throw std::invalid_argument("Null mxArray");
     }
@@ -63,7 +63,7 @@ public:
         }
       }
       
-      SparseBitMatrix mat(rowSizes, mxGetN(in));
+      fec::SparseBitMatrix mat(rowSizes, mxGetN(in));
       
       auto row = mat.begin();
       for (size_t j = 0; j < mxGetN(in); ++j) {
@@ -85,7 +85,7 @@ public:
         }
       }
       
-      SparseBitMatrix mat(rowSizes, mxGetN(in));
+      fec::SparseBitMatrix mat(rowSizes, mxGetN(in));
       pr = mxGetPr(in);
       for (size_t j = 0; j < mxGetN(in); ++j) {
         for (size_t i = 0; i < mxGetM(in); ++i, ++pr) {

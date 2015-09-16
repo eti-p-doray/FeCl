@@ -26,7 +26,7 @@
 
 #include <mex.h>
 
-#include "Turbo/Turbo.h"
+#include "Ldpc/Ldpc.h"
 #include "Structure/Serialization.h"
 #include "../MexConversion.h"
 #include "MexDecoderOptions.h"
@@ -36,11 +36,11 @@ using namespace fec;
 const int inputCount = 1;
 const int outputCount = 1;
 
-void Turbo_get_decoderOptions( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
+void Ldpc_get_decoderOptions( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 {
   if (nrhs != inputCount || nlhs != outputCount) {
     throw std::invalid_argument("Wrong arg count");
   }
-  auto codec = mxArrayTo<MexHandle<Turbo>>::f(prhs[0]);
+  auto codec = mxArrayTo<MexHandle<Ldpc>>::f(prhs[0]);
   plhs[0] = toMxArray(codec->getDecoderOptions());
 }

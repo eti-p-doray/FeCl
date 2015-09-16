@@ -80,6 +80,30 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
     case Turbo_set_encoderOptions_id:
       Turbo_set_encoderOptions(nlhs, plhs, nrhs, prhs);
       break;
+    case Ldpc_constructor_id:
+      Ldpc_constructor(nlhs, plhs, nrhs, prhs);
+      break;
+    case Ldpc_get_decoderOptions_id:
+      Ldpc_get_decoderOptions(nlhs, plhs, nrhs, prhs);
+      break;
+    case Ldpc_set_decoderOptions_id:
+      Ldpc_set_decoderOptions(nlhs, plhs, nrhs, prhs);
+      break;
+    case Ldpc_set_encoderOptions_id:
+      Ldpc_set_encoderOptions(nlhs, plhs, nrhs, prhs);
+      break;
+    case Convolutional_constructor_id:
+      Convolutional_constructor(nlhs, plhs, nrhs, prhs);
+      break;
+    case Convolutional_get_decoderOptions_id:
+      Convolutional_get_decoderOptions(nlhs, plhs, nrhs, prhs);
+      break;
+    case Convolutional_set_decoderOptions_id:
+      Convolutional_set_decoderOptions(nlhs, plhs, nrhs, prhs);
+      break;
+    case Convolutional_set_encoderOptions_id:
+      Convolutional_set_encoderOptions(nlhs, plhs, nrhs, prhs);
+      break;
     default:
       throw  std::invalid_argument("Unknow fonction id");
       break;

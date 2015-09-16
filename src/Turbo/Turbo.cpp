@@ -47,8 +47,18 @@ const char * Turbo::Structure::get_key() const {
  *  \param  codeStructure Codec structure used for encoding and decoding
  *  \param  workGroupSize Number of thread used for decoding
  ******************************************************************************/
-Turbo::Turbo(const Turbo::Structure& structure, int workGroupSize) :
+Turbo::Turbo(const Structure& structure,  int workGroupSize) :
 structure_(structure),
+Codec(&structure_, workGroupSize)
+{
+}
+Turbo::Turbo(const EncoderOptions& encoder, const DecoderOptions& decoder, int workGroupSize) :
+structure_(encoder, decoder),
+Codec(&structure_, workGroupSize)
+{
+}
+Turbo::Turbo(const EncoderOptions& encoder, int workGroupSize) :
+structure_(encoder),
 Codec(&structure_, workGroupSize)
 {
 }
@@ -70,6 +80,11 @@ Turbo::Structure::Structure(const EncoderOptions& encoder, const DecoderOptions&
 {
   setEncoderOptions(encoder);
   setDecoderOptions(decoder);
+}
+Turbo::Structure::Structure(const EncoderOptions& encoder)
+{
+  setEncoderOptions(encoder);
+  setDecoderOptions(DecoderOptions());
 }
 
 void Turbo::Structure::setEncoderOptions(const fec::Turbo::EncoderOptions &encoder)

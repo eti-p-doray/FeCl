@@ -22,8 +22,6 @@
  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- 
- Definition of the mex allocator.
  ******************************************************************************/
 
 #ifndef MEX_DECODER_OPTIONS
@@ -34,16 +32,14 @@
 
 #include <mex.h>
 
-#include "Turbo/Turbo.h"
+#include "Convolutional/Convolutional.h"
 #include "../MexConversion.h"
 
 template <>
-class mxArrayTo<fec::Turbo::DecoderOptions> {
+class mxArrayTo<fec::Convolutional::DecoderOptions> {
 public:
-  static fec::Turbo::DecoderOptions f(const mxArray* in) {
-    fec::Turbo::DecoderOptions decoderOptions;
-    decoderOptions.iterations(  mxArrayTo<size_t>::f(mxGetField(in, 0, "iterations")) );
-    decoderOptions.scheduling(  mxArrayTo<fec::Turbo::Scheduling>::f(mxGetField(in, 0, "scheduling")) );
+  static fec::Convolutional::DecoderOptions f(const mxArray* in) {
+    fec::Convolutional::DecoderOptions decoderOptions;
     decoderOptions.algorithm(  mxArrayTo<fec::Codec::DecoderAlgorithm>::f(mxGetField(in, 0, "algorithm")) );
     
     return decoderOptions;
@@ -51,13 +47,11 @@ public:
 };
 
 
-inline mxArray* toMxArray(fec::Turbo::DecoderOptions decoder)
+inline mxArray* toMxArray(fec::Convolutional::DecoderOptions decoder)
 {
-  const char* fieldnames[] = {"iterations", "scheduling", "algorithm"};
-  mxArray* out = mxCreateStructMatrix(1,1, 3, fieldnames);
+  const char* fieldnames[] = {"algorithm"};
+  mxArray* out = mxCreateStructMatrix(1,1,1, fieldnames);
   
-  mxSetField(out, 0, "iterations", toMxArray(decoder.iterations_));
-  mxSetField(out, 0, "scheduling", toMxArray(decoder.scheduling_));
   mxSetField(out, 0, "algorithm", toMxArray(decoder.algorithm_));
     
   return out;

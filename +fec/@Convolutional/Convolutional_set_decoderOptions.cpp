@@ -26,7 +26,7 @@
 
 #include <mex.h>
 
-#include "Turbo/Turbo.h"
+#include "Convolutional/Convolutional.h"
 #include "Structure/Serialization.h"
 #include "../MexConversion.h"
 #include "MexDecoderOptions.h"
@@ -36,11 +36,11 @@ using namespace fec;
 const int inputCount = 2;
 const int outputCount = 0;
 
-void Turbo_set_decoderOptions( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
+void Convolutional_set_decoderOptions( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 {
   if (nrhs != inputCount || nlhs != outputCount) {
     throw std::invalid_argument("Wrong arg count");
   }
-  auto codec = mxArrayTo<MexHandle<Turbo>>::f(prhs[0]);
-  codec->setDecoderOptions(mxArrayTo<Turbo::DecoderOptions>::f(prhs[1]));
+  auto codec = mxArrayTo<MexHandle<Convolutional>>::f(prhs[0]);
+  codec->setDecoderOptions(mxArrayTo<Convolutional::DecoderOptions>::f(prhs[1]));
 }

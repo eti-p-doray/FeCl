@@ -34,21 +34,19 @@
 
 #include <mex.h>
 
-#include "Turbo/Turbo.h"
+#include "Convolutional/Convolutional.h"
 #include "../MexTrellis.h"
-#include "../MexInterleaver.h"
 #include "../MexConversion.h"
 
 template <>
-class mxArrayTo<fec::Turbo::EncoderOptions> {
+class mxArrayTo<fec::Convolutional::EncoderOptions> {
 public:
-  static fec::Turbo::EncoderOptions f(const mxArray* in) {
-    auto trellis = mxArrayTo<std::vector<fec::Trellis>>::f(mxGetField(in, 0, "trellis"));
-    auto interl = mxArrayTo<std::vector<fec::Interleaver>>::f(mxGetField(in, 0, "interleaver"));
-    fec::Turbo::EncoderOptions encoderOptions(trellis, interl);
+  static fec::Convolutional::EncoderOptions f(const mxArray* in) {
+    auto trellis = mxArrayTo<fec::Trellis>::f(mxGetField(in, 0, "trellis"));
+    size_t length = mxArrayTo<size_t>::f(mxGetField(in, 0, "length"));
+    fec::Convolutional::EncoderOptions encoderOptions(trellis, length);
     
-    encoderOptions.termination(mxArrayTo<std::vector<fec::Convolutional::Termination>>::f(mxGetField(in, 0, "termination")));
-    encoderOptions.bitOrdering(mxArrayTo<fec::Turbo::BitOrdering>::f(mxGetField(in, 0, "bitOrdering")));
+    encoderOptions.termination(mxArrayTo<fec::Convolutional::Termination>::f(mxGetField(in, 0, "termination")));
     
     return encoderOptions;
   }

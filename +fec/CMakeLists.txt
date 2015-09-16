@@ -21,6 +21,14 @@ set(SOURCES
   @Turbo/Turbo_get_decoderOptions.cpp
   @Turbo/Turbo_set_encoderOptions.cpp
   @Turbo/Turbo_set_decoderOptions.cpp
+  @Ldpc/Ldpc_constructor.cpp
+  @Ldpc/Ldpc_get_decoderOptions.cpp
+  @Ldpc/Ldpc_set_encoderOptions.cpp
+  @Ldpc/Ldpc_set_decoderOptions.cpp
+  @Convolutional/Convolutional_constructor.cpp
+  @Convolutional/Convolutional_get_decoderOptions.cpp
+  @Convolutional/Convolutional_set_encoderOptions.cpp
+  @Convolutional/Convolutional_set_decoderOptions.cpp
 )
 
 add_library(wrap MODULE ${SOURCES} wrap.cpp Matlabdef.def)

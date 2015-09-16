@@ -47,8 +47,18 @@ const char * Ldpc::Structure::get_key() const {
  *  \param  codeStructure Codec structure used for encoding and decoding
  *  \param  workGroupSize Number of thread used for decoding
  */
-Ldpc::Ldpc(const Ldpc::Structure& structure, int workGroupSize) :
+Ldpc::Ldpc(const Structure& structure,  int workGroupSize) :
 structure_(structure),
+Codec(&structure_, workGroupSize)
+{
+}
+Ldpc::Ldpc(const EncoderOptions& encoder, const DecoderOptions& decoder, int workGroupSize) :
+structure_(encoder, decoder),
+Codec(&structure_, workGroupSize)
+{
+}
+Ldpc::Ldpc(const EncoderOptions& encoder, int workGroupSize) :
+structure_(encoder),
 Codec(&structure_, workGroupSize)
 {
 }
@@ -131,15 +141,35 @@ SparseBitMatrix Ldpc::gallagerConstruction(size_t n, size_t wc, size_t wr)
  */
 Ldpc::Structure::Structure(const EncoderOptions& encoder, const DecoderOptions& decoder)
 {
-  msgSize_ = encoder.H_.cols()-encoder.H_.rows();
-  paritySize_ = encoder.H_.cols();
-  stateSize_ = encoder.H_.size();
+  setEncoderOptions(encoder);
+  setDecoderOptions(decoder);
+}
+Ldpc::Structure::Structure(const EncoderOptions& encoder)
+{
+  setEncoderOptions(encoder);
+  setDecoderOptions(DecoderOptions());
+}
+
+void Ldpc::Structure::setEncoderOptions(const EncoderOptions& encoder)
+{
+  msgSize_ = encoder.checkMatrix_.cols()-encoder.checkMatrix_.rows();
+  paritySize_ = encoder.checkMatrix_.cols();
+  stateSize_ = encoder.checkMatrix_.size();
   
-  computeGeneratorMatrix(SparseBitMatrix(encoder.H_));
+  computeGeneratorMatrix(SparseBitMatrix(encoder.checkMatrix_));
   
   systSize_ = msgSize_;
+}
+
+void Ldpc::Structure::setDecoderOptions(const DecoderOptions& decoder)
+{
   decoderAlgorithm_ = decoder.algorithm_;
   iterations_ = decoder.iterations_;
+}
+
+fec::Ldpc::DecoderOptions Ldpc::Structure::getDecoderOptions() const
+{
+  return DecoderOptions().iterations(iterations()).algorithm(decoderAlgorithm());
 }
 
 /**

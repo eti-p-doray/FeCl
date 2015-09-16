@@ -39,15 +39,12 @@ using namespace fec;
 const int inputCount = 2;
 const int outputCount = 1;
 
-void Turbo_constructor( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
+void Ldpc_constructor( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 {
-  if (nrhs != inputCount || nlhs != outputCount) {
-    throw std::invalid_argument("Wrong arg count");
-  }
-  Turbo::EncoderOptions encoderOptions = mxArrayTo<Turbo::EncoderOptions>::f(prhs[0]);
-  Turbo::DecoderOptions decoderOptions = mxArrayTo<Turbo::DecoderOptions>::f(prhs[1]);
+  Ldpc::EncoderOptions encoderOptions = mxArrayTo<Ldpc::EncoderOptions>::f(prhs[0]);
+  Ldpc::DecoderOptions decoderOptions = mxArrayTo<Ldpc::DecoderOptions>::f(prhs[1]);
 
-  Turbo::Structure structure(encoderOptions, decoderOptions);
-  MexHandle<Codec> codec(new Turbo(structure));
+  Ldpc::Structure structure(encoderOptions, decoderOptions);
+  MexHandle<Codec> codec(new Ldpc(structure));
   plhs[0] = toMxArray(std::move(codec));
 }

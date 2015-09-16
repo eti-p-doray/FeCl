@@ -1,30 +1,26 @@
 classdef Structure < matlab.mixin.SetGet
     properties
         encoderOptions;
-        decoderOptions = fec.Turbo.DecoderOptions();
+        decoderOptions = fec.Ldpc.DecoderOptions();
     end
     properties(Dependent = true)
-        trellis;
-        interleaver;
-        termination;
-        bitOrdering;
+        checkMatrix
         
         iterations;
         algorithm;
-        scheduling;
     end
 
     methods
         function self = Structure(varargin)
-            if (isa(varargin{1}, 'fec.Turbo.EncoderOptions') || (isfield(varargin{1}, 'trellis') && isfield(varargin{1}, 'interleaver')) || iscell(varargin{1}))
-                self.encoderOptions = fec.Turbo.EncoderOptions(varargin{1});
+            if (isa(varargin{1}, 'fec.Ldpc.EncoderOptions') || (isfield(varargin{1}, 'checkMatrix')) || iscell(varargin{1}))
+                self.encoderOptions = fec.Ldpc.EncoderOptions(varargin{1});
                 if (nargin > 1)
-                    self.decoderOptions = fec.Turbo.DecoderOptions(varargin{2});
+                    self.decoderOptions = fec.Ldpc.DecoderOptions(varargin{2});
                 end
             else
-                self.encoderOptions = fec.Turbo.EncoderOptions(varargin{1}, varargin{2});
-                if (~isempty({varargin{3:end}}))
-                    self.set(varargin{3:end});
+                self.encoderOptions = fec.Ldpc.EncoderOptions(varargin{1});
+                if (~isempty({varargin{2:end}}))
+                    self.set(varargin{2:end});
                 end
             end
         end
@@ -36,18 +32,8 @@ classdef Structure < matlab.mixin.SetGet
             val = self.decoderOptions.get();
         end
 
-        function self = set.trellis(self,val)
-            self.encoderOptions.trellis = val;
-        end
-        function self = set.interleaver(self,val)
-            self.encoderOptions.interleaver = val;
-        end
-        function self = set.termination(self,val)
-            class(self.decoderOptions);
-            self.encoderOptions.termination = val;
-        end
-        function self = set.bitOrdering(self,val)
-            self.encoderOptions.bitOrdering = val;
+        function self = set.checkMatrix(self,val)
+            self.encoderOptions.checkMatrix = val;
         end
         
         function self = set.iterations(self,val)
@@ -55,9 +41,6 @@ classdef Structure < matlab.mixin.SetGet
         end
         function self = set.algorithm(self,val)
             self.decoderOptions.algorithm = val;
-        end
-        function self = set.scheduling(self,val)
-            self.decoderOptions.scheduling = val;
         end
     end
 end

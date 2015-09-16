@@ -45,6 +45,14 @@ enum WrapFcnId : uint32_t {
   Turbo_get_decoderOptions_id,
   Turbo_set_decoderOptions_id,
   Turbo_set_encoderOptions_id,
+  Ldpc_constructor_id,
+  Ldpc_get_decoderOptions_id,
+  Ldpc_set_decoderOptions_id,
+  Ldpc_set_encoderOptions_id,
+  Convolutional_constructor_id,
+  Convolutional_get_decoderOptions_id,
+  Convolutional_set_decoderOptions_id,
+  Convolutional_set_encoderOptions_id,
 };
 
 void Codec_destroy( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] );
@@ -64,4 +72,14 @@ void Turbo_constructor( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs
 void Turbo_get_decoderOptions( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] );
 void Turbo_set_decoderOptions( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] );
 void Turbo_set_encoderOptions( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] );
+
+void Ldpc_constructor( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] );
+void Ldpc_get_decoderOptions( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] );
+void Ldpc_set_decoderOptions( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] );
+void Ldpc_set_encoderOptions( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] );
+
+void Convolutional_constructor( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] );
+void Convolutional_get_decoderOptions( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] );
+void Convolutional_set_decoderOptions( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] );
+void Convolutional_set_encoderOptions( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] );
 

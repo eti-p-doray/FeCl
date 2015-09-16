@@ -65,26 +65,22 @@ class Ldpc : public Codec
 public:
   static SparseBitMatrix gallagerConstruction(size_t n, size_t wc, size_t wr);
   
-  class Structure;
-  class EncoderOptions
+  struct EncoderOptions
   {
     friend class Structure;
   public:
-    EncoderOptions(const SparseBitMatrix& H) {H_ = H;}
+    EncoderOptions(const SparseBitMatrix& checkMatrix) {checkMatrix_ = checkMatrix;}
     
-  private:
-    SparseBitMatrix H_;
+    SparseBitMatrix checkMatrix_;
   };
   
-  class DecoderOptions {
-    friend class Structure;
+  struct DecoderOptions {
   public:
     DecoderOptions() = default;
     
     DecoderOptions& algorithm(Codec::DecoderAlgorithm algorithm) {algorithm_ = algorithm; return *this;}
     DecoderOptions& iterations(size_t n) {iterations_ = n; return *this;}
     
-  private:
     Codec::DecoderAlgorithm algorithm_ = Approximate;
     size_t iterations_;
   };
@@ -97,14 +93,17 @@ public:
   public:
     Structure() = default;
     Structure(const EncoderOptions&, const DecoderOptions&);
+    Structure(const EncoderOptions&);
     virtual ~Structure() = default;
     
     virtual const char * get_key() const;
-    
     virtual Codec::Structure::Type type() const {return Codec::Structure::Ldpc;}
     
-    inline const SparseBitMatrix& checks() const {return H_;}
+    void setDecoderOptions(const DecoderOptions& decoder);
+    void setEncoderOptions(const EncoderOptions& encoder);
+    DecoderOptions getDecoderOptions() const;
     
+    inline const SparseBitMatrix& checks() const {return H_;}
     inline size_t iterations() const {return iterations_;}
     
     void syndrome(std::vector<uint8_t>::const_iterator parity, std::vector<uint8_t>::iterator syndrome) const;
@@ -134,13 +133,18 @@ public:
     size_t iterations_;
   };
   
-  
-  Ldpc(const Structure& structure, int workGroupdSize = 8);
+  Ldpc(const Structure& structure, int workGroupSize = 8);
+  Ldpc(const EncoderOptions& encoder, const DecoderOptions& decoder, int workGroupSize = 8);
+  Ldpc(const EncoderOptions& encoder, int workGroupSize = 8);
+  Ldpc(const Ldpc& other) : Codec(&structure_) {*this = other;}
   virtual ~Ldpc() = default;
   
   virtual const char * get_key() const;
   
   inline const Structure& structure() const {return structure_;}
+  void setDecoderOptions(const DecoderOptions& decoder) {structure_.setDecoderOptions(decoder);}
+  void setEncoderOptions(const EncoderOptions& encoder) {structure_.setEncoderOptions(encoder);}
+  DecoderOptions getDecoderOptions() const {return structure_.getDecoderOptions();}
   
 protected:
   Ldpc() = default;
