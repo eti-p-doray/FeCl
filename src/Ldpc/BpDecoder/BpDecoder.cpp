@@ -33,7 +33,7 @@ using namespace fec;
 
 std::unique_ptr<BpDecoder> BpDecoder::create(const Ldpc::Structure& structure)
 {
-  switch (structure.decoderType()) {
+  switch (structure.decoderAlgorithm()) {
     default:
     case Codec::Exact:
       return std::unique_ptr<BpDecoder>(new BpDecoderImpl<FloatLlrMetrics,BoxSum>(structure));

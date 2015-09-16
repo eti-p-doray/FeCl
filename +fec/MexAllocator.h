@@ -50,7 +50,7 @@ public :
   inline MexAllocator select_on_container_copy_construction() const {return MexAllocator();}
   
   //    memory allocation
-  inline T* allocate(size_t size) throw(std::bad_alloc())
+  inline T* allocate(size_t size)
   {
     if (ptr_ == nullptr) {
       ptr_ = mxMalloc(size * sizeof(T) );
@@ -84,13 +84,13 @@ private:
 template <typename T, class Enable = void>
 struct Allocator
 {
-  typedef std::allocator<T> type;
+  using type = std::allocator<T>;
 };
 
 template <typename T>
 struct Allocator<T, typename std::enable_if<std::is_convertible<typename std::vector<T,MexAllocator<T>>::iterator, typename std::vector<T>::iterator>::value>::type>
 {
-  typedef MexAllocator<T> type;
+  using type = MexAllocator<T>;
 };
 
 

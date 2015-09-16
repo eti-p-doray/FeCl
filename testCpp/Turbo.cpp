@@ -40,7 +40,7 @@ test_suite*
 init_unit_test_suite( int argc, char* argv[] )
 {
   uint64_t seed = 0;
-  std::mt19937 randomGenerator;
+  std::mt19937 randomGenerator((int)seed);
   std::vector<size_t> systIndex(1024);
   std::vector<size_t> permIndex(1024);
   for (size_t i = 0; i < systIndex.size(); i++) {
@@ -50,18 +50,19 @@ init_unit_test_suite( int argc, char* argv[] )
   std::shuffle (permIndex.begin(), permIndex.end(), randomGenerator);
   
   fec::Trellis trellis({4}, {{017}}, {015});
-  size_t length = 8;
-  auto encoder = fec::Turbo::EncoderOptions({trellis,trellis}, {systIndex, permIndex}).termination(fec::Convolutional::Truncation);
-  auto decoder = fec::Turbo::DecoderOptions().decoderType(fec::Codec::Approximate).iterations(5);
+  auto encoder = fec::Turbo::EncoderOptions(trellis, {{}, permIndex}).
+    termination(fec::Convolutional::Tail).
+    bitOrdering(fec::Turbo::Alternate);
+  auto decoder = fec::Turbo::DecoderOptions().algorithm(fec::Codec::Approximate).iterations(10).scheduling(fec::Turbo::Serial);
   
   auto structure = fec::Turbo::Structure(encoder, decoder);
   test_suite* ts1 = BOOST_TEST_SUITE("default");
   ts1->add( BOOST_TEST_CASE(std::bind(&test_encodeBlock, structure )));
-  ts1->add( BOOST_TEST_CASE(std::bind( &test_decodeBlock, fec::Turbo(structure), -2.0) ));
-  ts1->add( BOOST_TEST_CASE(std::bind( &test_soDecodeBlock, fec::Turbo(structure), -2.0) ));
-  ts1->add( BOOST_TEST_CASE(std::bind( &test_soDecodeBlock_parityOut, fec::Turbo(structure), -2.0) ));
-  ts1->add( BOOST_TEST_CASE(std::bind( &test_soDecodeBlock_systIn, fec::Turbo(structure), -2.0) ));
-  ts1->add( BOOST_TEST_CASE(std::bind( &test_soDecodeBlock_2phases, fec::Turbo(structure), -2.0) ));
+  ts1->add( BOOST_TEST_CASE(std::bind(&test_decodeBlock, fec::Turbo(structure), -4.0) ));
+  ts1->add( BOOST_TEST_CASE(std::bind(&test_soDecodeBlock, fec::Turbo(structure), 0.0) ));
+  ts1->add( BOOST_TEST_CASE(std::bind(&test_soDecodeBlock_parityOut, fec::Turbo(structure), 0.0) ));
+  ts1->add( BOOST_TEST_CASE(std::bind(&test_soDecodeBlock_systIn, fec::Turbo(structure), 0.0) ));
+  ts1->add( BOOST_TEST_CASE(std::bind(&test_soDecodeBlock_2phases, fec::Turbo(structure), 0.0) ));
   
   ts1->add( BOOST_TEST_CASE(std::bind(&test_encode, fec::Turbo(structure,1), 5 )));
   ts1->add( BOOST_TEST_CASE(std::bind(&test_encode, fec::Turbo(structure,2), 5 )));
@@ -73,43 +74,52 @@ init_unit_test_suite( int argc, char* argv[] )
   
   ts1->add( BOOST_TEST_CASE(std::bind(&test_soDecode, fec::Turbo(structure,1), 5 )));
   ts1->add( BOOST_TEST_CASE(std::bind(&test_soDecode, fec::Turbo(structure,2), 5 )));
-  ts1->add( BOOST_TEST_CASE(std::bind(&test_soDecode_badParitySize, fec::Turbo(structure,2) )));
-  ts1->add( BOOST_TEST_CASE(std::bind(&test_soDecode_badSystSize, fec::Turbo(structure,2) )));
-  ts1->add( BOOST_TEST_CASE(std::bind(&test_soDecode_badStateSize, fec::Turbo(structure,2) )));
-  ts1->add( BOOST_TEST_CASE(std::bind(&test_soDecode_noParity, fec::Turbo(structure,2) )));
+  ts1->add( BOOST_TEST_CASE(std::bind(&test_soDecode_badParitySize, fec::Turbo(structure) )));
+  ts1->add( BOOST_TEST_CASE(std::bind(&test_soDecode_badSystSize, fec::Turbo(structure) )));
+  ts1->add( BOOST_TEST_CASE(std::bind(&test_soDecode_badStateSize, fec::Turbo(structure) )));
+  ts1->add( BOOST_TEST_CASE(std::bind(&test_soDecode_noParity, fec::Turbo(structure) )));
   
   encoder.termination(fec::Convolutional::Tail);
   structure = fec::Turbo::Structure(encoder, decoder);
   test_suite* ts2 = BOOST_TEST_SUITE("tail");
   ts2->add( BOOST_TEST_CASE(std::bind( &test_encodeBlock, structure) ));
-  ts2->add( BOOST_TEST_CASE(std::bind( &test_decodeBlock, fec::Turbo(structure), -2.0) ));
-  ts2->add( BOOST_TEST_CASE(std::bind( &test_soDecodeBlock, fec::Turbo(structure), -2.0) ));
-  ts2->add( BOOST_TEST_CASE(std::bind( &test_soDecodeBlock_parityOut, fec::Turbo(structure), -2.0) ));
-  ts2->add( BOOST_TEST_CASE(std::bind( &test_soDecodeBlock_systIn, fec::Turbo(structure), -2.0) ));
+  ts2->add( BOOST_TEST_CASE(std::bind( &test_decodeBlock, fec::Turbo(structure), 2.0) ));
+  ts2->add( BOOST_TEST_CASE(std::bind( &test_soDecodeBlock, fec::Turbo(structure), 2.0) ));
+  ts2->add( BOOST_TEST_CASE(std::bind( &test_soDecodeBlock_parityOut, fec::Turbo(structure), 2.0) ));
+  ts2->add( BOOST_TEST_CASE(std::bind( &test_soDecodeBlock_systIn, fec::Turbo(structure), 2.0) ));
   
-  decoder.decoderType(fec::Codec::Table);
+  decoder.algorithm(fec::Codec::Table);
   structure = fec::Turbo::Structure(encoder, decoder);
   test_suite* ts3 = BOOST_TEST_SUITE("table");
   ts3->add( BOOST_TEST_CASE(std::bind( &test_encodeBlock, structure) ));
-  ts3->add( BOOST_TEST_CASE(std::bind( &test_decodeBlock, fec::Turbo(structure), -2.0) ));
-  ts3->add( BOOST_TEST_CASE(std::bind( &test_soDecodeBlock, fec::Turbo(structure), -2.0) ));
-  ts3->add( BOOST_TEST_CASE(std::bind( &test_soDecodeBlock_parityOut, fec::Turbo(structure), -2.0) ));
-  ts3->add( BOOST_TEST_CASE(std::bind( &test_soDecodeBlock_systIn, fec::Turbo(structure), -2.0) ));
+  ts3->add( BOOST_TEST_CASE(std::bind( &test_decodeBlock, fec::Turbo(structure), 2.0) ));
+  ts3->add( BOOST_TEST_CASE(std::bind( &test_soDecodeBlock, fec::Turbo(structure), 2.0) ));
+  ts3->add( BOOST_TEST_CASE(std::bind( &test_soDecodeBlock_parityOut, fec::Turbo(structure), 2.0) ));
+  ts3->add( BOOST_TEST_CASE(std::bind( &test_soDecodeBlock_systIn, fec::Turbo(structure), 2.0) ));
   
-  decoder.decoderType(fec::Codec::Approximate);
+  decoder.algorithm(fec::Codec::Approximate);
   structure = fec::Turbo::Structure(encoder, decoder);
   test_suite* ts4 = BOOST_TEST_SUITE("approximate");
   ts4->add( BOOST_TEST_CASE(std::bind( &test_encodeBlock, structure) ));
-  ts4->add( BOOST_TEST_CASE(std::bind( &test_decodeBlock, fec::Turbo(structure), -2.0) ));
-  ts4->add( BOOST_TEST_CASE(std::bind( &test_soDecodeBlock, fec::Turbo(structure), -2.0) ));
-  ts4->add( BOOST_TEST_CASE(std::bind( &test_soDecodeBlock_parityOut, fec::Turbo(structure), -2.0) ));
-  ts4->add( BOOST_TEST_CASE(std::bind( &test_soDecodeBlock_systIn, fec::Turbo(structure), -2.0) ));
+  ts4->add( BOOST_TEST_CASE(std::bind( &test_decodeBlock, fec::Turbo(structure), 2.0) ));
+  ts4->add( BOOST_TEST_CASE(std::bind( &test_soDecodeBlock, fec::Turbo(structure), 2.0) ));
+  ts4->add( BOOST_TEST_CASE(std::bind( &test_soDecodeBlock_parityOut, fec::Turbo(structure), 2.0) ));
+  ts4->add( BOOST_TEST_CASE(std::bind( &test_soDecodeBlock_systIn, fec::Turbo(structure), 2.0) ));
   
+  encoder.bitOrdering(fec::Turbo::Pack);
+  structure = fec::Turbo::Structure(encoder, decoder);
+  test_suite* ts5 = BOOST_TEST_SUITE("pack");
+  ts5->add( BOOST_TEST_CASE(std::bind( &test_encodeBlock, structure) ));
+  ts5->add( BOOST_TEST_CASE(std::bind( &test_decodeBlock, fec::Turbo(structure), 2.0) ));
+  ts5->add( BOOST_TEST_CASE(std::bind( &test_soDecodeBlock, fec::Turbo(structure), 2.0) ));
+  ts5->add( BOOST_TEST_CASE(std::bind( &test_soDecodeBlock_parityOut, fec::Turbo(structure), 2.0) ));
+  ts5->add( BOOST_TEST_CASE(std::bind( &test_soDecodeBlock_systIn, fec::Turbo(structure), 2.0) ));
   
   framework::master_test_suite().add(ts1);
   framework::master_test_suite().add(ts2);
   framework::master_test_suite().add(ts3);
   framework::master_test_suite().add(ts4);
+  framework::master_test_suite().add(ts5);
   
   return 0;
 }

@@ -125,7 +125,7 @@ SparseBitMatrix Ldpc::gallagerConstruction(size_t n, size_t wc, size_t wr)
  *  The ldpc matrix will be transformed (if needed) to allow in-place encoding
  *  using its partial triangular form.
  *  \param  H Ldpc matrix describing the code
- *  \param  iterationCount  Maximum number of iteration in belief propagation decoding.
+ *  \param  iterations  Maximum number of iteration in belief propagation decoding.
  *    The decoder can stop before the maximum number of iteration if the msg is consistent.
  *  \param  type  Decoder algorithm used
  */
@@ -138,8 +138,8 @@ Ldpc::Structure::Structure(const EncoderOptions& encoder, const DecoderOptions& 
   computeGeneratorMatrix(SparseBitMatrix(encoder.H_));
   
   systSize_ = msgSize_;
-  decoderType_ = decoder.decoderType_;
-  iterationCount_ = decoder.iterationCount_;
+  decoderAlgorithm_ = decoder.algorithm_;
+  iterations_ = decoder.iterations_;
 }
 
 /**

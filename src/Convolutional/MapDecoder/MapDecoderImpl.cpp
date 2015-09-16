@@ -130,7 +130,7 @@ void MapDecoderImpl<LlrMetrics, LogSumAlg>::forwardUpdate()
   std::fill(forwardMetric+1, forwardMetric + structure().trellis().stateCount(), -llrMetrics_.max());
   
   for (; forwardMetric < forwardMetrics_.end() - structure().trellis().stateCount();) {
-    forwardUpdateImpl<LogSumAlg<LlrMetrics>::isRecursive::value>(forwardMetric, branchMetric);
+    forwardUpdateImpl(forwardMetric, branchMetric);
     forwardMetric += structure().trellis().stateCount();
     branchMetric += structure().trellis().tableSize();
     typename LlrMetrics::Type max = -llrMetrics_.max();
@@ -148,14 +148,14 @@ template <class LlrMetrics, template <class> class LogSumAlg>
 void MapDecoderImpl<LlrMetrics, LogSumAlg>::backwardUpdate()
 {
   auto backwardMetric = backwardMetrics_.end()-structure().trellis().stateCount();
-  switch (structure().terminationType()) {
+  switch (structure().termination()) {
     case Convolutional::Tail:
       *backwardMetric = 0;
       std::fill(backwardMetric+1, backwardMetric + structure().trellis().stateCount(), -llrMetrics_.max());
       break;
       
     default:
-    case Convolutional::Truncation:
+    case Convolutional::Truncate:
       std::fill(backwardMetric, backwardMetric + structure().trellis().stateCount(), 0.0);
       break;
   }
@@ -163,7 +163,7 @@ void MapDecoderImpl<LlrMetrics, LogSumAlg>::backwardUpdate()
   auto branchMetric = branchMetrics_.cend()-structure().trellis().tableSize();
   
   for ( ; backwardMetric >= backwardMetrics_.begin();) {
-    backwardUpdateImpl<LogSumAlg<LlrMetrics>::isRecursive::value>(backwardMetric, branchMetric);
+    backwardUpdateImpl(backwardMetric, branchMetric);
     typename LlrMetrics::Type max = -llrMetrics_.max();
     for (BitField<size_t> j = 0; j < structure().trellis().stateCount(); ++j) {
       backwardMetric[j] = logSum_.post(backwardMetric[j]);
@@ -203,7 +203,7 @@ void MapDecoderImpl<LlrMetrics, LogSumAlg>::aPosterioriUpdate(Codec::InfoIterato
     if (output.hasSyst()) {
       for (size_t j = 0; j < structure().trellis().inputSize(); ++j) {
         branchMetric = branchMetrics_.begin() + i * structure().trellis().tableSize();
-        typename LlrMetrics::Type tmp = msgUpdateImpl<LogSumAlg<LlrMetrics>::isRecursive::value>(branchMetric, j);
+        typename LlrMetrics::Type tmp = msgUpdateImpl(branchMetric, j);
 
         if (input.hasSyst()) {
           systOut[j] = tmp - systIn[j];
@@ -212,12 +212,13 @@ void MapDecoderImpl<LlrMetrics, LogSumAlg>::aPosterioriUpdate(Codec::InfoIterato
           systOut[j] = tmp;
         }
       }
+      systIn += structure().trellis().inputSize();
       systOut += structure().trellis().inputSize();
     }
     if (output.hasParity()) {
       for (size_t j = 0; j < structure().trellis().outputSize(); ++j) {
         branchMetric = branchMetrics_.begin() + i * structure().trellis().tableSize();
-        typename LlrMetrics::Type tmp = parityUpdateImpl<LogSumAlg<LlrMetrics>::isRecursive::value>(branchMetric, j);
+        typename LlrMetrics::Type tmp = parityUpdateImpl(branchMetric, j);
         
         if (input.hasParity()) {
           parityOut[j] = tmp - parityIn[j];
@@ -226,14 +227,15 @@ void MapDecoderImpl<LlrMetrics, LogSumAlg>::aPosterioriUpdate(Codec::InfoIterato
           parityOut[j] = tmp;
         }
       }
+      parityIn += structure().trellis().outputSize();
       parityOut += structure().trellis().outputSize();
     }
   }
 }
 
 template <class LlrMetrics, template <class> class LogSumAlg>
-template <bool isRecursive>
-void MapDecoderImpl<LlrMetrics, LogSumAlg>::forwardUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator forwardMetric, typename std::vector<typename LlrMetrics::Type>::const_iterator branchMetric, char(*)[isRecursive])
+template <class U, typename std::enable_if<U::value>::type*>
+void MapDecoderImpl<LlrMetrics, LogSumAlg>::forwardUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator forwardMetric, typename std::vector<typename LlrMetrics::Type>::const_iterator branchMetric)
 {
   std::fill(forwardMetric + structure().trellis().stateCount(), forwardMetric + 2*structure().trellis().stateCount(), logSum_.prior(-llrMetrics_.max()));
   auto state = structure().trellis().beginState();
@@ -249,8 +251,8 @@ void MapDecoderImpl<LlrMetrics, LogSumAlg>::forwardUpdateImpl(typename std::vect
 }
 
 template <class LlrMetrics, template <class> class LogSumAlg>
-template <bool isRecursive>
-void MapDecoderImpl<LlrMetrics, LogSumAlg>::forwardUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator forwardMetric, typename std::vector<typename LlrMetrics::Type>::const_iterator branchMetric, char(*)[!isRecursive])
+template <class U, typename std::enable_if<!U::value>::type*>
+void MapDecoderImpl<LlrMetrics, LogSumAlg>::forwardUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator forwardMetric, typename std::vector<typename LlrMetrics::Type>::const_iterator branchMetric)
 {
   auto state = structure().trellis().beginState();
   auto bufferMetric = bufferMetrics_.begin();
@@ -283,8 +285,8 @@ void MapDecoderImpl<LlrMetrics, LogSumAlg>::forwardUpdateImpl(typename std::vect
 }
 
 template <class LlrMetrics, template <class> class LogSumAlg>
-template <bool isRecursive>
-void MapDecoderImpl<LlrMetrics, LogSumAlg>::backwardUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator backwardMetric, typename std::vector<typename LlrMetrics::Type>::const_iterator branchMetric, char(*)[isRecursive])
+template <class U, typename std::enable_if<U::value>::type*>
+void MapDecoderImpl<LlrMetrics, LogSumAlg>::backwardUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator backwardMetric, typename std::vector<typename LlrMetrics::Type>::const_iterator branchMetric)
 {
   std::fill(backwardMetric, backwardMetric + structure().trellis().stateCount(), logSum_.prior(-llrMetrics_.max()));
   auto state = structure().trellis().beginState();
@@ -302,8 +304,8 @@ void MapDecoderImpl<LlrMetrics, LogSumAlg>::backwardUpdateImpl(typename std::vec
 }
 
 template <class LlrMetrics, template <class> class LogSumAlg>
-template <bool isRecursive>
-void MapDecoderImpl<LlrMetrics, LogSumAlg>::backwardUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator backwardMetric, typename std::vector<typename LlrMetrics::Type>::const_iterator branchMetric, char(*)[!isRecursive])
+template <class U, typename std::enable_if<!U::value>::type*>
+void MapDecoderImpl<LlrMetrics, LogSumAlg>::backwardUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator backwardMetric, typename std::vector<typename LlrMetrics::Type>::const_iterator branchMetric)
 {
   auto state = structure().trellis().beginState();
   auto bufferMetric = bufferMetrics_.begin();
@@ -326,8 +328,8 @@ void MapDecoderImpl<LlrMetrics, LogSumAlg>::backwardUpdateImpl(typename std::vec
 }
 
 template <class LlrMetrics, template <class> class LogSumAlg>
-template <bool isRecursive>
-typename LlrMetrics::Type MapDecoderImpl<LlrMetrics, LogSumAlg>::msgUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator branchMetric, size_t j, char(*)[isRecursive])
+template <class U, typename std::enable_if<U::value>::type*>
+typename LlrMetrics::Type MapDecoderImpl<LlrMetrics, LogSumAlg>::msgUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator branchMetric, size_t j)
 {
   typename LlrMetrics::Type metric[2] = {logSum_.prior(-llrMetrics_.max()), logSum_.prior(-llrMetrics_.max())};
   for (size_t k = 0; k < structure().trellis().stateCount(); ++k) {
@@ -340,8 +342,8 @@ typename LlrMetrics::Type MapDecoderImpl<LlrMetrics, LogSumAlg>::msgUpdateImpl(t
 }
 
 template <class LlrMetrics, template <class> class LogSumAlg>
-template <bool isRecursive>
-typename LlrMetrics::Type MapDecoderImpl<LlrMetrics, LogSumAlg>::parityUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator branchMetric, size_t j, char(*)[isRecursive])
+template <class U, typename std::enable_if<U::value>::type*>
+typename LlrMetrics::Type MapDecoderImpl<LlrMetrics, LogSumAlg>::parityUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator branchMetric, size_t j)
 {
   typename LlrMetrics::Type metric[2] = {logSum_.prior(-llrMetrics_.max()), logSum_.prior(-llrMetrics_.max())};
   for (auto output = structure().trellis().beginOutput(); output < structure().trellis().endOutput();) {
@@ -355,8 +357,8 @@ typename LlrMetrics::Type MapDecoderImpl<LlrMetrics, LogSumAlg>::parityUpdateImp
 }
 
 template <class LlrMetrics, template <class> class LogSumAlg>
-template <bool isRecursive>
-typename LlrMetrics::Type MapDecoderImpl<LlrMetrics, LogSumAlg>::msgUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator branchMetric, size_t j, char(*)[!isRecursive])
+template <class U, typename std::enable_if<!U::value>::type*>
+typename LlrMetrics::Type MapDecoderImpl<LlrMetrics, LogSumAlg>::msgUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator branchMetric, size_t j)
 {
   typename LlrMetrics::Type max[2] = {typename LlrMetrics::Type(-llrMetrics_.max()), typename LlrMetrics::Type(-llrMetrics_.max())};
   typename LlrMetrics::Type metric[2] = {
@@ -381,8 +383,8 @@ typename LlrMetrics::Type MapDecoderImpl<LlrMetrics, LogSumAlg>::msgUpdateImpl(t
 }
 
 template <class LlrMetrics, template <class> class LogSumAlg>
-template <bool isRecursive>
-typename LlrMetrics::Type MapDecoderImpl<LlrMetrics, LogSumAlg>::parityUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator branchMetric, size_t j, char(*)[!isRecursive])
+template <class U, typename std::enable_if<!U::value>::type*>
+typename LlrMetrics::Type MapDecoderImpl<LlrMetrics, LogSumAlg>::parityUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator branchMetric, size_t j)
 {
   typename LlrMetrics::Type max[2] = {typename LlrMetrics::Type(-llrMetrics_.max()), typename LlrMetrics::Type(-llrMetrics_.max())};
   typename LlrMetrics::Type metric[2] = {

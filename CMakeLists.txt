@@ -42,13 +42,13 @@ add_library (fecStatic STATIC $<TARGET_OBJECTS:core>)
 target_link_libraries(fecStatic ${Boost_LIBRARIES})
 target_include_directories(fecStatic PUBLIC ${Boost_INCLUDE_DIRS})
 
-#add_subdirectory(+fec)
+add_subdirectory(+fec)
 
 if (UNIX)
   install(TARGETS fec DESTINATION lib)
   install(TARGETS fecStatic DESTINATION lib)
-  install(FILES src/Code.h DESTINATION include/fec )
-  install(DIRECTORY TurboCode/src ConvolutionalCode/src LdpcCode/src CodeStructure/src DESTINATION include/fec FILES_MATCHING PATTERN "*.h")
+  install(FILES src/Codec.h DESTINATION include/fec )
+  install(DIRECTORY src/Turbo src/Convolutional src/Ldpc src/Structure DESTINATION include/fec FILES_MATCHING PATTERN "*.h")
 endif (UNIX)
 
 find_package(Doxygen)

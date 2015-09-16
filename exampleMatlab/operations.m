@@ -5,13 +5,13 @@ function operations(code)
     %   The number of row must be equal to the code msgSize.
     %   Each row is one bloc of data encoded independently from the others.
     %   We are defining 5 bloc of data.
-    msg = int8( randi([0 1],code.msgSize,5) );
+    msg = randi([0 1],code.msgSize,5);
     
     % This is quite intuitive.
     parity = code.encode(msg);
     
     %Now we modulate (with bpsk) the parity bits.
-    symbol = double( -2*double(parity)+1 );
+    symbol =  -2*double(parity)+1;
     
     %And we add noise.
     snrdb = 0.0;

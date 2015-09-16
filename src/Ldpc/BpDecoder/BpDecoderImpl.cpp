@@ -46,14 +46,14 @@ void BpDecoderImpl<LlrMetrics, BoxSumAlg>::decodeBlock(std::vector<LlrType>::con
 {
   std::copy(parity, parity+structure().paritySize(), parity_.begin());
 
-  if (structure().iterationCount() > 0) {
+  if (structure().iterations() > 0) {
     for (size_t i = 0; i < structure().checks().size(); ++i) {
       checkMetrics_[i] = parity_[structure().checks().at(i)];
     }
   }
   
   bool succes = false;
-  for (int64_t i = 0; i < structure().iterationCount() - 1; ++i) {
+  for (int64_t i = 0; i < structure().iterations() - 1; ++i) {
     checkUpdate();
     bitUpdate();
     
@@ -91,7 +91,7 @@ void BpDecoderImpl<LlrMetrics, BoxSumAlg>::soDecodeBlock(Codec::InputIterator in
     std::copy(input.state(), input.state()+structure().stateSize(), checkMetrics_.begin());
   }
   
-  if (structure().iterationCount() > 0) {
+  if (structure().iterations() > 0) {
     if (input.hasState()) {
       bitUpdate();
     }
@@ -103,7 +103,7 @@ void BpDecoderImpl<LlrMetrics, BoxSumAlg>::soDecodeBlock(Codec::InputIterator in
   }
 
   bool succes = false;
-  for (int64_t i = 0; i < structure().iterationCount() - 1; ++i) {
+  for (int64_t i = 0; i < structure().iterations() - 1; ++i) {
     checkUpdate();
     bitUpdate();
     

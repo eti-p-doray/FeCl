@@ -90,8 +90,8 @@ void ViterbiDecoderImpl<LlrMetrics>::decodeBlock(std::vector<LlrType>::const_ite
   inputTraceBack -= structure().trellis().stateCount();
   
   BitField<size_t> bestState = 0;
-  switch (structure().terminationType()) {
-    case Convolutional::Truncation:
+  switch (structure().termination()) {
+    case Convolutional::Truncate:
       for (BitField<size_t> i = 0; i < structure().trellis().stateCount(); ++i) {
         if (previousPathMetrics_[i] > previousPathMetrics_[bestState]) {
           bestState = i;

@@ -1,103 +1,68 @@
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/) # add FindMatlab module
 
 find_package(Matlab REQUIRED)
-add_definitions(-DMATLAB_MEX_FILE) #define matlab macros
-
 set(Boost_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/libs/include/)
 set(Boost_LIBRARIES serialization)
 
 set(SOURCES
-  @Code/Code_softOutDecode.cpp
-  @Code/Code_appDecode.cpp
-  @Code/Code_decode.cpp
-  @Code/Code_encode.cpp
-  @Code/Code_get_extrinsicSize.cpp
-  @Code/Code_get_msgSize.cpp
-  @Code/Code_get_paritySize.cpp
-  @Code/Code_get_workGroupSize.cpp
-  @Code/Code_set_workGroupSize.cpp
-  @Code/Code_load.cpp
-  @Code/Code_save.cpp
-  @Code/Code_destructor.cpp
-  @ConvolutionalCode/ConvolutionalCode_constructor.cpp
-  @TurboCode/TurboCode_constructor.cpp
-  @TurboCode/TurboCode_get_iterationCount.cpp
-  @TurboCode/TurboCode_set_iterationCount.cpp
-  @LdpcCode/LdpcCode_constructor.cpp
-  @LdpcCode/LdpcCode_get_iterationCount.cpp
-  @LdpcCode/LdpcCode_set_iterationCount.cpp
+  @Codec/Codec_destroy.cpp
+  @Codec/Codec_save.cpp
+  @Codec/Codec_load.cpp
+  @Codec/Codec_encode.cpp
+  @Codec/Codec_decode.cpp
+  @Codec/Codec_soDecode.cpp
+  @Codec/Codec_get_msgSize.cpp
+  @Codec/Codec_get_systSize.cpp
+  @Codec/Codec_get_stateSize.cpp
+  @Codec/Codec_get_paritySize.cpp
+  @Codec/Codec_get_workGroupSize.cpp
+  @Codec/Codec_set_workGroupSize.cpp
+  @Turbo/Turbo_constructor.cpp
+  @Turbo/Turbo_get_decoderOptions.cpp
+  @Turbo/Turbo_set_encoderOptions.cpp
+  @Turbo/Turbo_set_decoderOptions.cpp
 )
 
-add_library(fecMatlab STATIC ${SOURCES})
-target_include_directories(fecMatlab PRIVATE ${MATLAB_INCLUDE_DIRS})
-target_include_directories(fecMatlab PRIVATE ${Boost_INCLUDE_DIRS})
-target_include_directories(fecMatlab PRIVATE ${CMAKE_SOURCE_DIR}/src)
-target_link_libraries(fecMatlab fecStatic)
-target_link_libraries(fecMatlab ${Boost_LIBRARIES})
-target_link_libraries(fecMatlab ${MATLAB_LIBRARIES})
+add_library(wrap MODULE ${SOURCES} wrap.cpp Matlabdef.def)
+target_include_directories(wrap PRIVATE ${MATLAB_INCLUDE_DIRS})
+target_include_directories(wrap PRIVATE ${Boost_INCLUDE_DIRS})
+target_include_directories(wrap PRIVATE ${CMAKE_SOURCE_DIR}/src)
+target_link_libraries(wrap fecStatic)
+target_link_libraries(wrap ${Boost_LIBRARIES})
+target_link_libraries(wrap ${MATLAB_LIBRARIES})
 
-foreach(SRC_NAME ${SOURCES})
-  get_filename_component(FUNCTION_NAME ${SRC_NAME} NAME_WE)
+set_target_properties(wrap PROPERTIES CMAKE_CXX_VISIBILITY_PRESET hidden)
+set_target_properties(wrap PROPERTIES CMAKE_VISIBILITY_INLINES_HIDDEN 1)
+set_target_properties(wrap PROPERTIES SUFFIX .${MATLAB_MEXEXT} PREFIX "")
+set_target_properties(wrap PROPERTIES COMPILE_FLAGS -DMATLAB_MEX_FILE)
 
-  add_library(${FUNCTION_NAME} MODULE MexFunction.cpp Matlabdef.def)
-  target_include_directories(${FUNCTION_NAME} PRIVATE ${MATLAB_INCLUDE_DIRS})
-  target_link_libraries(${FUNCTION_NAME} fecMatlab)
-  target_link_libraries(${FUNCTION_NAME} ${MATLAB_LIBRARIES})
-  set_target_properties(${FUNCTION_NAME} PROPERTIES CMAKE_CXX_VISIBILITY_PRESET hidden)
-  set_target_properties(${FUNCTION_NAME} PROPERTIES CMAKE_VISIBILITY_INLINES_HIDDEN 1)
-  set_target_properties(${FUNCTION_NAME} PROPERTIES SUFFIX .${MATLAB_MEXEXT} PREFIX "")
-  set_target_properties(${FUNCTION_NAME} PROPERTIES COMPILE_FLAGS -DMEX_FUNCTION=${FUNCTION_NAME})
+if (APPLE)
+  set_target_properties(wrap PROPERTIES LINK_FLAGS -Wl,-exported_symbols_list,"${MATLAB_MAP}")
+elseif (UNIX)
+  set_target_properties(wrap PROPERTIES LINK_FLAGS -Wl,--version-script,"${MATLAB_MAP}")
+endif (APPLE)
 
-  if (APPLE)
-    set_target_properties(${FUNCTION_NAME} PROPERTIES LINK_FLAGS -Wl,-exported_symbols_list,"${MATLAB_MAP}")
-  elseif (UNIX)
-    set_target_properties(${FUNCTION_NAME} PROPERTIES LINK_FLAGS -Wl,--version-script,"${MATLAB_MAP}")
-  endif (APPLE)
+install(TARGETS wrap DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/+bin)
 
-  install(TARGETS ${FUNCTION_NAME} DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/+bin)
-endforeach()
+#foreach(SRC_NAME ${SOURCES})
+#  get_filename_component(FUNCTION_NAME ${SRC_NAME} NAME_WE)
+#
+#  add_library(${FUNCTION_NAME} MODULE MexFunction.cpp Matlabdef.def)
+#  target_include_directories(${FUNCTION_NAME} PRIVATE ${MATLAB_INCLUDE_DIRS})
+#  target_link_libraries(${FUNCTION_NAME} fecMatlab)
+#  target_link_libraries(${FUNCTION_NAME} ${MATLAB_LIBRARIES})
+#  set_target_properties(${FUNCTION_NAME} PROPERTIES CMAKE_CXX_VISIBILITY_PRESET hidden)
+#  set_target_properties(${FUNCTION_NAME} PROPERTIES CMAKE_VISIBILITY_INLINES_HIDDEN 1)
+#  set_target_properties(${FUNCTION_NAME} PROPERTIES SUFFIX .${MATLAB_MEXEXT} PREFIX "")
+#  set_target_properties(${FUNCTION_NAME} PROPERTIES COMPILE_FLAGS -DMEX_FUNCTION=${FUNCTION_NAME})
+#
+#  if (APPLE)
+#    set_target_properties(${FUNCTION_NAME} PROPERTIES LINK_FLAGS -Wl,-exported_symbols_list,"${MATLAB_MAP}")
+#  elseif (UNIX)
+#    set_target_properties(${FUNCTION_NAME} PROPERTIES LINK_FLAGS -Wl,--version-script,"${MATLAB_MAP}")
+#  endif (APPLE)
+#
+#  install(TARGETS ${FUNCTION_NAME} DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/+bin)
+#endforeach()
 
 
-function (add_mex_function SRC_NAME)
-	get_filename_component(FUNCTION_NAME ${SRC_NAME} NAME_WE)
-	add_library(${FUNCTION_NAME} MODULE ${SRC_NAME} Matlabdef.def)
-	target_include_directories(${FUNCTION_NAME} PRIVATE ${MATLAB_INCLUDE_DIRS})
-	target_include_directories(${FUNCTION_NAME} PRIVATE ${Boost_INCLUDE_DIRS})
- 	target_include_directories(${FUNCTION_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src)
-	target_link_libraries(${FUNCTION_NAME} fecStatic)
-	target_link_libraries(${FUNCTION_NAME} ${Boost_LIBRARIES})
-	target_link_libraries(${FUNCTION_NAME} ${MATLAB_LIBRARIES})
-
-	set_target_properties(${FUNCTION_NAME} PROPERTIES CMAKE_CXX_VISIBILITY_PRESET hidden)
-	set_target_properties(${FUNCTION_NAME} PROPERTIES CMAKE_VISIBILITY_INLINES_HIDDEN 1)
-  set_target_properties(${FUNCTION_NAME} PROPERTIES SUFFIX .${MATLAB_MEXEXT} PREFIX "")
-
-  if (APPLE)
-    SET_TARGET_PROPERTIES(${FUNCTION_NAME} PROPERTIES LINK_FLAGS -Wl,-exported_symbols_list,"${MATLAB_MAP}")
-  elseif (UNIX)
-    SET_TARGET_PROPERTIES(${FUNCTION_NAME} PROPERTIES LINK_FLAGS -Wl,--version-script,"${MATLAB_MAP}")
-  endif (APPLE)
-
-	install(TARGETS ${FUNCTION_NAME} DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/+bin)
-endfunction()
-
-#add_mex_function(@Code/Code_softOutDecode.cpp)
-#add_mex_function(@Code/Code_appDecode.cpp)
-#add_mex_function(@Code/Code_decode.cpp)
-#add_mex_function(@Code/Code_encode.cpp)
-#add_mex_function(@Code/Code_get_extrinsicSize.cpp)
-#add_mex_function(@Code/Code_get_msgSize.cpp)
-#add_mex_function(@Code/Code_get_paritySize.cpp)
-#add_mex_function(@Code/Code_get_workGroupSize.cpp)
-#add_mex_function(@Code/Code_set_workGroupSize.cpp)
-#add_mex_function(@Code/Code_load.cpp)
-#add_mex_function(@Code/Code_save.cpp)
-#add_mex_function(@Code/Code_destructor.cpp)
-
-#add_mex_function(@ConvolutionalCode/ConvolutionalCode_constructor.cpp)
-#add_mex_function(@TurboCode/TurboCode_constructor.cpp)
-#add_mex_function(@TurboCode/TurboCode_get_iterationCount.cpp)
-#add_mex_function(@TurboCode/TurboCode_set_iterationCount.cpp)
-#add_mex_function(@LdpcCode/LdpcCode_constructor.cpp)
-#add_mex_function(@LdpcCode/LdpcCode_get_iterationCount.cpp)
-#add_mex_function(@LdpcCode/LdpcCode_set_iterationCount.cpp)

@@ -54,8 +54,8 @@ int main( int argc, char* argv[] )
    The trellis is used to create a code structure.
    We specify that one bloc will conatins 256 branches before being terminated.
    */
-  auto encoder = fec::Convolutional::EncoderOptions(trellis, 1024).termination(fec::Convolutional::Truncation);
-  auto decoder = fec::Convolutional::DecoderOptions().decoderType(fec::Codec::Exact);
+  auto encoder = fec::Convolutional::EncoderOptions(trellis, 1024).termination(fec::Convolutional::Truncate);
+  auto decoder = fec::Convolutional::DecoderOptions().type(fec::Codec::Exact);
   //! [Creating a Convolutional code structure]
   
   /*

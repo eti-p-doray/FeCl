@@ -66,63 +66,94 @@ void Turbo::soDecodeBlocks(InputIterator input, OutputIterator output, size_t n)
 }
 
 
-Turbo::Structure::Structure(const EncoderOptions& encode, const DecoderOptions& decode)
+Turbo::Structure::Structure(const EncoderOptions& encoder, const DecoderOptions& decoder)
 {
-  interleaver_ = encode.interleaver_;
-  if (encode.trellis_.size() != interleaver_.size()) {
+  setEncoderOptions(encoder);
+  setDecoderOptions(decoder);
+}
+
+void Turbo::Structure::setEncoderOptions(const fec::Turbo::EncoderOptions &encoder)
+{
+  interleaver_ = encoder.interleaver_;
+  if (encoder.trellis_.size() != 1 && encoder.trellis_.size() != interleaver_.size()) {
     throw std::invalid_argument("Trellis and Interleaver count don't match");
   }
-  if (encode.terminationType_.size() != 1 && encode.terminationType_.size() != interleaver_.size()) {
+  if (encoder.termination_.size() != 1 && encoder.termination_.size() != interleaver_.size()) {
     throw std::invalid_argument("Termination and Interleaver count don't match");
   }
   
-  for (size_t i = 0; i < interleaver_.size(); ++i) {
-    size_t length = interleaver_[i].outputSize() / encode.trellis_[i].inputSize();
-    if (length * encode.trellis_[i].inputSize() != interleaver_[i].outputSize()) {
-      throw std::invalid_argument("Invalid size for interleaver");
-    }
-    auto encoder = Convolutional::EncoderOptions(encode.trellis_[i], length);
-    auto decoder = Convolutional::DecoderOptions().decoderType(decode.decoderType_);
-    if (encode.terminationType_.size() == 1) {
-      encoder.termination(encode.terminationType_[i]);
-    }
-    else {
-      encoder.termination(encode.terminationType_[i]);
-    }
-    constituents_.push_back(Convolutional::Structure(encoder, decoder));
-  }
-  
-  iterationCount_ = decode.iterationCount_;
-  schedulingType_ = decode.schedulingType_;
-  decoderType_ = decode.decoderType_;
-  
   msgSize_ = 0;
-  systSize_ = 0;
-  paritySize_ = 0;
-  tailSize_ = 0;
-  for (size_t i = 0; i < constituents_.size(); ++i) {
-    tailSize_ += constituent(i).msgTailSize();
-    paritySize_ += constituents_[i].paritySize();
+  for (size_t i = 0; i < interleaver_.size(); ++i) {
     if (interleaver_[i].inputSize() > msgSize()) {
       msgSize_ = interleaver_[i].inputSize();
     }
   }
-  systSize_ = msgSize_ + msgTailSize();
-  paritySize_ += systSize();
   
+  for (size_t i = 0; i < interleaver_.size(); ++i) {
+    if (interleaver_[i].outputSize() == 0) {
+      std::vector<size_t> tmp(msgSize());
+      for (size_t j = 0; j < tmp.size(); ++j) {
+        tmp[j] = j;
+      }
+      interleaver_[i] = tmp;
+    }
+    size_t j = i;
+    if (encoder.trellis_.size() == 1) {
+      j = 0;
+    }
+    size_t length = interleaver_[i].outputSize() / encoder.trellis_[j].inputSize();
+    if (length * encoder.trellis_[j].inputSize() != interleaver_[i].outputSize()) {
+      throw std::invalid_argument("Invalid size for interleaver");
+    }
+    auto encoderConstituentOptions = Convolutional::EncoderOptions(encoder.trellis_[j], length);
+    if (encoder.termination_.size() == 1) {
+      encoderConstituentOptions.termination(encoder.termination_[0]);
+    }
+    else {
+      encoderConstituentOptions.termination(encoder.termination_[i]);
+    }
+    auto decoderConstituentOptions = Convolutional::DecoderOptions().algorithm(decoderAlgorithm_);
+    constituents_.push_back(Convolutional::Structure(encoderConstituentOptions, decoderConstituentOptions));
+  }
+  bitOrdering_ = encoder.bitOrdering_;
+  
+  systSize_ = 0;
+  paritySize_ = 0;
+  tailSize_ = 0;
   stateSize_ = 0;
   for (auto & i : constituents()) {
+    tailSize_ += i.msgTailSize();
+    paritySize_ += i.paritySize();
     stateSize_ += i.systSize();
   }
+  systSize_ = msgSize_ + msgTailSize();
+  paritySize_ += systSize();
+}
+
+void Turbo::Structure::setDecoderOptions(const fec::Turbo::DecoderOptions &decoder)
+{
+  iterations_ = decoder.iterations_;
+  scheduling_ = decoder.scheduling_;
+  decoderAlgorithm_ = decoder.algorithm_;
+  for (size_t i = 0; i < interleaver_.size(); ++i) {
+    auto constituentOptions = Convolutional::DecoderOptions().algorithm(decoder.algorithm_);
+    constituents_[i].setDecoderOptions(constituentOptions);
+  }
+}
+
+Turbo::DecoderOptions Turbo::Structure::getDecoderOptions() const
+{
+  return DecoderOptions().iterations(iterations()).scheduling(scheduling()).algorithm(decoderAlgorithm());
 }
 
 void Turbo::Structure::encode(std::vector<BitField<bool>>::const_iterator msg, std::vector<BitField<uint8_t>>::iterator parity) const
 {
+  std::vector<BitField<bool>> messageInterl;
   std::vector<BitField<uint8_t>> parityOut;
   std::vector<BitField<uint8_t>>::iterator parityOutIt;
   switch (bitOrdering()) {
     case Alternate:
-      parityOut.reserve(paritySize());
+      parityOut.resize(paritySize());
       parityOutIt = parityOut.begin();
       break;
       
@@ -132,15 +163,14 @@ void Turbo::Structure::encode(std::vector<BitField<bool>>::const_iterator msg, s
       break;
   }
   std::copy(msg, msg + msgSize(), parityOutIt);
-  parityOutIt += msgSize();
-  std::vector<BitField<bool>> messageInterl;
-  auto parityIt = parityOutIt + msgTailSize();
+  auto systTail = parityOutIt + msgSize();
+  parityOutIt += systSize();
   for (size_t i = 0; i < constituentCount(); ++i) {
     messageInterl.resize(constituent(i).msgSize());
     interleaver(i).interleaveBlock<BitField<bool>>(msg, messageInterl.begin());
-    constituent(i).encode(messageInterl.begin(), parityIt, parityOutIt);
-    parityOutIt += constituent(i).msgTailSize();
-    parityIt += constituent(i).paritySize();
+    constituent(i).encode(messageInterl.begin(), parityOutIt, systTail);
+    systTail += constituent(i).msgTailSize();
+    parityOutIt += constituent(i).paritySize();
   }
   if (bitOrdering() == Alternate) {
     alternate<BitField<uint8_t>>(parityOut.begin(), parity);
@@ -152,21 +182,36 @@ bool Turbo::Structure::check(std::vector<BitField<uint8_t>>::const_iterator pari
   std::vector<BitField<bool>> messageInterl;
   std::vector<BitField<uint8_t>> parityTest;
   std::vector<BitField<uint8_t>> tailTest;
-  auto parityIt = parity + systSize();
-  auto tailIt = parity + msgSize();
+  std::vector<BitField<uint8_t>> parityIn;
+  std::vector<BitField<uint8_t>>::const_iterator parityInIt;
+  switch (bitOrdering()) {
+    case Alternate:
+      parityIn.resize(paritySize());
+      pack<BitField<uint8_t>>(parity, parityIn.begin());
+      parityInIt = parityIn.begin();
+      break;
+      
+    default:
+    case Pack:
+      parityInIt = parity;
+      break;
+  }
+  auto tailIt = parityInIt + msgSize();
+  auto systIt = parityInIt;
+  parityInIt += systSize();
   for (size_t i = 0; i < constituentCount(); ++i) {
     messageInterl.resize(constituent(i).msgSize());
     parityTest.resize(constituent(i).paritySize());
     tailTest.resize(constituent(i).msgTailSize());
-    interleaver(i).interleaveBlock<BitField<uint8_t>,BitField<bool>>(parity+systSize(), messageInterl.begin());
+    interleaver(i).interleaveBlock<BitField<uint8_t>,BitField<bool>>(systIt, messageInterl.begin());
     constituent(i).encode(messageInterl.begin(), parityTest.begin(), tailTest.begin());
-    if (!std::equal(parityTest.begin(), parityTest.end(), parityIt)) {
+    if (!std::equal(parityTest.begin(), parityTest.end(), parityInIt)) {
       return false;
     }
     if (!std::equal(tailTest.begin(), tailTest.end(), tailIt)) {
       return false;
     }
-    parityIt += constituent(i).paritySize();
+    parityInIt += constituent(i).paritySize();
     tailIt += constituent(i).msgTailSize();
   }
   return true;
@@ -176,22 +221,22 @@ template <typename T>
 void fec::Turbo::Structure::alternate(typename std::vector<T>::const_iterator parityIn, typename std::vector<T>::iterator parityOut) const
 {
   auto msgInIt = parityIn;
-  auto parityInIt = parityIn + msgSize() + msgTailSize();
   for (size_t i = 0; i < msgSize(); ++i) {
     *parityOut = *msgInIt;
     ++msgInIt;
     ++parityOut;
+    auto parityInIt = parityIn + msgSize() + msgTailSize();
     for (size_t j = 0; j < constituentCount(); ++j) {
-      if (i < constituent(i).length()) {
-        for (size_t k = 0; k < constituent(i).trellis().outputSize(); ++k) {
-          *parityOut = parityInIt[j * constituent(i).paritySize()];
+      if (i < constituent(j).length()) {
+        for (size_t k = 0; k < constituent(j).trellis().outputSize(); ++k) {
+          *parityOut = parityInIt[i*constituent(j).trellis().outputSize()+k];
           ++parityOut;
-          ++parityInIt;
         }
       }
+      parityInIt += constituent(j).paritySize();
     }
   }
-  parityInIt = parityIn + msgSize() + msgTailSize();
+  auto parityInIt = parityIn + msgSize() + msgTailSize();
   for (size_t i = 0; i < constituentCount(); ++i) {
     parityInIt += constituent(i).paritySize() - constituent(i).tailSize() * constituent(i).trellis().outputSize();
     for (size_t j = 0; j < constituent(i).tailSize(); ++j) {
@@ -213,22 +258,22 @@ template <typename T>
 void fec::Turbo::Structure::pack(typename std::vector<T>::const_iterator parityIn, typename std::vector<T>::iterator parityOut) const
 {
   auto msgOutIt = parityOut;
-  auto parityOutIt = parityOut + msgSize() + msgTailSize();
   for (size_t i = 0; i < msgSize(); ++i) {
     *msgOutIt = *parityIn;
     ++msgOutIt;
     ++parityIn;
+    auto parityOutIt = parityOut + msgSize() + msgTailSize();
     for (size_t j = 0; j < constituentCount(); ++j) {
-      if (i < constituent(i).length()) {
-        for (size_t k = 0; k < constituent(i).trellis().outputSize(); ++k) {
-          parityOutIt[j * constituent(i).paritySize()] = *parityIn;
+      if (i < constituent(j).length()) {
+        for (size_t k = 0; k < constituent(j).trellis().outputSize(); ++k) {
+          parityOutIt[i*constituent(j).trellis().outputSize()+k] = *parityIn;
           ++parityIn;
-          ++parityOutIt;
         }
       }
+      parityOutIt += constituent(j).paritySize();
     }
   }
-  parityOutIt = parityOut + msgSize() + msgTailSize();
+  auto parityOutIt = parityOut + msgSize() + msgTailSize();
   for (size_t i = 0; i < constituentCount(); ++i) {
     parityOutIt += constituent(i).paritySize() - constituent(i).tailSize() * constituent(i).trellis().outputSize();
     for (size_t j = 0; j < constituent(i).tailSize(); ++j) {

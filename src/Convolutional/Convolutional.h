@@ -62,32 +62,27 @@ namespace fec {
      *  Trellis termination types.
      *  This specifies the type of termination at the end of each bloc.
      */
-    enum TerminationType {
+    enum Termination {
       Tail, /**< The state is brought to zero by implicitly adding new msg bit */
-      Truncation /**< The state is forced to zero by truncating the trellis */
+      Truncate /**< The state is forced to zero by truncating the trellis */
     };
     
-    class Structure;
-    class EncoderOptions {
-      friend class Structure;
+    struct EncoderOptions {
     public:
       EncoderOptions(Trellis trellis, size_t length) {trellis_ = trellis; length_ = length;}
-      EncoderOptions& termination(TerminationType type) {terminationType_ = type; return *this;}
+      EncoderOptions& termination(Termination type) {termination_ = type; return *this;}
       
-    private:
       Trellis trellis_;
       size_t length_;
-      TerminationType terminationType_ = Truncation;
+      Termination termination_ = Truncate;
     };
-    class DecoderOptions {
-      friend class Structure;
+    struct DecoderOptions {
     public:
       DecoderOptions() = default;
       
-      DecoderOptions& decoderType(Codec::DecoderType type) {decoderType_ = type; return *this;}
+      DecoderOptions& algorithm(Codec::DecoderAlgorithm algorithm) {algorithm_ = algorithm; return *this;}
       
-    private:
-      Codec::DecoderType decoderType_ = Approximate;
+      Codec::DecoderAlgorithm algorithm_ = Approximate;
     };
     /**
      *  This class represents a convolutional code structure.
@@ -104,15 +99,15 @@ namespace fec {
       virtual const char * get_key() const;
       virtual Codec::Structure::Type type() const {return Codec::Structure::Convolutional;}
       
+      void setDecoderOptions(const DecoderOptions& decoder);
+      void setEncoderOptions(const EncoderOptions& encoder);
+      DecoderOptions getDecoderOptions() const;
+      
       inline size_t length() const {return length_;}
       inline size_t tailSize() const {return tailSize_;}
       inline size_t msgTailSize() const {return tailSize_ * trellis().inputSize();}
-      inline TerminationType terminationType() const {return terminationType_;}
+      inline Termination termination() const {return termination_;}
       inline const Trellis& trellis() const {return trellis_;}
-      
-      void setDecoderOptions(const DecoderOptions& decoder);
-      void setEncoderOptions(const EncoderOptions& encoder);
-      DecoderOptions getDecoderOptions();
       
       virtual bool check(std::vector<BitField<uint8_t>>::const_iterator parity) const;
       virtual void encode(std::vector<BitField<bool>>::const_iterator msg, std::vector<BitField<uint8_t>>::iterator parity) const;
@@ -124,19 +119,19 @@ namespace fec {
         using namespace boost::serialization;
         ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(Codec::Structure);
         ar & ::BOOST_SERIALIZATION_NVP(trellis_);
-        ar & ::BOOST_SERIALIZATION_NVP(terminationType_);
+        ar & ::BOOST_SERIALIZATION_NVP(termination_);
         ar & ::BOOST_SERIALIZATION_NVP(tailSize_);
         ar & ::BOOST_SERIALIZATION_NVP(length_);
       }
       
       Trellis trellis_;
       size_t length_;
-      TerminationType terminationType_;
+      Termination termination_;
       size_t tailSize_;
     };
     
     Convolutional() = default;
-    Convolutional(const Structure& structure, int workGroupSize = 4);
+    Convolutional(const Structure& structure, int workGroupSize = 8);
     Convolutional(const EncoderOptions& encoder, const DecoderOptions& decoder, int workGroupSize = 8);
     Convolutional(const EncoderOptions& encoder, int workGroupSize = 8);
     Convolutional(const Convolutional& other) : Codec(&structure_) {*this = other;}
@@ -145,6 +140,9 @@ namespace fec {
     virtual const char * get_key() const;
     
     inline const Structure& structure() const {return structure_;}
+    void setDecoderOptions(const DecoderOptions& decoder) {structure_.setDecoderOptions(decoder);}
+    void setEncoderOptions(const EncoderOptions& encoder) {structure_.setEncoderOptions(encoder);}
+    DecoderOptions getDecoderOptions() const {return structure_.getDecoderOptions();}
     
   protected:
     virtual void decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<bool>>::iterator msg, size_t n) const;

@@ -54,7 +54,7 @@ class Codec
   friend class boost::serialization::access;
 public:
 
-  enum DecoderType {
+  enum DecoderAlgorithm {
     Exact, /**< No approximation is used and the L-values are computed in logarithmic domain. */
     Table, /**< A lookup table is used  */
     Approximate,  /**< An approximation is used */
@@ -89,7 +89,7 @@ public:
     inline size_t systSize() const {return systSize_;} /**< Access the size of the msg in each code bloc. */
     inline size_t paritySize() const {return paritySize_;} /**< Access the size of the parity in each code bloc. */
     inline size_t stateSize() const {return stateSize_;} /**< Access the size of the extrinsic in each code bloc. */
-    DecoderType decoderType() const {return decoderType_;}
+    DecoderAlgorithm decoderAlgorithm() const {return decoderAlgorithm_;}
     
     virtual void encode(std::vector<BitField<bool>>::const_iterator msg, std::vector<BitField<uint8_t>>::iterator parity) const = 0;
     virtual bool check(std::vector<BitField<uint8_t>>::const_iterator parity) const = 0;
@@ -103,14 +103,14 @@ public:
       ar & BOOST_SERIALIZATION_NVP(systSize_);
       ar & BOOST_SERIALIZATION_NVP(paritySize_);
       ar & BOOST_SERIALIZATION_NVP(stateSize_);
-      ar & BOOST_SERIALIZATION_NVP(decoderType_);
+      ar & BOOST_SERIALIZATION_NVP(decoderAlgorithm_);
     }
     
     size_t msgSize_;/**< Size of the msg in each code bloc. */
     size_t systSize_;/**< Size of the msg in each code bloc. */
     size_t paritySize_;/**< Size of the parity in each code bloc. */
     size_t stateSize_;/**< Size of the extrinsic in each code bloc. */
-    DecoderType decoderType_;
+    DecoderAlgorithm decoderAlgorithm_;
   };
   template <class Iterator>
   class InfoIterator {

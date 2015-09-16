@@ -16,15 +16,16 @@ function TurboCode
     %   defined by these indices array.
     % The first constituent will be given systematic inputs.
     % The second constituent will be given random permutation of the input sequence.
-    interl{1} = [1:256];
+    interl{1} = [];
     interl{2} = randperm(256);
     
     %We define a simple code with the trellis and the interleavers.
-    code = fec.TurboCode(trellis, interl)
+    codec = fec.Turbo(trellis, interl)
 
     %Lets now use the code for some operations. Since all code offer the
     %same interface, we call the operation function which will work on any
     %defined code
-    operations(code);
+    operations(codec);
+    moreOperations(codec);
     
 end

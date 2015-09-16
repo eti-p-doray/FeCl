@@ -62,7 +62,7 @@ namespace fec {
     std::vector<LlrType> extrinsic_;
     std::vector<LlrType> extrinsicBuffer_;
     std::vector<LlrType> parityIn_;
-    std::vector<LlrType> systOut_;
+    std::vector<LlrType> parityOut_;
     
   private:
     Turbo::Structure structure_;

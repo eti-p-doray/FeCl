@@ -40,14 +40,14 @@ test_suite*
 init_unit_test_suite( int argc, char* argv[] )
 {
   fec::Trellis trellis({4}, {{015, 017}}, {015});
-  size_t length = 64;
-  auto encoder = fec::Convolutional::EncoderOptions(trellis, length).termination(fec::Convolutional::Truncation);
-  auto decoder = fec::Convolutional::DecoderOptions().decoderType(fec::Codec::Approximate);
+  size_t length = 1024;
+  auto encoder = fec::Convolutional::EncoderOptions(trellis, length).termination(fec::Convolutional::Truncate);
+  auto decoder = fec::Convolutional::DecoderOptions().algorithm(fec::Codec::Approximate);
   
   auto structure = fec::Convolutional::Structure(encoder, decoder);
   test_suite* ts1 = BOOST_TEST_SUITE("default");
   ts1->add( BOOST_TEST_CASE(std::bind(&test_encodeBlock, structure )));
-  ts1->add( BOOST_TEST_CASE(std::bind( &test_decodeBlock, fec::Convolutional(structure), 4.0) ));
+  ts1->add( BOOST_TEST_CASE(std::bind( &test_decodeBlock, fec::Convolutional(structure), 3.0) ));
   ts1->add( BOOST_TEST_CASE(std::bind( &test_soDecodeBlock, fec::Convolutional(structure), 4.0) ));
   ts1->add( BOOST_TEST_CASE(std::bind( &test_soDecodeBlock_parityOut, fec::Convolutional(structure), 4.0) ));
   ts1->add( BOOST_TEST_CASE(std::bind( &test_soDecodeBlock_systIn, fec::Convolutional(structure), 4.0) ));
@@ -77,7 +77,7 @@ init_unit_test_suite( int argc, char* argv[] )
   ts2->add( BOOST_TEST_CASE(std::bind( &test_soDecodeBlock_parityOut, fec::Convolutional(structure), 4.0) ));
   ts2->add( BOOST_TEST_CASE(std::bind( &test_soDecodeBlock_systIn, fec::Convolutional(structure), 4.0) ));
   
-  decoder.decoderType(fec::Codec::Table);
+  decoder.algorithm(fec::Codec::Table);
   structure = fec::Convolutional::Structure(encoder, decoder);
   test_suite* ts3 = BOOST_TEST_SUITE("table");
   ts3->add( BOOST_TEST_CASE(std::bind( &test_encodeBlock, structure) ));
@@ -86,7 +86,7 @@ init_unit_test_suite( int argc, char* argv[] )
   ts3->add( BOOST_TEST_CASE(std::bind( &test_soDecodeBlock_parityOut, fec::Convolutional(structure), 4.0) ));
   ts3->add( BOOST_TEST_CASE(std::bind( &test_soDecodeBlock_systIn, fec::Convolutional(structure), 4.0) ));
   
-  decoder.decoderType(fec::Codec::Approximate);
+  decoder.algorithm(fec::Codec::Approximate);
   structure = fec::Convolutional::Structure(encoder, decoder);
   test_suite* ts4 = BOOST_TEST_SUITE("approximate");
   ts4->add( BOOST_TEST_CASE(std::bind( &test_encodeBlock, structure) ));

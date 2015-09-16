@@ -63,8 +63,8 @@ int main( int argc, char* argv[] )
   /*
    The trellis and interleaver indices are used to create a code structure.
    */
-  auto encoder = fec::Turbo::EncoderOptions({trellis, trellis}, {systIdx, permIdx}).termination({fec::Convolutional::Tail,fec::Convolutional::Tail});
-  auto decoder = fec::Turbo::DecoderOptions().decoderType(fec::Code::Exact).iterations(5).scheduling(fec::Turbo::Serial);
+  auto encoder = fec::Turbo::EncoderOptions({trellis, trellis}, {systIdx, permIdx}).termination(fec::Convolutional::Truncate).bitOrdering(fec::Turbo::Pack);
+  auto decoder = fec::Turbo::DecoderOptions().algorithm(fec::Codec::Exact).iterations(10).scheduling(fec::Turbo::Serial);
   fec::Turbo::Structure structure(encoder, decoder);
   //! [Creating a Turbo code structure]
   
@@ -72,20 +72,20 @@ int main( int argc, char* argv[] )
   /*
    A code is created and ready to operate
    */
-  std::unique_ptr<fec::Code> code = fec::Code::create(structure, 1);
+  std::unique_ptr<fec::Codec> code = fec::Codec::create(structure, 1);
   //! [Creating a Turbo code]
   
-  std::cout << per(code, -4.0) << std::endl;
+  std::cout << per(code, -4) << std::endl;
   
-  decoder.decoderType(fec::Code::Table);
-  code = fec::Code::create(fec::Turbo::Structure(encoder, decoder), 1);
+  /*decoder.decoderType(fec::Codec::Table);
+  code = fec::Codec::create(fec::Turbo::Structure(encoder, decoder), 1);
   
-  std::cout << per(code, -4.0) << std::endl;
+  std::cout << per(code, 4.0) << std::endl;
   
-  decoder.decoderType(fec::Code::Approximate);
-  code = fec::Code::create(fec::Turbo::Structure(encoder, decoder), 1);
+  decoder.decoderType(fec::Codec::Approximate);
+  code = fec::Codec::create(fec::Turbo::Structure(encoder, decoder), 1);
   
-  std::cout << per(code, -4.0) << std::endl;
+  std::cout << per(code, 4.0) << std::endl;*/
   
   return 0;
 }

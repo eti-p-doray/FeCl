@@ -56,7 +56,10 @@ public:
    *  from the given index sequence
    *  \param  sequence  Index sequence specifying the source index of each output element.
    */
-  Interleaver(::std::vector<size_t> sequence) {
+  Interleaver(const std::vector<size_t>& sequence) {
+    if (sequence.size() == 0) {
+      return;
+    }
     sequence_ = sequence;
     inputSize_ = *std::max_element(sequence_.begin(), sequence_.end()) + 1;
     outputSize_ = sequence_.size();
@@ -126,8 +129,8 @@ private:
   }
   
   std::vector<size_t> sequence_;
-  size_t outputSize_;
-  size_t inputSize_;
+  size_t outputSize_ = 0;
+  size_t inputSize_ = 0;
 };
   
 }

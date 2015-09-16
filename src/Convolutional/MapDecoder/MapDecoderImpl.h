@@ -61,25 +61,25 @@ namespace fec {
     template <class T> void aPosterioriUpdate(Codec::InfoIterator<typename std::vector<T>::const_iterator> input, Codec::InfoIterator<typename std::vector<T>::iterator> output);/**< Final (msg) L-values calculation. */
     
   private:
-    template <bool isRecursive>
-    void forwardUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator forwardMetric, typename std::vector<typename LlrMetrics::Type>::const_iterator branchMetric, char(*)[isRecursive]=0);/**< Forward metric calculation. */
-    template <bool isRecursive>
-    void forwardUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator forwardMetric, typename std::vector<typename LlrMetrics::Type>::const_iterator branchMetric, char(*)[!isRecursive]=0);/**< Forward metric calculation. */
+    template <class U = typename LogSumAlg<LlrMetrics>::isRecursive, typename std::enable_if<U::value>::type* = nullptr>
+    void forwardUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator forwardMetric, typename std::vector<typename LlrMetrics::Type>::const_iterator branchMetric);/**< Forward metric calculation. */
+    template <class U = typename LogSumAlg<LlrMetrics>::isRecursive, typename std::enable_if<!U::value>::type* = nullptr>
+    void forwardUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator forwardMetric, typename std::vector<typename LlrMetrics::Type>::const_iterator branchMetric);/**< Forward metric calculation. */
     
-    template <bool isRecursive>
-    void backwardUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator backwardMetric, typename std::vector<typename LlrMetrics::Type>::const_iterator branchMetric, char(*)[isRecursive]=0);/**< Forward metric calculation. */
-    template <bool isRecursive>
-    void backwardUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator backwardMetric, typename std::vector<typename LlrMetrics::Type>::const_iterator branchMetric, char(*)[!isRecursive]=0);/**< Forward metric calculation. */
+    template <class U = typename LogSumAlg<LlrMetrics>::isRecursive, typename std::enable_if<U::value>::type* = nullptr>
+    void backwardUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator backwardMetric, typename std::vector<typename LlrMetrics::Type>::const_iterator branchMetric);/**< Forward metric calculation. */
+    template <class U = typename LogSumAlg<LlrMetrics>::isRecursive, typename std::enable_if<!U::value>::type* = nullptr>
+    void backwardUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator backwardMetric, typename std::vector<typename LlrMetrics::Type>::const_iterator branchMetric);/**< Forward metric calculation. */
     
-    template <bool isRecursive>
-    typename LlrMetrics::Type msgUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator branchMetric, size_t j, char(*)[isRecursive]=0);/**< Forward metric calculation. */
-    template <bool isRecursive>
-    typename LlrMetrics::Type msgUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator branchMetric, size_t j, char(*)[!isRecursive]=0);/**< Forward metric calculation. */
+    template <class U = typename LogSumAlg<LlrMetrics>::isRecursive, typename std::enable_if<U::value>::type* = nullptr>
+    typename LlrMetrics::Type msgUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator branchMetric, size_t j);/**< Forward metric calculation. */
+    template <class U = typename LogSumAlg<LlrMetrics>::isRecursive, typename std::enable_if<!U::value>::type* = nullptr>
+    typename LlrMetrics::Type msgUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator branchMetric, size_t j);/**< Forward metric calculation. */
     
-    template <bool isRecursive>
-    typename LlrMetrics::Type parityUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator branchMetric, size_t j, char(*)[isRecursive]=0);/**< Forward metric calculation. */
-    template <bool isRecursive>
-    typename LlrMetrics::Type parityUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator branchMetric, size_t j, char(*)[!isRecursive]=0);/**< Forward metric calculation. */
+    template <class U = typename LogSumAlg<LlrMetrics>::isRecursive, typename std::enable_if<U::value>::type* = nullptr>
+    typename LlrMetrics::Type parityUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator branchMetric, size_t j);/**< Forward metric calculation. */
+    template <class U = typename LogSumAlg<LlrMetrics>::isRecursive, typename std::enable_if<!U::value>::type* = nullptr>
+    typename LlrMetrics::Type parityUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator branchMetric, size_t j);/**< Forward metric calculation. */
     
     std::vector<typename LlrMetrics::Type> bufferMetrics_;
     

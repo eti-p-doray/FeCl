@@ -101,13 +101,13 @@ void Convolutional::Structure::setEncoderOptions(const EncoderOptions& encoder)
 {
   trellis_ = encoder.trellis_;
   length_ = encoder.length_;
-  terminationType_ = encoder.terminationType_;
+  termination_ = encoder.termination_;
   
   msgSize_ = length_ * trellis_.inputSize();
   systSize_ = length_ * trellis_.inputSize();
   paritySize_ = length_ * trellis_.outputSize();
   stateSize_ = 0;
-  switch (terminationType_) {
+  switch (termination_) {
     case Tail:
       paritySize_ += trellis_.stateSize() * trellis_.outputSize();
       systSize_ += trellis_.stateSize() * trellis_.inputSize();
@@ -115,7 +115,7 @@ void Convolutional::Structure::setEncoderOptions(const EncoderOptions& encoder)
       break;
       
     default:
-    case Truncation:
+    case Truncate:
       tailSize_ = 0;
       break;
   }
@@ -123,12 +123,12 @@ void Convolutional::Structure::setEncoderOptions(const EncoderOptions& encoder)
 
 void Convolutional::Structure::setDecoderOptions(const DecoderOptions& decoder)
 {
-  decoderType_ = decoder.decoderType_;
+  decoderAlgorithm_ = decoder.algorithm_;
 }
 
-Convolutional::DecoderOptions Convolutional::Structure::getDecoderOptions()
+Convolutional::DecoderOptions Convolutional::Structure::getDecoderOptions() const
 {
-  return DecoderOptions().decoderType(decoderType_);
+  return DecoderOptions().algorithm(decoderAlgorithm_);
 }
 
 void Convolutional::Structure::encode(std::vector<BitField<bool>>::const_iterator msg, std::vector<BitField<uint8_t>>::iterator parity) const
@@ -151,7 +151,7 @@ void Convolutional::Structure::encode(std::vector<BitField<bool>>::const_iterato
     parity  += trellis().outputSize();
   }
   
-  switch (terminationType()) {
+  switch (termination()) {
     case Convolutional::Tail:
       for (int j = 0; j < tailSize(); ++j) {
         for (BitField<size_t> input = 0; input < trellis().inputCount(); ++input) {
@@ -170,7 +170,7 @@ void Convolutional::Structure::encode(std::vector<BitField<bool>>::const_iterato
       break;
       
     default:
-    case Convolutional::Truncation:
+    case Convolutional::Truncate:
       state = 0;
       break;
   }
@@ -201,12 +201,12 @@ bool Convolutional::Structure::check(std::vector<BitField<uint8_t>>::const_itera
     }
     parity += trellis().outputSize();
   }
-  switch (terminationType()) {
+  switch (termination()) {
     case Convolutional::Tail:
       return (state == 0);
       
     default:
-    case Convolutional::Truncation:
+    case Convolutional::Truncate:
       return true;
   }
 }
@@ -231,7 +231,7 @@ void Convolutional::Structure::encode(std::vector<BitField<bool>>::const_iterato
     parity  += trellis().outputSize();
   }
   
-  switch (terminationType()) {
+  switch (termination()) {
     case Convolutional::Tail:
       for (int j = 0; j < tailSize(); ++j) {
         for (BitField<size_t> input = 0; input < trellis().inputCount(); ++input) {
@@ -254,7 +254,7 @@ void Convolutional::Structure::encode(std::vector<BitField<bool>>::const_iterato
       break;
       
     default:
-    case Convolutional::Truncation:
+    case Convolutional::Truncate:
       state = 0;
       break;
   }

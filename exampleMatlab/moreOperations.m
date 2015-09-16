@@ -25,14 +25,14 @@ function moreOperations(code)
     msgDecoded = code.decode(llr);
 
     %We can also get the a posteriori values.
-    aPosteriori = code.softOutDecode(llr);
+    msgEx = code.soDecode(llr);
 
     %And we can use a priori knowledge about the code state.
     %This also gives us new extrinsic knowledge.
     %Here, we are actually giving a sequence of zero as extrinsic
     %information. This will yield the exact same result as softOutDecode.
-    [aPosteriori, extrinsic] = code.appDecode(llr, zeros(code.extrinsicSize,5));
+    [msgEx, ~, stateEx] = code.soDecode(llr, [], zeros(code.systSize,5));
 
     %Lets now count the errors in the decoded msg
-    errorCount = sum(sum((((aPosteriori)>0)-double(msg))~=0) ~= 0)
+    errorCount = sum(sum((((msgDecoded)>0)-double(msg))~=0) ~= 0)
 end

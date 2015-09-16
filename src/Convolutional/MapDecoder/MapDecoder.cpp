@@ -40,7 +40,7 @@ using namespace fec;
  */
 std::unique_ptr<MapDecoder> MapDecoder::create(const Convolutional::Structure& structure)
 {
-  switch (structure.decoderType()) {
+  switch (structure.decoderAlgorithm()) {
     default:
     case Codec::Exact:
       return std::unique_ptr<MapDecoder>(new MapDecoderImpl<FloatLlrMetrics, LogSum>(structure));

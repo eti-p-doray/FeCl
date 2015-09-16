@@ -81,12 +81,12 @@ public:
   public:
     DecoderOptions() = default;
     
-    DecoderOptions& decoderType(Codec::DecoderType type) {decoderType_ = type; return *this;}
-    DecoderOptions& iterations(size_t n) {iterationCount_ = n; return *this;}
+    DecoderOptions& algorithm(Codec::DecoderAlgorithm algorithm) {algorithm_ = algorithm; return *this;}
+    DecoderOptions& iterations(size_t n) {iterations_ = n; return *this;}
     
   private:
-    Codec::DecoderType decoderType_ = Approximate;
-    size_t iterationCount_;
+    Codec::DecoderAlgorithm algorithm_ = Approximate;
+    size_t iterations_;
   };
   /**
    *  This class represents a ldpc code structure.
@@ -105,7 +105,7 @@ public:
     
     inline const SparseBitMatrix& checks() const {return H_;}
     
-    inline size_t iterationCount() const {return iterationCount_;}
+    inline size_t iterations() const {return iterations_;}
     
     void syndrome(std::vector<uint8_t>::const_iterator parity, std::vector<uint8_t>::iterator syndrome) const;
     virtual bool check(std::vector<BitField<uint8_t>>::const_iterator parity) const;
@@ -131,11 +131,11 @@ public:
     SparseBitMatrix A_;
     SparseBitMatrix B_;
     
-    size_t iterationCount_;
+    size_t iterations_;
   };
   
   
-  Ldpc(const Structure& structure, int workGroupdSize = 4);
+  Ldpc(const Structure& structure, int workGroupdSize = 8);
   virtual ~Ldpc() = default;
   
   virtual const char * get_key() const;
