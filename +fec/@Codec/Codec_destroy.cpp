@@ -48,7 +48,7 @@ void Codec_destroy( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
     MexHandle<Codec> codec = mxArrayTo<MexHandle<Codec>>::f(prhs[0], derived);
     codec.reset();
     plhs[0] = toMxArray(std::move(codec));
-  } catch (std::exception& e) {
+  } catch (...) {
     MexHandle<fec::Codec> null;
     plhs[0] = toMxArray(std::move(null));
   }
