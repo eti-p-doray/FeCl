@@ -28,6 +28,7 @@ elseif( CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang" )
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
   set(CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
   set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-g -O3" )
+#set(CMAKE_CXX_FLAGS " ${CMAKE_CXX_FLAGS_MINSIZEREL} -std=c++11 ${CMAKE_C_FLAGS}")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++ -dead_strip")
 endif()
 
