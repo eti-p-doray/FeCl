@@ -47,36 +47,6 @@ namespace fec {
   public:
     using Type = double;
     static inline Type max() {return std::numeric_limits<Type>::infinity();}
-    
-    static Type upperCheck(Type x) {return x;}
-    static Type lowerCheck(Type x) {return x;}
-  };
-  
-  class FixLlrMetrics {
-  public:
-    //FixLlrMetrics(uint8_t n);
-    
-    using Type = float;
-    static inline Type max() {return std::numeric_limits<Type>::infinity();}
-      //return 255;
-    //}
-    
-    Type check(Type x) {
-      x = upperCheck(x);
-      return lowerCheck(x);
-    }
-    Type upperCheck(Type x) const {
-      if (x > max()) {
-        return max();
-      }
-      return x;
-    }
-    Type lowerCheck(Type x) const {
-      if (x < -max()) {
-        return max();
-      }
-      return x;
-    }
   };
   
   /**
@@ -156,7 +126,7 @@ namespace fec {
       return nlog1pexpTable(x);
     }
     
-    constexpr static typename LlrMetrics::Type tableScale = 1.0;
+    constexpr static typename LlrMetrics::Type tableScale = 4.0;
     constexpr static size_t tableSize = 4;
     struct nlog1pexpImpl {
       typename LlrMetrics::Type operator()(typename LlrMetrics::Type x) {

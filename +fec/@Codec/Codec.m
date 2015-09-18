@@ -89,25 +89,26 @@ classdef Codec < fec.MexObject
         %
         % Inputs
         %   this - Code object
-        %   parity - Parity extrinsic (a priori) L-values correspondig to the received signal.
+        %   parity - A-priori L-values correspondig to the received signal.
         %       Given a signal y and a parity bit x, we define the correspondig L-value as
         %         L = ln[ p(x = 1 | y) / p(x = 0 | y) ] = ln[ p(y | x = 1) / p(y | x = 0) ]
         %       This array is expected to have its number of rows equals to the
         %       paritySize.
         %       Each column corresponds to one bloc of data.
         %       Many parity blocs can be decoded at once.
-        %   [state] - State extrinsic (a priori) L-values from previous decoding attempts.
+        %   [state] - A-priori state information from previous decoding attempts.
         %       Can be empty.
-        %   [syst] - Systematic bits extrinsic (a priori) L-values.
+        %   [syst] - A-priori systematic bits infomartion L-values.
         %       Can be empty.
         %
         % Outputs:
-        %   [syst] - Systematic bits extrinsic (a posteriori) L-values.
-        %   [state] - State extrinsic (a posteriori) L-values from previous decoding attempts.
-        %   [parity] - Parity bits extrinsic (a posteriori) L-values.
+        %   msg - A-posteriori msg information.
+        %   [syst] - Extrinsic systematic bits information.
+        %   [state] - Extrinsic state information.
+        %   [parity] - Extrinsic parity bits information.
         %
-            varargout = cell(nargout,1);
-            [varargout{:}] = fec.bin.wrap(uint32(fec.WrapFcnId.Codec_soDecode), self, parity, varargin{:});
+            varargout = cell(nargout-1,1);
+            varargout{:} = fec.bin.wrap(uint32(fec.WrapFcnId.Codec_soDecode), self, parity, varargin{:});
             for i = 1:nargout
                 varargout{i} = reshape(varargout{i}, [], size(parity,2));
             end

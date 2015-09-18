@@ -104,6 +104,7 @@ void Turbo::Structure::setEncoderOptions(const fec::Turbo::EncoderOptions &encod
     }
   }
   
+  constituents_.clear();
   for (size_t i = 0; i < interleaver_.size(); ++i) {
     if (interleaver_[i].outputSize() == 0) {
       std::vector<size_t> tmp(msgSize());
@@ -173,7 +174,7 @@ void Turbo::Structure::encode(std::vector<BitField<bool>>::const_iterator msg, s
       break;
       
     default:
-    case Pack:
+    case Group:
       parityOutIt = parity;
       break;
   }
@@ -202,12 +203,12 @@ bool Turbo::Structure::check(std::vector<BitField<uint8_t>>::const_iterator pari
   switch (bitOrdering()) {
     case Alternate:
       parityIn.resize(paritySize());
-      pack<BitField<uint8_t>>(parity, parityIn.begin());
+      group<BitField<uint8_t>>(parity, parityIn.begin());
       parityInIt = parityIn.begin();
       break;
       
     default:
-    case Pack:
+    case Group:
       parityInIt = parity;
       break;
   }
@@ -270,7 +271,7 @@ void fec::Turbo::Structure::alternate(typename std::vector<T>::const_iterator pa
 }
 
 template <typename T>
-void fec::Turbo::Structure::pack(typename std::vector<T>::const_iterator parityIn, typename std::vector<T>::iterator parityOut) const
+void fec::Turbo::Structure::group(typename std::vector<T>::const_iterator parityIn, typename std::vector<T>::iterator parityOut) const
 {
   auto msgOutIt = parityOut;
   for (size_t i = 0; i < msgSize(); ++i) {
@@ -309,5 +310,5 @@ void fec::Turbo::Structure::pack(typename std::vector<T>::const_iterator parityI
 template void fec::Turbo::Structure::alternate<BitField<uint8_t>>(typename std::vector<BitField<uint8_t>>::const_iterator parityIn, typename std::vector<BitField<uint8_t>>::iterator parityOut) const;
 template void fec::Turbo::Structure::alternate<LlrType>(typename std::vector<LlrType>::const_iterator parityIn, typename std::vector<LlrType>::iterator parityOut) const;
 
-template void fec::Turbo::Structure::pack<BitField<uint8_t>>(typename std::vector<BitField<uint8_t>>::const_iterator parityIn, typename std::vector<BitField<uint8_t>>::iterator parityOut) const;
-template void fec::Turbo::Structure::pack<LlrType>(typename std::vector<LlrType>::const_iterator parityIn, typename std::vector<LlrType>::iterator parityOut) const;
+template void fec::Turbo::Structure::group<BitField<uint8_t>>(typename std::vector<BitField<uint8_t>>::const_iterator parityIn, typename std::vector<BitField<uint8_t>>::iterator parityOut) const;
+template void fec::Turbo::Structure::group<LlrType>(typename std::vector<LlrType>::const_iterator parityIn, typename std::vector<LlrType>::iterator parityOut) const;

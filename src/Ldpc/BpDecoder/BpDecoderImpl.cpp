@@ -133,6 +133,11 @@ void BpDecoderImpl<LlrMetrics, BoxSumAlg>::soDecodeBlock(Codec::InputIterator in
   if (output.hasState()) {
     std::copy(checkMetrics_.begin(), checkMetrics_.end(), output.state());
   }
+  if (output.hasMsg()) {
+    for (size_t i = 0; i < structure().msgSize(); ++i) {
+      output.msg()[i] = parity_[i] + bitMetrics_[i];
+    }
+  }
 }
 
 template <class LlrMetrics, template <class> class BoxSumAlg>

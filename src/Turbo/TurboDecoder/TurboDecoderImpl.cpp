@@ -39,11 +39,11 @@ void TurboDecoderImpl::decodeBlock(std::vector<LlrType>::const_iterator parity, 
 {
   switch (structure().bitOrdering()) {
     case Turbo::Alternate:
-      structure().pack<LlrType>(parity, parityIn_.begin());
+      structure().group<LlrType>(parity, parityIn_.begin());
       break;
       
     default:
-    case Turbo::Pack:
+    case Turbo::Group:
       std::copy(parity, parity + structure().paritySize(), parityIn_.begin());
       break;
   }
@@ -81,11 +81,11 @@ void TurboDecoderImpl::soDecodeBlock(Codec::InputIterator input, Codec::OutputIt
 {
   switch (structure().bitOrdering()) {
     case Turbo::Alternate:
-      structure().pack<LlrType>(input.parity(), parityIn_.begin());
+      structure().group<LlrType>(input.parity(), parityIn_.begin());
       break;
       
     default:
-    case Turbo::Pack:
+    case Turbo::Group:
       std::copy(input.parity(), input.parity() + structure().paritySize(), parityIn_.begin());
       break;
   }
@@ -146,13 +146,18 @@ void TurboDecoderImpl::soDecodeBlock(Codec::InputIterator input, Codec::OutputIt
         break;
         
       default:
-      case Turbo::Pack:
+      case Turbo::Group:
         std::copy(parityOut_.begin(), parityOut_.end(), output.parity());
         break;
     }
   }
   if (output.hasState()) {
     std::copy(extrinsic_.begin(), extrinsic_.end(), output.state());
+  }
+  if (output.hasMsg()) {
+    for (size_t i = 0; i < structure().msgSize(); ++i) {
+      output.msg()[i] = parityIn_[i] + parityOut_[i];
+    }
   }
 }
 

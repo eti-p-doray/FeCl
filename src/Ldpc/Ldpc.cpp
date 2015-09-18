@@ -71,14 +71,6 @@ void Ldpc::soDecodeBlocks(InputIterator input, OutputIterator output, size_t n) 
 
 void Ldpc::decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<bool>>::iterator msg, size_t n) const
 {
-  /*auto worker = BpDecoder::create(structure());
-  std::vector<LlrType> messageAPosteriori(n * systSize());
-  worker->soDecodeBlocks(InputInfoIterator(&structure()).parity(parity), OutputInfoIterator(&structure()).syst(messageAPosteriori.begin()), n);
-  
-  for (size_t i = 0; i < structure().msgSize()*n; ++i) {
-    msg[i] = (messageAPosteriori[i]+parity[i]) > 0;
-  }*/
-  
   auto worker = BpDecoder::create(structure());
   worker->decodeBlocks(parity, msg, n);
 }
@@ -99,7 +91,7 @@ void Ldpc::decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector
  *  \param  wc Number of branch connected to every check nodes.
  *  \param  wr Number of branch connected to every bit nodes
  */
-SparseBitMatrix Ldpc::gallagerConstruction(size_t n, size_t wc, size_t wr)
+SparseBitMatrix Ldpc::gallagerConstruction(size_t n, size_t wc, size_t wr, uint64_t seed)
 {
   SparseBitMatrix H(n/wr * wc, n, wr);
   
@@ -115,7 +107,6 @@ SparseBitMatrix Ldpc::gallagerConstruction(size_t n, size_t wc, size_t wr)
     ++row;
   }
   
-  uint64_t seed = 0;//std::chrono::system_clock::now().time_since_epoch().count();
   std::mt19937 generator((int)seed);
   for (size_t j = 0; j < H.cols(); j++) {
     std::uniform_int_distribution<int> distribution(int(j),int(H.cols()-1));

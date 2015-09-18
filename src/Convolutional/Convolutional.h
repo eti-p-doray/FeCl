@@ -153,6 +153,7 @@ namespace fec {
     void serialize(Archive & ar, const unsigned int version) {
       using namespace boost::serialization;
       ar & ::BOOST_SERIALIZATION_NVP(structure_);
+      ar.template register_type<Structure>();
       ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(Codec);
     }
     

@@ -63,7 +63,7 @@ class Ldpc : public Codec
 {
   friend class boost::serialization::access;
 public:
-  static SparseBitMatrix gallagerConstruction(size_t n, size_t wc, size_t wr);
+  static SparseBitMatrix gallagerConstruction(size_t n, size_t wc, size_t wr, uint64_t seed = 0);
   
   struct EncoderOptions
   {

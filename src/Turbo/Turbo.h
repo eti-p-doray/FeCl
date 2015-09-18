@@ -89,7 +89,7 @@ namespace fec {
      */
     enum BitOrdering {
       Alternate,
-      Pack,
+      Group,
     };
     
     struct EncoderOptions {
@@ -161,7 +161,7 @@ namespace fec {
       void alternate(typename std::vector<T>::const_iterator parityIn, typename std::vector<T>::iterator parityOut) const;
       
       template <typename T>
-      void pack(typename std::vector<T>::const_iterator parityIn, typename std::vector<T>::iterator parityOut) const;
+      void group(typename std::vector<T>::const_iterator parityIn, typename std::vector<T>::iterator parityOut) const;
       
     private:
       template <typename Archive>

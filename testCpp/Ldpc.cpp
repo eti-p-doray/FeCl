@@ -130,25 +130,5 @@ init_unit_test_suite( int argc, char* argv[] )
   structure.setEncoderOptions(encoder);
   framework::master_test_suite().add(test_turbo(structure, -3.7, "group"));
   
-  std::vector<size_t> permIndex2(1024);
-  for (size_t i = 0; i < permIndex2.size(); i++) {
-    permIndex2[i] = i;
-  }
-  std::shuffle (permIndex2.begin(), permIndex2.end(), randomGenerator);
-  std::vector<size_t> permIndex3(1024);
-  for (size_t i = 0; i < permIndex3.size(); i++) {
-    permIndex3[i] = i;
-  }
-  std::shuffle (permIndex3.begin(), permIndex3.end(), randomGenerator);
-  encoder = fec::Turbo::EncoderOptions({fec::Trellis({4}, {{017}}, {015}),
-    fec::Trellis({3, 3}, {{04, 05}, {03, 07}}, {07, 05}),
-    fec::Trellis({4}, {{017, 013}}, {015})}, {permIndex, permIndex2, permIndex3}).
-  termination(fec::Convolutional::Truncate).
-  bitOrdering(fec::Turbo::Group);
-  encoder.bitOrdering(fec::Turbo::Group);
-  structure.setEncoderOptions(encoder);
-  framework::master_test_suite().add(test_turbo(structure, -3.0, "3 constituents"));
-                                                         
-  
   return 0;
 }

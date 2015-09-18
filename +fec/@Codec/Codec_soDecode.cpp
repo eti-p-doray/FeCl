@@ -52,15 +52,18 @@ void Codec_soDecode( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] 
   if (systIn.size()) input.syst(systIn);
 
   auto output = Codec::Info<std::vector<LlrType,Allocator<LlrType>::type>>();
+  std::vector<LlrType,Allocator<LlrType>::type> msg;
   std::vector<LlrType,Allocator<LlrType>::type> systOut;
   std::vector<LlrType,Allocator<LlrType>::type> stateOut;
   std::vector<LlrType,Allocator<LlrType>::type> parityOut;
-  if (nlhs > 0) output.syst(systOut);
-  if (nlhs > 1) output.state(stateOut);
-  if (nlhs > 2) output.parity(parityOut);
+  output.msg(msg);
+  if (nlhs > 1) output.syst(systOut);
+  if (nlhs > 2) output.state(stateOut);
+  if (nlhs > 3) output.parity(parityOut);
   codec->soDecode(input, output);
   
-  if (nlhs > 0) plhs[0] = toMxArray(systOut);
-  if (nlhs > 1) plhs[1] = toMxArray(stateOut);
-  if (nlhs > 2) plhs[2] = toMxArray(parityOut);
+  plhs[0] = toMxArray(msg);
+  if (nlhs > 1) plhs[1] = toMxArray(systOut);
+  if (nlhs > 2) plhs[2] = toMxArray(stateOut);
+  if (nlhs > 3) plhs[3] = toMxArray(parityOut);
 }

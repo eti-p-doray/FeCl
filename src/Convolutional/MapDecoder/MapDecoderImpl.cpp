@@ -185,6 +185,7 @@ void MapDecoderImpl<LlrMetrics, LogSumAlg>::aPosterioriUpdate(Codec::InfoIterato
   auto systIn = input.syst();
   auto parityOut = output.parity();
   auto parityIn = input.parity();
+  auto msgOut = output.msg();
 
   for (size_t i = 0; i < structure().length() + structure().tailSize(); ++i) {
     auto branchMetric = branchMetrics_.begin() + i * structure().trellis().tableSize();
@@ -200,20 +201,26 @@ void MapDecoderImpl<LlrMetrics, LogSumAlg>::aPosterioriUpdate(Codec::InfoIterato
       ++forwardMetric;
     }
     
-    if (output.hasSyst()) {
+    if (output.hasSyst() || (output.hasMsg() && i < structure().length())) {
       for (size_t j = 0; j < structure().trellis().inputSize(); ++j) {
         branchMetric = branchMetrics_.begin() + i * structure().trellis().tableSize();
         typename LlrMetrics::Type tmp = msgUpdateImpl(branchMetric, j);
 
-        if (input.hasSyst()) {
-          systOut[j] = tmp - systIn[j];
+        if (output.hasSyst()) {
+          if (input.hasSyst()) {
+            systOut[j] = tmp - systIn[j];
+          }
+          else {
+            systOut[j] = tmp;
+          }
         }
-        else {
-          systOut[j] = tmp;
+        if (output.hasMsg() && i < structure().length()) {
+          msgOut[j] = tmp;
         }
       }
       systIn += structure().trellis().inputSize();
       systOut += structure().trellis().inputSize();
+      msgOut += structure().trellis().inputSize();
     }
     if (output.hasParity()) {
       for (size_t j = 0; j < structure().trellis().outputSize(); ++j) {
@@ -374,8 +381,7 @@ typename LlrMetrics::Type MapDecoderImpl<LlrMetrics, LogSumAlg>::msgUpdateImpl(t
   branchMetric = branchMetricTmp;
   for (size_t k = 0; k < structure().trellis().stateCount(); ++k) {
     for (BitField<size_t> input = 0; input < structure().trellis().inputCount(); ++input) {
-      branchMetric[input] = logSum_.prior(branchMetric[input], max[input.test(j)]);
-      metric[input.test(j)] = logSum_.sum(branchMetric[input], metric[input.test(j)]);
+      metric[input.test(j)] = logSum_.sum(logSum_.prior(branchMetric[input], max[input.test(j)]), metric[input.test(j)]);
     }
     branchMetric += structure().trellis().inputCount();
   }
@@ -401,8 +407,7 @@ typename LlrMetrics::Type MapDecoderImpl<LlrMetrics, LogSumAlg>::parityUpdateImp
   branchMetric = branchMetricTmp;
   for (auto output = structure().trellis().beginOutput(); output < structure().trellis().endOutput();) {
     for (BitField<size_t> input = 0; input < structure().trellis().inputCount(); ++input) {
-      branchMetric[input] = logSum_.prior(branchMetric[input], max[output[input].test(j)]);
-      metric[output[input].test(j)] = logSum_.sum(branchMetric[input], metric[output[input].test(j)]);
+      metric[output[input].test(j)] = logSum_.sum(logSum_.prior(branchMetric[input], max[output[input].test(j)]), metric[output[input].test(j)]);
     }
     branchMetric += structure().trellis().inputCount();
     output += structure().trellis().inputCount();
@@ -414,7 +419,3 @@ typename LlrMetrics::Type MapDecoderImpl<LlrMetrics, LogSumAlg>::parityUpdateImp
 template class fec::MapDecoderImpl<FloatLlrMetrics, LogSum>;
 template class fec::MapDecoderImpl<FloatLlrMetrics, MaxLogSum>;
 template class fec::MapDecoderImpl<FloatLlrMetrics, TableLogSum>;
-
-template class fec::MapDecoderImpl<FixLlrMetrics, LogSum>;
-template class fec::MapDecoderImpl<FixLlrMetrics, MaxLogSum>;
-template class fec::MapDecoderImpl<FixLlrMetrics, TableLogSum>;

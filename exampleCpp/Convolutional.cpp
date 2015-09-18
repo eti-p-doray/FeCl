@@ -47,25 +47,27 @@ int main( int argc, char* argv[] )
    There are two output bits, the first one with generator 4 (in octal) associated
    with the input bit.
    */
-  fec::Trellis trellis({4}, {{015, 017}}, {015});
+  fec::Trellis trellis({3, 3}, {{05, 03, 0}, {0, 03, 07}}, {07, 05});
+  //fec::Trellis trellis({4}, {{013, 017}}, {015});
   //! [Creating a trellis]
   
   /*
    The trellis is used to create a code structure.
    We specify that one bloc will conatins 256 branches before being terminated.
    */
-  auto encoder = fec::Convolutional::EncoderOptions(trellis, 1024).termination(fec::Convolutional::Truncate);
-  auto decoder = fec::Convolutional::DecoderOptions().type(fec::Codec::Exact);
+  auto encoder = fec::Convolutional::EncoderOptions(trellis, 1024).termination(fec::Convolutional::Tail);
+  auto decoder = fec::Convolutional::DecoderOptions().algorithm(fec::Codec::Approximate);
   //! [Creating a Convolutional code structure]
   
   /*
    A code is created and ready to operate
    */
-  std::unique_ptr<fec::Codec> codec(new fec::Convolutional(encoder, decoder, 1));
+  std::unique_ptr<fec::Codec> codec(new fec::Convolutional(encoder, decoder));
   //! [Creating a Convolutional code]
   
-  std::cout << per(codec, 4.0) << std::endl;
+  std::cout << per(codec, 3.0) << std::endl;
   
+  //std::cout << trellis << std::endl;
   
   return 0;
 }

@@ -83,7 +83,7 @@ size_t archiveSize(const T* u, DerivedTypeHolder derived)
 {
   const T* base_pointer = u;
   
-  size_t serialSize = 0;;
+  size_t serialSize = 0;
   sink_counter countSr(serialSize);
   boost::iostreams::stream< sink_counter > countSource(countSr);
   boost::archive::binary_oarchive countOa(countSource);

@@ -109,9 +109,9 @@ void Convolutional::Structure::setEncoderOptions(const EncoderOptions& encoder)
   stateSize_ = 0;
   switch (termination_) {
     case Tail:
+      tailSize_ = trellis_.stateSize();
       paritySize_ += trellis_.stateSize() * trellis_.outputSize();
       systSize_ += trellis_.stateSize() * trellis_.inputSize();
-      tailSize_ = trellis_.stateSize();
       break;
       
     default:
@@ -154,18 +154,23 @@ void Convolutional::Structure::encode(std::vector<BitField<bool>>::const_iterato
   switch (termination()) {
     case Convolutional::Tail:
       for (int j = 0; j < tailSize(); ++j) {
+        int maxCount = 0;
+        BitField<size_t> bestInput = 0;
         for (BitField<size_t> input = 0; input < trellis().inputCount(); ++input) {
           BitField<size_t> nextState = trellis().getNextState(state, input);
-          if (nextState.test(trellis().stateSize()-1) == 0) {
-            BitField<size_t> output = trellis().getOutput(state, input);
-            for (int k = 0; k < trellis().outputSize(); ++k) {
-              parity[k] = output.test(k);
-            }
-            parity += trellis().outputSize();
-            state = nextState;
-            break;
+          int count = weigth(BitField<size_t>(state)) - weigth(nextState);
+          if (count > maxCount) {
+            maxCount = count;
+            bestInput = input;
           }
         }
+        BitField<size_t> nextState = trellis().getNextState(state, bestInput);
+        BitField<size_t> output = trellis().getOutput(state, bestInput);
+        for (int k = 0; k < trellis().outputSize(); ++k) {
+          parity[k] = output.test(k);
+        }
+        parity += trellis().outputSize();
+        state = nextState;
       }
       break;
       

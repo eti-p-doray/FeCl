@@ -52,25 +52,4 @@ endif (APPLE)
 
 install(TARGETS wrap DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/+bin)
 
-#foreach(SRC_NAME ${SOURCES})
-#  get_filename_component(FUNCTION_NAME ${SRC_NAME} NAME_WE)
-#
-#  add_library(${FUNCTION_NAME} MODULE MexFunction.cpp Matlabdef.def)
-#  target_include_directories(${FUNCTION_NAME} PRIVATE ${MATLAB_INCLUDE_DIRS})
-#  target_link_libraries(${FUNCTION_NAME} fecMatlab)
-#  target_link_libraries(${FUNCTION_NAME} ${MATLAB_LIBRARIES})
-#  set_target_properties(${FUNCTION_NAME} PROPERTIES CMAKE_CXX_VISIBILITY_PRESET hidden)
-#  set_target_properties(${FUNCTION_NAME} PROPERTIES CMAKE_VISIBILITY_INLINES_HIDDEN 1)
-#  set_target_properties(${FUNCTION_NAME} PROPERTIES SUFFIX .${MATLAB_MEXEXT} PREFIX "")
-#  set_target_properties(${FUNCTION_NAME} PROPERTIES COMPILE_FLAGS -DMEX_FUNCTION=${FUNCTION_NAME})
-#
-#  if (APPLE)
-#    set_target_properties(${FUNCTION_NAME} PROPERTIES LINK_FLAGS -Wl,-exported_symbols_list,"${MATLAB_MAP}")
-#  elseif (UNIX)
-#    set_target_properties(${FUNCTION_NAME} PROPERTIES LINK_FLAGS -Wl,--version-script,"${MATLAB_MAP}")
-#  endif (APPLE)
-#
-#  install(TARGETS ${FUNCTION_NAME} DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/+bin)
-#endforeach()
-
 

@@ -77,11 +77,14 @@ int per(const std::unique_ptr<fec::Codec>& code, double snrdb)
   
   std::vector<fec::BitField<bool>> msgDec;
   code->decode(llr, msgDec);
-  //code->soDecode(fec::Code::Input<>().parity(llr), fec::Code::Output<>().syst(msgPost));
+  code->soDecode(fec::Codec::Input<>().parity(llr), fec::Codec::Output<>().syst(msgPost));
   
   int errorCount = 0;
   for (size_t i = 0; i < msg.size(); ++i) {
     //errorCount += (msg[i] != (msgPost[i]>0));
+    if (msg[i] != msgDec[i]) {
+      std::cout << i <<std::endl;
+    }
     errorCount += (msg[i] != msgDec[i]);
   }
   

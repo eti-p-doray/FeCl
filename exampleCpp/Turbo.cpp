@@ -63,7 +63,7 @@ int main( int argc, char* argv[] )
   /*
    The trellis and interleaver indices are used to create a code structure.
    */
-  auto encoder = fec::Turbo::EncoderOptions({trellis, trellis}, {systIdx, permIdx}).termination(fec::Convolutional::Truncate).bitOrdering(fec::Turbo::Pack);
+  auto encoder = fec::Turbo::EncoderOptions({trellis, trellis}, {systIdx, permIdx}).termination(fec::Convolutional::Truncate).bitOrdering(fec::Turbo::Group);
   auto decoder = fec::Turbo::DecoderOptions().algorithm(fec::Codec::Exact).iterations(10).scheduling(fec::Turbo::Serial);
   fec::Turbo::Structure structure(encoder, decoder);
   //! [Creating a Turbo code structure]

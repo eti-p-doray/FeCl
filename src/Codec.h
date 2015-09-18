@@ -106,10 +106,10 @@ public:
       ar & BOOST_SERIALIZATION_NVP(decoderAlgorithm_);
     }
     
-    size_t msgSize_;/**< Size of the msg in each code bloc. */
-    size_t systSize_;/**< Size of the msg in each code bloc. */
-    size_t paritySize_;/**< Size of the parity in each code bloc. */
-    size_t stateSize_;/**< Size of the extrinsic in each code bloc. */
+    size_t msgSize_=0;/**< Size of the msg in each code bloc. */
+    size_t systSize_=0;/**< Size of the msg in each code bloc. */
+    size_t paritySize_=0;/**< Size of the parity in each code bloc. */
+    size_t stateSize_=0;/**< Size of the extrinsic in each code bloc. */
     DecoderAlgorithm decoderAlgorithm_;
   };
   template <class Iterator>
@@ -120,16 +120,19 @@ public:
     InfoIterator& syst(Iterator syst) {syst_ = syst; hasSyst_ = true; return *this;}
     InfoIterator& parity(Iterator parity) {parity_ = parity; hasParity_ = true; return *this;}
     InfoIterator& state(Iterator state) {state_ = state; hasState_ = true; return *this;}
+    InfoIterator& msg(Iterator msg) {msg_ = msg; hasMsg_ = true; return *this;}
     
     inline void operator++() {
       syst_ += structureRef_->systSize();
       parity_ += structureRef_->paritySize();
       state_ += structureRef_->stateSize();
+      msg_ += structureRef_->msgSize();
     }
     inline void operator+=(size_t x) {
       syst_ += structureRef_->systSize() * x;
       parity_ += structureRef_->paritySize() * x;
       state_ += structureRef_->stateSize() * x;
+      msg_ += structureRef_->msgSize() * x;
     }
     inline bool operator != (const InfoIterator& b) {
       if (structureRef_ != b.structureRef_) {
@@ -144,24 +147,31 @@ public:
       else if (hasState() && (state_ != b.state_)) {
         return true;
       }
+      else if (hasMsg() && (msg_ != b.msg_)) {
+        return true;
+      }
       return false;
     }
     
     Iterator syst() const {return syst_;}
     Iterator parity() const {return parity_;}
     Iterator state() const {return state_;}
+    Iterator msg() const {return msg_;}
     
     bool hasSyst() const {return hasSyst_;}
     bool hasParity() const {return hasParity_;}
     bool hasState() const {return hasState_;}
+    bool hasMsg() const {return hasMsg_;}
     
   private:
     Iterator syst_;
     Iterator parity_;
     Iterator state_;
+    Iterator msg_;
     bool hasSyst_ = false;
     bool hasParity_ = false;
     bool hasState_ = false;
+    bool hasMsg_ = false;
     const Structure* structureRef_;
   };
   using InputIterator = InfoIterator<std::vector<LlrType>::const_iterator>;
@@ -177,14 +187,17 @@ public:
     Info& syst(Vector& syst) {syst_ = &syst; return *this;}
     Info& parity(Vector& parity) {parity_ = &parity; return *this;}
     Info& state(Vector& state) {state_ = &state; return *this;}
+    Info& msg(Vector& msg) {msg_ = &msg; return *this;}
     
     Vector& syst() const {return *syst_;}
     Vector& parity() const {return *parity_;}
     Vector& state() const {return *state_;}
+    Vector& msg() const {return *msg_;}
     
     bool hasSyst() const {return syst_ != nullptr;}
     bool hasParity() const {return parity_ != nullptr;}
     bool hasState() const {return state_ != nullptr;}
+    bool hasMsg() const {return msg_ != nullptr;}
     
     Iterator begin(const Structure& structure) const {
       auto it = Iterator(&structure);
@@ -196,6 +209,9 @@ public:
       }
       if (hasState()) {
         it.state(state().begin());
+      }
+      if (hasMsg()) {
+        it.msg(msg().begin());
       }
       return it;
     }
@@ -210,6 +226,9 @@ public:
       if (hasState()) {
         it.state(state().end());
       }
+      if (hasMsg()) {
+        it.msg(msg().end());
+      }
       return it;
     }
     
@@ -217,6 +236,7 @@ public:
     Vector* syst_ = nullptr;
     Vector* parity_ = nullptr;
     Vector* state_ = nullptr;
+    Vector* msg_ = nullptr;
   };
   
   template <template <typename> class A = std::allocator>
@@ -243,7 +263,7 @@ public:
   template <template <typename> class A> void encode(const std::vector<BitField<bool>,A<BitField<bool>>>& message, std::vector<BitField<uint8_t>,A<BitField<uint8_t>>>& parity) const;
   
   template <template <typename> class A>
-  void decode(const std::vector<LlrType,A<LlrType>>& parityIn, std::vector<BitField<bool>,A<BitField<bool>>>& msgOut) const;
+  void decode(const std::vector<LlrType,A<LlrType>>& parity, std::vector<BitField<bool>,A<BitField<bool>>>& msg) const;
   
   template <template <typename> class A>
   void soDecode(Input<A> input, Output<A> output) const;
@@ -418,7 +438,10 @@ template <template <typename> class A>
 void fec::Codec::soDecode(Input<A> input, Output<A> output) const
 {
   if (!input.hasParity()) {
-    throw std::invalid_argument("Input must contains parities");
+    throw std::invalid_argument("Input must contains parity");
+  }
+  if (input.hasMsg()) {
+    throw std::invalid_argument("Input should not contain msg");
   }
   size_t blockCount = input.parity().size() / paritySize();
   if (input.parity().size() != blockCount * paritySize()) {
@@ -443,6 +466,9 @@ void fec::Codec::soDecode(Input<A> input, Output<A> output) const
   }
   if (output.hasState()) {
     output.state().resize(blockCount * stateSize());
+  }
+  if (output.hasMsg()) {
+    output.msg().resize(blockCount * msgSize());
   }
   auto inputIt = input.begin(structure());
   auto outputIt = output.begin(structure());
