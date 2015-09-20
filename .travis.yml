@@ -3,7 +3,9 @@ language: cpp
 compiler:
   - clang
   - gcc
- 
+
+sudo: required
+
 install: ./setup-travis.sh
 
 script:
