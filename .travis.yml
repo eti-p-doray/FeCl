@@ -1,19 +1,17 @@
 language: cpp
-
 compiler:
   - clang
   - gcc
 
 sudo: required
-
-install: 
+before_install: 
   - chmod +x ./setup-travis.sh
   - sudo ./setup-travis.sh
-
-script:
+before_script:
   - mkdir build
   - cd build
   - cmake ..
+script:
   - make
   - make test
 
