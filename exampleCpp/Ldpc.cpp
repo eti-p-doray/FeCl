@@ -31,7 +31,7 @@
 #include <memory>
 #include <iostream>
 
-#include "LdpcCode/LdpcCode.h"
+#include "Ldpc/Ldpc.h"
 
 #include "operations.h"
 
@@ -43,22 +43,26 @@ int main( int argc, char* argv[] )
   /*
    We are creating an ldpc matrix
    */
-  auto checkMatrix = fec::LdpcCodeStructure::gallagerConstruction(4096, 8, 16);
+  auto checkMatrix = fec::Ldpc::gallagerConstruction(1024, 8, 16);
   //! [Creating an ldpcMatrix]
+  
+  
+  auto encoder = fec::Ldpc::EncoderOptions(checkMatrix);
+  auto decoder = fec::Ldpc::DecoderOptions().iterations(20).algorithm(fec::Codec::Exact);
   
   /*
    The matrix is used to create a code structure.
    */
-  fec::LdpcCodeStructure structure(checkMatrix, 50, fec::LdpcCodeStructure::TrueBp);
+  fec::Ldpc::Structure structure(encoder, decoder);
   //! [Creating a Turbo code structure]
   
   /*
    A code is created and ready to operate
    */
-  std::unique_ptr<fec::Code> code = fec::Code::create(structure);
+  std::unique_ptr<fec::Codec> codec = fec::Codec::create(structure, 1);
   //! [Creating an ldpc code]
   
-  std::cout << per(code, -2.0) << std::endl;
+  std::cout << per(codec, 1.0) << std::endl;
   
   return 0;
 }

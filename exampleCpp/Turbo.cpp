@@ -31,7 +31,7 @@
 #include <memory>
 #include <iostream>
 
-#include "TurboCode/TurboCode.h"
+#include "Turbo/Turbo.h"
 
 #include "operations.h"
 
@@ -47,7 +47,7 @@ int main( int argc, char* argv[] )
    There is one output bits, with generator 5 (in octal) associated
    with the input bit.
    */
-  fec::TrellisStructure trellis({3}, {{05}});
+  fec::Trellis trellis({4}, {{017}}, {015});
   //! [Creating a trellis]
   
   uint64_t seed = std::chrono::system_clock::now().time_since_epoch().count();
@@ -63,17 +63,29 @@ int main( int argc, char* argv[] )
   /*
    The trellis and interleaver indices are used to create a code structure.
    */
-  fec::TurboCodeStructure structure({trellis, trellis}, {systIdx, permIdx}, {fec::ConvolutionalCodeStructure::PaddingTail,fec::ConvolutionalCodeStructure::PaddingTail}, 5, fec::TurboCodeStructure::Serial, fec::ConvolutionalCodeStructure::LogMap);
+  auto encoder = fec::Turbo::EncoderOptions({trellis, trellis}, {systIdx, permIdx}).termination(fec::Convolutional::Truncate).bitOrdering(fec::Turbo::Group);
+  auto decoder = fec::Turbo::DecoderOptions().algorithm(fec::Codec::Exact).iterations(10).scheduling(fec::Turbo::Serial);
+  fec::Turbo::Structure structure(encoder, decoder);
   //! [Creating a Turbo code structure]
   
   
   /*
    A code is created and ready to operate
    */
-  std::unique_ptr<fec::Code> code = fec::Code::create(structure);
+  std::unique_ptr<fec::Codec> code = fec::Codec::create(structure, 1);
   //! [Creating a Turbo code]
   
-  std::cout << per(code, -2.0) << std::endl;
+  std::cout << per(code, -4) << std::endl;
+  
+  /*decoder.decoderType(fec::Codec::Table);
+  code = fec::Codec::create(fec::Turbo::Structure(encoder, decoder), 1);
+  
+  std::cout << per(code, 4.0) << std::endl;
+  
+  decoder.decoderType(fec::Codec::Approximate);
+  code = fec::Codec::create(fec::Turbo::Structure(encoder, decoder), 1);
+  
+  std::cout << per(code, 4.0) << std::endl;*/
   
   return 0;
 }

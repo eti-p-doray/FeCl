@@ -5,18 +5,18 @@ function speed
     trellis = poly2trellis(4, [17, 15], 17);
     turboTrellis = poly2trellis(4, [15], 17);
     
-    code{1} = fec.ConvolutionalCode(trellis, T);
+    code{1} = fec.Convolutional(trellis, T, 'termination', 'Truncate');
     pi = randperm(T);
     H = dvbs2ldpc(1/2);
-    code{2} = fec.TurboCode(turboTrellis, {[1:T], pi}, fec.TrellisEndType.PaddingTail, 4, fec.SchedulingType.Serial, fec.MapType.LogMap);
-    code{3} = fec.TurboCode(turboTrellis, {[1:T], pi}, fec.TrellisEndType.PaddingTail, 4, fec.SchedulingType.Serial, fec.MapType.MaxLogMap);
-    code{4} = fec.LdpcCode(H, 20, fec.BpType.TrueBp);
-    code{5} = fec.LdpcCode(H, 20, fec.BpType.MinSumBp);
+    code{2} = fec.Turbo(turboTrellis, {[], pi}, 'termination', 'Tail', 'iterations', 4, 'scheduling', 'Serial', 'algorithm', 'Exact');
+    code{3} = fec.Turbo(turboTrellis, {[], pi}, 'termination', 'Tail', 'iterations', 4, 'scheduling', 'Serial', 'algorithm', 'Approximate');
+    code{4} = fec.Ldpc(H, 'iterations', 20, 'algorithm', 'Exact');
+    code{5} = fec.Ldpc(H, 'iterations', 20, 'algorithm', 'Approximate');
     
     matlabEncoder{1} = comm.ConvolutionalEncoder('TrellisStructure', trellis, 'TerminationMethod', 'Truncated');
     matlabDecoder{1} = comm.ViterbiDecoder('TrellisStructure', trellis, 'TerminationMethod', 'Truncated', 'TracebackDepth', T);
     matlabEncoder{2} = comm.TurboEncoder('TrellisStructure', trellis, 'InterleaverIndices', pi);
-    matlabDecoder{2} = comm.TurboDecoder('TrellisStructure', trellis, 'InterleaverIndices', pi, 'Algorithm', 'Max*', 'NumIterations', 4);
+    matlabDecoder{2} = comm.TurboDecoder('TrellisStructure', trellis, 'InterleaverIndices', pi, 'Algorithm', 'True APP', 'NumIterations', 4);
     matlabEncoder{3} = comm.TurboEncoder('TrellisStructure', trellis, 'InterleaverIndices', pi);
     matlabDecoder{3} = comm.TurboDecoder('TrellisStructure', trellis, 'InterleaverIndices', pi, 'Algorithm', 'Max', 'NumIterations', 4);
     matlabEncoder{4} = comm.LDPCEncoder(H);
@@ -67,24 +67,6 @@ function speed
         
         if (~isa(code{i}, 'fec.TurboCode'))
             llr = -llr;
-        else
-            llrTmp = llr;
-            llr = zeros(size(llr));
-            for j = 1:size(msg,2)
-                for k = 1:T
-                    llr((k-1)*3+1,j) = llrTmp(k,j);
-                    llr((k-1)*3+2,j) = llrTmp(k+1*T+6,j);
-                    llr((k-1)*3+3,j) = llrTmp(k+2*T+9,j);
-                end
-                for k = 1:3
-                    llr((k-1)*2+1+(T)*3,j) = llrTmp(k+T,j);
-                    llr((k-1)*2+2+(T)*3,j) = llrTmp(k+2*T+6,j);
-                end
-                for k = 1:3
-                    llr((k-1)*2+7+(T)*3,j) = llrTmp(k+T+3,j);
-                    llr((k-1)*2+8+(T)*3,j) = llrTmp(k+3*T+9,j);
-                end
-            end
         end
         
         [matlabAvEncEt(i), matlabStdEncEt(i)] = matlabEncode(matlabEncoder{i}, msg, M);

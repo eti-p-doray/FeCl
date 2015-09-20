@@ -1,4 +1,5 @@
 function [avElapsedTime, stdElapsedTime] = fecEncode(code, msg, N)
+    code.encode(msg);
     elapsedTime = zeros(N,1);
     for i = 1:N
         tic

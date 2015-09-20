@@ -12,23 +12,23 @@ set(Boost_LIBRARIES serialization)
 add_definitions(-DBOOST_ALL_NO_LIB)
 
 if (UNIX)
-  set(CMAKE_CXX_FLAGS "-std=c++11 -fPIC ${CMAKE_C_FLAGS}")
+  set(CMAKE_CXX_FLAGS " -std=c++11 -fPIC ${CMAKE_C_FLAGS}")
 endif (UNIX)
 
 set(SOURCES
-  src/Code.cpp
-  src/CodeStructure/CodeStructure.cpp
-  src/CodeStructure/ConvolutionalCodeStructure.cpp
-  src/CodeStructure/TurboCodeStructure.cpp
-  src/CodeStructure/LdpcCodeStructure.cpp
-  src/CodeStructure/TrellisStructure.cpp
-  src/ConvolutionalCode/ConvolutionalCode.cpp
-  src/ConvolutionalCode/MapDecoder/MapDecoder.cpp
-  src/ConvolutionalCode/ViterbiDecoder/ViterbiDecoder.cpp
-  src/TurboCode/TurboCode.cpp
-  src/TurboCode/TurboCodeImpl.cpp
-  src/LdpcCode/LdpcCode.cpp
-  src/LdpcCode/BpDecoder/BpDecoder.cpp
+  src/Codec.cpp
+  src/Structure/Trellis.cpp
+  src/Convolutional/Convolutional.cpp
+  src/Convolutional/MapDecoder/MapDecoder.cpp
+  src/Convolutional/MapDecoder/MapDecoderImpl.cpp
+  src/Convolutional/ViterbiDecoder/ViterbiDecoder.cpp
+  src/Convolutional/ViterbiDecoder/ViterbiDecoderImpl.cpp
+  src/Turbo/Turbo.cpp
+  src/Turbo/TurboDecoder/TurboDecoder.cpp
+  src/Turbo/TurboDecoder/TurboDecoderImpl.cpp
+  src/Ldpc/Ldpc.cpp
+  src/Ldpc/BpDecoder/BpDecoder.cpp
+  src/Ldpc/BpDecoder/BpDecoderImpl.cpp
 )
 
 add_library (core OBJECT ${SOURCES})
@@ -47,8 +47,8 @@ add_subdirectory(+fec)
 if (UNIX)
   install(TARGETS fec DESTINATION lib)
   install(TARGETS fecStatic DESTINATION lib)
-  install(FILES src/Code.h DESTINATION include/fec )
-  install(DIRECTORY TurboCode/src ConvolutionalCode/src LdpcCode/src CodeStructure/src DESTINATION include/fec FILES_MATCHING PATTERN "*.h")
+  install(FILES src/Codec.h DESTINATION include/fec )
+  install(DIRECTORY src/Turbo src/Convolutional src/Ldpc src/Structure DESTINATION include/fec FILES_MATCHING PATTERN "*.h")
 endif (UNIX)
 
 find_package(Doxygen)
@@ -63,28 +63,22 @@ if(DOXYGEN_FOUND)
 endif(DOXYGEN_FOUND)
 
 enable_testing()
-add_executable(test_code testCpp/code.cpp)
-target_include_directories(test_code PUBLIC ${CMAKE_SOURCE_DIR}/src)
-target_include_directories(test_code PUBLIC ${Boost_INCLUDE_DIRS})
-target_link_libraries(test_code fecStatic)
-target_link_libraries(test_code ${Boost_LIBRARIES})
-add_test(code test_code)
 
-add_executable(example_Convolutional exampleCpp/Convolutional.cpp)
-target_include_directories(example_Convolutional PUBLIC ${CMAKE_SOURCE_DIR}/src)
-target_include_directories(example_Convolutional PUBLIC ${Boost_INCLUDE_DIRS})
-target_link_libraries(example_Convolutional fecStatic)
-target_link_libraries(example_Convolutional ${Boost_LIBRARIES})
+set(TESTS
+  testCpp/Convolutional.cpp
+  testCpp/Turbo.cpp
+  testCpp/Ldpc.cpp
+)
 
-add_executable(example_Turbo exampleCpp/Turbo.cpp)
-target_include_directories(example_Turbo PUBLIC ${CMAKE_SOURCE_DIR}/src)
-target_include_directories(example_Turbo PUBLIC ${Boost_INCLUDE_DIRS})
-target_link_libraries(example_Turbo ${Boost_LIBRARIES})
-target_link_libraries(example_Turbo fecStatic)
+foreach(TEST ${TESTS})
+  get_filename_component(TEST_NAME ${TEST} NAME_WE)
+  add_executable(test_${TEST_NAME} ${TEST})
+  target_include_directories(test_${TEST_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/src)
+  target_include_directories(test_${TEST_NAME} PUBLIC ${Boost_INCLUDE_DIRS})
+  target_link_libraries(test_${TEST_NAME} fecStatic)
+  target_link_libraries(test_${TEST_NAME} ${Boost_LIBRARIES})
+  add_test(NAME ${TEST_NAME} COMMAND test_${TEST_NAME} --log_level=test_suite)
+endforeach()
 
-add_executable(example_Ldpc exampleCpp/Ldpc.cpp)
-target_include_directories(example_Ldpc PUBLIC ${CMAKE_SOURCE_DIR}/src)
-target_include_directories(example_Ldpc PUBLIC ${Boost_INCLUDE_DIRS})
-target_link_libraries(example_Ldpc ${Boost_LIBRARIES})
-target_link_libraries(example_Ldpc fecStatic)
+
 

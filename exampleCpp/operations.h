@@ -26,31 +26,33 @@
  Operation code example
  ******************************************************************************/
 
+#ifndef OPERATIONS_H
+#define OPERATIONS_H
+
 #include <vector>
 #include <random>
 #include <memory>
 #include <cstdint>
 
-#include "Code.h"
+#include "Codec.h"
 
-
-std::vector<uint8_t> randomBits(size_t n) {
+std::vector<fec::BitField<bool>> randomBits(size_t n) {
   uint64_t seed = std::chrono::system_clock::now().time_since_epoch().count();
   std::independent_bits_engine<std::mt19937,1,std::uint_fast64_t> bitGenerator((uint32_t(seed)));
-  std::vector<uint8_t> msg(n);
+  std::vector<fec::BitField<bool>> msg(n);
   for (size_t i = 0; i < msg.size(); i++) {
     msg[i] = bitGenerator();
   }
   return msg;
 }
 
-std::vector<fec::LlrType> distort(const std::vector<uint8_t>& input, double snrdb)
+std::vector<fec::LlrType> distort(const std::vector<fec::BitField<uint8_t>>& input, double snrdb)
 {
   const int8_t bpsk[2] = {-1, 1};
   
   double snr = pow(10.0, snrdb/10.0);
   
-  uint64_t seed = std::chrono::system_clock::now().time_since_epoch().count();
+  uint64_t seed = 0;//std::chrono::system_clock::now().time_since_epoch().count();
   std::default_random_engine randomGenerator;
   randomGenerator.seed(uint32_t(seed));
   std::normal_distribution<double> normalDistribution(snr*4.0, 4.0*sqrt(snr/2.0));
@@ -62,22 +64,31 @@ std::vector<fec::LlrType> distort(const std::vector<uint8_t>& input, double snrd
   return llr;
 }
 
-int per(const std::unique_ptr<fec::Code>& code, double snrdb)
+int per(const std::unique_ptr<fec::Codec>& code, double snrdb)
 {
-  std::vector<uint8_t> msg = randomBits(code->msgSize()*5);
-  std::vector<uint8_t> parity;
+  std::vector<fec::BitField<bool>> msg = randomBits(code->msgSize());
+  std::vector<fec::BitField<uint8_t>> parity;
+
+  std::vector<fec::LlrType> msgPost;
   
   code->encode(msg, parity);
   
   std::vector<fec::LlrType> llr = distort(parity, snrdb);
   
-  std::vector<uint8_t> msgDec;
+  std::vector<fec::BitField<bool>> msgDec;
   code->decode(llr, msgDec);
+  code->soDecode(fec::Codec::Input<>().parity(llr), fec::Codec::Output<>().syst(msgPost));
   
   int errorCount = 0;
   for (size_t i = 0; i < msg.size(); ++i) {
+    //errorCount += (msg[i] != (msgPost[i]>0));
+    if (msg[i] != msgDec[i]) {
+      std::cout << i <<std::endl;
+    }
     errorCount += (msg[i] != msgDec[i]);
   }
   
   return errorCount;
 }
+
+#endif
