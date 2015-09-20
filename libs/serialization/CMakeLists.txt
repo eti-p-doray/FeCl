@@ -3,11 +3,11 @@
 cmake_minimum_required(VERSION 2.8.0)
 
 
-if(Boost_USE_STATIC_LIBS)
-  project("Serialization-Static")
-else()
-  project("Serialization-Shared")
-endif()
+#if(Boost_USE_STATIC_LIBS)
+#  project("Serialization-Static")
+#else()
+#  project("Serialization-Shared")
+#endif()
 
 #
 # Compiler settings
