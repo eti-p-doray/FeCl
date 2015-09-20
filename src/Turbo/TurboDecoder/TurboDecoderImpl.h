@@ -27,8 +27,8 @@
  Declaration of TurboDecoderImpl class
  ******************************************************************************/
 
-#ifndef TURBO_DECODER_IMPL_H
-#define TURBO_DECODER_IMPL_H
+#ifndef FEC_TURBO_DECODER_IMPL_H
+#define FEC_TURBO_DECODER_IMPL_H
 
 #include "TurboDecoder.h"
 

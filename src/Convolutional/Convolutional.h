@@ -26,8 +26,8 @@
  Declaration of Convolutional class
  ******************************************************************************/
 
-#ifndef CONVOLUTIONAL_H
-#define CONVOLUTIONAL_H
+#ifndef FEC_CONVOLUTIONAL_H
+#define FEC_CONVOLUTIONAL_H
 
 #include "../Codec.h"
 #include "../Structure/Trellis.h"

@@ -26,8 +26,8 @@
  Declaration of BpDecoderImpl class
  ******************************************************************************/
 
-#ifndef BP_DECODER_IMPL_H
-#define BP_DECODER_IMPL_H
+#ifndef FEC_BP_DECODER_IMPL_H
+#define FEC_BP_DECODER_IMPL_H
 
 #include <algorithm>
 #include <cmath>

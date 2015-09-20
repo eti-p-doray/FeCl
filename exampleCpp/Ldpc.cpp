@@ -43,12 +43,12 @@ int main( int argc, char* argv[] )
   /*
    We are creating an ldpc matrix
    */
-  auto checkMatrix = fec::Ldpc::Structure::gallagerConstruction(1024, 8, 16);
+  auto checkMatrix = fec::Ldpc::gallagerConstruction(1024, 8, 16);
   //! [Creating an ldpcMatrix]
   
   
   auto encoder = fec::Ldpc::EncoderOptions(checkMatrix);
-  auto decoder = fec::Ldpc::DecoderOptions().iterations(50).decoderType(fec::Code::Approximate);
+  auto decoder = fec::Ldpc::DecoderOptions().iterations(20).algorithm(fec::Codec::Exact);
   
   /*
    The matrix is used to create a code structure.
@@ -59,10 +59,10 @@ int main( int argc, char* argv[] )
   /*
    A code is created and ready to operate
    */
-  std::unique_ptr<fec::Code> code = fec::Code::create(structure, 1);
+  std::unique_ptr<fec::Codec> codec = fec::Codec::create(structure, 1);
   //! [Creating an ldpc code]
   
-  std::cout << per(code, 0.5) << std::endl;
+  std::cout << per(codec, 1.0) << std::endl;
   
   return 0;
 }

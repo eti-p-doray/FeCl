@@ -26,8 +26,8 @@
  Declaration of Ldpc class
  ******************************************************************************/
 
-#ifndef LDPC_H
-#define LDPC_H
+#ifndef FEC_LDPC_H
+#define FEC_LDPC_H
 
 #include <thread>
 #include <random>
@@ -120,6 +120,7 @@ public:
       ar & ::BOOST_SERIALIZATION_NVP(T_);
       ar & ::BOOST_SERIALIZATION_NVP(A_);
       ar & ::BOOST_SERIALIZATION_NVP(B_);
+      ar & ::BOOST_SERIALIZATION_NVP(iterations_);
     }
     
     void computeGeneratorMatrix(SparseBitMatrix&& H);

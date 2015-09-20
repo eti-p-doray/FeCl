@@ -47,8 +47,8 @@ int main( int argc, char* argv[] )
    There are two output bits, the first one with generator 4 (in octal) associated
    with the input bit.
    */
-  fec::Trellis trellis({3, 3}, {{05, 03, 0}, {0, 03, 07}}, {07, 05});
-  //fec::Trellis trellis({4}, {{013, 017}}, {015});
+  //fec::Trellis trellis({3, 3}, {{05, 03, 0}, {0, 03, 07}}, {07, 05});
+  fec::Trellis trellis({4}, {{013, 017}}, {015});
   //! [Creating a trellis]
   
   /*

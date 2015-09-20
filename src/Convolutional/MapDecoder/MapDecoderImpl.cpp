@@ -418,4 +418,4 @@ typename LlrMetrics::Type MapDecoderImpl<LlrMetrics, LogSumAlg>::parityUpdateImp
 //Explicit instantiation
 template class fec::MapDecoderImpl<FloatLlrMetrics, LogSum>;
 template class fec::MapDecoderImpl<FloatLlrMetrics, MaxLogSum>;
-template class fec::MapDecoderImpl<FloatLlrMetrics, TableLogSum>;
+template class fec::MapDecoderImpl<FloatLlrMetrics, LinearLogSum>;

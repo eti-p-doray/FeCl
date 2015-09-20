@@ -102,7 +102,7 @@ test_suite* init_unit_test_suite( int argc, char* argv[] )
   structure.setEncoderOptions(encoder);
   framework::master_test_suite().add(test_convolutional(structure, 0.7, "tail"));
   
-  decoder.algorithm(fec::Codec::Table);
+  decoder.algorithm(fec::Codec::Linear);
   structure.setDecoderOptions(decoder);
   framework::master_test_suite().add(test_convolutional(structure, 0.7, "table"));
 

@@ -167,6 +167,12 @@ void test_soDecode_parityOut(const fec::Codec& code, double snr, size_t n = 1)
     BOOST_REQUIRE(msg[i] == (msgOut[i]>0));
   }
   for (size_t i = 0; i < parity.size(); ++i) {
+    /*if (parity[i] != ((parityIn[i]+parityOut[i])>0)) {
+      std::cout << i << std::endl;
+      std::cout << parity[i] << std::endl;
+      std::cout << parityIn[i] << std::endl;
+      std::cout << parityOut[i] << std::endl;
+    }*/
     BOOST_REQUIRE(parity[i] == ((parityIn[i]+parityOut[i])>0));
   }
 }

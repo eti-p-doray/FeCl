@@ -26,8 +26,8 @@
  Declaration of the Interleaver class
  ******************************************************************************/
 
-#ifndef INTERLEAVER_H
-#define INTERLEAVER_H
+#ifndef FEC_INTERLEAVER_H
+#define FEC_INTERLEAVER_H
 
 #include <stdint.h>
 

@@ -26,8 +26,8 @@
  Declaration of Trellis class
  ******************************************************************************/
 
-#ifndef TRELLIS_STRUCTURE_H
-#define TRELLIS_STRUCTURE_H
+#ifndef FEC_TRELLIS_STRUCTURE_H
+#define FEC_TRELLIS_STRUCTURE_H
 
 #include <assert.h>
 #include <iostream>

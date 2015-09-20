@@ -58,7 +58,7 @@ void BpDecoderImpl<LlrMetrics, BoxSumAlg>::decodeBlock(std::vector<LlrType>::con
     bitUpdate();
     
     for (size_t j = 0; j < structure().paritySize(); ++j) {
-      hardParity_[j] = (parity_[j] >= 0.0);
+      hardParity_[j] = (bitMetrics_[j] >= 0.0);
     }
     if (structure().check(hardParity_.begin())) {
       succes = true;
@@ -74,7 +74,7 @@ void BpDecoderImpl<LlrMetrics, BoxSumAlg>::decodeBlock(std::vector<LlrType>::con
     bitMetrics_[structure().checks().at(i)] += checkMetrics_[i];
   }
   for (size_t i = 0; i < structure().msgSize(); ++i) {
-    msg[i] = bitMetrics_[i] > 0;
+    msg[i] = bitMetrics_[i] >= 0;
   }
 }
 
@@ -108,7 +108,7 @@ void BpDecoderImpl<LlrMetrics, BoxSumAlg>::soDecodeBlock(Codec::InputIterator in
     bitUpdate();
     
     for (size_t j = 0; j < structure().paritySize(); ++j) {
-      hardParity_[j] = (parity_[j] >= 0.0);
+      hardParity_[j] = (bitMetrics_[j] >= 0.0);
     }
     if (structure().check(hardParity_.begin())) {
       succes = true;
@@ -190,5 +190,5 @@ void BpDecoderImpl<LlrMetrics, BoxSumAlg>::bitUpdate()
 
 template class fec::BpDecoderImpl<FloatLlrMetrics, BoxSum>;
 template class fec::BpDecoderImpl<FloatLlrMetrics, MinBoxSum>;
-//template class fec::BpDecoderImpl<FloatLlrMetrics, TableLogSum>;
+template class fec::BpDecoderImpl<FloatLlrMetrics, LinearBoxSum>;
 

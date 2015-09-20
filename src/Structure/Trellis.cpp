@@ -59,13 +59,13 @@ Trellis::Trellis(std::vector<size_t> nextState, std::vector<size_t> output, size
       for (int k = 0; k < this->inputSize(); ++k) {
         input[k] = j[this->inputSize()-k-1];
       }
-      nextState_[input*inputCount()+j] = nextState[input+j*stateCount()];
-      assert(nextState_[input*inputCount()+j] < stateCount());
-      output_[input*inputCount()+j] = 0;
+      nextState_[i*inputCount()+j] = nextState[i+input*stateCount()];
+      assert(nextState_[i*inputCount()+j] < stateCount());
+      output_[i*inputCount()+j] = 0;
       for (size_t k = 0; k < this->outputSize(); k++) {
-        output_[input*inputCount()+j][k] = BitField<size_t>(output[input+j*stateCount()])[this->outputSize()-k-1];
+        output_[i*inputCount()+j][k] = BitField<size_t>(output[i+input*stateCount()])[this->outputSize()-k-1];
       }
-      assert(output_[input*inputCount()+j] < outputCount());
+      assert(output_[i*inputCount()+j] < outputCount());
     }
   }
 }

@@ -26,8 +26,8 @@
  Declaration of Trellis class
  ******************************************************************************/
 
-#ifndef SERIALIZATION_H
-#define SERIALIZATION_H
+#ifndef FEC_SERIALIZATION_H
+#define FEC_SERIALIZATION_H
 
 #include <assert.h>
 #include <iostream>

@@ -39,6 +39,10 @@ std::unique_ptr<BpDecoder> BpDecoder::create(const Ldpc::Structure& structure)
       return std::unique_ptr<BpDecoder>(new BpDecoderImpl<FloatLlrMetrics,BoxSum>(structure));
       break;
       
+    case Codec::Linear:
+      return std::unique_ptr<BpDecoder>(new BpDecoderImpl<FloatLlrMetrics,LinearBoxSum>(structure));
+      break;
+      
     case Codec::Approximate:
       return std::unique_ptr<BpDecoder>(new BpDecoderImpl<FloatLlrMetrics,MinBoxSum>(structure));
       break;

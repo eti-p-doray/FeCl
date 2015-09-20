@@ -26,8 +26,8 @@
  Declaration of MapDecoderImpl class
  ******************************************************************************/
 
-#ifndef MAP_DECODER_IMPL_H
-#define MAP_DECODER_IMPL_H
+#ifndef FEC_MAP_DECODER_IMPL_H
+#define FEC_MAP_DECODER_IMPL_H
 
 #include <vector>
 #include <memory>

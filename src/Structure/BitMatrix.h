@@ -26,8 +26,8 @@
  Declaration of the BitMatrix classes
  ******************************************************************************/
 
-#ifndef BIT_MATRIX_H
-#define BIT_MATRIX_H
+#ifndef FEC_BIT_MATRIX_H
+#define FEC_BIT_MATRIX_H
 
 #include <iostream>
 #include <boost/serialization/vector.hpp>

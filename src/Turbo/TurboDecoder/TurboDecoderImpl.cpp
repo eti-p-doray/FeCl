@@ -133,7 +133,7 @@ void TurboDecoderImpl::soDecodeBlock(Codec::InputIterator input, Codec::OutputIt
       parityOut += structure().constituent(j).paritySize();
     }
   }
-  std::fill(parityOut_.begin(), parityOut_.begin() + structure().msgSize(), 0);
+  std::fill(parityOut_.begin(), parityOut_.begin() + structure().systSize(), 0);
   aPosterioriUpdate();
 
   if (output.hasSyst()) {
@@ -227,13 +227,14 @@ void TurboDecoderImpl::serialSharingUpdate(size_t i)
     systTail += structure().constituent(j).msgTailSize();
   }
   auto extrinsicTmp = extrinsic;
+  extrinsic += structure().constituent(i).msgSize();
   std::copy(systTail, systTail + structure().constituent(i).msgTailSize(), extrinsic);
-  
+  extrinsic += structure().constituent(i).msgTailSize();
   for (size_t j = i+1; j < structure().constituentCount(); ++j) {
-    extrinsic += structure().constituent(j).systSize();
     for (size_t k = 0; k < structure().constituent(j).msgSize(); ++k) {
       syst[structure().interleaver(j)[k]] += extrinsic[k];
     }
+    extrinsic += structure().constituent(j).systSize();
   }
   
   structure().interleaver(i).template interleaveBlock<LlrType>(syst, extrinsicTmp);

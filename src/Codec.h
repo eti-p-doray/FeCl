@@ -26,8 +26,8 @@
  Declaration of Codec class
  ******************************************************************************/
 
-#ifndef CODEC_H
-#define CODEC_H
+#ifndef FEC_CODEC_H
+#define FEC_CODEC_H
 
 #include <memory>
 #include <thread>
@@ -56,7 +56,7 @@ public:
 
   enum DecoderAlgorithm {
     Exact, /**< No approximation is used and the L-values are computed in logarithmic domain. */
-    Table, /**< A lookup table is used  */
+    Linear, /**< A lookup table is used  */
     Approximate,  /**< An approximation is used */
   };
   enum MetricType {

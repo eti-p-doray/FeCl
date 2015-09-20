@@ -26,8 +26,8 @@
  Declaration of BitField class
  ******************************************************************************/
 
-#ifndef BITFIELD_H
-#define BITFIELD_H
+#ifndef FEC_BITFIELD_H
+#define FEC_BITFIELD_H
 
 #include <iostream>
 #include <stdint.h>

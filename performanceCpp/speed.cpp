@@ -7,7 +7,7 @@
 //
 
 #include <iostream>
-#include "TurboCode/TurboCode.h"
+#include "Turbo/Turbo.h"
 #include "operations.h"
 
 #include <itpp/comm/turbo.h>
@@ -20,12 +20,12 @@ using namespace fec;
 using namespace itpp;
 
 const size_t T = 32400;
-const size_t N = 8;
-const size_t M = 8;
+const size_t N = 2;
+const size_t M = 2;
 const double z = 1.96;
 
 int main(int argc, const char * argv[]) {
-  std::vector<std::shared_ptr<fec::Code>> codes;
+  std::vector<std::shared_ptr<fec::Codec>> codes;
   std::vector<ElapsedTime> fec1EncEt;
   std::vector<ElapsedTime> fec1DecEt;
   std::vector<ElapsedTime> fec4EncEt;
@@ -33,46 +33,66 @@ int main(int argc, const char * argv[]) {
   std::vector<ElapsedTime> itppEncEt;
   std::vector<ElapsedTime> itppDecEt;
   
-  TrellisStructure trellis({4}, {{015}}, {013});
-  std::vector<size_t> systIdx(T);
+  fec::Trellis trellis({4}, {{017}}, {015});
   std::vector<size_t> permIdx(T);
-  for (size_t i = 0; i < systIdx.size(); ++i) {
+  for (size_t i = 0; i < permIdx.size(); ++i) {
     permIdx[i] = i;
-    systIdx[i] = i;
   }
   std::random_shuffle (permIdx.begin(), permIdx.end());
-  codes.push_back( Code::create(TurboCodeStructure({trellis,trellis}, {systIdx, permIdx}, {fec::ConvolutionalCodeStructure::PaddingTail,fec::ConvolutionalCodeStructure::PaddingTail}, 4, TurboCodeStructure::Serial, ConvolutionalCodeStructure::LogMap), 1) );
-  
-  for (auto& code : codes) {
-    std::vector<uint8_t> msg = randomBits<std::vector<uint8_t>>(N * T);
-    fec1EncEt.push_back(fecEncode(code, msg, M));
-    
-    std::vector<uint8_t> parity;
-    code->encode(msg, parity);
-    std::vector<LlrType> llr = distort(parity, -5.0);
-    fec1DecEt.push_back(fecDecode(code, llr, M));
+  ivec itppPermIdx(permIdx.size());
+  for (size_t i = 0; i < permIdx.size(); ++i) {
+    itppPermIdx[i] = permIdx[i];
   }
   
-  /*std::vector<LlrType> codeL = distort(parity, -5.0);
-  std::vector<uint8_t> msgDec;
-  t1 = std::chrono::high_resolution_clock::now();
-  code->decode(codeL, msgDec);
-  t2 = std::chrono::high_resolution_clock::now();
-  time_span = std::chrono::duration_cast<std::chrono::duration<double> >(t2 - t1);
-  std::cout << time_span.count() << std::endl;*/
+  auto encoder = fec::Turbo::EncoderOptions(trellis, {{}, permIdx}).
+  termination(fec::Convolutional::Tail).
+  bitOrdering(fec::Turbo::Alternate);
+  auto decoder = fec::Turbo::DecoderOptions().algorithm(fec::Codec::Exact).iterations(4).scheduling(fec::Turbo::Serial);
   
-  /*{
-  Turbo_Codec code;
+  auto structure = fec::Turbo::Structure(encoder, decoder);
+  codes.push_back( std::shared_ptr<fec::Codec>(new fec::Turbo(structure,1)) );
+  
+  decoder.algorithm(fec::Codec::Approximate);
+  structure = fec::Turbo::Structure(encoder, decoder);
+  codes.push_back( std::shared_ptr<fec::Codec>(new fec::Turbo(structure,1)) );
+  
+  for (auto& code : codes) {
+    std::vector<BitField<bool>> msg = randomBits<std::vector<BitField<bool>>>(N * T);
+    fec1EncEt.push_back(fecEncode(*code.get(), msg, M));
+    
+    std::vector<BitField<uint8_t>> parity;
+    code->encode(msg, parity);
+    std::vector<LlrType> llr = distort(parity, -5.0);
+    fec1DecEt.push_back(fecDecode(*code.get(), llr, M));
+  }
+  
+  itpp::Turbo_Codec itppTurbo;
   ivec gen(2);
-  gen(0) = 013; gen(1) = 015;
-  int constraint_length = 4;
+  gen[0] = 017;
+  gen[1] = 015;
+  itppTurbo.set_parameters(gen, gen, 4, itppPermIdx, 4, "LOGMAP");
+  bvec msg = randomBits<bvec>(N * T);
+  itppEncEt.push_back(itppEncode(itppTurbo, msg, M));
   
-  Sequence_Interleaver<int> inter(T);
-  inter.randomize_interleaver_sequence();
+  bvec parity;
+  itppTurbo.encode(msg, parity);
+  vec llr = distort(parity, -5.0);
+  itppDecEt.push_back(itppDecode(itppTurbo, llr, M));
   
-  ivec interleaver_sequence = inter.get_interleaver_sequence();
-  code.set_parameters(gen, gen, constraint_length, interleaver_sequence, 5);
-  code.set_metric("LOGMAP");*/
+  itppTurbo.set_parameters(gen, gen, 4, itppPermIdx, 4, "LOGMAX");
+  msg = randomBits<bvec>(N * T);
+  itppEncEt.push_back(itppEncode(itppTurbo, msg, M));
+  
+  itppTurbo.encode(msg, parity);
+  llr = distort(parity, -5.0);
+  itppDecEt.push_back(itppDecode(itppTurbo, llr, M));
+  
+  for (int i = 0; i < fec1DecEt.size(); ++i) {
+    std::cout << fec1DecEt[i].mean << std::endl;
+  }
+  for (int i = 0; i < fec1DecEt.size(); ++i) {
+    std::cout << itppDecEt[i].mean << std::endl;
+  }
     
   return 0;
 }

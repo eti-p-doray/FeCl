@@ -36,7 +36,7 @@ using namespace boost::unit_test;
 
 #include "operations.h"
 
-void test_turbo_soDecode_systOut(const fec::Turbo& code, size_t n = 1)
+void test_ldpc_soDecode_systOut(const fec::Ldpc& code, size_t n = 1)
 {
   double snr = -5.0;
   
@@ -50,46 +50,44 @@ void test_turbo_soDecode_systOut(const fec::Turbo& code, size_t n = 1)
   std::vector<fec::LlrType> systOut;
   code.soDecode(fec::Codec::Input<>().parity(parityIn), fec::Codec::Output<>().parity(parityOut).syst(systOut));
   
-  if (code.structure().bitOrdering() == fec::Turbo::Group) {
-    for (size_t i = 0; i < systOut.size(); ++i) {
-      BOOST_REQUIRE(parityOut[i] == systOut[i]);
-    }
+  for (size_t i = 0; i < systOut.size(); ++i) {
+    BOOST_REQUIRE(parityOut[i] == systOut[i]);
   }
 }
 
-test_suite* test_turbo(const fec::Turbo::Structure& structure, double snr, const std::string& name)
+test_suite* test_ldpc(const fec::Ldpc::Structure& structure, double snr, const std::string& name)
 {
   test_suite* ts = BOOST_TEST_SUITE(name);
   
   ts->add( BOOST_TEST_CASE(std::bind(&test_encodeBlock, structure )));
-  ts->add( BOOST_TEST_CASE(std::bind(&test_encode, fec::Turbo(structure,1), 1 )));
-  ts->add( BOOST_TEST_CASE(std::bind(&test_encode, fec::Turbo(structure,1), 5 )));
-  ts->add( BOOST_TEST_CASE(std::bind(&test_encode, fec::Turbo(structure,2), 5 )));
-  ts->add( BOOST_TEST_CASE(std::bind(&test_encode_badMsgSize, fec::Turbo(structure) )));
+  ts->add( BOOST_TEST_CASE(std::bind(&test_encode, fec::Ldpc(structure,1), 1 )));
+  ts->add( BOOST_TEST_CASE(std::bind(&test_encode, fec::Ldpc(structure,1), 5 )));
+  ts->add( BOOST_TEST_CASE(std::bind(&test_encode, fec::Ldpc(structure,2), 5 )));
+  ts->add( BOOST_TEST_CASE(std::bind(&test_encode_badMsgSize, fec::Ldpc(structure) )));
   
-  ts->add( BOOST_TEST_CASE(std::bind( &test_decode, fec::Turbo(structure,1), snr, 1) ));
-  ts->add( BOOST_TEST_CASE(std::bind( &test_decode, fec::Turbo(structure,1), snr, 5) ));
-  ts->add( BOOST_TEST_CASE(std::bind( &test_decode, fec::Turbo(structure,2), snr, 5) ));
-  ts->add( BOOST_TEST_CASE(std::bind( &test_decode_badParitySize, fec::Turbo(structure) )));
+  ts->add( BOOST_TEST_CASE(std::bind( &test_decode, fec::Ldpc(structure,1), snr, 1) ));
+  ts->add( BOOST_TEST_CASE(std::bind( &test_decode, fec::Ldpc(structure,1), snr, 5) ));
+  ts->add( BOOST_TEST_CASE(std::bind( &test_decode, fec::Ldpc(structure,2), snr, 5) ));
+  ts->add( BOOST_TEST_CASE(std::bind( &test_decode_badParitySize, fec::Ldpc(structure) )));
   
-  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode, fec::Turbo(structure), -5.0, 1) ));
-  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_parityOut, fec::Turbo(structure), snr, 1) ));
-  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_0stateIn, fec::Turbo(structure), 1) ));
-  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_0systIn, fec::Turbo(structure), 1) ));
-  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_systIn, fec::Turbo(structure), -5.0, 1) ));
+  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode, fec::Ldpc(structure), -5.0, 1) ));
+  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_parityOut, fec::Ldpc(structure), snr, 1) ));
+  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_0stateIn, fec::Ldpc(structure), 1) ));
+  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_0systIn, fec::Ldpc(structure), 1) ));
+  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_systIn, fec::Ldpc(structure), -5.0, 1) ));
   auto structure2 = structure;
   auto decoder = structure2.getDecoderOptions();
   decoder.iterations_ = 2*decoder.iterations_;
   structure2.setDecoderOptions(decoder);
-  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_2phases, fec::Turbo(structure), fec::Turbo(structure2), 1)));
-  ts->add( BOOST_TEST_CASE(std::bind( &test_turbo_soDecode_systOut, fec::Turbo(structure), 1)));
+  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_2phases, fec::Ldpc(structure), fec::Ldpc(structure2), 1)));
+  ts->add( BOOST_TEST_CASE(std::bind( &test_ldpc_soDecode_systOut, fec::Ldpc(structure), 1)));
   
-  ts->add( BOOST_TEST_CASE(std::bind(&test_soDecode_badParitySize, fec::Turbo(structure) )));
-  ts->add( BOOST_TEST_CASE(std::bind(&test_soDecode_badSystSize, fec::Turbo(structure) )));
-  ts->add( BOOST_TEST_CASE(std::bind(&test_soDecode_badStateSize, fec::Turbo(structure) )));
-  ts->add( BOOST_TEST_CASE(std::bind(&test_soDecode_noParity, fec::Turbo(structure) )));
+  ts->add( BOOST_TEST_CASE(std::bind(&test_soDecode_badParitySize, fec::Ldpc(structure) )));
+  ts->add( BOOST_TEST_CASE(std::bind(&test_soDecode_badSystSize, fec::Ldpc(structure) )));
+  ts->add( BOOST_TEST_CASE(std::bind(&test_soDecode_badStateSize, fec::Ldpc(structure) )));
+  ts->add( BOOST_TEST_CASE(std::bind(&test_soDecode_noParity, fec::Ldpc(structure) )));
   
-  ts->add( BOOST_TEST_CASE(std::bind(&test_saveLoad, fec::Turbo(structure) )));
+  ts->add( BOOST_TEST_CASE(std::bind(&test_saveLoad, fec::Ldpc(structure) )));
   
   return ts;
 }
@@ -98,37 +96,20 @@ test_suite*
 init_unit_test_suite( int argc, char* argv[] )
 {
   uint64_t seed = 0;
-  std::mt19937 randomGenerator((int)seed);
-  std::vector<size_t> permIndex(1024);
-  for (size_t i = 0; i < permIndex.size(); i++) {
-    permIndex[i] = i;
-  }
-  std::shuffle (permIndex.begin(), permIndex.end(), randomGenerator);
+  auto checkMatrix = fec::Ldpc::gallagerConstruction(2048, 3, 5, seed);
+  auto encoder = fec::Ldpc::EncoderOptions(checkMatrix);
+  auto decoder = fec::Ldpc::DecoderOptions().algorithm(fec::Codec::Exact).iterations(30);
   
-  fec::Trellis trellis({4}, {{017}}, {015});
-  auto encoder = fec::Turbo::EncoderOptions(trellis, {{}, permIndex}).
-    termination(fec::Convolutional::Truncate).
-    bitOrdering(fec::Turbo::Alternate);
-  auto decoder = fec::Turbo::DecoderOptions().algorithm(fec::Codec::Exact).iterations(4).scheduling(fec::Turbo::Serial);
+  auto structure = fec::Ldpc::Structure(encoder, decoder);
+  framework::master_test_suite().add(test_ldpc(structure, 2.0, "exact"));
   
-  auto structure = fec::Turbo::Structure(encoder, decoder);
-  framework::master_test_suite().add(test_turbo(structure, -4.3, "default"));
-  
-  encoder.termination(fec::Convolutional::Tail);
-  structure.setEncoderOptions(encoder);
-  framework::master_test_suite().add(test_turbo(structure, -4.1, "tail"));
-  
-  decoder.algorithm(fec::Codec::Table);
+  decoder.algorithm(fec::Codec::Linear);
   structure.setDecoderOptions(decoder);
-  framework::master_test_suite().add(test_turbo(structure, -4.1, "table"));
+  framework::master_test_suite().add(test_ldpc(structure, 2.0, "linear"));
   
   decoder.algorithm(fec::Codec::Approximate);
   structure.setDecoderOptions(decoder);
-  framework::master_test_suite().add(test_turbo(structure, -3.9, "approximate"));
-  
-  encoder.bitOrdering(fec::Turbo::Group);
-  structure.setEncoderOptions(encoder);
-  framework::master_test_suite().add(test_turbo(structure, -3.7, "group"));
+  framework::master_test_suite().add(test_ldpc(structure, 2.0, "approximate"));
   
   return 0;
 }

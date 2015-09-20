@@ -27,8 +27,8 @@
  Declaration of TurboCodecImpl class
  ******************************************************************************/
 
-#ifndef TURBO_DECODER_H
-#define TURBO_DECODER_H
+#ifndef FEC_TURBO_DECODER_H
+#define FEC_TURBO_DECODER_H
 
 #include "../Turbo.h"
 #include "../../Convolutional/MapDecoder/MapDecoder.h"

@@ -154,7 +154,7 @@ void Convolutional::Structure::encode(std::vector<BitField<bool>>::const_iterato
   switch (termination()) {
     case Convolutional::Tail:
       for (int j = 0; j < tailSize(); ++j) {
-        int maxCount = 0;
+        int maxCount = -1;
         BitField<size_t> bestInput = 0;
         for (BitField<size_t> input = 0; input < trellis().inputCount(); ++input) {
           BitField<size_t> nextState = trellis().getNextState(state, input);
@@ -179,6 +179,8 @@ void Convolutional::Structure::encode(std::vector<BitField<bool>>::const_iterato
       state = 0;
       break;
   }
+  
+  assert(state == 0);
 }
 
 bool Convolutional::Structure::check(std::vector<BitField<uint8_t>>::const_iterator parity) const
@@ -239,22 +241,27 @@ void Convolutional::Structure::encode(std::vector<BitField<bool>>::const_iterato
   switch (termination()) {
     case Convolutional::Tail:
       for (int j = 0; j < tailSize(); ++j) {
+        int maxCount = -1;
+        BitField<size_t> bestInput = 0;
         for (BitField<size_t> input = 0; input < trellis().inputCount(); ++input) {
           BitField<size_t> nextState = trellis().getNextState(state, input);
-          if (nextState.test(trellis().stateSize()-1) == 0) {
-            BitField<size_t> output = trellis().getOutput(state, input);
-            for (int k = 0; k < trellis().inputSize(); ++k) {
-              tail[k] = input.test(k);
-            }
-            for (int k = 0; k < trellis().outputSize(); ++k) {
-              parity[k] = output.test(k);
-            }
-            parity += trellis().outputSize();
-            tail += trellis().inputSize();
-            state = nextState;
-            break;
+          int count = weigth(BitField<size_t>(state)) - weigth(nextState);
+          if (count > maxCount) {
+            maxCount = count;
+            bestInput = input;
           }
         }
+        BitField<size_t> nextState = trellis().getNextState(state, bestInput);
+        BitField<size_t> output = trellis().getOutput(state, bestInput);
+        for (int k = 0; k < trellis().outputSize(); ++k) {
+          parity[k] = output.test(k);
+        }
+        for (int k = 0; k < trellis().inputSize(); ++k) {
+          tail[k] = bestInput.test(k);
+        }
+        parity += trellis().outputSize();
+        tail += trellis().inputSize();
+        state = nextState;
       }
       break;
       
@@ -263,4 +270,6 @@ void Convolutional::Structure::encode(std::vector<BitField<bool>>::const_iterato
       state = 0;
       break;
   }
+  
+  assert(state == 0);
 }

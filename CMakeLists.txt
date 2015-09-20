@@ -67,6 +67,7 @@ enable_testing()
 set(TESTS
   testCpp/Convolutional.cpp
   testCpp/Turbo.cpp
+  testCpp/Ldpc.cpp
 )
 
 foreach(TEST ${TESTS})
@@ -76,7 +77,7 @@ foreach(TEST ${TESTS})
   target_include_directories(test_${TEST_NAME} PUBLIC ${Boost_INCLUDE_DIRS})
   target_link_libraries(test_${TEST_NAME} fecStatic)
   target_link_libraries(test_${TEST_NAME} ${Boost_LIBRARIES})
-  add_test(${TEST_NAME} test_${TEST_NAME})
+  add_test(NAME ${TEST_NAME} COMMAND test_${TEST_NAME} --log_level=test_suite)
 endforeach()
 
 

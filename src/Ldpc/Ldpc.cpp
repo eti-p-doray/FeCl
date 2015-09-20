@@ -186,7 +186,7 @@ void Ldpc::Structure::syndrome(std::vector<uint8_t>::const_iterator parity, std:
 bool Ldpc::Structure::check(std::vector<BitField<uint8_t>>::const_iterator parity) const
 {
   for (auto parityEq = checks().begin(); parityEq < checks().end(); ++parityEq) {
-    bool syndrome;
+    bool syndrome = 0;
     for (auto parityBit = parityEq->begin(); parityBit < parityEq->end(); ++parityBit) {
       syndrome ^= parity[*parityBit];
     }
@@ -210,11 +210,7 @@ void Ldpc::Structure::encode(std::vector<BitField<bool>>::const_iterator msg, st
   parity += msgSize();
   auto parityIt = parity;
   for (auto row = DC_.begin(); row < DC_.end(); ++row, ++parityIt) {
-    //auto msgIt = msg;
     for (auto elem = row->begin(); elem != row->end(); ++elem) {
-      /*if (*elem) {
-       *parityIt ^= *msgIt;
-       }*/
       *parityIt ^= msg[*elem];
     }
   }

@@ -94,12 +94,14 @@ test_suite* test_turbo(const fec::Turbo::Structure& structure, double snr, const
   return ts;
 }
 
+const int n = 1024;
+
 test_suite*
 init_unit_test_suite( int argc, char* argv[] )
 {
   uint64_t seed = 0;
   std::mt19937 randomGenerator((int)seed);
-  std::vector<size_t> permIndex(1024);
+  std::vector<size_t> permIndex(n);
   for (size_t i = 0; i < permIndex.size(); i++) {
     permIndex[i] = i;
   }
@@ -109,46 +111,81 @@ init_unit_test_suite( int argc, char* argv[] )
   auto encoder = fec::Turbo::EncoderOptions(trellis, {{}, permIndex}).
     termination(fec::Convolutional::Truncate).
     bitOrdering(fec::Turbo::Alternate);
-  auto decoder = fec::Turbo::DecoderOptions().algorithm(fec::Codec::Exact).iterations(4).scheduling(fec::Turbo::Serial);
+  auto decoder = fec::Turbo::DecoderOptions().algorithm(fec::Codec::Exact).iterations(4).scheduling(fec::Turbo::Parallel);
   
   auto structure = fec::Turbo::Structure(encoder, decoder);
-  framework::master_test_suite().add(test_turbo(structure, -4.3, "default"));
+  framework::master_test_suite().add(test_turbo(structure, -3.0, "default"));
   
   encoder.termination(fec::Convolutional::Tail);
   structure.setEncoderOptions(encoder);
-  framework::master_test_suite().add(test_turbo(structure, -4.1, "tail"));
+  framework::master_test_suite().add(test_turbo(structure, -3.0, "tail"));
   
-  decoder.algorithm(fec::Codec::Table);
+  decoder.algorithm(fec::Codec::Linear);
   structure.setDecoderOptions(decoder);
-  framework::master_test_suite().add(test_turbo(structure, -4.1, "table"));
+  framework::master_test_suite().add(test_turbo(structure, -3.0, "table"));
   
   decoder.algorithm(fec::Codec::Approximate);
   structure.setDecoderOptions(decoder);
-  framework::master_test_suite().add(test_turbo(structure, -3.9, "approximate"));
+  framework::master_test_suite().add(test_turbo(structure, -3.0, "approximate"));
   
   encoder.bitOrdering(fec::Turbo::Group);
   structure.setEncoderOptions(encoder);
-  framework::master_test_suite().add(test_turbo(structure, -3.7, "group"));
+  framework::master_test_suite().add(test_turbo(structure, -3.0, "group"));
   
-  std::vector<size_t> permIndex2(1024);
+  decoder.scheduling(fec::Turbo::Serial);
+  structure.setDecoderOptions(decoder);
+  framework::master_test_suite().add(test_turbo(structure, -3.0, "serial"));
+  
+  std::vector<size_t> permIndex2(n);
   for (size_t i = 0; i < permIndex2.size(); i++) {
     permIndex2[i] = i;
   }
   std::shuffle (permIndex2.begin(), permIndex2.end(), randomGenerator);
-  std::vector<size_t> permIndex3(1024);
+  std::vector<size_t> permIndex3(n);
   for (size_t i = 0; i < permIndex3.size(); i++) {
     permIndex3[i] = i;
   }
   std::shuffle (permIndex3.begin(), permIndex3.end(), randomGenerator);
   encoder = fec::Turbo::EncoderOptions({fec::Trellis({4}, {{017}}, {015}),
-    fec::Trellis({3, 3}, {{04, 05}, {03, 07}}, {07, 05}),
+    fec::Trellis({3, 3}, {{05, 03, 0}, {0, 03, 07}}, {07, 05}),
     fec::Trellis({4}, {{017, 013}}, {015})}, {permIndex, permIndex2, permIndex3}).
   termination(fec::Convolutional::Truncate).
   bitOrdering(fec::Turbo::Group);
   encoder.bitOrdering(fec::Turbo::Group);
   structure.setEncoderOptions(encoder);
   framework::master_test_suite().add(test_turbo(structure, -3.0, "3 constituents"));
-                                                         
   
+  encoder.termination(fec::Convolutional::Tail);
+  decoder.algorithm(fec::Codec::Exact);
+  structure.setDecoderOptions(decoder);
+  structure.setEncoderOptions(encoder);
+  framework::master_test_suite().add(test_turbo(structure, -3.0, "3 constituents + tail"));
+  
+  encoder.bitOrdering(fec::Turbo::Alternate);
+  structure.setEncoderOptions(encoder);
+  framework::master_test_suite().add(test_turbo(structure, -3.0, "3 constituents + alternate"));
+  
+  permIndex2.resize(n/2);
+  for (size_t i = 0; i < permIndex2.size(); i++) {
+    permIndex2[i] = i;
+  }
+  std::shuffle (permIndex2.begin(), permIndex2.end(), randomGenerator);
+  
+  permIndex3.resize(n/2);
+  for (size_t i = 0; i < permIndex3.size(); i++) {
+    permIndex3[i] = 2*i;
+  }
+  std::shuffle (permIndex3.begin(), permIndex3.end(), randomGenerator);
+  
+  decoder.scheduling(fec::Turbo::Serial);
+  structure.setDecoderOptions(decoder);
+  
+  encoder.interleaver_ = {permIndex, permIndex2, permIndex3};
+  structure.setEncoderOptions(encoder);
+  framework::master_test_suite().add(test_turbo(structure, 0.0, "3 var length constituents + Serial"));
+  
+  decoder.scheduling(fec::Turbo::Parallel);
+  structure.setDecoderOptions(decoder);
+  framework::master_test_suite().add(test_turbo(structure, 0.0, "3 var length constituents + Parallel"));
   return 0;
 }

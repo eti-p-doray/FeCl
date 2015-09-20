@@ -45,8 +45,8 @@ std::unique_ptr<MapDecoder> MapDecoder::create(const Convolutional::Structure& s
     case Codec::Exact:
       return std::unique_ptr<MapDecoder>(new MapDecoderImpl<FloatLlrMetrics, LogSum>(structure));
 
-    case Codec::Table:
-      return std::unique_ptr<MapDecoder>(new MapDecoderImpl<FloatLlrMetrics, TableLogSum>(structure));
+    case Codec::Linear:
+      return std::unique_ptr<MapDecoder>(new MapDecoderImpl<FloatLlrMetrics, LinearLogSum>(structure));
 
     case Codec::Approximate:
       return std::unique_ptr<MapDecoder>(new MapDecoderImpl<FloatLlrMetrics, MaxLogSum>(structure));

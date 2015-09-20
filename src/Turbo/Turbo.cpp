@@ -241,7 +241,7 @@ void fec::Turbo::Structure::alternate(typename std::vector<T>::const_iterator pa
     *parityOut = *msgInIt;
     ++msgInIt;
     ++parityOut;
-    auto parityInIt = parityIn + msgSize() + msgTailSize();
+    auto parityInIt = parityIn + systSize();
     for (size_t j = 0; j < constituentCount(); ++j) {
       if (i < constituent(j).length()) {
         for (size_t k = 0; k < constituent(j).trellis().outputSize(); ++k) {
@@ -252,7 +252,7 @@ void fec::Turbo::Structure::alternate(typename std::vector<T>::const_iterator pa
       parityInIt += constituent(j).paritySize();
     }
   }
-  auto parityInIt = parityIn + msgSize() + msgTailSize();
+  auto parityInIt = parityIn + systSize();
   for (size_t i = 0; i < constituentCount(); ++i) {
     parityInIt += constituent(i).paritySize() - constituent(i).tailSize() * constituent(i).trellis().outputSize();
     for (size_t j = 0; j < constituent(i).tailSize(); ++j) {

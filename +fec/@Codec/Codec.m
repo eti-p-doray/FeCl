@@ -13,12 +13,25 @@ classdef Codec < fec.MexObject
         stateSize %Size of 1 bloc of state information
         workGroupSize % Maximum of threads used in operations
     end
-    
+    properties (Hidden)
+        structure
+    end
+
+    methods (Static)
+        function self = loadobj(s)
+            self = fec.(s.class);
+            self.reload(s);
+        end
+    end
+
     methods
         function s = saveobj(self)
         % Overload of the saveobj method.
         %   Save configuration by serialization.
-            s = fec.bin.wrap(uint32(fec.WrapFcnId.Codec_save), self);
+            s.archive = fec.bin.wrap(uint32(fec.WrapFcnId.Codec_save), self);
+            s.structure = self.structure;
+            s.class = class(self);
+            s.class = strrep(s.class, 'fec.', '');
         end
 
         function val = get.msgSize(self)
@@ -107,7 +120,7 @@ classdef Codec < fec.MexObject
         %   [state] - Extrinsic state information.
         %   [parity] - Extrinsic parity bits information.
         %
-            varargout = cell(nargout-1,1);
+            varargout = cell(nargout,1);
             varargout{:} = fec.bin.wrap(uint32(fec.WrapFcnId.Codec_soDecode), self, parity, varargin{:});
             for i = 1:nargout
                 varargout{i} = reshape(varargout{i}, [], size(parity,2));
@@ -121,7 +134,8 @@ classdef Codec < fec.MexObject
         function self = reload(self, s)
         % Implementation of the loadobj method
         %   Allocate underlying ressources from saved configuration.
-            self.mexHandle_ = fec.bin.wrap(uint32(fec.WrapFcnId.Codec_load), s);
+            self.mexHandle_ = fec.bin.wrap(uint32(fec.WrapFcnId.Codec_load), s.archive);
+            self.structure = s.structure;
         end
     end
 end

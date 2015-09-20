@@ -18,8 +18,8 @@ classdef Ldpc < fec.Codec
     methods
         function self = Ldpc(varargin)
             if (nargin > 0)
-              structure = fec.Ldpc.Structure(varargin{:});
-              self.mexHandle_ = fec.bin.wrap(uint32(fec.WrapFcnId.Ldpc_constructor), structure.getEncoderOptions, structure.getDecoderOptions);
+              self.structure = fec.Ldpc.Structure(varargin{:});
+              self.mexHandle_ = fec.bin.wrap(uint32(fec.WrapFcnId.Ldpc_constructor), self.structure.getEncoderOptions, self.structure.getDecoderOptions);
             end
         end
         function val = get.iterations(self)
@@ -35,14 +35,17 @@ classdef Ldpc < fec.Codec
             self.setDecoderOptions('algorithm', val);
         end
         function val = get.decoderOptions(self)
-            val = fec.Ldpc.DecoderOptions(fec.bin.wrap(uint32(fec.WrapFcnId.Ldpc_get_decoderOptions), self));
+            val = self.structure.decoderOptions;
+        end
+        function val = get.encoderOptions(self)
+            val = self.structure.encoderOptions;
         end
         function set.decoderOptions(self,val)
-            decoderOptions = fec.Ldpc.DecoderOptions(val);
+            self.structure.decoderOptions = fec.Ldpc.DecoderOptions(val);
             fec.bin.wrap(uint32(fec.WrapFcnId.Ldpc_set_decoderOptions), self, decoderOptions.get());
         end
         function set.encoderOptions(self,val)
-            encoderOptions = fec.Ldpc.EncoderOptions(val);
+            self.structure.encoderOptions = fec.Ldpc.EncoderOptions(val);
             fec.bin.wrap(uint32(fec.WrapFcnId.Ldpc_set_encoderOptions), self, encoderOptions.get());
         end
         function setDecoderOptions(self,varargin)

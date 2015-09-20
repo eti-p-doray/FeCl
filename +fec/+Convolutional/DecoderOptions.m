@@ -1,6 +1,6 @@
 classdef DecoderOptions < matlab.mixin.SetGet
     properties
-        algorithm = uint32(fec.Codec.DecoderAlgorithm.('Table'));
+        algorithm = uint32(fec.Codec.DecoderAlgorithm.('Linear'));
     end
 
     methods

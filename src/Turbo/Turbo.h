@@ -26,8 +26,8 @@
  Declaration of Turbo class
  ******************************************************************************/
 
-#ifndef TURBO_H
-#define TURBO_H
+#ifndef FEC_TURBO_H
+#define FEC_TURBO_H
 
 #include <boost/serialization/export.hpp>
 

@@ -27,39 +27,63 @@
  Declaration of LlrMetrics class
  ******************************************************************************/
 
-#ifndef LU_TABLE_H
-#define LU_TABLE_H
+#ifndef FEC_LINEAR_TABLE_H
+#define FEC_LINEAR_TABLE_H
 
-#include <type_traits>
 #include <cmath>
-#include <array>
+#include <vector>
 
 //chanco
 namespace fec {
   
-  template <typename T, size_t N>
-  class LuTable {
+  template <typename T>
+  class LinearTable {
   public:
     template <class F>
-    LuTable(F f) {
-      for (size_t i = 0; i < N; ++i) {
+    LinearTable(size_t lenght, F f) {
+      y.resize(lenght);
+      for (size_t i = 0; i < y.size(); ++i) {
         y[i] = f(i);
       }
-      for (size_t i = 0; i < N-1; ++i) {
-        dy[i] = y[i+1] - y[i];
-        y[i] -= dy[i] * i;
-      }
-      dy[N-1] = 0;
     }
     
     T operator () (T x) const {
       size_t i = x;
-      return dy[i] * x + y[i];
+      return (y[i+1] - y[i]) * (x-i) + y[i];
+    }
+    size_t size() {
+      return y.size();
     }
     
   private:
-    std::array<T,N> dy;
-    std::array<T,N> y;
+    std::vector<T> y;
+  };
+  
+  template <typename T>
+  struct Linearlog1pexpm {
+    Linearlog1pexpm(T step, size_t length) : table_(length, Impl(step)) {
+      step_ = step;
+    }
+    struct Impl {
+      Impl(T step) {
+        step_ = step;
+      }
+      T operator()(T x) {
+        return std::log(1+std::exp(-double(x)/step_));
+      }
+      T step_;
+    };
+    
+    T operator()(T x) {
+      x*=step_;
+      if(x >= table_.size()) {
+        return 0;
+      }
+      return table_(x/step_);
+    }
+    
+    T step_;
+    LinearTable<T> table_;
   };
   
 }

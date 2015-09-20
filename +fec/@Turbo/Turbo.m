@@ -19,8 +19,8 @@ classdef Turbo < fec.Codec
     methods
         function self = Turbo(varargin)
             if (nargin > 0)
-              structure = fec.Turbo.Structure(varargin{:});
-              self.mexHandle_ = fec.bin.wrap(uint32(fec.WrapFcnId.Turbo_constructor), structure.getEncoderOptions, structure.getDecoderOptions);
+              self.structure = fec.Turbo.Structure(varargin{:});
+              self.mexHandle_ = fec.bin.wrap(uint32(fec.WrapFcnId.Turbo_constructor), self.structure.getEncoderOptions, self.structure.getDecoderOptions);
             end
         end
         function val = get.iterations(self)
@@ -42,15 +42,18 @@ classdef Turbo < fec.Codec
             self.setDecoderOptions('scheduling', val);
         end
         function val = get.decoderOptions(self)
-            val = fec.Turbo.DecoderOptions(fec.bin.wrap(uint32(fec.WrapFcnId.Turbo_get_decoderOptions), self));
+            val = self.structure.decoderOptions;
+        end
+        function val = get.encoderOptions(self)
+            val = self.structure.encoderOptions;
         end
         function set.decoderOptions(self,val)
-            decoderOptions = fec.Turbo.DecoderOptions(val);
-            fec.bin.wrap(uint32(fec.WrapFcnId.Turbo_set_decoderOptions), self, decoderOptions.get());
+            self.structure.decoderOptions = fec.Turbo.DecoderOptions(val);
+            fec.bin.wrap(uint32(fec.WrapFcnId.Turbo_set_decoderOptions), self, self.structure.decoderOptions.get());
         end
         function set.encoderOptions(self,val)
-            encoderOptions = fec.Turbo.EncoderOptions(val);
-            fec.bin.wrap(uint32(fec.WrapFcnId.Turbo_set_encoderOptions), self, encoderOptions.get());
+            self.structure.encoderOptions = fec.Turbo.EncoderOptions(val);
+            fec.bin.wrap(uint32(fec.WrapFcnId.Turbo_set_encoderOptions), self, self.structure.encoderOptions.get());
         end
         function setDecoderOptions(self,varargin)
             decoderOptions = self.decoderOptions;

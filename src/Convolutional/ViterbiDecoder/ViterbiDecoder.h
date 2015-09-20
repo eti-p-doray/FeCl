@@ -27,8 +27,8 @@
  Declaration of ViterbiDecoder class
  ******************************************************************************/
 
-#ifndef VITERBI_DECODER_H
-#define VITERBI_DECODER_H
+#ifndef FEC_VITERBI_DECODER_H
+#define FEC_VITERBI_DECODER_H
 
 #include <vector>
 #include <memory>

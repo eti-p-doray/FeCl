@@ -27,8 +27,8 @@
  Declaration of LlrMetrics class
  ******************************************************************************/
 
-#ifndef LLR_METRICS_H
-#define LLR_METRICS_H
+#ifndef FEC_LLR_METRICS_H
+#define FEC_LLR_METRICS_H
 
 #include <type_traits>
 #include <cmath>
@@ -36,7 +36,7 @@
 #include <limits>
 #include <algorithm>
 
-#include "LuTable.h"
+#include "LinearTable.h"
 
 //chanco
 namespace fec {
@@ -98,48 +98,28 @@ namespace fec {
    *  This class contains implementation of the max approximation for log add operation.
    */
   template <typename LlrMetrics>
-  class TableLogSum {
+  class LinearLogSum {
   public:
     using isRecursive = std::true_type;
     
+    LinearLogSum(typename LlrMetrics::Type step = 4.0, size_t length = 8) : log1pexpm(step, length) {}
     /**
      * Computes log add operation with max approximation.
      *  \param  a First operand
      *  \param  b Second operand
      */
-    static inline typename LlrMetrics::Type sum(typename LlrMetrics::Type a, typename LlrMetrics::Type b) {
+    inline typename LlrMetrics::Type sum(typename LlrMetrics::Type a, typename LlrMetrics::Type b) {
       if (a == b) {
         return a;
       }
-      return std::max(a,b) + nlog1pexp(std::abs(a-b));
+      return std::max(a,b) + log1pexpm(std::abs(a-b));
     }
     static inline typename LlrMetrics::Type prior(typename LlrMetrics::Type x) {return x;}
     static inline typename LlrMetrics::Type post(typename LlrMetrics::Type x) {return x;}
-    
+  
   private:
-    static typename LlrMetrics::Type nlog1pexp(typename LlrMetrics::Type x)
-    {
-      x *= tableScale;
-      if (x > tableSize) {
-        return 0;
-      }
-      return nlog1pexpTable(x);
-    }
-    
-    constexpr static typename LlrMetrics::Type tableScale = 4.0;
-    constexpr static size_t tableSize = 4;
-    struct nlog1pexpImpl {
-      typename LlrMetrics::Type operator()(typename LlrMetrics::Type x) {
-        return std::log(1+std::exp(-double(x)/tableScale));
-      }
-    };
-    static LuTable<typename LlrMetrics::Type, tableSize> nlog1pexpTable;
+    Linearlog1pexpm<typename LlrMetrics::Type> log1pexpm;
   };
-  
-  template <typename LlrMetrics>
-  LuTable<typename LlrMetrics::Type, TableLogSum<LlrMetrics>::tableSize> TableLogSum<LlrMetrics>::nlog1pexpTable = LuTable<typename LlrMetrics::Type, TableLogSum<LlrMetrics>::tableSize>(typename TableLogSum<LlrMetrics>::nlog1pexpImpl());
-  
-  template class TableLogSum<FloatLlrMetrics>;
   
   /**
    *  This class contains implementation of the max approximation for log add operation.
@@ -157,8 +137,35 @@ namespace fec {
      */
     static inline typename LlrMetrics::Type sum(typename LlrMetrics::Type a, typename LlrMetrics::Type b) {return a*b;}
     static inline typename LlrMetrics::Type prior(typename LlrMetrics::Type x) {return tanh(-x/2.0);}
-    static inline typename LlrMetrics::Type post(typename LlrMetrics::Type x) {return -2.0*atanh(x);}
+    static inline typename LlrMetrics::Type post(typename LlrMetrics::Type x) {return -std::log((1.0+x)/(1.0-x));}//{return -2.0*atanh(x);}
   };
+  
+  template <typename LlrMetrics>
+  class LinearBoxSum {
+  public:
+    using isRecursive = std::true_type;
+    
+    LinearBoxSum(typename LlrMetrics::Type step = 4.0, size_t length = 8) : log1pexpm(step, length) {}
+    /**
+     * Computes log add operation with max approximation.
+     *  \param  a First operand
+     *  \param  b Second operand
+     */
+    inline typename LlrMetrics::Type sum(typename LlrMetrics::Type a, typename LlrMetrics::Type b) {
+      if (std::signbit(a) ^ std::signbit(b)) {
+        return std::min(std::abs(a),std::abs(b)) + log1pexpm(std::abs(a+b)) - log1pexpm(std::abs(a-b));
+      }
+      else {
+        return -std::min(std::abs(a),std::abs(b)) + log1pexpm(std::abs(a+b)) - log1pexpm(std::abs(a-b));
+      }
+    }
+    static inline typename LlrMetrics::Type prior(typename LlrMetrics::Type x) {return x;}
+    static inline typename LlrMetrics::Type post(typename LlrMetrics::Type x) {return x;}
+    
+  private:
+    Linearlog1pexpm<typename LlrMetrics::Type> log1pexpm;
+  };
+
   
   /**
    *  This class contains implementation of the max approximation for log add operation.

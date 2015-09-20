@@ -26,8 +26,8 @@
  Declaration of BpDecoder class
  ******************************************************************************/
 
-#ifndef BP_DECODER_H
-#define BP_DECODER_H
+#ifndef FEC_BP_DECODER_H
+#define FEC_BP_DECODER_H
 
 #include <vector>
 #include <memory>
