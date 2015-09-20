@@ -1,0 +1,22 @@
+language: cpp
+
+compiler:
+  - clang
+  - gcc
+
+install: true
+
+script:
+  - mkdir build
+  - cd build
+  - cmake ..
+  - make
+  - make test
+
+branches:
+  only:
+    - master
+
+os:
+  - linux
+  - osx
