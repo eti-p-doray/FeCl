@@ -14,6 +14,8 @@ else
   echo "yes" | sudo add-apt-repository ppa:kalakris/cmake
   sudo apt-get update
   sudo apt-get install cmake
+  sudo apt-get install g++-4.8
+  export CXX="g++-4.8" CC="gcc-4.8"
   if [ "$CXX" = "clang++" ]; then sudo apt-get install -ibstdc++-4.8-dev; fi
   if [ "$CXX" = "g++" ]; then sudo apt-get install g++-4.8; fi
   if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
