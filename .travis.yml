@@ -6,7 +6,9 @@ compiler:
 
 sudo: required
 
-install: sudo ./setup-travis.sh
+install: 
+  -chmod +x ./setup-travis.sh
+  -sudo ./setup-travis.sh
 
 script:
   - mkdir build
