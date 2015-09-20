@@ -12,9 +12,9 @@ else
   #install a newer cmake since at this time Travis only has version 2.8.7
   sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
   echo "yes" | sudo add-apt-repository ppa:kalakris/cmake
-  sudo apt-get update -qq
+  sudo apt-get update
   sudo apt-get install cmake
-  if [ "$CXX" = "clang++" ]; then sudo apt-get install -qq libstdc++-4.8-dev; fi
-  if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-4.8; fi
+  if [ "$CXX" = "clang++" ]; then sudo apt-get install -ibstdc++-4.8-dev; fi
+  if [ "$CXX" = "g++" ]; then sudo apt-get install g++-4.8; fi
   if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
 fi
