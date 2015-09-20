@@ -22,7 +22,7 @@ endif(UNIX)
 if (UNIX)
   set(CMAKE_CXX_FLAGS " -std=c++11 -pthread -fPIC ${CMAKE_CXX_FLAGS}")
   add_definitions( -ftemplate-depth=300 )
-else
+else()
   add_definitions( /wd4996 )
 endif (UNIX)
 
