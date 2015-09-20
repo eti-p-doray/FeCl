@@ -27,7 +27,6 @@ build*
 *.mltbx
 
 # System files
-*.DS_Store
 *~
 
 gh-pages/

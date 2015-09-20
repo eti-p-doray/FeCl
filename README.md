@@ -1,6 +1,8 @@
 ForwardErrorCorrection {#mainpage}
 =================
 
+[![Build Status](https://travis-ci.org/eti-p-doray/ForwardErrorCorrection.svg?branch=master)](https://travis-ci.org/eti-p-doray/ForwardErrorCorrection)
+
 This software implements several forward error correction (fec) algorithms in C++ and offer a Matlab API.
 Its main use is in communication systems simulations for the research area.
 This project is a result of my work at the emt research center at INRS, Quebec, Canada.
