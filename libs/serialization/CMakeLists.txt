@@ -15,22 +15,16 @@ cmake_minimum_required(VERSION 2.8.11)
 
 message(STATUS "compiler is ${CMAKE_CXX_COMPILER_ID}" )
 
-if( CMAKE_CXX_COMPILER_ID STREQUAL "GNU" )
-  add_definitions( -ftemplate-depth=300 )
-  # we use gcc to test for C++03 compatibility
+if (UNIX)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-elseif( CMAKE_CXX_COMPILER_ID STREQUAL "MSVC" )
+endif(UNIX)
+
+if (UNIX)
+  set(CMAKE_CXX_FLAGS " -std=c++11 -pthread -fPIC ${CMAKE_CXX_FLAGS}")
+  add_definitions( -ftemplate-depth=300 )
+else
   add_definitions( /wd4996 )
-  message(STATUS "compiler is MSVC")
-elseif( CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang" )
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ftemplate-depth=300")
-  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-  set(CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
-  set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-g -O3" )
-#set(CMAKE_CXX_FLAGS " ${CMAKE_CXX_FLAGS_MINSIZEREL} -std=c++11 ${CMAKE_C_FLAGS}")
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++ -dead_strip")
-endif()
+endif (UNIX)
 
 #
 # IDE settings
