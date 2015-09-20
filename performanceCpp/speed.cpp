@@ -80,11 +80,6 @@ int main(int argc, const char * argv[]) {
   itppDecEt.push_back(itppDecode(itppTurbo, llr, M));
   
   itppTurbo.set_parameters(gen, gen, 4, itppPermIdx, 4, "LOGMAX");
-  msg = randomBits<bvec>(N * T);
-  itppEncEt.push_back(itppEncode(itppTurbo, msg, M));
-  
-  itppTurbo.encode(msg, parity);
-  llr = distort(parity, -5.0);
   itppDecEt.push_back(itppDecode(itppTurbo, llr, M));
   
   for (int i = 0; i < fec1DecEt.size(); ++i) {

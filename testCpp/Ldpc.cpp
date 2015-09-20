@@ -101,6 +101,7 @@ init_unit_test_suite( int argc, char* argv[] )
   auto decoder = fec::Ldpc::DecoderOptions().algorithm(fec::Codec::Exact).iterations(30);
   
   auto structure = fec::Ldpc::Structure(encoder, decoder);
+  std::cout << structure.msgSize() << std::endl;
   framework::master_test_suite().add(test_ldpc(structure, 2.0, "exact"));
   
   decoder.algorithm(fec::Codec::Linear);

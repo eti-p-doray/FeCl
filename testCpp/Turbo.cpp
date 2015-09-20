@@ -114,27 +114,27 @@ init_unit_test_suite( int argc, char* argv[] )
   auto decoder = fec::Turbo::DecoderOptions().algorithm(fec::Codec::Exact).iterations(4).scheduling(fec::Turbo::Parallel);
   
   auto structure = fec::Turbo::Structure(encoder, decoder);
-  framework::master_test_suite().add(test_turbo(structure, -3.0, "default"));
+  framework::master_test_suite().add(test_turbo(structure, -2.0, "default"));
   
   encoder.termination(fec::Convolutional::Tail);
   structure.setEncoderOptions(encoder);
-  framework::master_test_suite().add(test_turbo(structure, -3.0, "tail"));
+  framework::master_test_suite().add(test_turbo(structure, -2.0, "tail"));
   
   decoder.algorithm(fec::Codec::Linear);
   structure.setDecoderOptions(decoder);
-  framework::master_test_suite().add(test_turbo(structure, -3.0, "table"));
+  framework::master_test_suite().add(test_turbo(structure, -2.0, "table"));
   
   decoder.algorithm(fec::Codec::Approximate);
   structure.setDecoderOptions(decoder);
-  framework::master_test_suite().add(test_turbo(structure, -3.0, "approximate"));
+  framework::master_test_suite().add(test_turbo(structure, -2.0, "approximate"));
   
   encoder.bitOrdering(fec::Turbo::Group);
   structure.setEncoderOptions(encoder);
-  framework::master_test_suite().add(test_turbo(structure, -3.0, "group"));
+  framework::master_test_suite().add(test_turbo(structure, -2.0, "group"));
   
   decoder.scheduling(fec::Turbo::Serial);
   structure.setDecoderOptions(decoder);
-  framework::master_test_suite().add(test_turbo(structure, -3.0, "serial"));
+  framework::master_test_suite().add(test_turbo(structure, -2.0, "serial"));
   
   std::vector<size_t> permIndex2(n);
   for (size_t i = 0; i < permIndex2.size(); i++) {
@@ -153,17 +153,17 @@ init_unit_test_suite( int argc, char* argv[] )
   bitOrdering(fec::Turbo::Group);
   encoder.bitOrdering(fec::Turbo::Group);
   structure.setEncoderOptions(encoder);
-  framework::master_test_suite().add(test_turbo(structure, -3.0, "3 constituents"));
+  framework::master_test_suite().add(test_turbo(structure, -2.0, "3 constituents"));
   
   encoder.termination(fec::Convolutional::Tail);
   decoder.algorithm(fec::Codec::Exact);
   structure.setDecoderOptions(decoder);
   structure.setEncoderOptions(encoder);
-  framework::master_test_suite().add(test_turbo(structure, -3.0, "3 constituents + tail"));
+  framework::master_test_suite().add(test_turbo(structure, -2.0, "3 constituents + tail"));
   
   encoder.bitOrdering(fec::Turbo::Alternate);
   structure.setEncoderOptions(encoder);
-  framework::master_test_suite().add(test_turbo(structure, -3.0, "3 constituents + alternate"));
+  framework::master_test_suite().add(test_turbo(structure, -2.0, "3 constituents + alternate"));
   
   permIndex2.resize(n/2);
   for (size_t i = 0; i < permIndex2.size(); i++) {

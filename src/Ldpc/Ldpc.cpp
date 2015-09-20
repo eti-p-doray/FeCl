@@ -107,7 +107,7 @@ SparseBitMatrix Ldpc::gallagerConstruction(size_t n, size_t wc, size_t wr, uint6
     ++row;
   }
   
-  std::mt19937 generator((int)seed);
+  std::minstd_rand0 generator((int)seed);
   for (size_t j = 0; j < H.cols(); j++) {
     std::uniform_int_distribution<int> distribution(int(j),int(H.cols()-1));
     for (size_t i = n/wr; i < H.rows(); i+=n/wr) {
@@ -186,11 +186,11 @@ void Ldpc::Structure::syndrome(std::vector<uint8_t>::const_iterator parity, std:
 bool Ldpc::Structure::check(std::vector<BitField<uint8_t>>::const_iterator parity) const
 {
   for (auto parityEq = checks().begin(); parityEq < checks().end(); ++parityEq) {
-    bool syndrome = 0;
+    bool syndrome = false;
     for (auto parityBit = parityEq->begin(); parityBit < parityEq->end(); ++parityBit) {
-      syndrome ^= parity[*parityBit];
+      syndrome ^= bool(parity[*parityBit]);
     }
-    if (syndrome != 0) {
+    if (syndrome != false) {
       return false;
     }
   }

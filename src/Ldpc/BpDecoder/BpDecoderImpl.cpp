@@ -52,7 +52,7 @@ void BpDecoderImpl<LlrMetrics, BoxSumAlg>::decodeBlock(std::vector<LlrType>::con
     }
   }
   
-  bool succes = false;
+  bool success = false;
   for (int64_t i = 0; i < structure().iterations() - 1; ++i) {
     checkUpdate();
     bitUpdate();
@@ -61,15 +61,13 @@ void BpDecoderImpl<LlrMetrics, BoxSumAlg>::decodeBlock(std::vector<LlrType>::con
       hardParity_[j] = (bitMetrics_[j] >= 0.0);
     }
     if (structure().check(hardParity_.begin())) {
-      succes = true;
+      success = true;
       break;
     }
   }
-  if (!succes) {
-    checkUpdate();
-  }
+  checkUpdate();
   
-  std::copy(parity_.begin(), parity_.begin() + bitMetrics_.size(), bitMetrics_.begin());
+  std::copy(parity_.begin(), parity_.end(), bitMetrics_.begin());
   for (size_t i = 0; i < structure().checks().size(); ++i) {
     bitMetrics_[structure().checks().at(i)] += checkMetrics_[i];
   }
@@ -102,7 +100,7 @@ void BpDecoderImpl<LlrMetrics, BoxSumAlg>::soDecodeBlock(Codec::InputIterator in
     }
   }
 
-  bool succes = false;
+  bool success = false;
   for (int64_t i = 0; i < structure().iterations() - 1; ++i) {
     checkUpdate();
     bitUpdate();
@@ -111,13 +109,11 @@ void BpDecoderImpl<LlrMetrics, BoxSumAlg>::soDecodeBlock(Codec::InputIterator in
       hardParity_[j] = (bitMetrics_[j] >= 0.0);
     }
     if (structure().check(hardParity_.begin())) {
-      succes = true;
+      success = true;
       break;
     }
   }
-  if (!succes) {
-    checkUpdate();
-  }
+  checkUpdate();
   
   std::fill(bitMetrics_.begin(), bitMetrics_.end(), 0);
   for (size_t i = 0; i < structure().checks().size(); ++i) {

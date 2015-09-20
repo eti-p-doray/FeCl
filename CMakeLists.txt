@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.0.0)
+cmake_minimum_required (VERSION 2.8.0)
 project(fec LANGUAGES CXX)
 
 set(CMAKE_BUILD_TYPE Release)
@@ -12,7 +12,7 @@ set(Boost_LIBRARIES serialization)
 add_definitions(-DBOOST_ALL_NO_LIB)
 
 if (UNIX)
-  set(CMAKE_CXX_FLAGS " -std=c++11 -fPIC ${CMAKE_C_FLAGS}")
+  set(CMAKE_CXX_FLAGS " -std=c++11 -pthread -fPIC ${CMAKE_CXX_FLAGS}")
 endif (UNIX)
 
 set(SOURCES

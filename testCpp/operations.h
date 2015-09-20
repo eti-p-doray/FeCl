@@ -52,7 +52,7 @@ std::vector<fec::LlrType> distort(const std::vector<fec::BitField<T>>& input, do
   double snr = pow(10.0, snrdb/10.0);
   
   uint64_t seed = 0;
-  std::mt19937 randomGenerator;
+  std::minstd_rand0 randomGenerator;
   randomGenerator.seed(uint32_t(seed));
   std::normal_distribution<double> normalDistribution(snr*4.0, 4.0*sqrt(snr/2.0));
   
