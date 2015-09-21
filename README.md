@@ -26,7 +26,7 @@ For C++ API, refer to the [web documentation](http://eti-p-doray.github.io/Forwa
 
 Instructions:
 
-To install only the Matlab API from pre-compiled binaries, download and run the toolbox file <br/>
+To install the Matlab API from pre-compiled binaries, download from releases and add the project to your matlab path. <br/>
 Currently, the toolbox is built for the following architectures<br/>
 * win64 
 * maci64 
