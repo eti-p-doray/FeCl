@@ -5,8 +5,8 @@ compiler:
 
 sudo: required
 before_install: 
-  - chmod +x ./setup-travis.sh
-  - sudo ./setup-travis.sh
+  - chmod +x setup/travis.sh
+  - sudo setup/travis.sh
   - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
 before_script:
   - mkdir build

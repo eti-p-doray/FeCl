@@ -4,7 +4,6 @@ build
 *.lo
 *.o
 *.obj
-build*
 *.lib
 *.a
 *.dylib
@@ -29,4 +28,7 @@ build*
 # System files
 *~
 
+# Outputs
+build*
 gh-pages/
+fec.zip
