@@ -15,5 +15,4 @@ else
   sudo apt-get update
   sudo apt-get install cmake
   sudo apt-get install g++-4.8
-  sudo apt-get install -ibstdc++-4.8-dev
 fi
