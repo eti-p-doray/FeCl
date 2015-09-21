@@ -1,4 +1,4 @@
-classdef DecoderOptions < matlab.mixin.SetGet
+classdef DecoderOptions < hgsetget
     properties
         algorithm = uint32(fec.Codec.DecoderAlgorithm.('Linear'));
     end

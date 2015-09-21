@@ -1,4 +1,4 @@
-classdef EncoderOptions < matlab.mixin.SetGet
+classdef EncoderOptions < hgsetget
     properties
         trellis;
         length;

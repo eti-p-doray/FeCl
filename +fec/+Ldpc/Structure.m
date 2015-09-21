@@ -1,4 +1,4 @@
-classdef Structure < matlab.mixin.SetGet
+classdef Structure < hgsetget
     properties
         encoderOptions;
         decoderOptions = fec.Ldpc.DecoderOptions();

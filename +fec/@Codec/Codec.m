@@ -1,4 +1,4 @@
-classdef Codec < fec.MexObject
+classdef (Abstract) Codec < fec.MexObject
   % This abstract class represents an fec codec.
   % It provides encoding and decoding method following a specific structure.
   % Several specialisations of this class define different codec types.
@@ -15,6 +15,10 @@ classdef Codec < fec.MexObject
     end
     properties (Hidden)
         structure
+    end
+    properties (Abstract, Dependent = true, Hidden)
+        encoderOptions
+        decoderOptions
     end
 
     methods (Static)
