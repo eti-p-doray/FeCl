@@ -42,5 +42,5 @@ void Codec_get_msgSize( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs
 {
   DerivedTypeHolder<Convolutional,Turbo,Ldpc> derived;
   auto codec = mxArrayTo<MexHandle<Codec>>::f(prhs[0], derived);
-  plhs[0] = toMxArray(codec->msgSize());
+  plhs[0] = toMxArray<size_t>(codec->msgSize());
 }

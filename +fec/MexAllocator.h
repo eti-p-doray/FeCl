@@ -73,8 +73,8 @@ public :
   inline T* ptr() {return reinterpret_cast<T*>(ptr_);}
   inline size_t size() const {return size_;}
   
-  inline bool operator==(MexAllocator const& b) { return false; }
-  inline bool operator!=(MexAllocator const& b) { return !operator==(b); }
+  inline bool operator==(const MexAllocator& b) const { return false; }
+  inline bool operator!=(const MexAllocator& b) const { return !operator==(b); }
   
 private:
   void* ptr_ = nullptr;

@@ -307,8 +307,8 @@ void fec::Turbo::Structure::group(typename std::vector<T>::const_iterator parity
   }
 }
 
-template void fec::Turbo::Structure::alternate<BitField<uint8_t>>(typename std::vector<BitField<uint8_t>>::const_iterator parityIn, typename std::vector<BitField<uint8_t>>::iterator parityOut) const;
-template void fec::Turbo::Structure::alternate<LlrType>(typename std::vector<LlrType>::const_iterator parityIn, typename std::vector<LlrType>::iterator parityOut) const;
+template void fec::Turbo::Structure::alternate<BitField<uint8_t>>(std::vector<BitField<uint8_t>>::const_iterator parityIn, std::vector<BitField<uint8_t>>::iterator parityOut) const;
+template void fec::Turbo::Structure::alternate<LlrType>(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::iterator parityOut) const;
 
-template void fec::Turbo::Structure::group<BitField<uint8_t>>(typename std::vector<BitField<uint8_t>>::const_iterator parityIn, typename std::vector<BitField<uint8_t>>::iterator parityOut) const;
-template void fec::Turbo::Structure::group<LlrType>(typename std::vector<LlrType>::const_iterator parityIn, typename std::vector<LlrType>::iterator parityOut) const;
+template void fec::Turbo::Structure::group<BitField<uint8_t>>(std::vector<BitField<uint8_t>>::const_iterator parityIn, std::vector<BitField<uint8_t>>::iterator parityOut) const;
+template void fec::Turbo::Structure::group<LlrType>(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::iterator parityOut) const;

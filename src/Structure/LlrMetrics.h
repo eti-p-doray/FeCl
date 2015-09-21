@@ -38,6 +38,8 @@
 
 #include "LinearTable.h"
 
+#undef max
+
 //chanco
 namespace fec {
   

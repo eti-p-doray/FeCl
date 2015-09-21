@@ -29,11 +29,18 @@
 #ifndef TO_BITFIELD_H
 #define TO_BITFIELD_H
 
+#include <type_traits>
+
 #include <mex.h>
 
 #include "Structure/BitField.h"
 #include "MexConversion.h"
 
 template <typename T> struct MexType<fec::BitField<T>> {using ID = typename MexType<T>::ID; using isScalar = std::true_type;};
+
+namespace std {
+  template< class T >
+  struct is_arithmetic<fec::BitField<T>> : std::true_type {};
+}
   
 #endif

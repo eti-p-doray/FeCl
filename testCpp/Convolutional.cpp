@@ -96,27 +96,27 @@ test_suite* init_unit_test_suite( int argc, char* argv[] )
   auto decoder = fec::Convolutional::DecoderOptions().algorithm(fec::Codec::Exact);
   
   auto structure = fec::Convolutional::Structure(encoder, decoder);
-  framework::master_test_suite().add(test_convolutional(structure, 2.6, "default"));
+  framework::master_test_suite().add(test_convolutional(structure, 3.0, "default"));
   
   encoder.termination(fec::Convolutional::Tail);
   structure.setEncoderOptions(encoder);
-  framework::master_test_suite().add(test_convolutional(structure, 2.6, "tail"));
+  framework::master_test_suite().add(test_convolutional(structure, 3.0, "tail"));
   
   decoder.algorithm(fec::Codec::Linear);
   structure.setDecoderOptions(decoder);
-  framework::master_test_suite().add(test_convolutional(structure, 2.6, "table"));
+  framework::master_test_suite().add(test_convolutional(structure, 3.0, "table"));
 
   decoder.algorithm(fec::Codec::Approximate);
   structure.setDecoderOptions(decoder);
-  framework::master_test_suite().add(test_convolutional(structure, 2.6, "approximate"));
+  framework::master_test_suite().add(test_convolutional(structure, 3.0, "approximate"));
   
   encoder = fec::Convolutional::EncoderOptions(fec::Trellis({3, 3}, {{05, 03, 0}, {0, 03, 07}}, {07, 05}), length).termination(fec::Convolutional::Truncate);
   structure.setEncoderOptions(encoder);
-  framework::master_test_suite().add(test_convolutional(structure, 4.0, "2 inputs"));
+  framework::master_test_suite().add(test_convolutional(structure, 6.0, "2 inputs"));
   
   encoder.termination(fec::Convolutional::Tail);
   structure.setEncoderOptions(encoder);
-  framework::master_test_suite().add(test_convolutional(structure, 4.0, "2 inputs + tail"));
+  framework::master_test_suite().add(test_convolutional(structure, 5.0, "2 inputs + tail"));
   
   return 0;
 }

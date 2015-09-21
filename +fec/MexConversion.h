@@ -42,78 +42,48 @@
 #include "MexHandle.h"
 
 template <typename T1, typename T2>
-struct is_equiv_int
-{
-  using value = typename std::integral_constant<bool,
-  (sizeof(T1)==sizeof(T2)) &&
-  (std::is_integral<T1>::value && std::is_integral<T2>::value) &&
-  (std::is_signed<T1>::value == std::is_signed<T2>::value)
-  >;
-};
+struct is_equiv_int : std::integral_constant<bool,
+(sizeof(T1)==sizeof(T2)) &&
+(std::is_integral<T1>::value && std::is_integral<T2>::value) &&
+(std::is_signed<T1>::value == std::is_signed<T2>::value)>
+{};
 
 template <typename T, class Enable = void> struct MexType {using ID = std::integral_constant<mxClassID, mxUNKNOWN_CLASS>; using isScalar = std::false_type;};
 
 template <> struct MexType<bool> {using ID = std::integral_constant<mxClassID, mxLOGICAL_CLASS>; using isScalar = std::true_type;};
 
-template <typename T> struct MexType<T, typename std::enable_if<is_equiv_int<T,int8_t>::value::value>::type>
+template <typename T> struct MexType<T, typename std::enable_if<is_equiv_int<T,int8_t>::value>::type>
 {using ID = std::integral_constant<mxClassID, mxINT8_CLASS>; using isScalar = std::true_type;};
 
-template <typename T> struct MexType<T, typename std::enable_if<is_equiv_int<T,uint8_t>::value::value>::type>
+template <typename T> struct MexType<T, typename std::enable_if<is_equiv_int<T,uint8_t>::value>::type>
 {using ID = std::integral_constant<mxClassID, mxUINT8_CLASS>; using isScalar = std::true_type;};
 
-template <typename T> struct MexType<T, typename std::enable_if<is_equiv_int<T,int16_t>::value::value>::type>
+template <typename T> struct MexType<T, typename std::enable_if<is_equiv_int<T,int16_t>::value>::type>
 {using ID = std::integral_constant<mxClassID, mxINT16_CLASS>; using isScalar = std::true_type;};
 
-template <typename T> struct MexType<T, typename std::enable_if<is_equiv_int<T,uint16_t>::value::value>::type>
+template <typename T> struct MexType<T, typename std::enable_if<is_equiv_int<T,uint16_t>::value>::type>
 {using ID = std::integral_constant<mxClassID, mxUINT16_CLASS>; using isScalar = std::true_type;};
 
-template <typename T> struct MexType<T, typename std::enable_if<is_equiv_int<T,int32_t>::value::value>::type>
+template <typename T> struct MexType<T, typename std::enable_if<is_equiv_int<T,int32_t>::value>::type>
 {using ID = std::integral_constant<mxClassID, mxINT32_CLASS>; using isScalar = std::true_type;};
 
-template <typename T> struct MexType<T, typename std::enable_if<is_equiv_int<T,uint32_t>::value::value>::type>
+template <typename T> struct MexType<T, typename std::enable_if<is_equiv_int<T,uint32_t>::value>::type>
 {using ID = std::integral_constant<mxClassID, mxUINT32_CLASS>; using isScalar = std::true_type;};
 
-template <typename T> struct MexType<T, typename std::enable_if<is_equiv_int<T,int64_t>::value::value>::type>
+template <typename T> struct MexType<T, typename std::enable_if<is_equiv_int<T,int64_t>::value>::type>
 {using ID = std::integral_constant<mxClassID, mxINT64_CLASS>; using isScalar = std::true_type;};
 
-template <typename T> struct MexType<T, typename std::enable_if<is_equiv_int<T,uint64_t>::value::value>::type>
+template <typename T> struct MexType<T, typename std::enable_if<is_equiv_int<T,uint64_t>::value>::type>
 {using ID = std::integral_constant<mxClassID, mxUINT64_CLASS>; using isScalar = std::true_type;};
 
 template <> struct MexType<float> {using ID = std::integral_constant<mxClassID, mxSINGLE_CLASS>; using isScalar = std::true_type;};
 template <> struct MexType<double> {using ID = std::integral_constant<mxClassID, mxDOUBLE_CLASS>; using isScalar = std::true_type;};
 
-/*template <typename T1, typename T2>
-struct is_equiv_int
-{
-  using value = std::integral_constant<bool,
-  (sizeof(T1)==sizeof(T2)) &&
-  (std::is_integral<T1>::value && std::is_integral<T2>::value) &&
-  (std::is_signed<T1>::value == std::is_signed<T2>::value) &&
-  (std::numeric_limits<T1>::max == std::numeric_limits<T2>::max) &&
-  (std::numeric_limits<T1>::min == std::numeric_limits<T2>::min)
-  >;
-};
-
-template <typename T> struct MexType {using ID = std::integral_constant<mxClassID, mxUNKNOWN_CLASS>; using isScalar = std::false_type;};
-
-template <typename T> struct MexType<typename std::enable_if<is_equiv_int<T,bool>::value,T>::type> {using ID = std::integral_constant<mxClassID, mxLOGICAL_CLASS>; using isScalar = std::true_type;};
-template <typename T> struct MexType<typename std::enable_if<is_equiv_int<T,int8_t>::vale,T>::type> {using ID = std::integral_constant<mxClassID, mxINT8_CLASS>; using isScalar = std::true_type;};
-template <typename T> struct MexType<typename std::enable_if<is_equiv_int<T,uint8_t>::value,T>::type> {using ID = std::integral_constant<mxClassID, mxUINT8_CLASS>; using isScalar = std::true_type;};
-template <typename T> struct MexType<typename std::enable_if<is_equiv_int<T,int16_t>::value,T>::type> {using ID = std::integral_constant<mxClassID, mxINT16_CLASS>; using isScalar = std::true_type;};
-template <typename T> struct MexType<typename std::enable_if<is_equiv_int<T,uint16_t>::value,T>::type> {using ID = std::integral_constant<mxClassID, mxUINT16_CLASS>; using isScalar = std::true_type;};
-template <typename T> struct MexType<typename std::enable_if<is_equiv_int<T,int32_t>::value,T>::type> {using ID = std::integral_constant<mxClassID, mxINT32_CLASS>; using isScalar = std::true_type;};
-template <typename T> struct MexType<typename std::enable_if<is_equiv_int<T,uint32_t>::value,T>::type> {using ID = std::integral_constant<mxClassID, mxUINT32_CLASS>; using isScalar = std::true_type;};
-template <typename T> struct MexType<typename std::enable_if<is_equiv_int<T,int64_t>::value,T>::type> {using ID = std::integral_constant<mxClassID, mxINT64_CLASS>; using isScalar = std::true_type;};
-template <typename T> struct MexType<typename std::enable_if<is_equiv_int<T,uint64_t>::value,T>::type> {using ID = std::integral_constant<mxClassID, mxUINT64_CLASS>; using isScalar = std::true_type;};
-template <> struct MexType<float> {using ID = std::integral_constant<mxClassID, mxSINGLE_CLASS>; using isScalar = std::true_type;};
-template <> struct MexType<double> {using ID = std::integral_constant<mxClassID, mxDOUBLE_CLASS>; using isScalar = std::true_type;};
-*/
-
-template <class T, class isEnum = void, class isScalar = void>
+template <class T, class Enable = void>
 class mxArrayTo {};
 
 template <class T>
-class mxArrayTo<T, void, typename std::enable_if<MexType<T>::isScalar::value>::type>
+class mxArrayTo<T, typename std::enable_if<std::is_arithmetic<T>::value>::type>
 {
 public:
   static T f(const mxArray* in) {
@@ -153,8 +123,8 @@ public:
   }
 };
 
-template <typename T>
-class mxArrayTo<T, typename std::enable_if<std::is_enum<T>::value>::type, void> {
+template <class T>
+class mxArrayTo<T, typename std::enable_if<std::is_enum<T>::value>::type> {
 public:
   static T f(const mxArray* in) {
     return static_cast<T>(mxArrayTo<typename std::underlying_type<T>::type>::f(in));
@@ -162,7 +132,7 @@ public:
 };
 
 template <class T, class A>
-class mxArrayTo<std::vector<T,A>, void, typename std::enable_if<MexType<T>::isScalar::value>::type> {
+class mxArrayTo<typename std::vector<T,A>, typename std::enable_if<std::is_arithmetic<T>::value && !std::is_same<A, MexAllocator<T>>::value>::type> {
 public:
   static std::vector<T,A> f(const mxArray* in) {
     if (in == nullptr) {
@@ -237,7 +207,7 @@ public:
 };
 
 template <class T>
-class mxArrayTo<std::vector<T, MexAllocator<T>>, void, typename std::enable_if<MexType<T>::isScalar::value>::type> {
+class mxArrayTo<typename std::vector<T, MexAllocator<T>>, typename std::enable_if<std::is_arithmetic<T>::value>::type> {
 public:
   static std::vector<T, MexAllocator<T>> f(const mxArray* in) {
     if (in == nullptr) {
@@ -264,7 +234,7 @@ public:
 };
 
 template <class T, class A>
-class mxArrayTo<std::vector<T,A>, void, typename std::enable_if<!MexType<T>::isScalar::value>::type> {
+class mxArrayTo<typename std::vector<T,A>, typename std::enable_if<!std::is_arithmetic<T>::value>::type> {
 public:
   static std::vector<T> f(const mxArray* in) {
     if (in == nullptr) {
@@ -282,7 +252,7 @@ public:
 };
 
 template <class T>
-class mxArrayTo<MexHandle<T>> {
+class mxArrayTo<MexHandle<T>,void> {
 public:
   template <class DerivedTypeHolder>
   static MexHandle<T> f(const mxArray* in, DerivedTypeHolder derived) {
@@ -312,26 +282,27 @@ public:
 };
 
 
-template <class T, typename std::enable_if<MexType<T>::isScalar::value>::type* = nullptr>
-mxArray* toMxArray(const T& in) {
+
+template <class T, typename std::enable_if<std::is_arithmetic<T>::value>::type* = nullptr>
+mxArray* toMxArray(T in) {
   mxArray* out = mxCreateNumericMatrix(1,1, MexType<T>::ID::value, mxREAL);
   *static_cast<T*>(mxGetData(out)) = in;
   return out;
 }
 
 template <class T, typename std::enable_if<std::is_enum<T>::value>::type* = nullptr>
-mxArray* toMxArray(const T& in) {
+mxArray* toMxArray(T in) {
   return toMxArray(static_cast<uint32_t>(in));
 }
 
-template <class T, template <class> class A, typename std::enable_if<MexType<T>::isScalar::value>::type* = nullptr>
+template <class T, template <class> class A, typename std::enable_if<std::is_arithmetic<T>::value>::type* = nullptr>
 mxArray* toMxArray(const std::vector<T, A<T>>& vec) {
   mxArray* out = mxCreateNumericMatrix(vec.size(), 1, MexType<T>::ID::value, mxREAL);
   std::copy(vec.begin(), vec.end(), static_cast<T*>(mxGetData(out)));
   return out;
 }
 
-template <class T, template <class> class A, typename std::enable_if<!MexType<T>::isScalar::value>::type* = nullptr>
+template <class T, template <class> class A, typename std::enable_if<!std::is_arithmetic<T>::value>::type* = nullptr>
 mxArray* toMxArray(const std::vector<T, A<T>>& vec) {
   mxArray* out = mxCreateCellMatrix(vec.size(), 1);
   for (size_t i = 0; i < vec.size(); ++i) {
@@ -350,7 +321,7 @@ mxArray* toMxArray(const std::vector<T, MexAllocator<T>>& vec) {
   return out;
 }
 
-template <class T>
+template <typename T>
 mxArray* toMxArray(MexHandle<T>&& u) {
   mxArray* out = mxCreateNumericMatrix(1, 1, mxUINT64_CLASS, mxREAL);
   *((uint64_t *)mxGetData(out)) = reinterpret_cast<uint64_t>(u.get());

@@ -26,8 +26,8 @@
  Definition of the mex allocator.
  ******************************************************************************/
 
-#ifndef MEX_HANDLE
-#define MEX_HANDLE
+#ifndef FEC_MEX_HANDLE
+#define FEC_MEX_HANDLE
 
 #include <memory>
 #include <type_traits>
