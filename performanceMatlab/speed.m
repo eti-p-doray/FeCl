@@ -1,5 +1,5 @@
 function speed
-    N = 2;
+    N = 8;
     M = 2;
     T = 32400;
     trellis = poly2trellis(4, [17, 15], 17);
@@ -9,26 +9,34 @@ function speed
     pi = randperm(T);
     H = dvbs2ldpc(1/2);
     code{2} = fec.Turbo(turboTrellis, {[], pi}, 'termination', 'Tail', 'iterations', 4, 'scheduling', 'Serial', 'algorithm', 'Exact');
-    code{3} = fec.Turbo(turboTrellis, {[], pi}, 'termination', 'Tail', 'iterations', 4, 'scheduling', 'Serial', 'algorithm', 'Approximate');
-    code{4} = fec.Ldpc(H, 'iterations', 20, 'algorithm', 'Exact');
-    code{5} = fec.Ldpc(H, 'iterations', 20, 'algorithm', 'Approximate');
+    code{3} = fec.Turbo(turboTrellis, {[], pi}, 'termination', 'Tail', 'iterations', 4, 'scheduling', 'Serial', 'algorithm', 'Linear');
+    code{4} = fec.Turbo(turboTrellis, {[], pi}, 'termination', 'Tail', 'iterations', 4, 'scheduling', 'Serial', 'algorithm', 'Approximate');
+    code{5} = fec.Ldpc(H, 'iterations', 20, 'algorithm', 'Exact');
+    code{6} = fec.Ldpc(H, 'iterations', 20, 'algorithm', 'Linear');
+    code{7} = fec.Ldpc(H, 'iterations', 20, 'algorithm', 'Approximate');
     
     matlabEncoder{1} = comm.ConvolutionalEncoder('TrellisStructure', trellis, 'TerminationMethod', 'Truncated');
     matlabDecoder{1} = comm.ViterbiDecoder('TrellisStructure', trellis, 'TerminationMethod', 'Truncated', 'TracebackDepth', T);
     matlabEncoder{2} = comm.TurboEncoder('TrellisStructure', trellis, 'InterleaverIndices', pi);
     matlabDecoder{2} = comm.TurboDecoder('TrellisStructure', trellis, 'InterleaverIndices', pi, 'Algorithm', 'True APP', 'NumIterations', 4);
     matlabEncoder{3} = comm.TurboEncoder('TrellisStructure', trellis, 'InterleaverIndices', pi);
-    matlabDecoder{3} = comm.TurboDecoder('TrellisStructure', trellis, 'InterleaverIndices', pi, 'Algorithm', 'Max', 'NumIterations', 4);
-    matlabEncoder{4} = comm.LDPCEncoder(H);
-    matlabDecoder{4} = comm.LDPCDecoder(H, 'IterationTerminationCondition', 'Parity check satisfied', 'MaximumIterationCount', 20);
+    matlabDecoder{3} = comm.TurboDecoder('TrellisStructure', trellis, 'InterleaverIndices', pi, 'Algorithm', 'Max*', 'NumIterations', 4);
+    matlabEncoder{4} = comm.TurboEncoder('TrellisStructure', trellis, 'InterleaverIndices', pi);
+    matlabDecoder{4} = comm.TurboDecoder('TrellisStructure', trellis, 'InterleaverIndices', pi, 'Algorithm', 'Max', 'NumIterations', 4);
     matlabEncoder{5} = comm.LDPCEncoder(H);
     matlabDecoder{5} = comm.LDPCDecoder(H, 'IterationTerminationCondition', 'Parity check satisfied', 'MaximumIterationCount', 20);
+    matlabEncoder{6} = comm.LDPCEncoder(H);
+    matlabDecoder{6} = comm.LDPCDecoder(H, 'IterationTerminationCondition', 'Parity check satisfied', 'MaximumIterationCount', 20);
+    matlabEncoder{7} = comm.LDPCEncoder(H);
+    matlabDecoder{7} = comm.LDPCDecoder(H, 'IterationTerminationCondition', 'Parity check satisfied', 'MaximumIterationCount', 20);
     
     codeDesc = {...
         'Convolutional',...
         'Turbo',...
+        'Turbo table'...
         'Turbo appr'...
         'Ldpc'...
+        'Ldpc table'...
         'Ldpc appr'
         };
     

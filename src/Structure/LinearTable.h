@@ -47,11 +47,11 @@ namespace fec {
       }
     }
     
-    T operator () (T x) const {
+    inline T operator () (T x) const {
       size_t i = x;
       return (y[i+1] - y[i]) * (x-i) + y[i];
     }
-    size_t size() {
+    inline size_t size() {
       return y.size();
     }
     
@@ -61,7 +61,7 @@ namespace fec {
   
   template <typename T>
   struct Linearlog1pexpm {
-    Linearlog1pexpm(T step, size_t length) : table_(length, Impl(step)) {
+    Linearlog1pexpm(int step, size_t length) : table_(length, Impl(step)) {
       step_ = step;
     }
     struct Impl {
@@ -69,17 +69,17 @@ namespace fec {
         step_ = step;
       }
       T operator()(T x) {
-        return std::log(1+std::exp(-double(x)/step_));
+        return std::log(1+std::exp(-(double(x)/step_)));
       }
       T step_;
     };
     
-    T operator()(T x) {
-      x*=step_;
+    inline T operator()(T x) {
+      x *= step_;
       if(x >= table_.size()) {
         return 0;
       }
-      return table_(x/step_);
+      return table_(x);
     }
     
     T step_;

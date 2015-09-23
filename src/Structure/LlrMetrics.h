@@ -84,7 +84,8 @@ namespace fec {
   class MaxLogSum {
   public:
     using isRecursive = std::true_type;
-    //typedef std::false_type isRecursive;
+    
+    MaxLogSum(typename LlrMetrics::Type gain = 1.0) {gain_ = gain;}
     
     /**
      * Computes log add operation with max approximation.
@@ -93,7 +94,10 @@ namespace fec {
      */
     static inline typename LlrMetrics::Type sum(typename LlrMetrics::Type a, typename LlrMetrics::Type b) {return std::max(a,b);}
     static inline typename LlrMetrics::Type prior(typename LlrMetrics::Type x) {return x;}
-    static inline typename LlrMetrics::Type post(typename LlrMetrics::Type x) {return x;}
+    inline typename LlrMetrics::Type post(typename LlrMetrics::Type x) {return x * gain_;}
+    
+  private:
+    typename LlrMetrics::Type gain_ = 1.0;
   };
   
   /**
@@ -104,7 +108,7 @@ namespace fec {
   public:
     using isRecursive = std::true_type;
     
-    LinearLogSum(typename LlrMetrics::Type step = 4.0, size_t length = 8) : log1pexpm(step, length) {}
+    LinearLogSum(typename LlrMetrics::Type step = 4, size_t length = 8) : log1pexpm(step, length) {}
     /**
      * Computes log add operation with max approximation.
      *  \param  a First operand
@@ -147,7 +151,7 @@ namespace fec {
   public:
     using isRecursive = std::true_type;
     
-    LinearBoxSum(typename LlrMetrics::Type step = 4.0, size_t length = 8) : log1pexpm(step, length) {}
+    LinearBoxSum(typename LlrMetrics::Type step = 4, size_t length = 8) : log1pexpm(step, length) {}
     /**
      * Computes log add operation with max approximation.
      *  \param  a First operand
@@ -176,7 +180,8 @@ namespace fec {
   class MinBoxSum {
   public:
     using isRecursive = std::true_type;
-    //typedef std::false_type isRecursive;
+    
+    MinBoxSum(typename LlrMetrics::Type gain = 1.0) {gain_ = gain;}
     
     /**
      * Computes log add operation with max approximation.
@@ -192,7 +197,10 @@ namespace fec {
       }
     }
     static inline typename LlrMetrics::Type prior(typename LlrMetrics::Type x) {return x;}
-    static inline typename LlrMetrics::Type post(typename LlrMetrics::Type x) {return x;}
+    inline typename LlrMetrics::Type post(typename LlrMetrics::Type x) {return x*gain_;}
+    
+  private:
+    typename LlrMetrics::Type gain_ = 1.0;
   };
   
   /**

@@ -11,7 +11,8 @@
 #include <memory>
 #include <cstdint>
 #include <iostream>
-#include "Turbo/Turbo.h"
+
+#include <boost/property_tree/ptree.hpp>
 
 #include <itpp/comm/turbo.h>
 #include <itpp/base/vec.h>
@@ -19,11 +20,9 @@
 #include <itpp/comm/channel.h>
 #include <itpp/comm/interleave.h>
 
-struct ElapsedTime
-{
-  double mean;
-  double std;
-};
+#include "Turbo/Turbo.h"
+
+const double z = 1.96;
 
 template <class V>
 V randomBits(size_t n) {
@@ -72,7 +71,7 @@ itpp::vec distort(const itpp::bvec& input, double snrdb)
   return llr;
 }
 
-ElapsedTime fecEncode(const fec::Codec& code, const std::vector<fec::BitField<bool>>& msg, size_t M)
+boost::property_tree::ptree fecEncode(const fec::Codec& code, const std::vector<fec::BitField<bool>>& msg, size_t M)
 {
   std::vector<double> elapsedTimes(M);
   for (size_t i = 0; i < M; ++i) {
@@ -83,16 +82,17 @@ ElapsedTime fecEncode(const fec::Codec& code, const std::vector<fec::BitField<bo
     std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double> >(t2 - t1);
     elapsedTimes[i] = time_span.count();
   }
-  ElapsedTime elapsedTime;
+  boost::property_tree::ptree et;
   double sum = std::accumulate(elapsedTimes.begin(), elapsedTimes.end(), 0.0);
-  elapsedTime.mean = sum / elapsedTimes.size();
+  double avg = sum / elapsedTimes.size();
+  et.put("avg", avg);
   
   double sq_sum = std::inner_product(elapsedTimes.begin(), elapsedTimes.end(), elapsedTimes.begin(), 0.0);
-  elapsedTime.std = std::sqrt(sq_sum / elapsedTimes.size() - elapsedTime.mean * elapsedTime.mean);
-  return elapsedTime;
+  et.put("intvl", std::sqrt(sq_sum / elapsedTimes.size() - avg * avg) * z / sqrt(M));
+  return et;
 }
 
-ElapsedTime fecDecode(const fec::Codec& code, const std::vector<fec::LlrType>& llr, size_t M)
+boost::property_tree::ptree fecDecode(const fec::Codec& code, const std::vector<fec::LlrType>& llr, size_t M)
 {
   std::vector<double> elapsedTimes(M);
   for (size_t i = 0; i < M; ++i) {
@@ -103,16 +103,18 @@ ElapsedTime fecDecode(const fec::Codec& code, const std::vector<fec::LlrType>& l
     std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double> >(t2 - t1);
     elapsedTimes[i] = time_span.count();
   }
-  ElapsedTime elapsedTime;
+  boost::property_tree::ptree et;
   double sum = std::accumulate(elapsedTimes.begin(), elapsedTimes.end(), 0.0);
-  elapsedTime.mean = sum / elapsedTimes.size();
+  double avg = sum / elapsedTimes.size();
+  et.put("avg", avg);
   
   double sq_sum = std::inner_product(elapsedTimes.begin(), elapsedTimes.end(), elapsedTimes.begin(), 0.0);
-  elapsedTime.std = std::sqrt(sq_sum / elapsedTimes.size() - elapsedTime.mean * elapsedTime.mean);
-  return elapsedTime;
+  et.put("intvl", std::sqrt(sq_sum / elapsedTimes.size() - avg * avg) * z / sqrt(M));
+  return et;
 }
 
-ElapsedTime itppEncode(itpp::Turbo_Codec& code, const itpp::bvec& msg, size_t M)
+template <class ItppCodec>
+boost::property_tree::ptree itppEncode(ItppCodec& code, const itpp::bvec& msg, size_t M)
 {
   std::vector<double> elapsedTimes(M);
   for (size_t i = 0; i < M; ++i) {
@@ -123,31 +125,36 @@ ElapsedTime itppEncode(itpp::Turbo_Codec& code, const itpp::bvec& msg, size_t M)
     std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double> >(t2 - t1);
     elapsedTimes[i] = time_span.count();
   }
-  ElapsedTime elapsedTime;
+  boost::property_tree::ptree et;
   double sum = std::accumulate(elapsedTimes.begin(), elapsedTimes.end(), 0.0);
-  elapsedTime.mean = sum / elapsedTimes.size();
+  double avg = sum / elapsedTimes.size();
+  et.put("avg", avg);
   
   double sq_sum = std::inner_product(elapsedTimes.begin(), elapsedTimes.end(), elapsedTimes.begin(), 0.0);
-  elapsedTime.std = std::sqrt(sq_sum / elapsedTimes.size() - elapsedTime.mean * elapsedTime.mean);
-  return elapsedTime;
+  et.put("intvl", std::sqrt(sq_sum / elapsedTimes.size() - avg * avg) * z / sqrt(M));
+  return et;
 }
 
-ElapsedTime itppDecode(itpp::Turbo_Codec& code, const itpp::vec& llr, size_t M)
+template <class ItppCodec>
+boost::property_tree::ptree itppDecode(ItppCodec& code, const itpp::vec& llr, size_t M, size_t N = 1)
 {
   std::vector<double> elapsedTimes(M);
   for (size_t i = 0; i < M; ++i) {
     std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
     itpp::bvec decodedMsg;
-    code.decode(llr, decodedMsg);
+    for (size_t j = 0; j < N; ++j) {
+      code.decode(llr, decodedMsg);
+    }
     std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double> >(t2 - t1);
     elapsedTimes[i] = time_span.count();
   }
-  ElapsedTime elapsedTime;
+  boost::property_tree::ptree et;
   double sum = std::accumulate(elapsedTimes.begin(), elapsedTimes.end(), 0.0);
-  elapsedTime.mean = sum / elapsedTimes.size();
+  double avg = sum / elapsedTimes.size();
+  et.put("avg", avg);
   
   double sq_sum = std::inner_product(elapsedTimes.begin(), elapsedTimes.end(), elapsedTimes.begin(), 0.0);
-  elapsedTime.std = std::sqrt(sq_sum / elapsedTimes.size() - elapsedTime.mean * elapsedTime.mean);
-  return elapsedTime;
+  et.put("intvl", std::sqrt(sq_sum / elapsedTimes.size() - avg * avg) * z / sqrt(M));
+  return et;
 }
