@@ -94,7 +94,7 @@ namespace fec {
      */
     static inline typename LlrMetrics::Type sum(typename LlrMetrics::Type a, typename LlrMetrics::Type b) {return std::max(a,b);}
     static inline typename LlrMetrics::Type prior(typename LlrMetrics::Type x) {return x;}
-    inline typename LlrMetrics::Type post(typename LlrMetrics::Type x) {return x * gain_;}
+    inline typename LlrMetrics::Type post(typename LlrMetrics::Type x) const {return x * gain_;}
     
   private:
     typename LlrMetrics::Type gain_ = 1.0;
@@ -114,7 +114,7 @@ namespace fec {
      *  \param  a First operand
      *  \param  b Second operand
      */
-    inline typename LlrMetrics::Type sum(typename LlrMetrics::Type a, typename LlrMetrics::Type b) {
+    inline typename LlrMetrics::Type sum(typename LlrMetrics::Type a, typename LlrMetrics::Type b) const {
       if (a == b) {
         return a;
       }
@@ -157,7 +157,7 @@ namespace fec {
      *  \param  a First operand
      *  \param  b Second operand
      */
-    inline typename LlrMetrics::Type sum(typename LlrMetrics::Type a, typename LlrMetrics::Type b) {
+    inline typename LlrMetrics::Type sum(typename LlrMetrics::Type a, typename LlrMetrics::Type b) const {
       if (std::signbit(a) ^ std::signbit(b)) {
         return std::min(std::abs(a),std::abs(b)) + log1pexpm(std::abs(a+b)) - log1pexpm(std::abs(a-b));
       }
@@ -197,7 +197,7 @@ namespace fec {
       }
     }
     static inline typename LlrMetrics::Type prior(typename LlrMetrics::Type x) {return x;}
-    inline typename LlrMetrics::Type post(typename LlrMetrics::Type x) {return x*gain_;}
+    inline typename LlrMetrics::Type post(typename LlrMetrics::Type x) const {return x*gain_;}
     
   private:
     typename LlrMetrics::Type gain_ = 1.0;

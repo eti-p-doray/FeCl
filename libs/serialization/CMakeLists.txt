@@ -3,17 +3,11 @@
 cmake_minimum_required(VERSION 2.8.11)
 
 
-#if(Boost_USE_STATIC_LIBS)
-#  project("Serialization-Static")
-#else()
-#  project("Serialization-Shared")
-#endif()
-
 #
 # Compiler settings
 #
 
-message(STATUS "compiler is ${CMAKE_CXX_COMPILER_ID}" )
+add_definitions(-DBOOST_ALL_NO_LIB)
 
 if (UNIX)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")

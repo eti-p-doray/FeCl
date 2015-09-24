@@ -1,8 +1,3 @@
-set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/) # add FindMatlab module
-
-find_package(Matlab REQUIRED)
-set(Boost_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/libs/include/)
-set(Boost_LIBRARIES serialization)
 
 set(SOURCES
   @Codec/Codec_destroy.cpp

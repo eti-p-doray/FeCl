@@ -51,7 +51,7 @@ namespace fec {
       size_t i = x;
       return (y[i+1] - y[i]) * (x-i) + y[i];
     }
-    inline size_t size() {
+    inline size_t size() const {
       return y.size();
     }
     
@@ -69,14 +69,14 @@ namespace fec {
         step_ = step;
       }
       T operator()(T x) {
-        return std::log(1+std::exp(-(double(x)/step_)));
+        return std::log(1.0+std::exp(-(double(x)/step_)));
       }
       T step_;
     };
     
-    inline T operator()(T x) {
+    inline T operator()(T x) const {
       x *= step_;
-      if(x >= table_.size()) {
+      if(x >= table_.size()-1) {
         return 0;
       }
       return table_(x);
