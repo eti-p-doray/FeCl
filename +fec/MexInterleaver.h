@@ -52,4 +52,12 @@ public:
   }
 };
 
+inline mxArray* toMxArray(const fec::Interleaver& in) {
+  std::vector<size_t> indices(in.outputSize());
+  for (size_t i = 0; i < indices.size(); ++i) {
+    indices[i] = in[i]+1;
+  }
+  return toMxArray(indices);
+}
+
 #endif
