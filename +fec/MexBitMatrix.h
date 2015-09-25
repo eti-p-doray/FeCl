@@ -35,8 +35,9 @@
 #include <mex.h>
 #include <matrix.h>
 
-#include "MexConversion.h"
 #include "Structure/BitMatrix.h"
+#include "MexConversion.h"
+#include "MexBitField.h"
 
 template <>
 class mxArrayTo<fec::SparseBitMatrix> {
@@ -99,5 +100,27 @@ public:
 
   }
 };
+
+inline mxArray* toMxArray(fec::SparseBitMatrix mat) {
+  mat = mat.transpose();
   
+  mxArray* out = mxCreateSparseLogicalMatrix(mat.cols(), mat.rows(), mat.size());
+  auto jc = mxGetJc(out);
+  auto ir = mxGetIr(out);
+  auto data = reinterpret_cast<mxLogical*>(mxGetData(out));
+  
+  jc[0] = 0;
+  for (size_t i = 0; i < mat.rows(); ++i) {
+    jc[i+1] = jc[i] + mat[i].size();
+  }
+  
+  for (size_t i = 0; i < mat.size(); ++i) {
+    ir[i] = mat.at(i);
+  }
+  
+  std::fill(data, data+mat.size(), true);
+
+  return out;
+}
+
 #endif
