@@ -40,7 +40,7 @@ using namespace fec;
  *  \param  outputSize  Number of output symbol for each branch
  *  \param  stateSize Number of bits (registers) in the state
  */
-Trellis::Trellis(std::vector<size_t> nextState, std::vector<size_t> output, size_t inputSize, size_t outputSize, size_t stateSize)
+Trellis::Trellis(std::vector<BitField<size_t>> nextState, std::vector<BitField<size_t>> output, size_t inputSize, size_t outputSize, size_t stateSize)
 {
   stateSize_ = stateSize;
   outputSize_ = outputSize;
@@ -63,7 +63,7 @@ Trellis::Trellis(std::vector<size_t> nextState, std::vector<size_t> output, size
       assert(nextState_[i*inputCount()+j] < stateCount());
       output_[i*inputCount()+j] = 0;
       for (size_t k = 0; k < this->outputSize(); k++) {
-        output_[i*inputCount()+j][k] = BitField<size_t>(output[i+input*stateCount()])[this->outputSize()-k-1];
+        output_[i*inputCount()+j][k] = output[i+input*stateCount()].test(this->outputSize()-k-1);
       }
       assert(output_[i*inputCount()+j] < outputCount());
     }

@@ -26,8 +26,8 @@
  Definition of toTrellis conversion function.
  ******************************************************************************/
 
-#ifndef TO_TRELLIS_H
-#define TO_TRELLIS_H
+#ifndef MEX_TRELLIS_H
+#define MEX_TRELLIS_H
 
 #include <memory>
 #include <math.h>
@@ -36,6 +36,7 @@
 
 #include "Structure/Trellis.h"
 #include "MexConversion.h"
+#include "MexBitField.h"
 
 template<>
 class mxArrayTo<fec::Trellis> {
@@ -44,13 +45,43 @@ public:
     if (in == nullptr) {
       throw std::invalid_argument("null");
     }
-    return fec::Trellis(mxArrayTo<std::vector<size_t>>::f(mxGetField(in, 0, "nextStates")),
-                            mxArrayTo<std::vector<size_t>>::f(mxGetField(in, 0, "outputs")),
+    return fec::Trellis(mxArrayTo<std::vector<fec::BitField<size_t>>>::f(mxGetField(in, 0, "nextStates")),
+                            mxArrayTo<std::vector<fec::BitField<size_t>>>::f(mxGetField(in, 0, "outputs")),
                             log2(mxArrayTo<size_t>::f(mxGetField(in, 0, "numInputSymbols"))),
                             log2(mxArrayTo<size_t>::f(mxGetField(in, 0, "numOutputSymbols"))),
                             log2(mxArrayTo<size_t>::f(mxGetField(in, 0, "numStates"))));
   }
 };
+
+inline mxArray* toMxArray(const fec::Trellis& trellis)
+{
+  const char* fieldnames[] = {"numInputSymbols", "numOutputSymbols", "numStates", "nextStates", "outputs"};
+  mxArray* out = mxCreateStructMatrix(1,1,1, fieldnames);
+  
+  mxSetField(out, 0, fieldnames[0], toMxArray(trellis.inputCount()));
+  mxSetField(out, 0, fieldnames[1], toMxArray(trellis.outputCount()));
+  mxSetField(out, 0, fieldnames[2], toMxArray(trellis.stateCount()));
+
+  std::vector<fec::BitField<size_t>> nextStates(trellis.inputCount() * trellis.stateCount());
+  std::vector<fec::BitField<size_t>> outputs(trellis.inputCount() * trellis.stateCount());
+  for (size_t i = 0; i < trellis.stateCount(); ++i) {
+    for (fec::BitField<size_t> j = 0; j < trellis.inputCount(); j++) {
+      fec::BitField<size_t> input = 0;
+      for (int k = 0; k < trellis.inputSize(); ++k) {
+        input[k] = j[trellis.inputSize()-k-1];
+      }
+      nextStates[i+input*trellis.stateCount()] = trellis.getNextState(i, j);
+      outputs[i+input*trellis.stateCount()] = 0;
+      for (size_t k = 0; k < trellis.outputSize(); k++) {
+        outputs[i+input*trellis.stateCount()][trellis.outputSize()-k-1] = trellis.getOutput(i, j).test(k);
+      }
+    }
+  }
+  
+  mxSetField(out, 0, fieldnames[3], toMxArray(nextStates));
+  mxSetField(out, 0, fieldnames[4], toMxArray(outputs));
+  return out;
+}
 
 
 #endif
