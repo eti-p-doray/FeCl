@@ -30,7 +30,7 @@
 #include <mex.h>
 
 #include "Convolutional/Convolutional.h"
-#include "../MexConversion.h"
+#include "../util/MexConversion.h"
 #include "MexDecoderOptions.h"
 #include "MexEncoderOptions.h"
 

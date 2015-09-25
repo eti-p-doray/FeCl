@@ -31,8 +31,8 @@
 #include "Turbo/Turbo.h"
 #include "Ldpc/Ldpc.h"
 #include "Structure/Serialization.h"
-#include "../MexConversion.h"
-#include "../MexBitField.h"
+#include "../util/MexConversion.h"
+#include "../util/MexBitField.h"
 
 using namespace fec;
 

@@ -35,7 +35,7 @@
 #include <mex.h>
 
 #include "Turbo/Turbo.h"
-#include "../MexConversion.h"
+#include "../util/MexConversion.h"
 
 template <>
 class mxArrayTo<fec::Turbo::DecoderOptions> {

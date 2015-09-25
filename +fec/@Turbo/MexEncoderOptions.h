@@ -35,9 +35,9 @@
 #include <mex.h>
 
 #include "Turbo/Turbo.h"
-#include "../MexTrellis.h"
-#include "../MexInterleaver.h"
-#include "../MexConversion.h"
+#include "../util/MexTrellis.h"
+#include "../util/MexInterleaver.h"
+#include "../util/MexConversion.h"
 
 template <>
 class mxArrayTo<fec::Turbo::EncoderOptions> {

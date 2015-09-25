@@ -30,7 +30,7 @@
 #include <mex.h>
 
 #include "Ldpc/Ldpc.h"
-#include "../MexConversion.h"
+#include "../util/MexConversion.h"
 #include "MexDecoderOptions.h"
 #include "MexEncoderOptions.h"
 

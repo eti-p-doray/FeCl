@@ -33,7 +33,7 @@
 #include <mex.h>
 
 #include "Convolutional/Convolutional.h"
-#include "../MexConversion.h"
+#include "../util/MexConversion.h"
 
 template <>
 class mxArrayTo<fec::Convolutional::DecoderOptions> {

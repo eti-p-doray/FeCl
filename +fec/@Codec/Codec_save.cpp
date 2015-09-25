@@ -33,8 +33,8 @@
 #include "Convolutional/Convolutional.h"
 #include "Turbo/Turbo.h"
 #include "Ldpc/Ldpc.h"
-#include "../MexConversion.h"
-#include "../MexSaveLoad.h"
+#include "../util/MexConversion.h"
+#include "../util/MexSaveLoad.h"
 
 using namespace fec;
 

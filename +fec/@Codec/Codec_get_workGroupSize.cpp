@@ -31,7 +31,7 @@
 #include "Turbo/Turbo.h"
 #include "Ldpc/Ldpc.h"
 #include "Structure/Serialization.h"
-#include "../MexConversion.h"
+#include "../util/MexConversion.h"
 
 using namespace fec;
 

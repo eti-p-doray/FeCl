@@ -35,8 +35,8 @@
 #include <mex.h>
 
 #include "Convolutional/Convolutional.h"
-#include "../MexTrellis.h"
-#include "../MexConversion.h"
+#include "../util/MexTrellis.h"
+#include "../util/MexConversion.h"
 
 template <>
 class mxArrayTo<fec::Convolutional::EncoderOptions> {

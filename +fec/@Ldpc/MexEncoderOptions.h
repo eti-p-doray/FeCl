@@ -35,8 +35,8 @@
 #include <mex.h>
 
 #include "Ldpc/Ldpc.h"
-#include "../MexBitMatrix.h"
-#include "../MexConversion.h"
+#include "../util/MexBitMatrix.h"
+#include "../util/MexConversion.h"
 
 template <>
 class mxArrayTo<fec::Ldpc::EncoderOptions> {

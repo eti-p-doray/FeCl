@@ -28,7 +28,7 @@
 
 #include "Turbo/Turbo.h"
 #include "Structure/Serialization.h"
-#include "../MexConversion.h"
+#include "../util/MexConversion.h"
 #include "MexDecoderOptions.h"
 
 using namespace fec;
