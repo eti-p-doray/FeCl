@@ -9,8 +9,8 @@ results.msgSize = T;
 results.blocks = N;
 results.experiments = M;
 
-results.Convolutional = Convolutional(snrdb, T, N, M, z);
-results.Turbo = Turbo(snrdb, T, N, M, z);
+%results.Convolutional = Convolutional(snrdb, T, N, M, z);
+%results.Turbo = Turbo(snrdb, T, N, M, z);
 results.Ldpc = Ldpc(snrdb, T, N, M, z);
 
 savejson('', results, '../benchmarkMatlabResult.json');
