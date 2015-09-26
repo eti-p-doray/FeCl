@@ -53,6 +53,7 @@ enum WrapFcnId : uint32_t {
   Convolutional_get_decoderOptions_id,
   Convolutional_set_decoderOptions_id,
   Convolutional_set_encoderOptions_id,
+  Trellis_constructor_id,
 };
 
 void Codec_destroy( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] );
@@ -83,3 +84,4 @@ void Convolutional_get_decoderOptions( int nlhs, mxArray *plhs[], int nrhs, cons
 void Convolutional_set_decoderOptions( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] );
 void Convolutional_set_encoderOptions( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] );
 
+void Trellis_constructor( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] );

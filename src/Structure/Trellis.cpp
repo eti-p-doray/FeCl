@@ -80,62 +80,27 @@ Trellis::Trellis(std::vector<BitField<size_t>> nextState, std::vector<BitField<s
  *    (connections from each register to each output)
  *    associated with each input bit stream
  */
-Trellis::Trellis(std::vector<BitField<size_t> > constraintLengths, std::vector<std::vector<BitField<size_t> > > generator)
-{
-  inputSize_ = size_t(generator.size());
-  outputSize_ = size_t(generator[0].size());
-  assert(constraintLengths.size() == generator.size());
-  for (size_t i = 0; i < inputSize(); i++) {
-    assert(outputSize_ == generator[i].size());
-  }
-  
-  outputCount_ = 1<<outputSize_;
-  inputCount_ = 1<<inputSize_;
-  
-  
-  std::vector<BitField<size_t> > inputStates(constraintLengths.size(), 0);
-  
-  stateSize_ = 0;
-  for (size_t i = 0; i < constraintLengths.size(); i++) {
-    stateSize_ += constraintLengths[i] - 1;
-  }
-  stateCount_ = 1<<stateSize_;
-  nextState_.resize(stateCount()*inputCount());
-  output_.resize(stateCount()*inputCount());
-  
-  for (BitField<size_t> state = 0; state < stateCount(); state++) {
-    for (BitField<size_t> input = 0; input < inputCount(); input++) {
-      nextState_[state*inputCount()+input] = 0;
-      output_[state*inputCount()+input] = 0;
-      size_t j = 0;
-      for (size_t i = 0; i < constraintLengths.size(); i++) {
-        for (size_t k = 0; k < constraintLengths[i]-1; k++) {
-          inputStates[i][k] = state[j+k];
-        }
-        
-        for (size_t k = 0; k < outputSize_; k++) {
-          assert((generator[i][k]>>constraintLengths[i]) == 0);
-          output_[state*inputCount()+input][k] ^=
-          (input[i] & generator[i][k].test(constraintLengths[i]-1))
-          ^ parity(inputStates[i] & generator[i][k]);
-        }
-        
-        nextState_[state*inputCount()+input][j+constraintLengths[i]-2] = (input[i]);
-        nextState_[state*inputCount()+input] |= (inputStates[i] >> 1) << j ;
-        
-        j += constraintLengths[i]-1;
-      }
-    }
-  }
-}
-
 Trellis::Trellis(std::vector<BitField<size_t>> constraintLengths, std::vector<std::vector<BitField<size_t>>> generator, std::vector<BitField<size_t>> feedback)
 {
   inputSize_ = size_t(generator.size());
   outputSize_ = size_t(generator[0].size());
-  assert(constraintLengths.size() == generator.size());
+  if (constraintLengths.size() != generator.size()) {
+    throw std::invalid_argument("Invalid number of generators");
+  }
+  if (constraintLengths.size() != feedback.size() && feedback.size() != 0) {
+    throw std::invalid_argument("Invalid number of feedback");
+  }
   for (size_t i = 0; i < inputSize(); i++) {
-    assert(outputSize_ == generator[i].size());
+    if (outputSize_ != generator[i].size()) {
+      throw std::invalid_argument("Invalid number of generators");
+    }
+  }
+  if (feedback.size() == 0) {
+    feedback.resize(constraintLengths.size());
+    for (int i = 0; i < feedback.size(); ++i) {
+      feedback[i] = 0;
+      feedback[i].set(constraintLengths[i]-1);
+    }
   }
   
   outputCount_ = 1<<outputSize_;
@@ -163,13 +128,17 @@ Trellis::Trellis(std::vector<BitField<size_t>> constraintLengths, std::vector<st
         }
         
         for (size_t k = 0; k < outputSize_; k++) {
-          assert((generator[i][k]>>constraintLengths[i]) == 0);
+          if ((generator[i][k]>>constraintLengths[i]) == 0) {
+            throw std::invalid_argument("Invalid connection in generator");
+          }
           output_[state*inputCount()+input][k] ^=
           ((input[i] ^ parity(inputStates[i] & feedback[i])) & generator[i][k].test(constraintLengths[i]-1))
           ^ parity(inputStates[i] & generator[i][k]);
         }
         
-        assert(feedback[i].test(constraintLengths[i]-1) == 1);
+        if (feedback[i].test(constraintLengths[i]-1) == 1) {
+          throw std::invalid_argument("Feedback must connect systematic");
+        }
         nextState_[state*inputCount()+input][j+constraintLengths[i]-2] = (input[i] & feedback[i].test(constraintLengths[i]-1))
         ^ parity(inputStates[i] & feedback[i]);
         nextState_[state*inputCount()+input] |= (inputStates[i] >> 1) << j ;

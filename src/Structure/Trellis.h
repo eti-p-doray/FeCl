@@ -61,8 +61,7 @@ public:
   
   Trellis() = default;
   Trellis(std::vector<BitField<size_t>> nextState, std::vector<BitField<size_t>> output, size_t inputSize, size_t outputSize, size_t stateSize);
-  Trellis(std::vector<BitField<size_t> > constraintLengths, std::vector<std::vector<BitField<size_t> > > generator);
-  Trellis(std::vector<BitField<size_t> > constraintLengths, std::vector<std::vector<BitField<size_t> > > generator, std::vector<BitField<size_t> > feedback);/**< Not yet implemented */
+  Trellis(std::vector<BitField<size_t> > constraintLengths, std::vector<std::vector<BitField<size_t> > > generator, std::vector<BitField<size_t> > feedback = {});/**< Not yet implemented */
   
   Trellis(const Trellis&) = default;
   

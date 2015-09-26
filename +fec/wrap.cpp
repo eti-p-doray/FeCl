@@ -104,6 +104,9 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
     case Convolutional_set_encoderOptions_id:
       Convolutional_set_encoderOptions(nlhs, plhs, nrhs, prhs);
       break;
+    case Trellis_constructor_id:
+      Trellis_constructor(nlhs, plhs, nrhs, prhs);
+      break;
     default:
       throw  std::invalid_argument("Unknow fonction id");
       break;
