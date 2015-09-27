@@ -90,7 +90,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
-<a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="classfec_1_1_bp_decoder-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">BpDecoder Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
@@ -107,67 +106,46 @@ Inheritance diagram for BpDecoder:</div>
  <div class="center">
   <img src="classfec_1_1_bp_decoder.png" usemap="#BpDecoder_map" alt=""/>
   <map id="BpDecoder_map" name="BpDecoder_map">
-<area href="classfec_1_1_bp_decoder_impl.html" title="This class contains the concrete implementation of the belief propagation decoder. " alt="BpDecoderImpl&lt; A &gt;" shape="rect" coords="0,56,131,80"/>
+<area href="classfec_1_1_bp_decoder_impl.html" title="This class contains the concrete implementation of the belief propagation decoder. " alt="BpDecoderImpl&lt; LlrMetrics, BoxSumAlg &gt;" shape="rect" coords="0,56,252,80"/>
 </map>
  </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a8de17a4bec3bdeaa96df20a1c7767c88"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8de17a4bec3bdeaa96df20a1c7767c88"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>appDecodeNBloc</b> (std::vector&lt; LlrType &gt;::const_iterator parityIn, std::vector&lt; LlrType &gt;::const_iterator extrinsicIn, std::vector&lt; LlrType &gt;::iterator messageOut, std::vector&lt; LlrType &gt;::iterator extrinsicOut, size_t n)</td></tr>
-<tr class="separator:a8de17a4bec3bdeaa96df20a1c7767c88"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a36ced43e4e204a8f8e50a0d472c2f58f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a36ced43e4e204a8f8e50a0d472c2f58f"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>softOutDecodeNBloc</b> (std::vector&lt; LlrType &gt;::const_iterator parityIn, std::vector&lt; LlrType &gt;::iterator messageOut, size_t n)</td></tr>
-<tr class="separator:a36ced43e4e204a8f8e50a0d472c2f58f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac9b8f21ce5239ebc8a753f4d3dbb86bd"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac9b8f21ce5239ebc8a753f4d3dbb86bd"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>decodeBlocks</b> (std::vector&lt; LlrType &gt;::const_iterator parity, std::vector&lt; <a class="el" href="classfec_1_1_bit_field.html">BitField</a>&lt; bool &gt;&gt;::iterator msg, size_t n)</td></tr>
+<tr class="separator:ac9b8f21ce5239ebc8a753f4d3dbb86bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aae15a20031c7d21a1233a21b74ab17c2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aae15a20031c7d21a1233a21b74ab17c2"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>soDecodeBlocks</b> (<a class="el" href="classfec_1_1_codec_1_1_info_iterator.html">Codec::InputIterator</a> input, <a class="el" href="classfec_1_1_codec_1_1_info_iterator.html">Codec::OutputIterator</a> output, size_t n)</td></tr>
+<tr class="separator:aae15a20031c7d21a1233a21b74ab17c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:affcd3bfef75971c357349a5154edbb87"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="affcd3bfef75971c357349a5154edbb87"></a>
-static std::unique_ptr&lt; <a class="el" href="classfec_1_1_bp_decoder.html">BpDecoder</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>create</b> (const <a class="el" href="classfec_1_1_ldpc_code_structure.html">LdpcCodeStructure</a> &amp;)</td></tr>
-<tr class="separator:affcd3bfef75971c357349a5154edbb87"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a369f211a3f85d7652d8b818c4576fb0e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a369f211a3f85d7652d8b818c4576fb0e"></a>
+static std::unique_ptr&lt; <a class="el" href="classfec_1_1_bp_decoder.html">BpDecoder</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>create</b> (const <a class="el" href="classfec_1_1_ldpc_1_1_structure.html">Ldpc::Structure</a> &amp;)</td></tr>
+<tr class="separator:a369f211a3f85d7652d8b818c4576fb0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:a2b9c6b44c165eaee9becdc3a3ef1bcde"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2b9c6b44c165eaee9becdc3a3ef1bcde"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>BpDecoder</b> (const <a class="el" href="classfec_1_1_ldpc_code_structure.html">LdpcCodeStructure</a> &amp;codeStructure)</td></tr>
-<tr class="separator:a2b9c6b44c165eaee9becdc3a3ef1bcde"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a165bbfe4c42c77673339a2cf79b1c99b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a165bbfe4c42c77673339a2cf79b1c99b"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>appDecodeBloc</b> (std::vector&lt; LlrType &gt;::const_iterator parityIn, std::vector&lt; LlrType &gt;::const_iterator extrinsicIn, std::vector&lt; LlrType &gt;::iterator messageOut, std::vector&lt; LlrType &gt;::iterator extrinsicOut)</td></tr>
-<tr class="separator:a165bbfe4c42c77673339a2cf79b1c99b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a21402c720e9089a98f738d4229955be0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a21402c720e9089a98f738d4229955be0"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>softOutDecodeBloc</b> (std::vector&lt; LlrType &gt;::const_iterator parityIn, std::vector&lt; LlrType &gt;::iterator messageOut)</td></tr>
-<tr class="separator:a21402c720e9089a98f738d4229955be0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a289618f142e2752b80d2227152f1e37e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a289618f142e2752b80d2227152f1e37e"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>checkUpdate</b> ()=0</td></tr>
-<tr class="separator:a289618f142e2752b80d2227152f1e37e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab9421569b1727b285c78e1183bf92ddb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab9421569b1727b285c78e1183bf92ddb"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>bitUpdate</b> (std::vector&lt; LlrType &gt;::const_iterator parity)=0</td></tr>
-<tr class="separator:ab9421569b1727b285c78e1183bf92ddb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afdc0fa96bd6dfde63cfe891f7d8d887c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afdc0fa96bd6dfde63cfe891f7d8d887c"></a>
-const <a class="el" href="classfec_1_1_ldpc_code_structure.html">LdpcCodeStructure</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>codeStructure</b> () const </td></tr>
-<tr class="separator:afdc0fa96bd6dfde63cfe891f7d8d887c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
-Protected Attributes</h2></td></tr>
-<tr class="memitem:a36a99ac6a12b08dd2d7f4849748eee37"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a36a99ac6a12b08dd2d7f4849748eee37"></a>
-std::vector&lt; uint8_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>hardParity_</b></td></tr>
-<tr class="separator:a36a99ac6a12b08dd2d7f4849748eee37"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afdcbee8fc6a7b458539b297ab7b65227"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afdcbee8fc6a7b458539b297ab7b65227"></a>
-std::vector&lt; LlrType &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>bitMetrics_</b></td></tr>
-<tr class="separator:afdcbee8fc6a7b458539b297ab7b65227"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a454065084f184804d2e80adb855a2b37"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a454065084f184804d2e80adb855a2b37"></a>
-std::vector&lt; LlrType &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>checkMetrics_</b></td></tr>
-<tr class="separator:a454065084f184804d2e80adb855a2b37"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adb89187313b7db9d78245f82764fa97b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adb89187313b7db9d78245f82764fa97b"></a>
-std::vector&lt; LlrType &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>checkMetricsBuffer_</b></td></tr>
-<tr class="separator:adb89187313b7db9d78245f82764fa97b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3e4c33c3e1c99c53f4b90f08321b48d4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3e4c33c3e1c99c53f4b90f08321b48d4"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>BpDecoder</b> (const <a class="el" href="classfec_1_1_ldpc_1_1_structure.html">Ldpc::Structure</a> &amp;codeStructure)</td></tr>
+<tr class="separator:a3e4c33c3e1c99c53f4b90f08321b48d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4be18c9bacc6fcc0fc9243051e1609dc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4be18c9bacc6fcc0fc9243051e1609dc"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>decodeBlock</b> (std::vector&lt; LlrType &gt;::const_iterator parity, std::vector&lt; <a class="el" href="classfec_1_1_bit_field.html">BitField</a>&lt; bool &gt;&gt;::iterator msg)=0</td></tr>
+<tr class="separator:a4be18c9bacc6fcc0fc9243051e1609dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a88961127d85a334a04e451f537857549"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a88961127d85a334a04e451f537857549"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>soDecodeBlock</b> (<a class="el" href="classfec_1_1_codec_1_1_info_iterator.html">Codec::InputIterator</a> input, <a class="el" href="classfec_1_1_codec_1_1_info_iterator.html">Codec::OutputIterator</a> output)=0</td></tr>
+<tr class="separator:a88961127d85a334a04e451f537857549"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:add29404c484896061b7bc67b552c29af"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="add29404c484896061b7bc67b552c29af"></a>
+const <a class="el" href="classfec_1_1_ldpc_1_1_structure.html">Ldpc::Structure</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>structure</b> () const </td></tr>
+<tr class="separator:add29404c484896061b7bc67b552c29af"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>This class contains the abstract implementation of the belief propagation decoder. </p>
-<p>This algorithm is used for decoding in an <a class="el" href="classfec_1_1_ldpc_code.html" title="This class represents an ldpc encode / decoder. ">LdpcCode</a>. The reason for this class is to offer an common interface of bp decoders while allowing the compiler to inline implementation specific functions by using templates instead of polymorphism. </p>
+<p>This algorithm is used for decoding in an LdpcCodec. The reason for this class is to offer an common interface of bp decoders while allowing the compiler to inline implementation specific functions by using templates instead of polymorphism. </p>
 </div><hr/>The documentation for this class was generated from the following files:<ul>
-<li>src/LdpcCode/BpDecoder/<a class="el" href="_bp_decoder_8h_source.html">BpDecoder.h</a></li>
-<li>src/LdpcCode/BpDecoder/BpDecoder.cpp</li>
+<li>Ldpc/BpDecoder/<a class="el" href="_bp_decoder_8h_source.html">BpDecoder.h</a></li>
+<li>Ldpc/BpDecoder/BpDecoder.cpp</li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

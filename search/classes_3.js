@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['ldpccode',['LdpcCode',['../classfec_1_1_ldpc_code.html',1,'fec']]],
-  ['ldpccodestructure',['LdpcCodeStructure',['../classfec_1_1_ldpc_code_structure.html',1,'fec']]],
-  ['logmap',['LogMap',['../classfec_1_1_log_map.html',1,'fec']]]
+  ['encoderoptions',['EncoderOptions',['../structfec_1_1_convolutional_1_1_encoder_options.html',1,'fec::Convolutional']]],
+  ['encoderoptions',['EncoderOptions',['../structfec_1_1_turbo_1_1_encoder_options.html',1,'fec::Turbo']]],
+  ['encoderoptions',['EncoderOptions',['../structfec_1_1_ldpc_1_1_encoder_options.html',1,'fec::Ldpc']]]
 ];

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['schedulingtype',['SchedulingType',['../classfec_1_1_turbo_code_structure.html#aa4dfc80e0475312169cf7a2b4299b825',1,'fec::TurboCodeStructure']]]
+  ['decoderalgorithm',['DecoderAlgorithm',['../classfec_1_1_codec.html#a5dfadcf4e4da97c1fe8b7c7bf00ac1aa',1,'fec::Codec']]]
 ];

@@ -1,10 +1,13 @@
 var searchData=
 [
-  ['ldpc',['Ldpc',['../classfec_1_1_code_structure.html#a1d1cfd8ffb84e947f82999c682b666a7a65f13839acdb66cfab95b1fd9a9d3416',1,'fec::CodeStructure']]],
-  ['ldpccode',['LdpcCode',['../classfec_1_1_ldpc_code.html',1,'fec']]],
-  ['ldpccode',['LdpcCode',['../classfec_1_1_ldpc_code.html#a4d1f59a54f877db6d2100440f4f800b8',1,'fec::LdpcCode']]],
-  ['ldpccodestructure',['LdpcCodeStructure',['../classfec_1_1_ldpc_code_structure.html',1,'fec']]],
-  ['ldpccodestructure',['LdpcCodeStructure',['../classfec_1_1_ldpc_code_structure.html#a0d8b5e27c4b45683a9db4c4cae4eaa5e',1,'fec::LdpcCodeStructure::LdpcCodeStructure(const SparseBitMatrix &amp;H, size_t iterationCount=50, DecoderType type=MinSumBp)'],['../classfec_1_1_ldpc_code_structure.html#a67f780ade7ccd9d35ade4fa4e8e1b26b',1,'fec::LdpcCodeStructure::LdpcCodeStructure(SparseBitMatrix &amp;&amp;H, size_t iterationCount=50, DecoderType type=MinSumBp)']]],
-  ['logmap',['LogMap',['../classfec_1_1_log_map.html',1,'fec']]],
-  ['logmap',['LogMap',['../classfec_1_1_convolutional_code_structure.html#a477bc238b10958849277f79d585eff2aaf41d06f5043827c8d4ba5da56dcf4652',1,'fec::ConvolutionalCodeStructure']]]
+  ['ldpc',['Ldpc',['../classfec_1_1_ldpc.html',1,'fec']]],
+  ['ldpc',['Ldpc',['../classfec_1_1_codec_1_1_structure.html#a1d1cfd8ffb84e947f82999c682b666a7a65f13839acdb66cfab95b1fd9a9d3416',1,'fec::Codec::Structure::Ldpc()'],['../classfec_1_1_ldpc.html#a46c8b5c28e3cbcc31d815a03d181e5ce',1,'fec::Ldpc::Ldpc()']]],
+  ['linear',['Linear',['../classfec_1_1_codec.html#a5dfadcf4e4da97c1fe8b7c7bf00ac1aaa1a1f3bc55fefa098d9034cc46e2e7a2b',1,'fec::Codec']]],
+  ['linearboxsum',['LinearBoxSum',['../classfec_1_1_linear_box_sum.html',1,'fec']]],
+  ['linearlog1pexpm',['Linearlog1pexpm',['../structfec_1_1_linearlog1pexpm.html',1,'fec']]],
+  ['linearlog1pexpm_3c_20typename_20llrmetrics_3a_3atype_20_3e',['Linearlog1pexpm&lt; typename LlrMetrics::Type &gt;',['../structfec_1_1_linearlog1pexpm.html',1,'fec']]],
+  ['linearlogsum',['LinearLogSum',['../classfec_1_1_linear_log_sum.html',1,'fec']]],
+  ['lineartable',['LinearTable',['../classfec_1_1_linear_table.html',1,'fec']]],
+  ['lineartable_3c_20typename_20llrmetrics_3a_3atype_20_3e',['LinearTable&lt; typename LlrMetrics::Type &gt;',['../classfec_1_1_linear_table.html',1,'fec']]],
+  ['logsum',['LogSum',['../classfec_1_1_log_sum.html',1,'fec']]]
 ];

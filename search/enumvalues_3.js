@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['paddingtail',['PaddingTail',['../classfec_1_1_convolutional_code_structure.html#a2c72f72d7bd15274f8f6e4a944ee25b7a3d05ee68cc5f7c75cefb5c63b22ebb98',1,'fec::ConvolutionalCodeStructure']]],
-  ['parallel',['Parallel',['../classfec_1_1_turbo_code_structure.html#aa4dfc80e0475312169cf7a2b4299b825ad7e3c421af2bf83aa0bc5b367e0b5573',1,'fec::TurboCodeStructure']]]
+  ['fixed',['Fixed',['../classfec_1_1_codec.html#a5a73aada416b5b8e3f549fb0caf28219a8da0283267b1c9960b792a579407ff02',1,'fec::Codec']]],
+  ['floating',['Floating',['../classfec_1_1_codec.html#a5a73aada416b5b8e3f549fb0caf28219a4815677a428e37e90c6f71f94ddd7b65',1,'fec::Codec']]]
 ];

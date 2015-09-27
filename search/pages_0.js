@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['forwarderrorcorrection',['ForwardErrorCorrection',['../index.html',1,'']]]
+  ['fecl',['FeCl',['../index.html',1,'']]]
 ];

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['forwardmetrics_5f',['forwardMetrics_',['../classfec_1_1_map_decoder.html#ac316f1a687e517735e845a8a747c5f29',1,'fec::MapDecoder']]]
+  ['nextstate',['nextState',['../classfec_1_1_trellis.html#aea8c97ad9577f0c77651d229383a6df8',1,'fec::Trellis::Branch']]]
 ];

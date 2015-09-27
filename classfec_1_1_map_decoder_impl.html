@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.9.1"/>
-<title>ForwardErrorCorrection: MapDecoderImpl&lt; A &gt; Class Template Reference</title>
+<title>ForwardErrorCorrection: MapDecoderImpl&lt; LlrMetrics, LogSumAlg &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -91,120 +91,115 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="classfec_1_1_map_decoder_impl-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">MapDecoderImpl&lt; A &gt; Class Template Reference</div>  </div>
+<div class="title">MapDecoderImpl&lt; LlrMetrics, LogSumAlg &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>This class contains the concrete implementation of the map decoder.  
+<p>This class contains the abstract implementation of the map decoder.  
  <a href="classfec_1_1_map_decoder_impl.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="_map_decoder_impl_8h_source.html">MapDecoderImpl.h</a>&gt;</code></p>
 <div class="dynheader">
-Inheritance diagram for MapDecoderImpl&lt; A &gt;:</div>
+Inheritance diagram for MapDecoderImpl&lt; LlrMetrics, LogSumAlg &gt;:</div>
 <div class="dyncontent">
  <div class="center">
-  <img src="classfec_1_1_map_decoder_impl.png" usemap="#MapDecoderImpl&lt; A &gt;_map" alt=""/>
-  <map id="MapDecoderImpl&lt; A &gt;_map" name="MapDecoderImpl&lt; A &gt;_map">
-<area href="classfec_1_1_map_decoder.html" title="This class contains the abstract implementation of the map decoder. " alt="MapDecoder" shape="rect" coords="0,0,141,24"/>
+  <img src="classfec_1_1_map_decoder_impl.png" usemap="#MapDecoderImpl&lt; LlrMetrics, LogSumAlg &gt;_map" alt=""/>
+  <map id="MapDecoderImpl&lt; LlrMetrics, LogSumAlg &gt;_map" name="MapDecoderImpl&lt; LlrMetrics, LogSumAlg &gt;_map">
+<area href="classfec_1_1_map_decoder.html" title="This class contains the abstract implementation of the map decoder. " alt="MapDecoder" shape="rect" coords="0,0,262,24"/>
 </map>
  </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:abb3a7609ba2477a2e520ee23331054b7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abb3a7609ba2477a2e520ee23331054b7"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>MapDecoderImpl</b> (const <a class="el" href="classfec_1_1_convolutional_code_structure.html">ConvolutionalCodeStructure</a> &amp;<a class="el" href="classfec_1_1_map_decoder.html#a3442244db6f783194d77162d8a42388f">codeStructure</a>)</td></tr>
-<tr class="separator:abb3a7609ba2477a2e520ee23331054b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aabc7e910f45f80b77fbe3e01b68fae47"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_map_decoder_impl.html#aabc7e910f45f80b77fbe3e01b68fae47">MapDecoderImpl</a> (const <a class="el" href="classfec_1_1_convolutional_1_1_structure.html">Convolutional::Structure</a> &amp;)</td></tr>
+<tr class="memdesc:aabc7e910f45f80b77fbe3e01b68fae47"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#aabc7e910f45f80b77fbe3e01b68fae47">More...</a><br /></td></tr>
+<tr class="separator:aabc7e910f45f80b77fbe3e01b68fae47"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acd463d697f74d26472776a444dfab6b8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acd463d697f74d26472776a444dfab6b8"></a>
+virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_map_decoder_impl.html#acd463d697f74d26472776a444dfab6b8">~MapDecoderImpl</a> ()=default</td></tr>
+<tr class="memdesc:acd463d697f74d26472776a444dfab6b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default destructor. <br /></td></tr>
+<tr class="separator:acd463d697f74d26472776a444dfab6b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae23a3ba483068959b68b8ac46cfc9050"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_map_decoder_impl.html#ae23a3ba483068959b68b8ac46cfc9050">soDecodeBlock</a> (<a class="el" href="classfec_1_1_codec_1_1_info_iterator.html">Codec::InputIterator</a> input, <a class="el" href="classfec_1_1_codec_1_1_info_iterator.html">Codec::OutputIterator</a> output)</td></tr>
+<tr class="memdesc:ae23a3ba483068959b68b8ac46cfc9050"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decodes one blocs of information bits.  <a href="#ae23a3ba483068959b68b8ac46cfc9050">More...</a><br /></td></tr>
+<tr class="separator:ae23a3ba483068959b68b8ac46cfc9050"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a98456ca69951c640a73f3c7552aba534"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
+<tr class="memitem:a98456ca69951c640a73f3c7552aba534"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classfec_1_1_map_decoder_impl.html#a98456ca69951c640a73f3c7552aba534">soDecodeBlockImpl</a> (<a class="el" href="classfec_1_1_codec_1_1_info_iterator.html">Codec::InfoIterator</a>&lt; typename std::vector&lt; T &gt;::const_iterator &gt; input, <a class="el" href="classfec_1_1_codec_1_1_info_iterator.html">Codec::InfoIterator</a>&lt; typename std::vector&lt; T &gt;::iterator &gt; output)</td></tr>
+<tr class="memdesc:a98456ca69951c640a73f3c7552aba534"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decodes one blocs of information bits.  <a href="#a98456ca69951c640a73f3c7552aba534">More...</a><br /></td></tr>
+<tr class="separator:a98456ca69951c640a73f3c7552aba534"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classfec_1_1_map_decoder"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classfec_1_1_map_decoder')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classfec_1_1_map_decoder.html">MapDecoder</a></td></tr>
 <tr class="memitem:a1f9c6edb537bd9512ec30fd1abc2c3de inherit pub_methods_classfec_1_1_map_decoder"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1f9c6edb537bd9512ec30fd1abc2c3de"></a>
 virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_map_decoder.html#a1f9c6edb537bd9512ec30fd1abc2c3de">~MapDecoder</a> ()=default</td></tr>
 <tr class="memdesc:a1f9c6edb537bd9512ec30fd1abc2c3de inherit pub_methods_classfec_1_1_map_decoder"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default destructor. <br /></td></tr>
 <tr class="separator:a1f9c6edb537bd9512ec30fd1abc2c3de inherit pub_methods_classfec_1_1_map_decoder"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a36ced43e4e204a8f8e50a0d472c2f58f inherit pub_methods_classfec_1_1_map_decoder"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a36ced43e4e204a8f8e50a0d472c2f58f"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_map_decoder.html#a36ced43e4e204a8f8e50a0d472c2f58f">softOutDecodeNBloc</a> (std::vector&lt; LlrType &gt;::const_iterator parityIn, std::vector&lt; LlrType &gt;::iterator messageOut, size_t n)</td></tr>
-<tr class="memdesc:a36ced43e4e204a8f8e50a0d472c2f58f inherit pub_methods_classfec_1_1_map_decoder"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of <a class="el" href="classfec_1_1_code.html#a48a81456d15ef0727c0866e62c90b57f" title="Decodes several blocs of information bits. ">Code::softOutDecodeNBloc</a>. <br /></td></tr>
-<tr class="separator:a36ced43e4e204a8f8e50a0d472c2f58f inherit pub_methods_classfec_1_1_map_decoder"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8de17a4bec3bdeaa96df20a1c7767c88 inherit pub_methods_classfec_1_1_map_decoder"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8de17a4bec3bdeaa96df20a1c7767c88"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_map_decoder.html#a8de17a4bec3bdeaa96df20a1c7767c88">appDecodeNBloc</a> (std::vector&lt; LlrType &gt;::const_iterator parityIn, std::vector&lt; LlrType &gt;::const_iterator extrinsicIn, std::vector&lt; LlrType &gt;::iterator messageOut, std::vector&lt; LlrType &gt;::iterator extrinsicOut, size_t n)</td></tr>
-<tr class="memdesc:a8de17a4bec3bdeaa96df20a1c7767c88 inherit pub_methods_classfec_1_1_map_decoder"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of <a class="el" href="classfec_1_1_code.html#a84b23d8261d36147215ec4a5790f4a0a" title="Decodes several blocs of information bits. ">Code::appDecodeNBloc</a>. <br /></td></tr>
-<tr class="separator:a8de17a4bec3bdeaa96df20a1c7767c88 inherit pub_methods_classfec_1_1_map_decoder"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a21402c720e9089a98f738d4229955be0 inherit pub_methods_classfec_1_1_map_decoder"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_map_decoder.html#a21402c720e9089a98f738d4229955be0">softOutDecodeBloc</a> (std::vector&lt; LlrType &gt;::const_iterator parityIn, std::vector&lt; LlrType &gt;::iterator messageOut)</td></tr>
-<tr class="memdesc:a21402c720e9089a98f738d4229955be0 inherit pub_methods_classfec_1_1_map_decoder"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decodes one blocs of information bits.  <a href="#a21402c720e9089a98f738d4229955be0">More...</a><br /></td></tr>
-<tr class="separator:a21402c720e9089a98f738d4229955be0 inherit pub_methods_classfec_1_1_map_decoder"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a165bbfe4c42c77673339a2cf79b1c99b inherit pub_methods_classfec_1_1_map_decoder"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_map_decoder.html#a165bbfe4c42c77673339a2cf79b1c99b">appDecodeBloc</a> (std::vector&lt; LlrType &gt;::const_iterator parityIn, std::vector&lt; LlrType &gt;::const_iterator extrinsicIn, std::vector&lt; LlrType &gt;::iterator messageOut, std::vector&lt; LlrType &gt;::iterator extrinsicOut)</td></tr>
-<tr class="memdesc:a165bbfe4c42c77673339a2cf79b1c99b inherit pub_methods_classfec_1_1_map_decoder"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decodes one blocs of information bits.  <a href="#a165bbfe4c42c77673339a2cf79b1c99b">More...</a><br /></td></tr>
-<tr class="separator:a165bbfe4c42c77673339a2cf79b1c99b inherit pub_methods_classfec_1_1_map_decoder"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aae15a20031c7d21a1233a21b74ab17c2 inherit pub_methods_classfec_1_1_map_decoder"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aae15a20031c7d21a1233a21b74ab17c2"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_map_decoder.html#aae15a20031c7d21a1233a21b74ab17c2">soDecodeBlocks</a> (<a class="el" href="classfec_1_1_codec_1_1_info_iterator.html">Codec::InputIterator</a> input, <a class="el" href="classfec_1_1_codec_1_1_info_iterator.html">Codec::OutputIterator</a> output, size_t n)</td></tr>
+<tr class="memdesc:aae15a20031c7d21a1233a21b74ab17c2 inherit pub_methods_classfec_1_1_map_decoder"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of Codec::softOutDecodeNBloc. <br /></td></tr>
+<tr class="separator:aae15a20031c7d21a1233a21b74ab17c2 inherit pub_methods_classfec_1_1_map_decoder"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:ad68d976e838750b590a9cebcbf4b220b"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_map_decoder_impl.html#ad68d976e838750b590a9cebcbf4b220b">appBranchMetrics</a> (std::vector&lt; LlrType &gt;::const_iterator code, std::vector&lt; LlrType &gt;::const_iterator extrinsic)</td></tr>
-<tr class="memdesc:ad68d976e838750b590a9cebcbf4b220b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Branch metric calculation with app (msg) L-values.  <a href="#ad68d976e838750b590a9cebcbf4b220b">More...</a><br /></td></tr>
-<tr class="separator:ad68d976e838750b590a9cebcbf4b220b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0c1a4de4e9c1b803f62fe2706f51e473"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_map_decoder_impl.html#a0c1a4de4e9c1b803f62fe2706f51e473">parityAppBranchMetrics</a> (std::vector&lt; LlrType &gt;::const_iterator code, std::vector&lt; LlrType &gt;::const_iterator extrinsic)</td></tr>
-<tr class="memdesc:a0c1a4de4e9c1b803f62fe2706f51e473"><td class="mdescLeft">&#160;</td><td class="mdescRight">Branch metric calculation with app (parity) L-values.  <a href="#a0c1a4de4e9c1b803f62fe2706f51e473">More...</a><br /></td></tr>
-<tr class="separator:a0c1a4de4e9c1b803f62fe2706f51e473"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9ff9a86bd04ec380741c0da7344c8c61"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_map_decoder_impl.html#a9ff9a86bd04ec380741c0da7344c8c61">branchMetrics</a> (std::vector&lt; LlrType &gt;::const_iterator code)</td></tr>
-<tr class="memdesc:a9ff9a86bd04ec380741c0da7344c8c61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Branch metric calculation.  <a href="#a9ff9a86bd04ec380741c0da7344c8c61">More...</a><br /></td></tr>
-<tr class="separator:a9ff9a86bd04ec380741c0da7344c8c61"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae2bfeb88bce4cb61ae763bc90a04860e"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_map_decoder_impl.html#ae2bfeb88bce4cb61ae763bc90a04860e">forwardMetrics</a> ()</td></tr>
-<tr class="memdesc:ae2bfeb88bce4cb61ae763bc90a04860e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forward metric calculation.  <a href="#ae2bfeb88bce4cb61ae763bc90a04860e">More...</a><br /></td></tr>
-<tr class="separator:ae2bfeb88bce4cb61ae763bc90a04860e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2b5d42e0c952b187d08fb75671db5e73"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_map_decoder_impl.html#a2b5d42e0c952b187d08fb75671db5e73">backwardMetrics</a> ()</td></tr>
-<tr class="memdesc:a2b5d42e0c952b187d08fb75671db5e73"><td class="mdescLeft">&#160;</td><td class="mdescRight">Backard metric calculation.  <a href="#a2b5d42e0c952b187d08fb75671db5e73">More...</a><br /></td></tr>
-<tr class="separator:a2b5d42e0c952b187d08fb75671db5e73"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a663fdcb2fb79cb5bc1ff66e28ab11cac"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_map_decoder_impl.html#a663fdcb2fb79cb5bc1ff66e28ab11cac">parityAPosteriori</a> (std::vector&lt; LlrType &gt;::iterator parityOut)</td></tr>
-<tr class="memdesc:a663fdcb2fb79cb5bc1ff66e28ab11cac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Final (parity) L-values calculation.  <a href="#a663fdcb2fb79cb5bc1ff66e28ab11cac">More...</a><br /></td></tr>
-<tr class="separator:a663fdcb2fb79cb5bc1ff66e28ab11cac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab8983ad799e10303d09e0968fea6bdb6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab8983ad799e10303d09e0968fea6bdb6"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>messageAPosteriori</b> (std::vector&lt; LlrType &gt;::iterator parityOut)</td></tr>
-<tr class="separator:ab8983ad799e10303d09e0968fea6bdb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aed7b524097200e48d2c53d9aa307dee2"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_map_decoder_impl.html#aed7b524097200e48d2c53d9aa307dee2">messageExtrinsic</a> (std::vector&lt; LlrType &gt;::const_iterator extrinsicIn, std::vector&lt; LlrType &gt;::iterator messageOut, std::vector&lt; LlrType &gt;::iterator extrinscOut)</td></tr>
-<tr class="memdesc:aed7b524097200e48d2c53d9aa307dee2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Final (msg) L-values calculation.  <a href="#aed7b524097200e48d2c53d9aa307dee2">More...</a><br /></td></tr>
-<tr class="separator:aed7b524097200e48d2c53d9aa307dee2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1784c1f0568432271aeecb1c649c6cc9"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
+<tr class="memitem:a1784c1f0568432271aeecb1c649c6cc9"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classfec_1_1_map_decoder_impl.html#a1784c1f0568432271aeecb1c649c6cc9">branchUpdate</a> (<a class="el" href="classfec_1_1_codec_1_1_info_iterator.html">Codec::InfoIterator</a>&lt; typename std::vector&lt; T &gt;::const_iterator &gt; input)</td></tr>
+<tr class="memdesc:a1784c1f0568432271aeecb1c649c6cc9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Branch metric calculation.  <a href="#a1784c1f0568432271aeecb1c649c6cc9">More...</a><br /></td></tr>
+<tr class="separator:a1784c1f0568432271aeecb1c649c6cc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a23907e6851198a2ce1df5a11a7fdda8d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_map_decoder_impl.html#a23907e6851198a2ce1df5a11a7fdda8d">forwardUpdate</a> ()</td></tr>
+<tr class="memdesc:a23907e6851198a2ce1df5a11a7fdda8d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forward metric calculation.  <a href="#a23907e6851198a2ce1df5a11a7fdda8d">More...</a><br /></td></tr>
+<tr class="separator:a23907e6851198a2ce1df5a11a7fdda8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a205651e707251b706d3d99fcc10fcc57"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_map_decoder_impl.html#a205651e707251b706d3d99fcc10fcc57">backwardUpdate</a> ()</td></tr>
+<tr class="memdesc:a205651e707251b706d3d99fcc10fcc57"><td class="mdescLeft">&#160;</td><td class="mdescRight">Backard metric calculation.  <a href="#a205651e707251b706d3d99fcc10fcc57">More...</a><br /></td></tr>
+<tr class="separator:a205651e707251b706d3d99fcc10fcc57"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:add57708e9ab7aff3a1637acc062ba29c"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
+<tr class="memitem:add57708e9ab7aff3a1637acc062ba29c"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classfec_1_1_map_decoder_impl.html#add57708e9ab7aff3a1637acc062ba29c">aPosterioriUpdate</a> (<a class="el" href="classfec_1_1_codec_1_1_info_iterator.html">Codec::InfoIterator</a>&lt; typename std::vector&lt; T &gt;::const_iterator &gt; input, <a class="el" href="classfec_1_1_codec_1_1_info_iterator.html">Codec::InfoIterator</a>&lt; typename std::vector&lt; T &gt;::iterator &gt; output)</td></tr>
+<tr class="memdesc:add57708e9ab7aff3a1637acc062ba29c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Final (msg) L-values calculation.  <a href="#add57708e9ab7aff3a1637acc062ba29c">More...</a><br /></td></tr>
+<tr class="separator:add57708e9ab7aff3a1637acc062ba29c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_classfec_1_1_map_decoder"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classfec_1_1_map_decoder')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classfec_1_1_map_decoder.html">MapDecoder</a></td></tr>
-<tr class="memitem:a71644a2eb3f2c10998a79be5389b169e inherit pro_methods_classfec_1_1_map_decoder"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_map_decoder.html#a71644a2eb3f2c10998a79be5389b169e">MapDecoder</a> (const <a class="el" href="classfec_1_1_convolutional_code_structure.html">ConvolutionalCodeStructure</a> &amp;<a class="el" href="classfec_1_1_map_decoder.html#a3442244db6f783194d77162d8a42388f">codeStructure</a>)</td></tr>
-<tr class="memdesc:a71644a2eb3f2c10998a79be5389b169e inherit pro_methods_classfec_1_1_map_decoder"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#a71644a2eb3f2c10998a79be5389b169e">More...</a><br /></td></tr>
-<tr class="separator:a71644a2eb3f2c10998a79be5389b169e inherit pro_methods_classfec_1_1_map_decoder"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3442244db6f783194d77162d8a42388f inherit pro_methods_classfec_1_1_map_decoder"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3442244db6f783194d77162d8a42388f"></a>
-const <a class="el" href="classfec_1_1_convolutional_code_structure.html">ConvolutionalCodeStructure</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_map_decoder.html#a3442244db6f783194d77162d8a42388f">codeStructure</a> () const </td></tr>
-<tr class="memdesc:a3442244db6f783194d77162d8a42388f inherit pro_methods_classfec_1_1_map_decoder"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access the code structure. <br /></td></tr>
-<tr class="separator:a3442244db6f783194d77162d8a42388f inherit pro_methods_classfec_1_1_map_decoder"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae423c8f4cb262dcaa4b012a225a72388 inherit pro_methods_classfec_1_1_map_decoder"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_map_decoder.html#ae423c8f4cb262dcaa4b012a225a72388">MapDecoder</a> (const <a class="el" href="classfec_1_1_convolutional_1_1_structure.html">Convolutional::Structure</a> &amp;)</td></tr>
+<tr class="memdesc:ae423c8f4cb262dcaa4b012a225a72388 inherit pro_methods_classfec_1_1_map_decoder"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#ae423c8f4cb262dcaa4b012a225a72388">More...</a><br /></td></tr>
+<tr class="separator:ae423c8f4cb262dcaa4b012a225a72388 inherit pro_methods_classfec_1_1_map_decoder"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a65d38a6c107b9ceef6131d4d4c2f8973 inherit pro_methods_classfec_1_1_map_decoder"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a65d38a6c107b9ceef6131d4d4c2f8973"></a>
+const <a class="el" href="classfec_1_1_convolutional_1_1_structure.html">Convolutional::Structure</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_map_decoder.html#a65d38a6c107b9ceef6131d4d4c2f8973">structure</a> () const </td></tr>
+<tr class="memdesc:a65d38a6c107b9ceef6131d4d4c2f8973 inherit pro_methods_classfec_1_1_map_decoder"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access the code structure. <br /></td></tr>
+<tr class="separator:a65d38a6c107b9ceef6131d4d4c2f8973 inherit pro_methods_classfec_1_1_map_decoder"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pub_static_methods_classfec_1_1_map_decoder"><td colspan="2" onclick="javascript:toggleInherit('pub_static_methods_classfec_1_1_map_decoder')"><img src="closed.png" alt="-"/>&#160;Static Public Member Functions inherited from <a class="el" href="classfec_1_1_map_decoder.html">MapDecoder</a></td></tr>
-<tr class="memitem:a1240df52a29864fccf12a31e95f88268 inherit pub_static_methods_classfec_1_1_map_decoder"><td class="memItemLeft" align="right" valign="top">static std::unique_ptr&lt; <a class="el" href="classfec_1_1_map_decoder.html">MapDecoder</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_map_decoder.html#a1240df52a29864fccf12a31e95f88268">create</a> (const <a class="el" href="classfec_1_1_convolutional_code_structure.html">ConvolutionalCodeStructure</a> &amp;)</td></tr>
-<tr class="memdesc:a1240df52a29864fccf12a31e95f88268 inherit pub_static_methods_classfec_1_1_map_decoder"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classfec_1_1_map_decoder.html" title="This class contains the abstract implementation of the map decoder. ">MapDecoder</a> creator function.  <a href="#a1240df52a29864fccf12a31e95f88268">More...</a><br /></td></tr>
-<tr class="separator:a1240df52a29864fccf12a31e95f88268 inherit pub_static_methods_classfec_1_1_map_decoder"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pro_attribs_classfec_1_1_map_decoder"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classfec_1_1_map_decoder')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classfec_1_1_map_decoder.html">MapDecoder</a></td></tr>
-<tr class="memitem:a801afbdb91537b7a96724593ce0573ee inherit pro_attribs_classfec_1_1_map_decoder"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a801afbdb91537b7a96724593ce0573ee"></a>
-std::vector&lt; LlrType &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_map_decoder.html#a801afbdb91537b7a96724593ce0573ee">branchOutputMetrics_</a></td></tr>
-<tr class="memdesc:a801afbdb91537b7a96724593ce0573ee inherit pro_attribs_classfec_1_1_map_decoder"><td class="mdescLeft">&#160;</td><td class="mdescRight">Output branch metric buffer. <br /></td></tr>
-<tr class="separator:a801afbdb91537b7a96724593ce0573ee inherit pro_attribs_classfec_1_1_map_decoder"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3957cd1b7f8219e5e44911ecb6894cc6 inherit pro_attribs_classfec_1_1_map_decoder"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3957cd1b7f8219e5e44911ecb6894cc6"></a>
-std::vector&lt; LlrType &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_map_decoder.html#a3957cd1b7f8219e5e44911ecb6894cc6">branchInputMetrics_</a></td></tr>
-<tr class="memdesc:a3957cd1b7f8219e5e44911ecb6894cc6 inherit pro_attribs_classfec_1_1_map_decoder"><td class="mdescLeft">&#160;</td><td class="mdescRight">Input branch metric buffer. <br /></td></tr>
-<tr class="separator:a3957cd1b7f8219e5e44911ecb6894cc6 inherit pro_attribs_classfec_1_1_map_decoder"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a401c9efd93b9ee83998d250810135cbd inherit pro_attribs_classfec_1_1_map_decoder"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a401c9efd93b9ee83998d250810135cbd"></a>
-std::vector&lt; LlrType &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_map_decoder.html#a401c9efd93b9ee83998d250810135cbd">branchMetrics_</a></td></tr>
-<tr class="memdesc:a401c9efd93b9ee83998d250810135cbd inherit pro_attribs_classfec_1_1_map_decoder"><td class="mdescLeft">&#160;</td><td class="mdescRight">Branch metric buffer (gamma) <br /></td></tr>
-<tr class="separator:a401c9efd93b9ee83998d250810135cbd inherit pro_attribs_classfec_1_1_map_decoder"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac316f1a687e517735e845a8a747c5f29 inherit pro_attribs_classfec_1_1_map_decoder"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac316f1a687e517735e845a8a747c5f29"></a>
-std::vector&lt; LlrType &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_map_decoder.html#ac316f1a687e517735e845a8a747c5f29">forwardMetrics_</a></td></tr>
-<tr class="memdesc:ac316f1a687e517735e845a8a747c5f29 inherit pro_attribs_classfec_1_1_map_decoder"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forward metric buffer (alpha) <br /></td></tr>
-<tr class="separator:ac316f1a687e517735e845a8a747c5f29 inherit pro_attribs_classfec_1_1_map_decoder"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa59f32faf98d931a7cabfffa4db62c9a inherit pro_attribs_classfec_1_1_map_decoder"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa59f32faf98d931a7cabfffa4db62c9a"></a>
-std::vector&lt; LlrType &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_map_decoder.html#aa59f32faf98d931a7cabfffa4db62c9a">backwardMetrics_</a></td></tr>
-<tr class="memdesc:aa59f32faf98d931a7cabfffa4db62c9a inherit pro_attribs_classfec_1_1_map_decoder"><td class="mdescLeft">&#160;</td><td class="mdescRight">Backard metric buffer (beta) <br /></td></tr>
-<tr class="separator:aa59f32faf98d931a7cabfffa4db62c9a inherit pro_attribs_classfec_1_1_map_decoder"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acf6c7ae98392d1e56c222dadd20983e2 inherit pub_static_methods_classfec_1_1_map_decoder"><td class="memItemLeft" align="right" valign="top">static std::unique_ptr&lt; <a class="el" href="classfec_1_1_map_decoder.html">MapDecoder</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_map_decoder.html#acf6c7ae98392d1e56c222dadd20983e2">create</a> (const <a class="el" href="classfec_1_1_convolutional_1_1_structure.html">Convolutional::Structure</a> &amp;)</td></tr>
+<tr class="memdesc:acf6c7ae98392d1e56c222dadd20983e2 inherit pub_static_methods_classfec_1_1_map_decoder"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creating function.  <a href="#acf6c7ae98392d1e56c222dadd20983e2">More...</a><br /></td></tr>
+<tr class="separator:acf6c7ae98392d1e56c222dadd20983e2 inherit pub_static_methods_classfec_1_1_map_decoder"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><h3>template&lt;typename A&gt;<br />
-class fec::MapDecoderImpl&lt; A &gt;</h3>
+<div class="textblock"><h3>template&lt;class LlrMetrics, template&lt; class &gt; class LogSumAlg&gt;<br />
+class fec::MapDecoderImpl&lt; LlrMetrics, LogSumAlg &gt;</h3>
 
-<p>This class contains the concrete implementation of the map decoder. </p>
-<p>This algorithm is used for decoding with a-priori information in a <a class="el" href="classfec_1_1_convolutional_code.html" title="This class represents a convolutional encode / decoder. ">ConvolutionalCode</a>. The reason for this class is to offer an common interface of map decoders while allowing the compiler to inline implementation specific functions by using templates instead of polymorphism. </p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="ad68d976e838750b590a9cebcbf4b220b"></a>
+<p>This class contains the abstract implementation of the map decoder. </p>
+<p>This algorithm is used for decoding with a-priori information in a ConvolutionalCodec. The reason for this class is to offer an common interface of map decoders while allowing the compiler to inline implementation specific functions by using templates instead of polymorphism. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a class="anchor" id="aabc7e910f45f80b77fbe3e01b68fae47"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classfec_1_1_map_decoder_impl.html">MapDecoderImpl</a> </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classfec_1_1_convolutional_1_1_structure.html">Convolutional::Structure</a> &amp;&#160;</td>
+          <td class="paramname"><em>structure</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Constructor. </p>
+<p>Allocates metric buffers based on the given code structure. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">codeStructure</td><td><a class="el" href="classfec_1_1_convolutional.html" title="This class represents a convolutional encode / decoder. ">Convolutional</a> code structure describing the code </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="ae23a3ba483068959b68b8ac46cfc9050"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -212,16 +207,16 @@ class fec::MapDecoderImpl&lt; A &gt;</h3>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void appBranchMetrics </td>
+          <td class="memname">void soDecodeBlock </td>
           <td>(</td>
-          <td class="paramtype">std::vector&lt; LlrType &gt;::const_iterator&#160;</td>
-          <td class="paramname"><em>parity</em>, </td>
+          <td class="paramtype"><a class="el" href="classfec_1_1_codec_1_1_info_iterator.html">Codec::InputIterator</a>&#160;</td>
+          <td class="paramname"><em>input</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::vector&lt; LlrType &gt;::const_iterator&#160;</td>
-          <td class="paramname"><em>extrinsic</em>&#160;</td>
+          <td class="paramtype"><a class="el" href="classfec_1_1_codec_1_1_info_iterator.html">Codec::OutputIterator</a>&#160;</td>
+          <td class="paramname"><em>output</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -231,35 +226,39 @@ class fec::MapDecoderImpl&lt; A &gt;</h3>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Branch metric calculation with app (msg) L-values. </p>
+<p>Decodes one blocs of information bits. </p>
+<p>A posteriori information about the msg is output instead of the decoded bit sequence. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">parityIn</td><td>Input iterator pointing to the first element in the parity L-value sequence </td></tr>
+    <tr><td class="paramname">messageOut[out]</td><td>Output iterator pointing to the first element in the a posteriori information L-value sequence. Output needs to be pre-allocated. </td></tr>
+  </table>
+  </dd>
+</dl>
 
-<p>Implements <a class="el" href="classfec_1_1_map_decoder.html#ae8cb844fcb84afda9d2b22e446b0714c">MapDecoder</a>.</p>
+<p>Implements <a class="el" href="classfec_1_1_map_decoder.html">MapDecoder</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a0c1a4de4e9c1b803f62fe2706f51e473"></a>
+<a class="anchor" id="a98456ca69951c640a73f3c7552aba534"></a>
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void parityAppBranchMetrics </td>
+          <td class="memname">void soDecodeBlockImpl </td>
           <td>(</td>
-          <td class="paramtype">std::vector&lt; LlrType &gt;::const_iterator&#160;</td>
-          <td class="paramname"><em>parity</em>, </td>
+          <td class="paramtype"><a class="el" href="classfec_1_1_codec_1_1_info_iterator.html">Codec::InfoIterator</a>&lt; typename std::vector&lt; T &gt;::const_iterator &gt;&#160;</td>
+          <td class="paramname"><em>input</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::vector&lt; LlrType &gt;::const_iterator&#160;</td>
-          <td class="paramname"><em>extrinsic</em>&#160;</td>
+          <td class="paramtype"><a class="el" href="classfec_1_1_codec_1_1_info_iterator.html">Codec::InfoIterator</a>&lt; typename std::vector&lt; T &gt;::iterator &gt;&#160;</td>
+          <td class="paramname"><em>output</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -267,20 +266,20 @@ class fec::MapDecoderImpl&lt; A &gt;</h3>
           <td></td><td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
-<p>Branch metric calculation with app (parity) L-values. </p>
-
-<p>Implements <a class="el" href="classfec_1_1_map_decoder.html#af54805bf09ac8dd89b5f9ca35f45208b">MapDecoder</a>.</p>
+<p>Decodes one blocs of information bits. </p>
+<p>A posteriori information about the msg is output instead of the decoded bit sequence. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">parityIn</td><td>Input iterator pointing to the first element in the parity L-value sequence </td></tr>
+    <tr><td class="paramname">messageOut[out]</td><td>Output iterator pointing to the first element in the a posteriori information L-value sequence. Output needs to be pre-allocated. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
-<a class="anchor" id="a9ff9a86bd04ec380741c0da7344c8c61"></a>
+<a class="anchor" id="a1784c1f0568432271aeecb1c649c6cc9"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -288,27 +287,25 @@ class fec::MapDecoderImpl&lt; A &gt;</h3>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void branchMetrics </td>
+          <td class="memname">void branchUpdate </td>
           <td>(</td>
-          <td class="paramtype">std::vector&lt; LlrType &gt;::const_iterator&#160;</td>
-          <td class="paramname"><em>parity</em></td><td>)</td>
+          <td class="paramtype"><a class="el" href="classfec_1_1_codec_1_1_info_iterator.html">Codec::InfoIterator</a>&lt; typename std::vector&lt; T &gt;::const_iterator &gt;&#160;</td>
+          <td class="paramname"><em>input</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Branch metric calculation. </p>
 
-<p>Implements <a class="el" href="classfec_1_1_map_decoder.html#ab488c81bca03d62bf77ce06833afff8b">MapDecoder</a>.</p>
-
 </div>
 </div>
-<a class="anchor" id="ae2bfeb88bce4cb61ae763bc90a04860e"></a>
+<a class="anchor" id="a23907e6851198a2ce1df5a11a7fdda8d"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -316,7 +313,7 @@ class fec::MapDecoderImpl&lt; A &gt;</h3>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void forwardMetrics </td>
+          <td class="memname">void forwardUpdate </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -324,18 +321,16 @@ class fec::MapDecoderImpl&lt; A &gt;</h3>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Forward metric calculation. </p>
 
-<p>Implements <a class="el" href="classfec_1_1_map_decoder.html#adc86aea8899d444bb351d4505604274c">MapDecoder</a>.</p>
-
 </div>
 </div>
-<a class="anchor" id="a2b5d42e0c952b187d08fb75671db5e73"></a>
+<a class="anchor" id="a205651e707251b706d3d99fcc10fcc57"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -343,7 +338,7 @@ class fec::MapDecoderImpl&lt; A &gt;</h3>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void backwardMetrics </td>
+          <td class="memname">void backwardUpdate </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -351,18 +346,16 @@ class fec::MapDecoderImpl&lt; A &gt;</h3>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Backard metric calculation. </p>
 
-<p>Implements <a class="el" href="classfec_1_1_map_decoder.html#a862daf41816325ce988499efbd6c72ab">MapDecoder</a>.</p>
-
 </div>
 </div>
-<a class="anchor" id="a663fdcb2fb79cb5bc1ff66e28ab11cac"></a>
+<a class="anchor" id="add57708e9ab7aff3a1637acc062ba29c"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -370,50 +363,16 @@ class fec::MapDecoderImpl&lt; A &gt;</h3>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void parityAPosteriori </td>
+          <td class="memname">void aPosterioriUpdate </td>
           <td>(</td>
-          <td class="paramtype">std::vector&lt; LlrType &gt;::iterator&#160;</td>
-          <td class="paramname"><em>parityOut</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Final (parity) L-values calculation. </p>
-
-<p>Implements <a class="el" href="classfec_1_1_map_decoder.html#a3a82252fa47504bb8a754cd8ed1f066f">MapDecoder</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="aed7b524097200e48d2c53d9aa307dee2"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void messageExtrinsic </td>
-          <td>(</td>
-          <td class="paramtype">std::vector&lt; LlrType &gt;::const_iterator&#160;</td>
-          <td class="paramname"><em>extrinsicIn</em>, </td>
+          <td class="paramtype"><a class="el" href="classfec_1_1_codec_1_1_info_iterator.html">Codec::InfoIterator</a>&lt; typename std::vector&lt; T &gt;::const_iterator &gt;&#160;</td>
+          <td class="paramname"><em>input</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::vector&lt; LlrType &gt;::iterator&#160;</td>
-          <td class="paramname"><em>messageOut</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::vector&lt; LlrType &gt;::iterator&#160;</td>
-          <td class="paramname"><em>extrinscOut</em>&#160;</td>
+          <td class="paramtype"><a class="el" href="classfec_1_1_codec_1_1_info_iterator.html">Codec::InfoIterator</a>&lt; typename std::vector&lt; T &gt;::iterator &gt;&#160;</td>
+          <td class="paramname"><em>output</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -423,19 +382,18 @@ class fec::MapDecoderImpl&lt; A &gt;</h3>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Final (msg) L-values calculation. </p>
 
-<p>Implements <a class="el" href="classfec_1_1_map_decoder.html#a29a8f72b2af5f46b00f56325374f61ac">MapDecoder</a>.</p>
-
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following file:<ul>
-<li>src/ConvolutionalCode/MapDecoder/<a class="el" href="_map_decoder_impl_8h_source.html">MapDecoderImpl.h</a></li>
+<hr/>The documentation for this class was generated from the following files:<ul>
+<li>Convolutional/MapDecoder/<a class="el" href="_map_decoder_impl_8h_source.html">MapDecoderImpl.h</a></li>
+<li>Convolutional/MapDecoder/MapDecoderImpl.cpp</li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

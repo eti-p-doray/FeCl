@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['messagesize_5f',['messageSize_',['../classfec_1_1_code_structure.html#ac64c04ae70180dab906a2a624d126218',1,'fec::CodeStructure']]]
+  ['output',['output',['../classfec_1_1_trellis.html#a186586bf06976b522bb335f1e7bdf8ec',1,'fec::Trellis::Branch']]]
 ];

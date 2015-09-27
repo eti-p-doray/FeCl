@@ -1,8 +1,11 @@
 var searchData=
 [
-  ['trellisstructure',['TrellisStructure',['../classfec_1_1_trellis_structure.html',1,'fec']]],
-  ['truebp',['TrueBp',['../classfec_1_1_true_bp.html',1,'fec']]],
-  ['turbocode',['TurboCode',['../classfec_1_1_turbo_code.html',1,'fec']]],
-  ['turbocodeimpl',['TurboCodeImpl',['../classfec_1_1_turbo_code_impl.html',1,'fec']]],
-  ['turbocodestructure',['TurboCodeStructure',['../classfec_1_1_turbo_code_structure.html',1,'fec']]]
+  ['ldpc',['Ldpc',['../classfec_1_1_ldpc.html',1,'fec']]],
+  ['linearboxsum',['LinearBoxSum',['../classfec_1_1_linear_box_sum.html',1,'fec']]],
+  ['linearlog1pexpm',['Linearlog1pexpm',['../structfec_1_1_linearlog1pexpm.html',1,'fec']]],
+  ['linearlog1pexpm_3c_20typename_20llrmetrics_3a_3atype_20_3e',['Linearlog1pexpm&lt; typename LlrMetrics::Type &gt;',['../structfec_1_1_linearlog1pexpm.html',1,'fec']]],
+  ['linearlogsum',['LinearLogSum',['../classfec_1_1_linear_log_sum.html',1,'fec']]],
+  ['lineartable',['LinearTable',['../classfec_1_1_linear_table.html',1,'fec']]],
+  ['lineartable_3c_20typename_20llrmetrics_3a_3atype_20_3e',['LinearTable&lt; typename LlrMetrics::Type &gt;',['../classfec_1_1_linear_table.html',1,'fec']]],
+  ['logsum',['LogSum',['../classfec_1_1_log_sum.html',1,'fec']]]
 ];
