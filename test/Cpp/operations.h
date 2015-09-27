@@ -60,28 +60,28 @@ std::vector<fec::LlrType> distort(const std::vector<fec::BitField<T>>& input, do
 
 void test_encodeBlock(const fec::Codec::Structure& structure)
 {
-  std::vector<fec::BitField<bool>> msg0(structure.msgSize(), 0);
-  std::vector<fec::BitField<uint8_t>> parity(structure.paritySize());
+  std::vector<fec::BitField<size_t>> msg0(structure.msgSize(), 0);
+  std::vector<fec::BitField<size_t>> parity(structure.paritySize());
   structure.encode(msg0.begin(), parity.begin());
   BOOST_CHECK(structure.check(parity.begin()));
   
-  std::vector<fec::BitField<bool>> msg1(structure.msgSize(), 1);
+  std::vector<fec::BitField<size_t>> msg1(structure.msgSize(), 1);
   structure.encode(msg1.begin(), parity.begin());
   BOOST_CHECK(structure.check(parity.begin()));
 }
 
 void test_encode(const fec::Codec& code, size_t n)
 {
-  std::vector<fec::BitField<bool>> msg(code.msgSize()*n, 1);
-  std::vector<fec::BitField<uint8_t>> parity;
+  std::vector<fec::BitField<size_t>> msg(code.msgSize()*n, 1);
+  std::vector<fec::BitField<size_t>> parity;
   code.encode(msg, parity);
   BOOST_CHECK(code.check(parity));
 }
 
 void test_encode_badMsgSize(const fec::Codec& code)
 {
-  std::vector<fec::BitField<bool>> msg(code.msgSize()+1);
-  std::vector<fec::BitField<uint8_t>> parity;
+  std::vector<fec::BitField<size_t>> msg(code.msgSize()+1);
+  std::vector<fec::BitField<size_t>> parity;
   try {
     code.encode(msg, parity);
   } catch (std::exception& e) {
@@ -99,12 +99,12 @@ void test_saveLoad(const fec::Codec& code) {
 
 void test_decode(const fec::Codec& code, double snr, size_t n = 1)
 {
-  std::vector<fec::BitField<bool>> msg(code.msgSize()*n, 1);
-  std::vector<fec::BitField<uint8_t>> parity(code.paritySize());
+  std::vector<fec::BitField<size_t>> msg(code.msgSize()*n, 1);
+  std::vector<fec::BitField<size_t>> parity(code.paritySize());
   code.encode(msg, parity);
   
   std::vector<fec::LlrType> parityIn = distort(parity, snr);
-  std::vector<fec::BitField<bool>> msgOut;
+  std::vector<fec::BitField<size_t>> msgOut;
   code.decode(parityIn, msgOut);
   
   BOOST_REQUIRE(msgOut.size() == code.msgSize()*n);
@@ -116,7 +116,7 @@ void test_decode(const fec::Codec& code, double snr, size_t n = 1)
 void test_decode_badParitySize(const fec::Codec& code)
 {
   std::vector<fec::LlrType> parityIn(code.paritySize()+1);
-  std::vector<fec::BitField<bool>> msgOut(code.msgSize());
+  std::vector<fec::BitField<size_t>> msgOut(code.msgSize());
   try {
     code.decode(parityIn, msgOut);
   } catch (std::exception& e) {
@@ -127,8 +127,8 @@ void test_decode_badParitySize(const fec::Codec& code)
 
 void test_soDecode(const fec::Codec& code, double snr, size_t n = 1)
 {
-  std::vector<fec::BitField<bool>> msg(code.msgSize()*n, 1);
-  std::vector<fec::BitField<uint8_t>> parity;
+  std::vector<fec::BitField<size_t>> msg(code.msgSize()*n, 1);
+  std::vector<fec::BitField<size_t>> parity;
   code.encode(msg, parity);
   
   std::vector<fec::LlrType> parityIn = distort(parity, snr);
@@ -136,7 +136,7 @@ void test_soDecode(const fec::Codec& code, double snr, size_t n = 1)
   std::vector<fec::LlrType> msgOut;
   code.soDecode(fec::Codec::Input<>().parity(parityIn), fec::Codec::Output<>().msg(msgOut));
   
-  std::vector<fec::BitField<bool>> msgDec;
+  std::vector<fec::BitField<size_t>> msgDec;
   code.decode(parityIn, msgDec);
   
   BOOST_REQUIRE(msgOut.size() == code.msgSize()*n);
@@ -147,8 +147,8 @@ void test_soDecode(const fec::Codec& code, double snr, size_t n = 1)
 
 void test_soDecode_parityOut(const fec::Codec& code, double snr, size_t n = 1)
 {
-  std::vector<fec::BitField<bool>> msg(code.msgSize()*n, 1);
-  std::vector<fec::BitField<uint8_t>> parity;
+  std::vector<fec::BitField<size_t>> msg(code.msgSize()*n, 1);
+  std::vector<fec::BitField<size_t>> parity;
   code.encode(msg, parity);
   
   std::vector<fec::LlrType> parityIn = distort(parity, snr);
@@ -174,8 +174,8 @@ void test_soDecode_parityOut(const fec::Codec& code, double snr, size_t n = 1)
 
 void test_soDecode_systIn(const fec::Codec& code, double snr, size_t n = 1)
 {
-  std::vector<fec::BitField<bool>> msg(code.msgSize()*n, 1);
-  std::vector<fec::BitField<uint8_t>> parity;
+  std::vector<fec::BitField<size_t>> msg(code.msgSize()*n, 1);
+  std::vector<fec::BitField<size_t>> parity;
   code.encode(msg, parity);
   
   std::vector<fec::LlrType> parityIn = distort(parity, snr);
@@ -215,8 +215,8 @@ void test_soDecode_0systIn(const fec::Codec& code, size_t n = 1)
 {
   double snr = -5.0;
   
-  std::vector<fec::BitField<bool>> msg(code.msgSize()*n, 1);
-  std::vector<fec::BitField<uint8_t>> parity;
+  std::vector<fec::BitField<size_t>> msg(code.msgSize()*n, 1);
+  std::vector<fec::BitField<size_t>> parity;
   code.encode(msg, parity);
   
   std::vector<fec::LlrType> parityIn = distort(parity, snr);
@@ -249,8 +249,8 @@ void test_soDecode_0stateIn(const fec::Codec& code, size_t n = 1)
 {
   double snr = -5.0;
   
-  std::vector<fec::BitField<bool>> msg(code.msgSize()*n, 1);
-  std::vector<fec::BitField<uint8_t>> parity;
+  std::vector<fec::BitField<size_t>> msg(code.msgSize()*n, 1);
+  std::vector<fec::BitField<size_t>> parity;
   code.encode(msg, parity);
   
   std::vector<fec::LlrType> parityIn = distort(parity, snr);
@@ -283,9 +283,9 @@ void test_soDecode_2phases(const fec::Codec& code1, const fec::Codec& code2, siz
 {
   double snr = -5.0;
   
-  std::vector<fec::BitField<bool>> msg(code1.msgSize()*n, 1);
-  std::vector<fec::BitField<uint8_t>> parity1;
-  std::vector<fec::BitField<uint8_t>> parity2;
+  std::vector<fec::BitField<size_t>> msg(code1.msgSize()*n, 1);
+  std::vector<fec::BitField<size_t>> parity1;
+  std::vector<fec::BitField<size_t>> parity2;
   code1.encode(msg, parity1);
   code2.encode(msg, parity2);
   BOOST_REQUIRE(parity1.size() == parity2.size());

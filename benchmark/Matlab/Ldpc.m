@@ -29,9 +29,9 @@ function results = Ldpc(snrdb, T, N, M, z)
     cmlSim{1}.decoder_type = 0;
     cmlSim{1}.filename = strcat( '', 'DVBS2longRate1by2_BPSK.mat');
     cmlSim{1}.reset = 0;
-    cmlSim{1}.max_trials = 1*ones( size(cmlSim{1}.SNR) );
+    cmlSim{1}.max_trials = 1;
     cmlSim{1}.minBER = MINBER;
-    cmlSim{1}.max_frame_errors = 30*ones( size(cmlSim{1}.SNR) );
+    cmlSim{1}.max_frame_errors = 1;
     cmlSim{1}.plot_iterations = cmlSim{1}.max_iterations;
     cmlSim{1}.save_rate = 5;
 

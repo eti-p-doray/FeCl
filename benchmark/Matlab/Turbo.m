@@ -12,6 +12,12 @@ function results = Turbo(snrdb, T, N, M, z)
     matlabDecoder{2} = comm.TurboDecoder('TrellisStructure', trellis, 'InterleaverIndices', pi, 'Algorithm', 'Max*', 'NumIterations', 4);
     matlabDecoder{3} = comm.TurboDecoder('TrellisStructure', trellis, 'InterleaverIndices', pi, 'Algorithm', 'Max', 'NumIterations', 4);
     
+    
+    [cmlSim{1}, cmlCodec{1}] = InitializeCodeParam( cmlSim{1}, pwd );
+    cmlSim{2} = cmlSim{1};
+    cmlSim{2}.decoder_type = 1;
+    [cmlSim{2}, cmlCodec{2}] = InitializeCodeParam( cmlSim{2}, pwd );
+    
     msg = int8(randi([0 1],codec{1}.msgSize,N));
     parity = int8(codec{1}.encode(msg));
          

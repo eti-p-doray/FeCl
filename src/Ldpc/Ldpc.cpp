@@ -62,7 +62,7 @@ void Ldpc::soDecodeBlocks(InputIterator input, OutputIterator output, size_t n) 
   worker->soDecodeBlocks(input, output, n);
 }
 
-void Ldpc::decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<bool>>::iterator msg, size_t n) const
+void Ldpc::decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const
 {
   auto worker = BpDecoder::create(structure());
   worker->decodeBlocks(parity, msg, n);
@@ -176,7 +176,7 @@ void Ldpc::Structure::syndrome(std::vector<uint8_t>::const_iterator parity, std:
  *  \param  parity  Input iterator pointing to the first element of the parity sequence.
  *  \return True if the parity sequence is consistent. False otherwise.
  */
-bool Ldpc::Structure::check(std::vector<BitField<uint8_t>>::const_iterator parity) const
+bool Ldpc::Structure::check(std::vector<BitField<size_t>>::const_iterator parity) const
 {
   for (auto parityEq = checks().begin(); parityEq < checks().end(); ++parityEq) {
     bool syndrome = false;
@@ -196,7 +196,7 @@ bool Ldpc::Structure::check(std::vector<BitField<uint8_t>>::const_iterator parit
  *  \param  parity[out] Output iterator pointing to the first
  *    element of the computed parity sequence. The output needs to be allocated.
  */
-void Ldpc::Structure::encode(std::vector<BitField<bool>>::const_iterator msg, std::vector<BitField<uint8_t>>::iterator parity) const
+void Ldpc::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const
 {
   std::copy(msg, msg + msgSize(), parity);
   std::fill(parity+msgSize(), parity+paritySize(), 0);

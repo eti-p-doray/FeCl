@@ -84,8 +84,8 @@ public:
     inline size_t stateSize() const {return stateSize_;} /**< Access the size of the extrinsic in each code bloc. */
     DecoderAlgorithm decoderAlgorithm() const {return decoderAlgorithm_;}
     
-    virtual void encode(std::vector<BitField<bool>>::const_iterator msg, std::vector<BitField<uint8_t>>::iterator parity) const = 0;
-    virtual bool check(std::vector<BitField<uint8_t>>::const_iterator parity) const = 0;
+    virtual void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const = 0;
+    virtual bool check(std::vector<BitField<size_t>>::const_iterator parity) const = 0;
     
   protected:
     Structure() = default;
@@ -252,11 +252,11 @@ public:
   int getWorkGroupSize() const {return workGroupSize_;}
   void setWorkGroupSize(int size) {workGroupSize_ = size;}
   
-  template <template <typename> class A> bool check(std::vector<BitField<uint8_t>,A<BitField<uint8_t>>>& parity) const;
-  template <template <typename> class A> void encode(const std::vector<BitField<bool>,A<BitField<bool>>>& message, std::vector<BitField<uint8_t>,A<BitField<uint8_t>>>& parity) const;
+  template <template <typename> class A> bool check(std::vector<BitField<size_t>,A<BitField<size_t>>>& parity) const;
+  template <template <typename> class A> void encode(const std::vector<BitField<size_t>,A<BitField<size_t>>>& message, std::vector<BitField<size_t>,A<BitField<size_t>>>& parity) const;
   
   template <template <typename> class A>
-  void decode(const std::vector<LlrType,A<LlrType>>& parity, std::vector<BitField<bool>,A<BitField<bool>>>& msg) const;
+  void decode(const std::vector<LlrType,A<LlrType>>& parity, std::vector<BitField<size_t>,A<BitField<size_t>>>& msg) const;
   
   template <template <typename> class A>
   void soDecode(Input<A> input, Output<A> output) const;
@@ -269,14 +269,14 @@ protected:
   
   inline int workGroupSize() const {return workGroupSize_;}
   
-  virtual bool checkBlocks(std::vector<BitField<uint8_t>>::const_iterator parity, size_t n) const;
+  virtual bool checkBlocks(std::vector<BitField<size_t>>::const_iterator parity, size_t n) const;
   /**
    *  Encodes several blocs of msg bits.
    *  \param  messageIt  Input iterator pointing to the first element in the msg bit sequence.
    *  \param  parityIt[out] Output iterator pointing to the first element in the parity bit sequence.
    *    The output neeeds to be pre-allocated.
    */
-  virtual void encodeBlocks(std::vector<BitField<bool>>::const_iterator msg, std::vector<BitField<uint8_t>>::iterator parity, size_t n) const;
+  virtual void encodeBlocks(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity, size_t n) const;
   
   /**
    *  Decodes several blocks of information bits.
@@ -286,7 +286,7 @@ protected:
    *    in the decoded msg sequence.
    *    Output needs to be pre-allocated.
    */
-  virtual void decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<bool>>::iterator msg, size_t n) const = 0;
+  virtual void decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const = 0;
   /**
    *  Decodes several blocks of information bits.
    *  A posteriori information about the msg is output instead of the decoded bit sequence.
@@ -332,7 +332,7 @@ BOOST_CLASS_TYPE_INFO(fec::Codec,extended_type_info_no_rtti<fec::Codec>);
 BOOST_CLASS_EXPORT_KEY(fec::Codec);
 
 template <template <typename> class A>
-bool fec::Codec::check(std::vector<BitField<uint8_t>,A<BitField<uint8_t>>>& parity) const
+bool fec::Codec::check(std::vector<BitField<size_t>,A<BitField<size_t>>>& parity) const
 {
   uint64_t blockCount = parity.size() / (paritySize());
   if (parity.size() != blockCount * paritySize()) {
@@ -350,7 +350,7 @@ bool fec::Codec::check(std::vector<BitField<uint8_t>,A<BitField<uint8_t>>>& pari
  *    the matlab API to use a custom mex allocator
  */
 template <template <typename> class A>
-void fec::Codec::encode(const std::vector<BitField<bool>,A<BitField<bool>>>& msg, std::vector<BitField<uint8_t>,A<BitField<uint8_t>>>& parity) const
+void fec::Codec::encode(const std::vector<BitField<size_t>,A<BitField<size_t>>>& msg, std::vector<BitField<size_t>,A<BitField<size_t>>>& parity) const
 {
   uint64_t blockCount = msg.size() / (msgSize());
   if (msg.size() != blockCount * msgSize()) {
@@ -389,7 +389,7 @@ void fec::Codec::encode(const std::vector<BitField<bool>,A<BitField<bool>>>& msg
  *    the matlab API to use a custom mex allocator
  */
 template <template <typename> class A>
-void fec::Codec::decode(const std::vector<LlrType,A<LlrType>>& parity, std::vector<BitField<bool>,A<BitField<bool>>>& msg) const
+void fec::Codec::decode(const std::vector<LlrType,A<LlrType>>& parity, std::vector<BitField<size_t>,A<BitField<size_t>>>& msg) const
 {
   size_t blockCount = parity.size() / paritySize();
   if (parity.size() != blockCount * paritySize()) {

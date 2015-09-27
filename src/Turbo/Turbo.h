@@ -147,8 +147,8 @@ namespace fec {
       inline BitOrdering bitOrdering() const {return bitOrdering_;}
       inline Scheduling scheduling() const {return scheduling_;}
       
-      virtual bool check(std::vector<BitField<uint8_t>>::const_iterator parity) const;
-      virtual void encode(std::vector<BitField<bool>>::const_iterator msg, std::vector<BitField<uint8_t>>::iterator parity) const;
+      virtual bool check(std::vector<BitField<size_t>>::const_iterator parity) const;
+      virtual void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const;
       
       template <typename T>
       void alternate(typename std::vector<T>::const_iterator parityIn, typename std::vector<T>::iterator parityOut) const;
@@ -193,7 +193,7 @@ namespace fec {
   protected:
     Turbo() = default;
     
-    virtual void decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<bool>>::iterator msg, size_t n) const;
+    virtual void decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const;
     virtual void soDecodeBlocks(InputIterator input, OutputIterator output, size_t n) const;
     
   private:

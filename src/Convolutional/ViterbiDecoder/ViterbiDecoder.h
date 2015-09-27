@@ -39,8 +39,8 @@ namespace fec {
     static std::unique_ptr<ViterbiDecoder> create(const Convolutional::Structure&); /**< Creating function */
     ~ViterbiDecoder() = default;
     
-    void decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<bool>>::iterator msg, size_t n);
-    virtual void decodeBlock(std::vector<LlrType>::const_iterator parity, std::vector<BitField<bool>>::iterator msg) = 0;
+    void decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n);
+    virtual void decodeBlock(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg) = 0;
     
   protected:
     ViterbiDecoder(const Convolutional::Structure&);

@@ -40,7 +40,7 @@ TurboDecoder::TurboDecoder(const Turbo::Structure& structure) : structure_(struc
   parityOut_.resize(this->structure().paritySize());
 }
 
-void TurboDecoder::decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<bool>>::iterator msg, size_t n)
+void TurboDecoder::decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n)
 {
   for (size_t i = 0; i < n; ++i) {
     decodeBlock(parity, msg);

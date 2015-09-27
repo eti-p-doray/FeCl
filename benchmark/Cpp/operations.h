@@ -48,7 +48,7 @@ V randomBits(size_t n) {
   return msg;
 }
 
-std::vector<fec::LlrType> distort(const std::vector<fec::BitField<uint8_t>>& input, double snrdb)
+std::vector<fec::LlrType> distort(const std::vector<fec::BitField<size_t>>& input, double snrdb)
 {
   const int8_t bpsk[2] = {-1, 1};
   
@@ -84,12 +84,12 @@ itpp::vec distort(const itpp::bvec& input, double snrdb)
   return llr;
 }
 
-boost::property_tree::ptree fecEncode(const fec::Codec& code, const std::vector<fec::BitField<bool>>& msg, size_t M)
+boost::property_tree::ptree fecEncode(const fec::Codec& code, const std::vector<fec::BitField<size_t>>& msg, size_t M)
 {
   std::vector<double> elapsedTimes(M);
   for (size_t i = 0; i < M; ++i) {
     std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
-    std::vector<fec::BitField<uint8_t>> parity;
+    std::vector<fec::BitField<size_t>> parity;
     code.encode(msg, parity);
     std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double> >(t2 - t1);
@@ -110,7 +110,7 @@ boost::property_tree::ptree fecDecode(const fec::Codec& code, const std::vector<
   std::vector<double> elapsedTimes(M);
   for (size_t i = 0; i < M; ++i) {
     std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
-    std::vector<fec::BitField<bool>> decodedMsg;
+    std::vector<fec::BitField<size_t>> decodedMsg;
     code.decode(llr, decodedMsg);
     std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double> >(t2 - t1);

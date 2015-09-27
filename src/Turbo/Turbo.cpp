@@ -56,7 +56,7 @@ Codec(&structure_, workGroupSize)
 {
 }
 
-void Turbo::decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<bool>>::iterator msg, size_t n) const
+void Turbo::decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const
 {
   auto worker = TurboDecoder::create(structure_);
   worker->decodeBlocks(parity, msg, n);
@@ -155,11 +155,11 @@ Turbo::DecoderOptions Turbo::Structure::getDecoderOptions() const
   return DecoderOptions().iterations(iterations()).scheduling(scheduling()).algorithm(decoderAlgorithm());
 }
 
-void Turbo::Structure::encode(std::vector<BitField<bool>>::const_iterator msg, std::vector<BitField<uint8_t>>::iterator parity) const
+void Turbo::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const
 {
-  std::vector<BitField<bool>> messageInterl;
-  std::vector<BitField<uint8_t>> parityOut;
-  std::vector<BitField<uint8_t>>::iterator parityOutIt;
+  std::vector<BitField<size_t>> messageInterl;
+  std::vector<BitField<size_t>> parityOut;
+  std::vector<BitField<size_t>>::iterator parityOutIt;
   switch (bitOrdering()) {
     case Alternate:
       parityOut.resize(paritySize());
@@ -176,27 +176,27 @@ void Turbo::Structure::encode(std::vector<BitField<bool>>::const_iterator msg, s
   parityOutIt += systSize();
   for (size_t i = 0; i < constituentCount(); ++i) {
     messageInterl.resize(constituent(i).msgSize());
-    interleaver(i).interleaveBlock<BitField<bool>>(msg, messageInterl.begin());
+    interleaver(i).interleaveBlock<BitField<size_t>>(msg, messageInterl.begin());
     constituent(i).encode(messageInterl.begin(), parityOutIt, systTail);
     systTail += constituent(i).msgTailSize();
     parityOutIt += constituent(i).paritySize();
   }
   if (bitOrdering() == Alternate) {
-    alternate<BitField<uint8_t>>(parityOut.begin(), parity);
+    alternate<BitField<size_t>>(parityOut.begin(), parity);
   }
 }
 
-bool Turbo::Structure::check(std::vector<BitField<uint8_t>>::const_iterator parity) const
+bool Turbo::Structure::check(std::vector<BitField<size_t>>::const_iterator parity) const
 {
-  std::vector<BitField<bool>> messageInterl;
-  std::vector<BitField<uint8_t>> parityTest;
-  std::vector<BitField<uint8_t>> tailTest;
-  std::vector<BitField<uint8_t>> parityIn;
-  std::vector<BitField<uint8_t>>::const_iterator parityInIt;
+  std::vector<BitField<size_t>> messageInterl;
+  std::vector<BitField<size_t>> parityTest;
+  std::vector<BitField<size_t>> tailTest;
+  std::vector<BitField<size_t>> parityIn;
+  std::vector<BitField<size_t>>::const_iterator parityInIt;
   switch (bitOrdering()) {
     case Alternate:
       parityIn.resize(paritySize());
-      group<BitField<uint8_t>>(parity, parityIn.begin());
+      group<BitField<size_t>>(parity, parityIn.begin());
       parityInIt = parityIn.begin();
       break;
       
@@ -212,7 +212,7 @@ bool Turbo::Structure::check(std::vector<BitField<uint8_t>>::const_iterator pari
     messageInterl.resize(constituent(i).msgSize());
     parityTest.resize(constituent(i).paritySize());
     tailTest.resize(constituent(i).msgTailSize());
-    interleaver(i).interleaveBlock<BitField<uint8_t>,BitField<bool>>(systIt, messageInterl.begin());
+    interleaver(i).interleaveBlock<BitField<size_t>,BitField<size_t>>(systIt, messageInterl.begin());
     constituent(i).encode(messageInterl.begin(), parityTest.begin(), tailTest.begin());
     if (!std::equal(parityTest.begin(), parityTest.end(), parityInIt)) {
       return false;
@@ -300,8 +300,8 @@ void fec::Turbo::Structure::group(typename std::vector<T>::const_iterator parity
   }
 }
 
-template void fec::Turbo::Structure::alternate<BitField<uint8_t>>(std::vector<BitField<uint8_t>>::const_iterator parityIn, std::vector<BitField<uint8_t>>::iterator parityOut) const;
+template void fec::Turbo::Structure::alternate<BitField<size_t>>(std::vector<BitField<size_t>>::const_iterator parityIn, std::vector<BitField<size_t>>::iterator parityOut) const;
 template void fec::Turbo::Structure::alternate<LlrType>(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::iterator parityOut) const;
 
-template void fec::Turbo::Structure::group<BitField<uint8_t>>(std::vector<BitField<uint8_t>>::const_iterator parityIn, std::vector<BitField<uint8_t>>::iterator parityOut) const;
+template void fec::Turbo::Structure::group<BitField<size_t>>(std::vector<BitField<size_t>>::const_iterator parityIn, std::vector<BitField<size_t>>::iterator parityOut) const;
 template void fec::Turbo::Structure::group<LlrType>(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::iterator parityOut) const;

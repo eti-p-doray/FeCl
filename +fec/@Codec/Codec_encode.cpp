@@ -39,13 +39,13 @@ void Codec_encode( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
   DerivedTypeHolder<Convolutional,Turbo,Ldpc> derived;
   auto codec = mxArrayTo<MexHandle<Codec>>::f(prhs[0], derived);
   
-  std::vector<BitField<bool>,Allocator<BitField<bool>>::type> msg;
+  std::vector<BitField<size_t>,Allocator<BitField<size_t>>::type> msg;
   try {
-    msg = mxArrayTo<std::vector<BitField<bool>,Allocator<BitField<bool>>::type>>::f(prhs[1]);
+    msg = mxArrayTo<std::vector<BitField<size_t>,Allocator<BitField<size_t>>::type>>::f(prhs[1]);
   } catch (std::exception& e) {
     throw std::invalid_argument("Msg vector is invalid");
   }
-  std::vector<BitField<uint8_t>, Allocator<BitField<uint8_t>>::type> parity;
+  std::vector<BitField<size_t>, Allocator<BitField<size_t>>::type> parity;
   codec->encode(msg, parity);
   plhs[0] = toMxArray(parity);
 }

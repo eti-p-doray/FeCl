@@ -39,14 +39,14 @@ namespace fec {
     
     inline const Turbo::Structure& structure() const {return structure_;}
     
-    void decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<bool>>::iterator msg, size_t n);
+    void decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n);
     void soDecodeBlocks(Codec::InputIterator input, Codec::OutputIterator output, size_t n);
     
   protected:
     TurboDecoder(const Turbo::Structure& codeStructure);
     TurboDecoder() = default;
     
-    virtual void decodeBlock(std::vector<LlrType>::const_iterator parity, std::vector<BitField<bool>>::iterator msg) = 0;
+    virtual void decodeBlock(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg) = 0;
     virtual void soDecodeBlock(Codec::InputIterator input, Codec::OutputIterator output) = 0;
     
     std::vector<std::unique_ptr<MapDecoder>> code_;

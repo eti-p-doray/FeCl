@@ -29,17 +29,17 @@
 
 #include "Codec.h"
 
-std::vector<fec::BitField<bool>> randomBits(size_t n) {
+std::vector<fec::BitField<size_t>> randomBits(size_t n) {
   uint64_t seed = std::chrono::system_clock::now().time_since_epoch().count();
   std::independent_bits_engine<std::mt19937,1,std::uint_fast64_t> bitGenerator((uint32_t(seed)));
-  std::vector<fec::BitField<bool>> msg(n);
+  std::vector<fec::BitField<size_t>> msg(n);
   for (size_t i = 0; i < msg.size(); i++) {
     msg[i] = bitGenerator();
   }
   return msg;
 }
 
-std::vector<fec::LlrType> distort(const std::vector<fec::BitField<uint8_t>>& input, double snrdb)
+std::vector<fec::LlrType> distort(const std::vector<fec::BitField<size_t>>& input, double snrdb)
 {
   const int8_t bpsk[2] = {-1, 1};
   
@@ -59,8 +59,8 @@ std::vector<fec::LlrType> distort(const std::vector<fec::BitField<uint8_t>>& inp
 
 int per(const std::unique_ptr<fec::Codec>& code, double snrdb)
 {
-  std::vector<fec::BitField<bool>> msg = randomBits(code->msgSize());
-  std::vector<fec::BitField<uint8_t>> parity;
+  std::vector<fec::BitField<size_t>> msg = randomBits(code->msgSize());
+  std::vector<fec::BitField<size_t>> parity;
 
   std::vector<fec::LlrType> msgPost;
   
@@ -68,7 +68,7 @@ int per(const std::unique_ptr<fec::Codec>& code, double snrdb)
   
   std::vector<fec::LlrType> llr = distort(parity, snrdb);
   
-  std::vector<fec::BitField<bool>> msgDec;
+  std::vector<fec::BitField<size_t>> msgDec;
   code->decode(llr, msgDec);
   code->soDecode(fec::Codec::Input<>().parity(llr), fec::Codec::Output<>().syst(msgPost));
   

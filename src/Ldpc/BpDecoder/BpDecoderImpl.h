@@ -43,7 +43,7 @@ namespace fec {
     ~BpDecoderImpl() = default;
     
   protected:
-    virtual void decodeBlock(std::vector<LlrType>::const_iterator parity, std::vector<BitField<bool>>::iterator msg);
+    virtual void decodeBlock(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg);
     virtual void soDecodeBlock(Codec::InputIterator input, Codec::
                                OutputIterator output);
     
@@ -51,7 +51,7 @@ namespace fec {
     void checkUpdate();
     void bitUpdate();
     
-    std::vector<BitField<uint8_t>> hardParity_;
+    std::vector<BitField<size_t>> hardParity_;
     
     std::vector<typename LlrMetrics::Type> parity_;
     std::vector<typename LlrMetrics::Type> bitMetrics_;

@@ -68,7 +68,7 @@ ptree speed_Convolutional()
     itppCodecs[0].set_generator_polynomials(generator, 4);
     itppCodecs[0].set_method(Trunc);
     
-    std::vector<BitField<bool>> msg = randomBits<std::vector<BitField<bool>>>(N * T);
+    std::vector<BitField<size_t>> msg = randomBits<std::vector<BitField<size_t>>>(N * T);
     bvec itppMsg = randomBits<bvec>(N * T);
     
     codecs[0].setWorkGroupSize(1);
@@ -77,7 +77,7 @@ ptree speed_Convolutional()
     encResults.put_child("fec4", fecEncode(codecs[0], msg, M));
     encResults.put_child("itpp", itppEncode(itppCodecs[0], itppMsg, M));
     
-    std::vector<BitField<uint8_t>> parity;
+    std::vector<BitField<size_t>> parity;
     codecs[0].encode(msg, parity);
     std::vector<LlrType> llr = distort(parity, -5.0);
     codecs[0].setWorkGroupSize(1);
@@ -130,7 +130,7 @@ ptree speed_Turbo()
   itppCodecs[1].set_parameters(gen, gen, 4, itppPermIdx, 4, "TABLE");
   itppCodecs[2].set_parameters(gen, gen, 4, itppPermIdx, 4, "LOGMAX");
   
-  std::vector<BitField<bool>> msg = randomBits<std::vector<BitField<bool>>>(N * T);
+  std::vector<BitField<size_t>> msg = randomBits<std::vector<BitField<size_t>>>(N * T);
   bvec itppMsg = randomBits<bvec>(N * T);
   
   codecs[0].setWorkGroupSize(1);
@@ -139,7 +139,7 @@ ptree speed_Turbo()
   encResults.put_child("fec4", fecEncode(codecs[0], msg, M));
   encResults.put_child("itpp", itppEncode(itppCodecs[0], itppMsg, M));
   
-  std::vector<BitField<uint8_t>> parity;
+  std::vector<BitField<size_t>> parity;
   codecs[0].encode(msg, parity);
   std::vector<LlrType> llr = distort(parity, -5.0);
   
@@ -198,14 +198,14 @@ ptree speed_Ldpc()
   itppCodecs.push_back(std::unique_ptr<itpp::LDPC_Code>(new itpp::LDPC_Code(&itppCheckMatrix)));
   itppCodecs[0]->set_exit_conditions(20, true);
   
-  std::vector<BitField<bool>> msg = randomBits<std::vector<BitField<bool>>>(N * T);
+  std::vector<BitField<size_t>> msg = randomBits<std::vector<BitField<size_t>>>(N * T);
   
   codecs[0].setWorkGroupSize(1);
   encResults.put_child("fec1", fecEncode(codecs[0], msg, M));
   codecs[0].setWorkGroupSize(4);
   encResults.put_child("fec4", fecEncode(codecs[0], msg, M));
   
-  std::vector<BitField<uint8_t>> parity;
+  std::vector<BitField<size_t>> parity;
   codecs[0].encode(msg, parity);
   std::vector<LlrType> llr = distort(parity, -5.0);
   

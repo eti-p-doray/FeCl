@@ -64,7 +64,7 @@ Codec::Codec(Codec::Structure* structure, int workGroupSize) : structureRef_(str
   workGroupSize_ = workGroupSize;
 }
 
-bool Codec::checkBlocks(std::vector<BitField<uint8_t>>::const_iterator parity, size_t n) const
+bool Codec::checkBlocks(std::vector<BitField<size_t>>::const_iterator parity, size_t n) const
 {
   for (size_t i = 0; i < n; ++i) {
     bool check = structure().check(parity);
@@ -76,7 +76,7 @@ bool Codec::checkBlocks(std::vector<BitField<uint8_t>>::const_iterator parity, s
   return true;
 }
 
-void Codec::encodeBlocks(std::vector<BitField<bool>>::const_iterator msg, std::vector<BitField<uint8_t>>::iterator parity, size_t n) const
+void Codec::encodeBlocks(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity, size_t n) const
 {
   for (size_t i = 0; i < n; ++i) {
     structure().encode(msg, parity);

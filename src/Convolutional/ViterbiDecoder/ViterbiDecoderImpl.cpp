@@ -32,7 +32,7 @@ using namespace fec;
  *    Output needs to be pre-allocated.
  */
 template <class LlrMetrics>
-void ViterbiDecoderImpl<LlrMetrics>::decodeBlock(std::vector<LlrType>::const_iterator parityIn, std::vector<BitField<bool>>::iterator messageOut)
+void ViterbiDecoderImpl<LlrMetrics>::decodeBlock(std::vector<LlrType>::const_iterator parityIn, std::vector<BitField<size_t>>::iterator messageOut)
 {
   previousPathMetrics_[0] = 0;
   std::fill(previousPathMetrics_.begin()+1, previousPathMetrics_.end(), -llrMetrics_.max());

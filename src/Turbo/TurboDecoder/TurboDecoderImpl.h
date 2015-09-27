@@ -40,7 +40,7 @@ namespace fec {
   protected:
     TurboDecoderImpl() = default;
     
-    virtual void decodeBlock(std::vector<LlrType>::const_iterator parity, std::vector<BitField<bool>>::iterator msg);
+    virtual void decodeBlock(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg);
     virtual void soDecodeBlock(Codec::InputIterator input, Codec::OutputIterator output);
     
   private:

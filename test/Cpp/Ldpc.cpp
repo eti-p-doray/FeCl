@@ -33,8 +33,8 @@ void test_ldpc_soDecode_systOut(const fec::Ldpc& code, size_t n = 1)
 {
   double snr = -5.0;
   
-  std::vector<fec::BitField<bool>> msg(code.msgSize()*n, 1);
-  std::vector<fec::BitField<uint8_t>> parity;
+  std::vector<fec::BitField<size_t>> msg(code.msgSize()*n, 1);
+  std::vector<fec::BitField<size_t>> parity;
   code.encode(msg, parity);
   
   std::vector<fec::LlrType> parityIn = distort(parity, snr);

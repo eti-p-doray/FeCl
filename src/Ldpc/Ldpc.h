@@ -109,8 +109,8 @@ namespace fec {
       inline size_t iterations() const {return iterations_;}
       
       void syndrome(std::vector<uint8_t>::const_iterator parity, std::vector<uint8_t>::iterator syndrome) const;
-      virtual bool check(std::vector<BitField<uint8_t>>::const_iterator parity) const;
-      virtual void encode(std::vector<BitField<bool>>::const_iterator msg, std::vector<BitField<uint8_t>>::iterator parity) const;
+      virtual bool check(std::vector<BitField<size_t>>::const_iterator parity) const;
+      virtual void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const;
       
     private:
       template <typename Archive>
@@ -152,7 +152,7 @@ namespace fec {
   protected:
     Ldpc() = default;
     
-    virtual void decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<bool>>::iterator msg, size_t n) const;
+    virtual void decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const;
     virtual void soDecodeBlocks(InputIterator input, OutputIterator output, size_t n) const;
     
   private:

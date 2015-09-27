@@ -45,7 +45,7 @@ void Codec_decode( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
   } catch (std::exception& e) {
     throw std::invalid_argument("Parity vector is invalid");
   }
-  std::vector<BitField<bool>, Allocator<BitField<bool>>::type> msg;
+  std::vector<BitField<size_t>, Allocator<BitField<size_t>>::type> msg;
   codec->decode(parity, msg);
   plhs[0] = toMxArray(msg);
 }

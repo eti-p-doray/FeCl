@@ -64,7 +64,7 @@ void Convolutional::soDecodeBlocks(InputIterator input, OutputIterator output, s
   worker->soDecodeBlocks(input, output, n);
 }
 
-void Convolutional::decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<bool>>::iterator msg, size_t n) const
+void Convolutional::decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const
 {
   auto worker = ViterbiDecoder::create(structure());
   worker->decodeBlocks(parity, msg, n);
@@ -124,7 +124,7 @@ Convolutional::DecoderOptions Convolutional::Structure::getDecoderOptions() cons
   return DecoderOptions().algorithm(decoderAlgorithm_);
 }
 
-void Convolutional::Structure::encode(std::vector<BitField<bool>>::const_iterator msg, std::vector<BitField<uint8_t>>::iterator parity) const
+void Convolutional::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const
 {
   size_t state = 0;
   
@@ -176,7 +176,7 @@ void Convolutional::Structure::encode(std::vector<BitField<bool>>::const_iterato
   assert(state == 0);
 }
 
-bool Convolutional::Structure::check(std::vector<BitField<uint8_t>>::const_iterator parity) const
+bool Convolutional::Structure::check(std::vector<BitField<size_t>>::const_iterator parity) const
 {
   size_t state = 0;
   for (int j = 0; j < length()+tailSize(); ++j) {
@@ -211,7 +211,7 @@ bool Convolutional::Structure::check(std::vector<BitField<uint8_t>>::const_itera
   }
 }
 
-void Convolutional::Structure::encode(std::vector<BitField<bool>>::const_iterator msg, std::vector<BitField<uint8_t>>::iterator parity, std::vector<BitField<uint8_t>>::iterator tail) const
+void Convolutional::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity, std::vector<BitField<size_t>>::iterator tail) const
 {
   size_t state = 0;
   

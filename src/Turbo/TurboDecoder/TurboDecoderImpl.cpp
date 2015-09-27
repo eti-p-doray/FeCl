@@ -27,7 +27,7 @@ TurboDecoderImpl::TurboDecoderImpl(const Turbo::Structure& structure) : TurboDec
 {
 }
 
-void TurboDecoderImpl::decodeBlock(std::vector<LlrType>::const_iterator parity, std::vector<BitField<bool>>::iterator msg)
+void TurboDecoderImpl::decodeBlock(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg)
 {
   switch (structure().bitOrdering()) {
     case Turbo::Alternate:
