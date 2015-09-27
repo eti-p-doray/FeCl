@@ -121,7 +121,7 @@ Trellis::Trellis(std::vector<BitField<size_t>> constraintLengths, std::vector<st
         }
         
         for (size_t k = 0; k < outputSize_; k++) {
-          if ((generator[i][k]>>constraintLengths[i]) == 0) {
+          if ((generator[i][k]>>constraintLengths[i]) != 0) {
             throw std::invalid_argument("Invalid connection in generator");
           }
           output_[state*inputCount()+input][k] ^=
@@ -129,7 +129,7 @@ Trellis::Trellis(std::vector<BitField<size_t>> constraintLengths, std::vector<st
           ^ parity(inputStates[i] & generator[i][k]);
         }
         
-        if (feedback[i].test(constraintLengths[i]-1) == 1) {
+        if (feedback[i].test(constraintLengths[i]-1) != 1) {
           throw std::invalid_argument("Feedback must connect systematic");
         }
         nextState_[state*inputCount()+input][j+constraintLengths[i]-2] = (input[i] & feedback[i].test(constraintLengths[i]-1))
