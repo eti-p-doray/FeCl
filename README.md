@@ -20,7 +20,7 @@ The implementation is optimized to process large amount of data. It profits from
 Documentation:
 
 For Matlab API, see exampleMatlab folder. You can use `doc` function in matlab after installation.
-For C++ API, refer to the [web documentation](http://eti-p-doray.github.io/ForwardErrorCorrection/)
+For C++ API, refer to the [web documentation](http://eti-p-doray.github.io/FeCl/)
 
 =================
 
