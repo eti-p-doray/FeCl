@@ -1,13 +1,13 @@
-ForwardErrorCorrection {#mainpage}
+FeCl {#mainpage}
 =================
 
 [![Build Status](https://travis-ci.org/eti-p-doray/ForwardErrorCorrection.svg?branch=master)](https://travis-ci.org/eti-p-doray/ForwardErrorCorrection)
 
-This software implements several forward error correction (fec) algorithms in C++ and offer a Matlab API.
-Its main use is in communication systems simulations for the research area.
-This project is a result of my work at the emt research center at INRS, Quebec, Canada.
+FeCl is a channel coding library to help analysis of communication systems in research and education.
+FeCl is licensed as free software under the lesser GPL license.
+It can be used from C++ and Matlab.
 
-Implemented fec Codes<br/>
+Implemented fec Codecs<br/>
 * Convolutional
 * Turbo (generalized to n code constituents)
 * Ldpc
