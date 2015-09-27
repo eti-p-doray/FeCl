@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 2.8.11)
-#project(fec LANGUAGES CXX)
+#project(FeCl LANGUAGES CXX)
 
 set(CMAKE_BUILD_TYPE Release)
 
@@ -10,6 +10,7 @@ find_package(Itpp)
 
 set(Boost_USE_STATIC_LIBS       ON) # only find static libs
 set(Boost_USE_STATIC_RUNTIME   	OFF)
+add_definitions(-DBOOST_ALL_NO_LIB)
 
 set(Boost_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/libs/include/)
 set(Boost_LIBRARIES serialization)
