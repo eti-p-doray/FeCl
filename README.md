@@ -1,7 +1,7 @@
 FeCl {#mainpage}
 =================
 
-[![Build Status](https://travis-ci.org/eti-p-doray/ForwardErrorCorrection.svg?branch=master)](https://travis-ci.org/eti-p-doray/ForwardErrorCorrection)
+[![Build Status](https://travis-ci.org/eti-p-doray/FeCl.svg?branch=master)](https://travis-ci.org/eti-p-doray/FeCl)
 
 FeCl is a channel coding library to help analysis of communication systems in research and education.
 FeCl is licensed as free software under the lesser GPL license.
