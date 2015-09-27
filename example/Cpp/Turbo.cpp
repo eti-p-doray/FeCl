@@ -1,16 +1,16 @@
 /*******************************************************************************
- This file is part of C3sar.
+ This file is part of FeCl.
  
  Copyright (c) 2015, Etienne Pierre-Doray, INRS
  Copyright (c) 2015, Leszek Szczecinski, INRS
  All rights reserved.
  
- C3sar is free software: you can redistribute it and/or modify
+ FeCl is free software: you can redistribute it and/or modify
  it under the terms of the Lesser General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
  (at your option) any later version.
  
- C3sar is distributed in the hope that it will be useful,
+ FeCl is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
@@ -45,18 +45,16 @@ int main( int argc, char* argv[] )
   
   uint64_t seed = std::chrono::system_clock::now().time_since_epoch().count();
   std::srand ( unsigned (seed ) );
-  std::vector<size_t> systIdx(2048);
   std::vector<size_t> permIdx(2048);
-  for (size_t i = 0; i < systIdx.size(); ++i) {
+  for (size_t i = 0; i < permIdx.size(); ++i) {
     permIdx[i] = i;
-    systIdx[i] = i;
   }
   std::random_shuffle (permIdx.begin(), permIdx.end());
   
   /*
    The trellis and interleaver indices are used to create a code structure.
    */
-  auto encoder = fec::Turbo::EncoderOptions({trellis, trellis}, {systIdx, permIdx}).termination(fec::Convolutional::Truncate).bitOrdering(fec::Turbo::Group);
+  auto encoder = fec::Turbo::EncoderOptions({trellis, trellis}, {{}, permIdx}).termination(fec::Convolutional::Truncate).bitOrdering(fec::Turbo::Group);
   auto decoder = fec::Turbo::DecoderOptions().algorithm(fec::Codec::Exact).iterations(10).scheduling(fec::Turbo::Serial);
   fec::Turbo::Structure structure(encoder, decoder);
   //! [Creating a Turbo code structure]
@@ -69,16 +67,6 @@ int main( int argc, char* argv[] )
   //! [Creating a Turbo code]
   
   std::cout << per(code, -4) << std::endl;
-  
-  /*decoder.decoderType(fec::Codec::Table);
-  code = fec::Codec::create(fec::Turbo::Structure(encoder, decoder), 1);
-  
-  std::cout << per(code, 4.0) << std::endl;
-  
-  decoder.decoderType(fec::Codec::Approximate);
-  code = fec::Codec::create(fec::Turbo::Structure(encoder, decoder), 1);
-  
-  std::cout << per(code, 4.0) << std::endl;*/
   
   return 0;
 }
