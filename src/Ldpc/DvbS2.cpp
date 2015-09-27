@@ -24,11 +24,11 @@
 using namespace fec;
 
 const std::array<size_t, 2> Ldpc::DvbS2::length_ = {64800, 16200};
-const std::vector<const std::vector<double>> Ldpc::DvbS2::rate_ = {
+const std::vector<std::vector<double>> Ldpc::DvbS2::rate_ = {
   {1.0/4.0, 1.0/3.0, 2.0/5.0, 1.0/2.0, 3.0/5.0, 2.0/3.0, 3.0/4.0, 4.0/5.0, 5.0/6.0, 8.0/9.0, 9.0/10.0},
   {1.0/5.0, 1.0/3.0, 2.0/5.0, 4.0/9.0, 3.0/5.0, 2.0/3.0, 11.0/15.0, 7.0/9.0, 37.0/49.0, 8.0/9.0}};
 
-const std::vector<const std::vector<const std::vector<const std::vector<size_t>>>> Ldpc::DvbS2::index_ = {
+const std::vector<std::vector<std::vector<std::vector<size_t>>>> Ldpc::DvbS2::index_ = {
   {
     {
       {23606, 36098, 1140, 28859, 18148, 18510, 6226, 540, 42014, 20879, 23802, 47088},

@@ -63,8 +63,8 @@ namespace fec {
       static SparseBitMatrix matrix(size_t n, double rate);
       
       static const std::array<size_t, 2> length_;
-      static const std::vector<const std::vector<double>> rate_;
-      static const std::vector<const std::vector<const std::vector<const std::vector<size_t>>>> index_;
+      static const std::vector<std::vector<double>> rate_;
+      static const std::vector<std::vector<std::vector<std::vector<size_t>>>> index_;
     };
     
     struct EncoderOptions
