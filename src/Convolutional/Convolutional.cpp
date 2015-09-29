@@ -270,29 +270,19 @@ void Convolutional::Structure::encode(std::vector<BitField<size_t>>::const_itera
 Permutation Convolutional::Structure::createPermutation(const PermuteOptions& options) const
 {
   std::vector<size_t> perms;
-  if (options.parityMask_.size() > 0) {
-    for (size_t i = 0; i < length() * trellis().outputSize(); ++i) {
-      if (options.parityMask_[i % options.parityMask_.size()]) {
-        perms.push_back(i);
-      }
-    }
-  } else {
-    for (size_t i = 0; i < length() * trellis().outputSize(); ++i) {
-      perms.push_back(i);
+  size_t systIdx = 0;
+  for (size_t i = 0; i < length() * trellis().outputSize(); ++i) {
+    if (options.parityMask_.size() == 0 || options.parityMask_[i % options.parityMask_.size()]) {
+      perms.push_back(systIdx);
+      ++systIdx;
     }
   }
-  if (options.tailMask_.size() > 0) {
-    for (size_t i = 0; i < tailSize()*trellis().outputSize(); ++i) {
-      if (options.tailMask_[i % options.tailMask_.size()]) {
-        perms.push_back(length()*trellis().outputSize()+i);
-      }
+  for (size_t i = 0; i < tailSize()*trellis().outputSize(); ++i) {
+    if ((options.tailMask_.size() == 0 && (options.parityMask_.size() == 0 || options.tailMask_[i % options.tailMask_.size()])) ||
+        (options.tailMask_.size() != 0 && (options.tailMask_[systIdx % options.tailMask_.size()]))) {
+      perms.push_back(systIdx);
     }
-  } else {
-    for (size_t i = 0; i < tailSize()*trellis().outputSize(); ++i) {
-      if (options.tailMask_[(length()*trellis().outputSize()+i) % options.tailMask_.size()]) {
-        perms.push_back(length()*trellis().outputSize()+i);
-      }
-    }
+    ++systIdx;
   }
   
   return Permutation(perms, paritySize());

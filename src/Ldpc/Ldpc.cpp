@@ -351,18 +351,21 @@ void Ldpc::Structure::computeGeneratorMatrix(SparseBitMatrix&& H)
 
 Permutation Ldpc::Structure::createPermutation(const PermuteOptions& options) const
 {
-  //permutations_ = Permutation
   std::vector<size_t> perms;
-  /*for (size_t i = 0; i < length()*trellis().outputSize(); ) {
-   for (size_t j = 0; j < options.parityPattern_.size(); ++j) {
-   if (options.parityPattern_[j]) {
-   perms.push_back(i);
-   ++i;
-   }
-   }
-   }*/
-  for (size_t i = 0; i < paritySize(); ++i) {
-    perms.push_back(i);
+  size_t idx = 0;
+  for (size_t i = 0; i < systSize(); ++i) {
+    if ((options.systMask_.size() == 0 && (options.parityMask_.size() == 0 || options.parityMask_[i % options.parityMask_.size()])) ||
+        (options.systMask_.size() != 0 && (options.systMask_[idx % options.systMask_.size()]))) {
+      perms.push_back(idx);
+      ++idx;
+    }
+  }
+  for (size_t i = 0; i < paritySize() - systSize(); ++i) {
+    if ((options.systMask_.size() == 0 && (options.parityMask_.size() == 0 || options.parityMask_[i % options.parityMask_.size()])) ||
+        (options.systMask_.size() != 0 && (options.parityMask_.size() == 0 || options.parityMask_[idx % options.parityMask_.size()]))) {
+      perms.push_back(idx);
+    }
+    ++idx;
   }
   
   return Permutation(perms, paritySize());

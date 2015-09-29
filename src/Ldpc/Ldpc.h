@@ -91,11 +91,11 @@ namespace fec {
     public:
       PermuteOptions() = default;
       
-      PermuteOptions& systPattern(std::vector<bool> pattern) {systPattern_ = pattern; return *this;}
-      PermuteOptions& parityPattern(std::vector<bool> pattern) {parityPattern_ = pattern; return *this;}
+      PermuteOptions& systMask(std::vector<bool> mask) {systMask_ = mask; return *this;}
+      PermuteOptions& parityMask(std::vector<bool> mask) {parityMask_ = mask; return *this;}
       
-      std::vector<bool> systPattern_;
-      std::vector<bool> parityPattern_;
+      std::vector<bool> systMask_;
+      std::vector<bool> parityMask_;
     };
     /**
      *  This class represents a ldpc code structure.

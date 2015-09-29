@@ -114,19 +114,19 @@ namespace fec {
     public:
       PermuteOptions() = default;
       
-      //PermuteOptions& systMask(std::vector<bool> pattern) {systPattern_ = pattern; return *this;}
-      //PermuteOptions& systTailMask(std::vector<bool> pattern) {systTailPattern_ = {pattern}; return *this;}
-      //PermuteOptions& systTailMask(std::vector<std::vector<bool>> pattern) {systTailPattern_ = pattern; return *this;}
-      //PermuteOptions& parityMask(std::vector<bool> pattern) {parityPattern_ = {pattern}; return *this;}
-      //PermuteOptions& parityMask(std::vector<std::vector<bool>> pattern) {parityPattern_ = pattern; return *this;}
-      //PermuteOptions& tailMask(std::vector<bool> pattern) {tailPattern_ = {pattern}; return *this;}
-      //PermuteOptions& tailMask(std::vector<std::vector<bool>> pattern) {tailPattern_ = pattern; return *this;}
+      PermuteOptions& systMask(std::vector<bool> mask) {systMask_ = mask; return *this;}
+      PermuteOptions& systTailMask(std::vector<bool> mask) {systTailMask_ = {mask}; return *this;}
+      PermuteOptions& systTailMask(std::vector<std::vector<bool>> mask) {systTailMask_ = mask; return *this;}
+      PermuteOptions& parityMask(std::vector<bool> mask) {parityMask_ = {mask}; return *this;}
+      PermuteOptions& parityMask(std::vector<std::vector<bool>> mask) {parityMask_ = mask; return *this;}
+      PermuteOptions& tailMask(std::vector<bool> mask) {tailMask_ = {mask}; return *this;}
+      PermuteOptions& tailMask(std::vector<std::vector<bool>> mask) {tailMask_ = mask; return *this;}
       PermuteOptions& bitOrdering(BitOrdering ordering) {bitOrdering_ = ordering; return *this;}
       
-      //std::vector<bool> systMask_;
-      //std::vector<std::vector<bool>> systTailMask_;
-      //std::vector<std::vector<bool>> parityMask_;
-      //std::vector<std::vector<bool>> tailMask_;
+      std::vector<bool> systMask_;
+      std::vector<std::vector<bool>> systTailMask_;
+      std::vector<std::vector<bool>> parityMask_;
+      std::vector<std::vector<bool>> tailMask_;
       BitOrdering bitOrdering_ = Alternate;
     };
     /**
@@ -167,12 +167,6 @@ namespace fec {
       virtual void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const;
       
       Permutation createPermutation(const PermuteOptions& options) const;
-      
-      template <typename T>
-      void alternate(typename std::vector<T>::const_iterator parityIn, typename std::vector<T>::iterator parityOut) const;
-      
-      template <typename T>
-      void group(typename std::vector<T>::const_iterator parityIn, typename std::vector<T>::iterator parityOut) const;
       
     private:
       template <typename Archive>

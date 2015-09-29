@@ -201,105 +201,150 @@ bool Turbo::Structure::check(std::vector<BitField<size_t>>::const_iterator parit
   return true;
 }
 
-template <typename T>
-void fec::Turbo::Structure::alternate(typename std::vector<T>::const_iterator parityIn, typename std::vector<T>::iterator parityOut) const
-{
-  auto msgInIt = parityIn;
-  for (size_t i = 0; i < msgSize(); ++i) {
-    *parityOut = *msgInIt;
-    ++msgInIt;
-    ++parityOut;
-    auto parityInIt = parityIn + systSize();
-    for (size_t j = 0; j < constituentCount(); ++j) {
-      if (i < constituent(j).length()) {
-        for (size_t k = 0; k < constituent(j).trellis().outputSize(); ++k) {
-          *parityOut = parityInIt[i*constituent(j).trellis().outputSize()+k];
-          ++parityOut;
-        }
-      }
-      parityInIt += constituent(j).paritySize();
-    }
-  }
-  auto parityInIt = parityIn + systSize();
-  for (size_t i = 0; i < constituentCount(); ++i) {
-    parityInIt += constituent(i).paritySize() - constituent(i).tailSize() * constituent(i).trellis().outputSize();
-    for (size_t j = 0; j < constituent(i).tailSize(); ++j) {
-      for (size_t k = 0; k < constituent(i).trellis().inputSize(); ++k) {
-        *parityOut = *msgInIt;
-        ++parityOut;
-        ++msgInIt;
-      }
-      for (size_t k = 0; k < constituent(i).trellis().outputSize(); ++k) {
-        *parityOut = *parityInIt;
-        ++parityOut;
-        ++parityInIt;
-      }
-    }
-  }
-}
-
-template <typename T>
-void fec::Turbo::Structure::group(typename std::vector<T>::const_iterator parityIn, typename std::vector<T>::iterator parityOut) const
-{
-  auto msgOutIt = parityOut;
-  for (size_t i = 0; i < msgSize(); ++i) {
-    *msgOutIt = *parityIn;
-    ++msgOutIt;
-    ++parityIn;
-    auto parityOutIt = parityOut + msgSize() + systTailSize();
-    for (size_t j = 0; j < constituentCount(); ++j) {
-      if (i < constituent(j).length()) {
-        for (size_t k = 0; k < constituent(j).trellis().outputSize(); ++k) {
-          parityOutIt[i*constituent(j).trellis().outputSize()+k] = *parityIn;
-          ++parityIn;
-        }
-      }
-      parityOutIt += constituent(j).paritySize();
-    }
-  }
-  auto parityOutIt = parityOut + msgSize() + systTailSize();
-  for (size_t i = 0; i < constituentCount(); ++i) {
-    parityOutIt += constituent(i).paritySize() - constituent(i).tailSize() * constituent(i).trellis().outputSize();
-    for (size_t j = 0; j < constituent(i).tailSize(); ++j) {
-      for (size_t k = 0; k < constituent(i).trellis().inputSize(); ++k) {
-        *msgOutIt = *parityIn;
-        ++parityIn;
-        ++msgOutIt;
-      }
-      for (size_t k = 0; k < constituent(i).trellis().outputSize(); ++k) {
-        *parityOutIt = *parityIn;
-        ++parityOutIt;
-        ++parityIn;
-      }
-    }
-  }
-}
-
 Permutation Turbo::Structure::createPermutation(const PermuteOptions& options) const
 {
-  //permutations_ = Permutation
-  std::vector<size_t> perms;
-  /*for (size_t i = 0; i < length()*trellis().outputSize(); ) {
-   for (size_t j = 0; j < options.parityPattern_.size(); ++j) {
-   if (options.parityPattern_[j]) {
-   perms.push_back(i);
-   ++i;
-   }
-   }
-   }*/
-  for (size_t i = 0; i < paritySize(); ++i) {
-    perms.push_back(i);
+  std::vector<bool> systMask_ = options.systMask_;
+  if (systMask_.size() == 0) {
+    systMask_ = {true};
   }
-  std::vector<size_t> temp(perms.size());
-  if (options.bitOrdering_ == Alternate) {
-    alternate<size_t>(perms.begin(), temp.begin());
+  std::vector<std::vector<bool>> systTailMask_ = options.systTailMask_;
+  if (systTailMask_.size() == 0) {
+    
+  } else if (systTailMask_.size() == 1) {
+    systTailMask_.resize(constituentCount(), systTailMask_[0]);
+  } else if (systTailMask_.size() == constituentCount()) {
+    for (size_t i = 0; i < constituentCount(); ++i) {
+      if (systTailMask_[i].size() == 0) {
+        systTailMask_[i] = {true};
+      }
+    }
+  } else {
+    throw std::invalid_argument("Invalid size for systematic tail mask");
   }
   
-  return Permutation(temp, paritySize());
+  std::vector<std::vector<bool>> parityMask_ = options.parityMask_;
+  if (parityMask_.size() == 0) {
+    parityMask_.resize(constituentCount(), {true});
+  } else if (parityMask_.size() == 1) {
+    parityMask_.resize(constituentCount(), parityMask_[0]);
+  } else if (parityMask_.size() == constituentCount()) {
+    for (size_t i = 0; i < constituentCount(); ++i) {
+      if (parityMask_[i].size() == 0) {
+        parityMask_[i] = {true};
+      }
+    }
+  } else {
+    throw std::invalid_argument("Invalid size for parity mask");
+  }
+  std::vector<std::vector<bool>> tailMask_ = options.tailMask_;
+  if (tailMask_.size() == 0) {
+    
+  } else if (tailMask_.size() == 1) {
+    tailMask_.resize(constituentCount(), tailMask_[0]);
+  } else if (tailMask_.size() == constituentCount()) {
+    for (size_t i = 0; i < constituentCount(); ++i) {
+      if (tailMask_[i].size() == 0) {
+        tailMask_[i] = {true};
+      }
+    }
+  } else {
+    throw std::invalid_argument("Invalid size for tail mask");
+  }
+  
+  
+  std::vector<size_t> perms;
+  switch (options.bitOrdering_) {
+    case Alternate: {
+      size_t systIdx = 0;
+      for (size_t i = 0; i < msgSize(); ++i) {
+        if (options.systMask_[systIdx % options.systMask_.size()]) {
+          perms.push_back(systIdx);
+        }
+        ++systIdx;
+        size_t parityBaseIdx = systSize();
+        for (size_t j = 0; j < constituentCount(); ++j) {
+          if (i < constituent(j).length()) {
+            for (size_t k = 0; k < constituent(j).trellis().outputSize(); ++k) {
+              size_t parityIdx = i*constituent(j).trellis().outputSize()+k;
+              if (options.parityMask_[j][parityIdx % options.parityMask_[j].size()]) {
+                perms.push_back(parityBaseIdx+parityIdx);
+              }
+            }
+          }
+          parityBaseIdx += constituent(j).paritySize();
+        }
+      }
+      size_t parityIdx = systSize();
+      for (size_t i = 0; i < constituentCount(); ++i) {
+        parityIdx += constituent(i).paritySize() - constituent(i).tailSize() * constituent(i).trellis().outputSize();
+        size_t tailIdx = 0;
+        size_t systTailIdx = 0;
+        for (size_t j = 0; j < constituent(i).tailSize(); ++j) {
+          for (size_t k = 0; k < constituent(i).trellis().inputSize(); ++k) {
+            if ((options.systTailMask_.size() == 0 && (options.systMask_[systIdx % options.systMask_.size()])) ||
+                (options.systTailMask_.size() != 0 && (options.systTailMask_[i][systTailIdx % options.systTailMask_.size()]))) {
+              perms.push_back(systIdx);
+            }
+            ++systIdx;
+            ++systTailIdx;
+          }
+          for (size_t k = 0; k < constituent(i).trellis().outputSize(); ++k) {
+            if ((options.tailMask_.size() == 0 && (options.parityMask_[i][parityIdx % options.systMask_.size()])) ||
+                (options.tailMask_.size() != 0 && (options.tailMask_[i][tailIdx % options.systTailMask_.size()]))) {
+              perms.push_back(parityIdx);
+            }
+            ++parityIdx;
+            ++tailIdx;
+          }
+        }
+      }
+      break;
+    }
+      
+    case Group: {
+      size_t idx = 0;
+      for (size_t i = 0; i < msgSize(); ++i) {
+        if (options.systMask_[idx % options.systMask_.size()]) {
+          perms.push_back(idx);
+        }
+        ++idx;
+      }
+      for (size_t i = 0; i < constituentCount(); ++i) {
+        size_t tailIdx = 0;
+        for (size_t j = 0; j < constituent(i).tailSize() * constituent(i).trellis().inputSize(); ++j) {
+            if ((options.systTailMask_.size() == 0 && (options.systMask_[idx % options.systMask_.size()])) ||
+                (options.systTailMask_.size() != 0 && (options.systTailMask_[i][tailIdx % options.systTailMask_.size()]))) {
+              perms.push_back(idx);
+            }
+            ++idx;
+            ++tailIdx;
+        }
+      }
+      for (size_t i = 0; i < constituentCount(); ++i) {
+        size_t parityIdx = 0;
+        for (size_t j = 0; j < constituent(i).paritySize() * constituent(i).trellis().outputSize(); ++j) {
+            if (options.parityMask_[j][parityIdx % options.parityMask_[j].size()]) {
+              perms.push_back(idx);
+            }
+            ++idx;
+        }
+        size_t tailIdx = 0;
+        for (size_t j = 0; j < constituent(i).tailSize() * constituent(i).trellis().outputSize(); ++j) {
+          if ((options.tailMask_.size() == 0 && (options.parityMask_[i][parityIdx % options.systMask_.size()])) ||
+              (options.tailMask_.size() != 0 && (options.tailMask_[i][tailIdx % options.systTailMask_.size()]))) {
+            perms.push_back(idx);
+          }
+          ++idx;
+          ++parityIdx;
+          ++tailIdx;
+        }
+      }
+      break;
+    }
+      
+    default:
+      break;
+  }
+  
+  return Permutation(perms, paritySize());
 }
-
-template void fec::Turbo::Structure::alternate<BitField<size_t>>(std::vector<BitField<size_t>>::const_iterator parityIn, std::vector<BitField<size_t>>::iterator parityOut) const;
-template void fec::Turbo::Structure::alternate<LlrType>(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::iterator parityOut) const;
-
-template void fec::Turbo::Structure::group<BitField<size_t>>(std::vector<BitField<size_t>>::const_iterator parityIn, std::vector<BitField<size_t>>::iterator parityOut) const;
-template void fec::Turbo::Structure::group<LlrType>(std::vector<LlrType>::const_iterator parityIn, std::vector<LlrType>::iterator parityOut) const;
