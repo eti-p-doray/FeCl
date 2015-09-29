@@ -19,31 +19,38 @@
  along with C3rel.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#ifndef MEX_ENCODER_OPTIONS
-#define MEX_ENCODER_OPTIONS
+#ifndef TO_INTERLEAVER_H
+#define TO_INTERLEAVER_H
 
 #include <memory>
-#include <type_traits>
-
+#include <math.h>
+#include <vector>
 #include <mex.h>
 
-#include "Turbo/Turbo.h"
-#include "../util/MexTrellis.h"
-#include "../util/MexPermutation.h"
-#include "../util/MexConversion.h"
+#include "MexConversion.h"
+#include "Structure/Permutation.h"
 
 template <>
-class mxArrayTo<fec::Turbo::EncoderOptions> {
+class mxArrayTo<fec::Permutation> {
 public:
-  static fec::Turbo::EncoderOptions f(const mxArray* in) {
-    auto trellis = mxArrayTo<std::vector<fec::Trellis>>::f(mxGetField(in, 0, "trellis"));
-    auto interl = mxArrayTo<std::vector<fec::Permutation>>::f(mxGetField(in, 0, "interleaver"));
-    fec::Turbo::EncoderOptions encoderOptions(trellis, interl);
-    
-    encoderOptions.termination(mxArrayTo<std::vector<fec::Convolutional::Termination>>::f(mxGetField(in, 0, "termination")));
-    
-    return encoderOptions;
+  static fec::Permutation f(const mxArray* in) {
+    if (in == nullptr) {
+      throw std::invalid_argument("null");
+    }
+    std::vector<size_t> perm = mxArrayTo<std::vector<size_t>>::f(in);
+    for (auto & i : perm) {
+      i--;
+    }
+    return fec::Permutation(perm);
   }
 };
+
+inline mxArray* toMxArray(const fec::Permutation& in) {
+  std::vector<size_t> indices(in.outputSize());
+  for (size_t i = 0; i < indices.size(); ++i) {
+    indices[i] = in[i]+1;
+  }
+  return toMxArray(indices);
+}
 
 #endif

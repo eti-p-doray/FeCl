@@ -23,6 +23,14 @@ classdef Turbo < fec.Codec
               self.mexHandle_ = fec.bin.wrap(uint32(fec.WrapFcnId.Turbo_constructor), self.structure.getEncoderOptions, self.structure.getDecoderOptions);
             end
         end
+        function perms = createPermutation(self, options)
+            if (nargin < 2)
+                options = {};
+            end
+            options = fec.Turbo.PermuteOptions(options);
+            perms = fec.Permutation(fec.bin.wrap(uint32(fec.WrapFcnId.Turbo_createPermutation), self, options.get()), self.paritySize);
+        end
+
         function val = get.iterations(self)
             val = self.decoderOptions.iterations;
         end

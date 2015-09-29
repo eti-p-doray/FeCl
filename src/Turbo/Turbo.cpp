@@ -84,10 +84,10 @@ void Turbo::Structure::setEncoderOptions(const fec::Turbo::EncoderOptions &encod
 {
   interleaver_ = encoder.interleaver_;
   if (encoder.trellis_.size() != 1 && encoder.trellis_.size() != interleaver_.size()) {
-    throw std::invalid_argument("Trellis and Interleaver count don't match");
+    throw std::invalid_argument("Trellis and Permutation count don't match");
   }
   if (encoder.termination_.size() != 1 && encoder.termination_.size() != interleaver_.size()) {
-    throw std::invalid_argument("Termination and Interleaver count don't match");
+    throw std::invalid_argument("Termination and Permutation count don't match");
   }
   
   msgSize_ = 0;
@@ -124,18 +124,17 @@ void Turbo::Structure::setEncoderOptions(const fec::Turbo::EncoderOptions &encod
     auto decoderConstituentOptions = Convolutional::DecoderOptions().algorithm(decoderAlgorithm_);
     constituents_.push_back(Convolutional::Structure(encoderConstituentOptions, decoderConstituentOptions));
   }
-  bitOrdering_ = encoder.bitOrdering_;
   
   systSize_ = 0;
   paritySize_ = 0;
   tailSize_ = 0;
   stateSize_ = 0;
   for (auto & i : constituents()) {
-    tailSize_ += i.msgTailSize();
-    paritySize_ += i.paritySize();
+    tailSize_ += i.systTailSize();
+    paritySize_ += i.innerParitySize();
     stateSize_ += i.systSize();
   }
-  systSize_ = msgSize_ + msgTailSize();
+  systSize_ = msgSize_ + systTailSize();
   paritySize_ += systSize();
 }
 
@@ -160,29 +159,16 @@ void Turbo::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg,
   std::vector<BitField<size_t>> messageInterl;
   std::vector<BitField<size_t>> parityOut;
   std::vector<BitField<size_t>>::iterator parityOutIt;
-  switch (bitOrdering()) {
-    case Alternate:
-      parityOut.resize(paritySize());
-      parityOutIt = parityOut.begin();
-      break;
-      
-    default:
-    case Group:
-      parityOutIt = parity;
-      break;
-  }
+  parityOutIt = parity;
   std::copy(msg, msg + msgSize(), parityOutIt);
   auto systTail = parityOutIt + msgSize();
   parityOutIt += systSize();
   for (size_t i = 0; i < constituentCount(); ++i) {
     messageInterl.resize(constituent(i).msgSize());
-    interleaver(i).interleaveBlock<BitField<size_t>>(msg, messageInterl.begin());
+    interleaver(i).permuteBlock<BitField<size_t>>(msg, messageInterl.begin());
     constituent(i).encode(messageInterl.begin(), parityOutIt, systTail);
-    systTail += constituent(i).msgTailSize();
-    parityOutIt += constituent(i).paritySize();
-  }
-  if (bitOrdering() == Alternate) {
-    alternate<BitField<size_t>>(parityOut.begin(), parity);
+    systTail += constituent(i).systTailSize();
+    parityOutIt += constituent(i).innerParitySize();
   }
 }
 
@@ -193,26 +179,15 @@ bool Turbo::Structure::check(std::vector<BitField<size_t>>::const_iterator parit
   std::vector<BitField<size_t>> tailTest;
   std::vector<BitField<size_t>> parityIn;
   std::vector<BitField<size_t>>::const_iterator parityInIt;
-  switch (bitOrdering()) {
-    case Alternate:
-      parityIn.resize(paritySize());
-      group<BitField<size_t>>(parity, parityIn.begin());
-      parityInIt = parityIn.begin();
-      break;
-      
-    default:
-    case Group:
-      parityInIt = parity;
-      break;
-  }
+  parityInIt = parity;
   auto tailIt = parityInIt + msgSize();
   auto systIt = parityInIt;
   parityInIt += systSize();
   for (size_t i = 0; i < constituentCount(); ++i) {
     messageInterl.resize(constituent(i).msgSize());
-    parityTest.resize(constituent(i).paritySize());
-    tailTest.resize(constituent(i).msgTailSize());
-    interleaver(i).interleaveBlock<BitField<size_t>,BitField<size_t>>(systIt, messageInterl.begin());
+    parityTest.resize(constituent(i).innerParitySize());
+    tailTest.resize(constituent(i).systTailSize());
+    interleaver(i).permuteBlock<BitField<size_t>,BitField<size_t>>(systIt, messageInterl.begin());
     constituent(i).encode(messageInterl.begin(), parityTest.begin(), tailTest.begin());
     if (!std::equal(parityTest.begin(), parityTest.end(), parityInIt)) {
       return false;
@@ -220,8 +195,8 @@ bool Turbo::Structure::check(std::vector<BitField<size_t>>::const_iterator parit
     if (!std::equal(tailTest.begin(), tailTest.end(), tailIt)) {
       return false;
     }
-    parityInIt += constituent(i).paritySize();
-    tailIt += constituent(i).msgTailSize();
+    parityInIt += constituent(i).innerParitySize();
+    tailIt += constituent(i).systTailSize();
   }
   return true;
 }
@@ -242,12 +217,12 @@ void fec::Turbo::Structure::alternate(typename std::vector<T>::const_iterator pa
           ++parityOut;
         }
       }
-      parityInIt += constituent(j).paritySize();
+      parityInIt += constituent(j).innerParitySize();
     }
   }
   auto parityInIt = parityIn + systSize();
   for (size_t i = 0; i < constituentCount(); ++i) {
-    parityInIt += constituent(i).paritySize() - constituent(i).tailSize() * constituent(i).trellis().outputSize();
+    parityInIt += constituent(i).innerParitySize() - constituent(i).tailSize() * constituent(i).trellis().outputSize();
     for (size_t j = 0; j < constituent(i).tailSize(); ++j) {
       for (size_t k = 0; k < constituent(i).trellis().inputSize(); ++k) {
         *parityOut = *msgInIt;
@@ -271,7 +246,7 @@ void fec::Turbo::Structure::group(typename std::vector<T>::const_iterator parity
     *msgOutIt = *parityIn;
     ++msgOutIt;
     ++parityIn;
-    auto parityOutIt = parityOut + msgSize() + msgTailSize();
+    auto parityOutIt = parityOut + msgSize() + systTailSize();
     for (size_t j = 0; j < constituentCount(); ++j) {
       if (i < constituent(j).length()) {
         for (size_t k = 0; k < constituent(j).trellis().outputSize(); ++k) {
@@ -279,12 +254,12 @@ void fec::Turbo::Structure::group(typename std::vector<T>::const_iterator parity
           ++parityIn;
         }
       }
-      parityOutIt += constituent(j).paritySize();
+      parityOutIt += constituent(j).innerParitySize();
     }
   }
-  auto parityOutIt = parityOut + msgSize() + msgTailSize();
+  auto parityOutIt = parityOut + msgSize() + systTailSize();
   for (size_t i = 0; i < constituentCount(); ++i) {
-    parityOutIt += constituent(i).paritySize() - constituent(i).tailSize() * constituent(i).trellis().outputSize();
+    parityOutIt += constituent(i).innerParitySize() - constituent(i).tailSize() * constituent(i).trellis().outputSize();
     for (size_t j = 0; j < constituent(i).tailSize(); ++j) {
       for (size_t k = 0; k < constituent(i).trellis().inputSize(); ++k) {
         *msgOutIt = *parityIn;
@@ -298,6 +273,29 @@ void fec::Turbo::Structure::group(typename std::vector<T>::const_iterator parity
       }
     }
   }
+}
+
+Permutation Turbo::Structure::createPermutation(const PermuteOptions& options) const
+{
+  //permutations_ = Permutation
+  std::vector<size_t> perms;
+  /*for (size_t i = 0; i < length()*trellis().outputSize(); ) {
+   for (size_t j = 0; j < options.parityPattern_.size(); ++j) {
+   if (options.parityPattern_[j]) {
+   perms.push_back(i);
+   ++i;
+   }
+   }
+   }*/
+  for (size_t i = 0; i < innerParitySize(); ++i) {
+    perms.push_back(i);
+  }
+  std::vector<size_t> temp(perms.size());
+  if (options.bitOrdering_ == Alternate) {
+    alternate<size_t>(perms.begin(), temp.begin());
+  }
+  
+  return Permutation(temp, innerParitySize());
 }
 
 template void fec::Turbo::Structure::alternate<BitField<size_t>>(std::vector<BitField<size_t>>::const_iterator parityIn, std::vector<BitField<size_t>>::iterator parityOut) const;

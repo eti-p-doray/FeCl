@@ -3,7 +3,6 @@ classdef EncoderOptions < hgsetget
         trellis;
         interleaver;
         termination = {uint32(fec.Convolutional.Termination.('Tail'))};
-        bitOrdering = uint32(fec.Turbo.BitOrdering.('Alternate'));
     end
 
     methods
@@ -44,9 +43,6 @@ classdef EncoderOptions < hgsetget
                     self.termination{i} = uint32(fec.Convolutional.Termination.(val{i}));
                 end
             end
-        end
-        function self = set.bitOrdering(self,val)
-            self.bitOrdering = uint32(fec.Turbo.BitOrdering.(val));
         end
     end
 end

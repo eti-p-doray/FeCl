@@ -199,7 +199,7 @@ bool Ldpc::Structure::check(std::vector<BitField<size_t>>::const_iterator parity
 void Ldpc::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const
 {
   std::copy(msg, msg + msgSize(), parity);
-  std::fill(parity+msgSize(), parity+paritySize(), 0);
+  std::fill(parity+msgSize(), parity+innerParitySize(), 0);
   parity += msgSize();
   auto parityIt = parity;
   for (auto row = DC_.begin(); row < DC_.end(); ++row, ++parityIt) {
@@ -349,3 +349,21 @@ void Ldpc::Structure::computeGeneratorMatrix(SparseBitMatrix&& H)
   T_ = H_({0, tSize}, {H.cols()-tSize, H.cols()}).transpose();
 }
 
+Permutation Ldpc::Structure::createPermutation(const PermuteOptions& options) const
+{
+  //permutations_ = Permutation
+  std::vector<size_t> perms;
+  /*for (size_t i = 0; i < length()*trellis().outputSize(); ) {
+   for (size_t j = 0; j < options.parityPattern_.size(); ++j) {
+   if (options.parityPattern_[j]) {
+   perms.push_back(i);
+   ++i;
+   }
+   }
+   }*/
+  for (size_t i = 0; i < innerParitySize(); ++i) {
+    perms.push_back(i);
+  }
+  
+  return Permutation(perms, innerParitySize());
+}

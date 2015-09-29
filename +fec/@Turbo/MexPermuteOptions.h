@@ -19,8 +19,8 @@
  along with C3rel.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#ifndef MEX_ENCODER_OPTIONS
-#define MEX_ENCODER_OPTIONS
+#ifndef MEX_PERMUTE_OPTIONS
+#define MEX_PERMUTE_OPTIONS
 
 #include <memory>
 #include <type_traits>
@@ -33,16 +33,14 @@
 #include "../util/MexConversion.h"
 
 template <>
-class mxArrayTo<fec::Turbo::EncoderOptions> {
+class mxArrayTo<fec::Turbo::PermuteOptions> {
 public:
-  static fec::Turbo::EncoderOptions f(const mxArray* in) {
-    auto trellis = mxArrayTo<std::vector<fec::Trellis>>::f(mxGetField(in, 0, "trellis"));
-    auto interl = mxArrayTo<std::vector<fec::Permutation>>::f(mxGetField(in, 0, "interleaver"));
-    fec::Turbo::EncoderOptions encoderOptions(trellis, interl);
+  static fec::Turbo::PermuteOptions f(const mxArray* in) {
+    fec::Turbo::PermuteOptions permuteOptions;
     
-    encoderOptions.termination(mxArrayTo<std::vector<fec::Convolutional::Termination>>::f(mxGetField(in, 0, "termination")));
+    permuteOptions.bitOrdering(mxArrayTo<fec::Turbo::BitOrdering>::f(mxGetField(in, 0, "bitOrdering")));
     
-    return encoderOptions;
+    return permuteOptions;
   }
 };
 

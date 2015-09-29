@@ -26,7 +26,7 @@
 
 #include "../Codec.h"
 #include "../Convolutional/Convolutional.h"
-#include "../Structure/Interleaver.h"
+#include "../Structure/Permutation.h"
 
 namespace fec {
   
@@ -88,16 +88,14 @@ namespace fec {
     struct EncoderOptions {
       friend class Structure;
     public:
-      EncoderOptions(const std::vector<Trellis>& trellis, const std::vector<Interleaver>& interleaver) {trellis_ = trellis; interleaver_ = interleaver;}
-      EncoderOptions(const Trellis& trellis, const std::vector<Interleaver>& interleaver) {trellis_ = {trellis}; interleaver_ = interleaver;}
+      EncoderOptions(const std::vector<Trellis>& trellis, const std::vector<Permutation>& interleaver) {trellis_ = trellis; interleaver_ = interleaver;}
+      EncoderOptions(const Trellis& trellis, const std::vector<Permutation>& interleaver) {trellis_ = {trellis}; interleaver_ = interleaver;}
       EncoderOptions& termination(Convolutional::Termination type) {termination_ = {type}; return *this;}
       EncoderOptions& termination(std::vector<Convolutional::Termination> type) {termination_ = type; return *this;}
-      EncoderOptions& bitOrdering(BitOrdering ordering) {bitOrdering_ = ordering; return *this;}
       
       std::vector<Trellis> trellis_;
-      std::vector<Interleaver> interleaver_;
+      std::vector<Permutation> interleaver_;
       std::vector<Convolutional::Termination> termination_ = std::vector<Convolutional::Termination>(1,Convolutional::Tail);
-      BitOrdering bitOrdering_ = Alternate;
     };
     struct DecoderOptions {
       friend class Structure;
@@ -111,6 +109,27 @@ namespace fec {
       size_t iterations_ = 6;
       Scheduling scheduling_ = Serial;
       Codec::DecoderAlgorithm algorithm_ = Approximate;
+    };
+    struct PermuteOptions {
+    public:
+      PermuteOptions() = default;
+      
+      //PermuteOptions& systPattern(std::vector<bool> pattern) {systPattern_ = pattern; return *this;}
+      //PermuteOptions& systTailPattern(std::vector<bool> pattern) {systTailPattern_ = {pattern}; return *this;}
+      //PermuteOptions& systTailPattern(std::vector<std::vector<bool>> pattern) {systTailPattern_ = pattern; return *this;}
+      //PermuteOptions& parityPattern(std::vector<bool> pattern) {parityPattern_ = {pattern}; return *this;}
+      //PermuteOptions& parityPattern(std::vector<std::vector<bool>> pattern) {parityPattern_ = pattern; return *this;}
+      //PermuteOptions& tailPattern(std::vector<bool> pattern) {tailPattern_ = {pattern}; return *this;}
+      //PermuteOptions& tailPattern(std::vector<std::vector<bool>> pattern) {tailPattern_ = pattern; return *this;}
+      PermuteOptions& bitOrdering(BitOrdering ordering) {bitOrdering_ = ordering; return *this;}
+      //PermuteOptions& interleaver(Permutation interleaver) {interleaver_ = interleaver; return *this;}
+      
+      //std::vector<bool> systPattern_;
+      //std::vector<std::vector<bool>> systTailPattern_;
+      //std::vector<std::vector<bool>> parityPattern_;
+      //std::vector<std::vector<bool>> tailPattern_;
+      BitOrdering bitOrdering_ = Alternate;
+      //Permutation interleaver_;
     };
     /**
      *  This class represents a convolutional code structure.
@@ -136,19 +155,20 @@ namespace fec {
        *  This is zero in the cas of trunction.
        *  \return Tail size
        */
-      inline size_t msgTailSize() const {return tailSize_;}
+      inline size_t systTailSize() const {return tailSize_;}
       inline size_t constituentCount() const {return constituents_.size();}
       inline const std::vector<Convolutional::Structure>& constituents() const {return constituents_;}
-      inline const std::vector<Interleaver>& interleavers() const {return interleaver_;}
+      inline const std::vector<Permutation>& interleavers() const {return interleaver_;}
       inline const Convolutional::Structure& constituent(size_t i) const {return constituents_[i];}
-      inline const Interleaver& interleaver(size_t i) const {return interleaver_[i];}
+      inline const Permutation& interleaver(size_t i) const {return interleaver_[i];}
       
       inline size_t iterations() const {return iterations_;}
-      inline BitOrdering bitOrdering() const {return bitOrdering_;}
       inline Scheduling scheduling() const {return scheduling_;}
       
       virtual bool check(std::vector<BitField<size_t>>::const_iterator parity) const;
       virtual void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const;
+      
+      Permutation createPermutation(const PermuteOptions& options) const;
       
       template <typename T>
       void alternate(typename std::vector<T>::const_iterator parityIn, typename std::vector<T>::iterator parityOut) const;
@@ -165,15 +185,13 @@ namespace fec {
         ar & ::BOOST_SERIALIZATION_NVP(interleaver_);
         ar & ::BOOST_SERIALIZATION_NVP(tailSize_);
         ar & ::BOOST_SERIALIZATION_NVP(iterations_);
-        ar & ::BOOST_SERIALIZATION_NVP(bitOrdering_);
         ar & ::BOOST_SERIALIZATION_NVP(scheduling_);
       }
       
       std::vector<Convolutional::Structure> constituents_;
-      std::vector<Interleaver> interleaver_;
+      std::vector<Permutation> interleaver_;
       size_t tailSize_;
       size_t iterations_;
-      BitOrdering bitOrdering_;
       Scheduling scheduling_;
     };
     
@@ -189,6 +207,8 @@ namespace fec {
     void setDecoderOptions(const DecoderOptions& decoder) {structure_.setDecoderOptions(decoder);}
     void setEncoderOptions(const EncoderOptions& encoder) {structure_.setEncoderOptions(encoder);}
     DecoderOptions getDecoderOptions() const {return structure_.getDecoderOptions();}
+    
+    Permutation createPermutation(const PermuteOptions& options) {return structure_.createPermutation(options);}
     
   protected:
     Turbo() = default;

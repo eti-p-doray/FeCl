@@ -19,8 +19,8 @@
  along with C3rel.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#ifndef FEC_INTERLEAVER_H
-#define FEC_INTERLEAVER_H
+#ifndef FEC_PERMUTATION_H
+#define FEC_PERMUTATION_H
 
 #include <stdint.h>
 
@@ -39,80 +39,76 @@ namespace fec {
   * The interleaver can interleave many independant sequences at once.
   * An interleaver is most usefull in concatenated codes such as turbo code.
   */
-class Interleaver {
+class Permutation {
   friend class boost::serialization::access;
 public:
-  Interleaver() = default;
+  Permutation() = default;
   /**
-   * Interleaver constructor.
+   * Permutation constructor.
    *  The size of the input and output sequence is automatically detected 
    *  from the given index sequence
    *  \param  sequence  Index sequence specifying the source index of each output element.
    */
-  Interleaver(const std::vector<size_t>& sequence) {
+  Permutation(const std::vector<size_t>& sequence) {
     if (sequence.size() == 0) {
       return;
     }
     sequence_ = sequence;
     inputSize_ = *std::max_element(sequence_.begin(), sequence_.end()) + 1;
-    outputSize_ = sequence_.size();
   }
   /**
-   * Interleaver constructor.
+   * Permutation constructor.
    *  You can specify a custom input and output seuqence size.
    *  Be carefull specifying these size because an invalid index in the index sequence
    *  will result in segfault.
    *  \param  sequence  Index sequence specifying the source index of each output element.
-   *  \param  srcSize Length of the input sequence.
-   *  \param  dstSize Length of the output sequence.
+   *  \param  inputSize Length of the input sequence for interleaving.
    */
-  Interleaver(::std::vector<size_t> sequence, size_t inputSize, size_t outputSize) {
+  Permutation(::std::vector<size_t> sequence, size_t inputSize) {
     sequence_ = sequence;
-    outputSize_ = outputSize;
     inputSize_ = inputSize;
   }
   
-  size_t& outputSize() {return outputSize_;}
   size_t& inputSize() {return inputSize_;}
   size_t inputSize() const {return inputSize_;}
-  size_t outputSize() const {return outputSize_;}
+  size_t outputSize() const {return sequence_.size();}
   
   size_t operator[] (size_t i) const {return sequence_[i];}
   
-  template <typename T1, typename T2=T1> void interleave(const std::vector<T1>& input, std::vector<T2>& output) const;
-  template <typename T1, typename T2=T1> void deInterleave(const std::vector<T1>& input, std::vector<T2>& output) const;
+  template <typename T1, typename T2=T1> void permute(const std::vector<T1>& input, std::vector<T2>& output) const;
+  template <typename T1, typename T2=T1> void dePermute(const std::vector<T1>& input, std::vector<T2>& output) const;
   
-  template <typename T1, typename T2=T1> std::vector<T1> interleave(const std::vector<T2>& input) const {
+  template <typename T1, typename T2=T1> std::vector<T1> permute(const std::vector<T2>& input) const {
     std::vector<T2> output;
     interleave(input, output);
     return output;
   }
-  template <typename T1, typename T2=T1> std::vector<T1> deInterleave(const std::vector<T2>& input) const {
+  template <typename T1, typename T2=T1> std::vector<T1> dePermute(const std::vector<T2>& input) const {
     std::vector<T2> output;
-    deInterleave<T1,T2>(input, output);
+    dePermute<T1,T2>(input, output);
     return output;
   }
   
-  template <typename T1, typename T2=T1> void interleaveBlocks(typename std::vector<T1>::const_iterator input, typename std::vector<T2>::iterator output, size_t n) const
+  template <typename T1, typename T2=T1> void permuteBlocks(typename std::vector<T1>::const_iterator input, typename std::vector<T2>::iterator output, size_t n) const
   {
     for (size_t i = 0; i < n; i++) {
-      interleaveBlock<T1,T2>(input, output);
+      permuteBlock<T1,T2>(input, output);
       input += inputSize();
       output += outputSize();
     }
   }
   
-  template <typename T1, typename T2=T1> void deInterleaveBlocks(typename std::vector<T1>::const_iterator input, typename std::vector<T2>::iterator output, size_t n) const
+  template <typename T1, typename T2=T1> void dePermuteBlocks(typename std::vector<T1>::const_iterator input, typename std::vector<T2>::iterator output, size_t n) const
   {
     for (size_t i = 0; i < n; i++) {
-      deInterleaveBlock<T1,T2>(input, output);
+      dePermuteBlock<T1,T2>(input, output);
       input += outputSize();
       output += inputSize();
     }
   }
   
-  template <typename T1, typename T2=T1> void interleaveBlock(typename std::vector<T1>::const_iterator input, typename std::vector<T2>::iterator output) const;
-  template <typename T1, typename T2=T1> void deInterleaveBlock(typename std::vector<T1>::const_iterator input, typename std::vector<T2>::iterator output) const;
+  template <typename T1, typename T2=T1> void permuteBlock(typename std::vector<T1>::const_iterator input, typename std::vector<T2>::iterator output) const;
+  template <typename T1, typename T2=T1> void dePermuteBlock(typename std::vector<T1>::const_iterator input, typename std::vector<T2>::iterator output) const;
   
 private:
   template <typename Archive>
@@ -129,31 +125,31 @@ private:
 }
 
 template <typename T1, typename T2>
-void fec::Interleaver::interleave(const std::vector<T1>& input, std::vector<T2>& output) const
+void fec::Permutation::permute(const std::vector<T1>& input, std::vector<T2>& output) const
 {
   output.resize(input.size() / inputSize() * outputSize());
   
   auto inputIt = input.begin();
   auto outputIt = output.begin();
   for (; inputIt < input.end(); inputIt += sequence_.size(), outputIt += sequence_.size()) {
-    interleaveBlock<T1,T2>(inputIt, outputIt);
+    permuteBlock<T1,T2>(inputIt, outputIt);
   }
 }
 
 template <typename T1, typename T2>
-void fec::Interleaver::deInterleave(const std::vector<T1>& input, std::vector<T2>& output) const
+void fec::Permutation::dePermute(const std::vector<T1>& input, std::vector<T2>& output) const
 {
   output.resize(input.size() / inputSize() * outputSize());
   
   auto inputIt = input.begin();
   auto outputIt = output.begin();
   for (; inputIt < input.end(); inputIt += sequence_.size(), outputIt += sequence_.size()) {
-    deInterleaveBlock<T1,T2>(inputIt, outputIt);
+    dePermuteBlock<T1,T2>(inputIt, outputIt);
   }
 }
 
 template <typename T1, typename T2>
-void fec::Interleaver::interleaveBlock(typename std::vector<T1>::const_iterator input, typename std::vector<T2>::iterator output) const
+void fec::Permutation::permuteBlock(typename std::vector<T1>::const_iterator input, typename std::vector<T2>::iterator output) const
 {
   for (size_t i = 0; i < sequence_.size(); i++) {
     output[i] = input[sequence_[i]];
@@ -161,7 +157,7 @@ void fec::Interleaver::interleaveBlock(typename std::vector<T1>::const_iterator 
 }
 
 template <typename T1, typename T2>
-void fec::Interleaver::deInterleaveBlock(typename std::vector<T1>::const_iterator input, typename std::vector<T2>::iterator output) const
+void fec::Permutation::dePermuteBlock(typename std::vector<T1>::const_iterator input, typename std::vector<T2>::iterator output) const
 {
   for (size_t i = 0; i < sequence_.size(); i++) {
     output[sequence_[i]] = input[i];

@@ -29,16 +29,7 @@ TurboDecoderImpl::TurboDecoderImpl(const Turbo::Structure& structure) : TurboDec
 
 void TurboDecoderImpl::decodeBlock(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg)
 {
-  switch (structure().bitOrdering()) {
-    case Turbo::Alternate:
-      structure().group<LlrType>(parity, parityIn_.begin());
-      break;
-      
-    default:
-    case Turbo::Group:
-      std::copy(parity, parity + structure().paritySize(), parityIn_.begin());
-      break;
-  }
+  std::copy(parity, parity + structure().innerParitySize(), parityIn_.begin());
   std::fill(extrinsic_.begin(), extrinsic_.end(), 0);
   for (size_t i = 0; i < structure().iterations(); ++i) {
     if (structure().scheduling() == Turbo::Parallel) {
@@ -57,7 +48,7 @@ void TurboDecoderImpl::decodeBlock(std::vector<LlrType>::const_iterator parity, 
       code_[j]->soDecodeBlock(inputInfo, outputInfo);
       
       extrinsic += structure().constituent(j).systSize();
-      parityIt += structure().constituent(j).paritySize();
+      parityIt += structure().constituent(j).innerParitySize();
     }
   }
   std::copy(parityIn_.begin(), parityIn_.begin()+structure().msgSize(), parityOut_.begin());
@@ -71,16 +62,7 @@ void TurboDecoderImpl::decodeBlock(std::vector<LlrType>::const_iterator parity, 
 
 void TurboDecoderImpl::soDecodeBlock(Codec::InputIterator input, Codec::OutputIterator output)
 {
-  switch (structure().bitOrdering()) {
-    case Turbo::Alternate:
-      structure().group<LlrType>(input.parity(), parityIn_.begin());
-      break;
-      
-    default:
-    case Turbo::Group:
-      std::copy(input.parity(), input.parity() + structure().paritySize(), parityIn_.begin());
-      break;
-  }
+  std::copy(input.parity(), input.parity() + structure().innerParitySize(), parityIn_.begin());
   if (input.hasSyst()) {
     for (size_t i = 0; i < structure().systSize(); ++i) {
       parityIn_[i] += input.syst()[i];
@@ -96,7 +78,7 @@ void TurboDecoderImpl::soDecodeBlock(Codec::InputIterator input, Codec::OutputIt
   
   if (structure().iterations() == 0) {
     if (output.hasParity()) {
-      std::fill(output.parity()+structure().systSize(), output.parity()+structure().paritySize(), 0);
+      std::fill(output.parity()+structure().systSize(), output.parity()+structure().innerParitySize(), 0);
     }
   }
   
@@ -121,8 +103,8 @@ void TurboDecoderImpl::soDecodeBlock(Codec::InputIterator input, Codec::OutputIt
       code_[j]->soDecodeBlock(inputInfo, outputInfo);
       
       extrinsic += structure().constituent(j).systSize();
-      parityIn += structure().constituent(j).paritySize();
-      parityOut += structure().constituent(j).paritySize();
+      parityIn += structure().constituent(j).innerParitySize();
+      parityOut += structure().constituent(j).innerParitySize();
     }
   }
   std::fill(parityOut_.begin(), parityOut_.begin() + structure().systSize(), 0);
@@ -132,16 +114,7 @@ void TurboDecoderImpl::soDecodeBlock(Codec::InputIterator input, Codec::OutputIt
     std::copy(parityOut_.begin(), parityOut_.begin()+structure().systSize(), output.syst());
   }
   if (output.hasParity()) {
-    switch (structure().bitOrdering()) {
-      case Turbo::Alternate:
-        structure().alternate<LlrType>(parityOut_.begin(), output.parity());
-        break;
-        
-      default:
-      case Turbo::Group:
-        std::copy(parityOut_.begin(), parityOut_.end(), output.parity());
-        break;
-    }
+    std::copy(parityOut_.begin(), parityOut_.end(), output.parity());
   }
   if (output.hasState()) {
     std::copy(extrinsic_.begin(), extrinsic_.end(), output.state());
@@ -163,11 +136,11 @@ void TurboDecoderImpl::aPosterioriUpdate()
       syst[structure().interleaver(j)[k]] += extrinsic[k];
     }
     extrinsic += structure().constituent(j).msgSize();
-    for (size_t k = 0; k < structure().constituent(j).msgTailSize(); ++k) {
+    for (size_t k = 0; k < structure().constituent(j).systTailSize(); ++k) {
       systTail[k] += extrinsic[k];
     }
-    extrinsic += structure().constituent(j).msgTailSize();
-    systTail += structure().constituent(j).msgTailSize();
+    extrinsic += structure().constituent(j).systTailSize();
+    systTail += structure().constituent(j).systTailSize();
   }
 }
 
@@ -188,10 +161,10 @@ void TurboDecoderImpl::parallelSharingUpdate()
     extrinsic += structure().constituent(j).msgSize();
     extrinsicTmp += structure().constituent(j).msgSize();
     
-    std::copy(systTail, systTail + structure().constituent(j).msgTailSize(), extrinsic);
+    std::copy(systTail, systTail + structure().constituent(j).systTailSize(), extrinsic);
     
-    extrinsic += structure().constituent(j).msgTailSize();
-    systTail += structure().constituent(j).msgTailSize();
+    extrinsic += structure().constituent(j).systTailSize();
+    systTail += structure().constituent(j).systTailSize();
   }
   std::copy(parityIn_.begin(), parityIn_.begin() + structure().msgSize(), parityOut_.begin());
   
@@ -216,12 +189,12 @@ void TurboDecoderImpl::serialSharingUpdate(size_t i)
       syst[structure().interleaver(j)[k]] += extrinsic[k];
     }
     extrinsic += structure().constituent(j).systSize();
-    systTail += structure().constituent(j).msgTailSize();
+    systTail += structure().constituent(j).systTailSize();
   }
   auto extrinsicTmp = extrinsic;
   extrinsic += structure().constituent(i).msgSize();
-  std::copy(systTail, systTail + structure().constituent(i).msgTailSize(), extrinsic);
-  extrinsic += structure().constituent(i).msgTailSize();
+  std::copy(systTail, systTail + structure().constituent(i).systTailSize(), extrinsic);
+  extrinsic += structure().constituent(i).systTailSize();
   for (size_t j = i+1; j < structure().constituentCount(); ++j) {
     for (size_t k = 0; k < structure().constituent(j).msgSize(); ++k) {
       syst[structure().interleaver(j)[k]] += extrinsic[k];
@@ -229,7 +202,7 @@ void TurboDecoderImpl::serialSharingUpdate(size_t i)
     extrinsic += structure().constituent(j).systSize();
   }
   
-  structure().interleaver(i).template interleaveBlock<LlrType>(syst, extrinsicTmp);
+  structure().interleaver(i).template permuteBlock<LlrType>(syst, extrinsicTmp);
 }
 
 //Explicit instantiation

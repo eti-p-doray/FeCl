@@ -36,6 +36,7 @@
 
 #include "Structure/BitField.h"
 #include "Structure/LlrMetrics.h"
+#include "Structure/Permutation.h"
 
 namespace fec {
 /**
@@ -82,7 +83,9 @@ public:
     inline size_t systSize() const {return systSize_;} /**< Access the size of the msg in each code bloc. */
     inline size_t paritySize() const {return paritySize_;} /**< Access the size of the parity in each code bloc. */
     inline size_t stateSize() const {return stateSize_;} /**< Access the size of the extrinsic in each code bloc. */
+    inline size_t innerParitySize() const {return paritySize_;} /**< Access the size of the parity in each code bloc. */
     DecoderAlgorithm decoderAlgorithm() const {return decoderAlgorithm_;}
+    Permutation permutations() const {return permutations_;}
     
     virtual void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const = 0;
     virtual bool check(std::vector<BitField<size_t>>::const_iterator parity) const = 0;
@@ -97,6 +100,7 @@ public:
       ar & BOOST_SERIALIZATION_NVP(paritySize_);
       ar & BOOST_SERIALIZATION_NVP(stateSize_);
       ar & BOOST_SERIALIZATION_NVP(decoderAlgorithm_);
+      ar & BOOST_SERIALIZATION_NVP(permutations_);
     }
     
     size_t msgSize_=0;/**< Size of the msg in each code bloc. */
@@ -104,6 +108,7 @@ public:
     size_t paritySize_=0;/**< Size of the parity in each code bloc. */
     size_t stateSize_=0;/**< Size of the extrinsic in each code bloc. */
     DecoderAlgorithm decoderAlgorithm_;
+    Permutation permutations_;
   };
   template <class Iterator>
   class InfoIterator {
@@ -252,7 +257,8 @@ public:
   int getWorkGroupSize() const {return workGroupSize_;}
   void setWorkGroupSize(int size) {workGroupSize_ = size;}
   
-  template <template <typename> class A> bool check(std::vector<BitField<size_t>,A<BitField<size_t>>>& parity) const;
+  template <template <typename> class A> bool check(const std::vector<BitField<size_t>,A<BitField<size_t>>>& parity) const;
+  
   template <template <typename> class A> void encode(const std::vector<BitField<size_t>,A<BitField<size_t>>>& message, std::vector<BitField<size_t>,A<BitField<size_t>>>& parity) const;
   
   template <template <typename> class A>
@@ -332,7 +338,7 @@ BOOST_CLASS_TYPE_INFO(fec::Codec,extended_type_info_no_rtti<fec::Codec>);
 BOOST_CLASS_EXPORT_KEY(fec::Codec);
 
 template <template <typename> class A>
-bool fec::Codec::check(std::vector<BitField<size_t>,A<BitField<size_t>>>& parity) const
+bool fec::Codec::check(const std::vector<BitField<size_t>,A<BitField<size_t>>>& parity) const
 {
   uint64_t blockCount = parity.size() / (paritySize());
   if (parity.size() != blockCount * paritySize()) {

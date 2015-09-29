@@ -60,6 +60,7 @@ namespace fec {
       static SparseBitMatrix matrix(size_t n, size_t wc, size_t wr, uint64_t seed = 0);
     };
     struct DvbS2 {
+    public:
       static SparseBitMatrix matrix(size_t n, double rate);
       
       static const std::array<size_t, 2> length_;
@@ -86,6 +87,16 @@ namespace fec {
       Codec::DecoderAlgorithm algorithm_ = Approximate;
       size_t iterations_;
     };
+    struct PermuteOptions {
+    public:
+      PermuteOptions() = default;
+      
+      PermuteOptions& systPattern(std::vector<bool> pattern) {systPattern_ = pattern; return *this;}
+      PermuteOptions& parityPattern(std::vector<bool> pattern) {parityPattern_ = pattern; return *this;}
+      
+      std::vector<bool> systPattern_;
+      std::vector<bool> parityPattern_;
+    };
     /**
      *  This class represents a ldpc code structure.
      *  It provides a usefull interface to store and acces the structure information.
@@ -104,6 +115,7 @@ namespace fec {
       void setDecoderOptions(const DecoderOptions& decoder);
       void setEncoderOptions(const EncoderOptions& encoder);
       DecoderOptions getDecoderOptions() const;
+      Permutation createPermutation(const PermuteOptions& options) const;
       
       inline const SparseBitMatrix& checks() const {return H_;}
       inline size_t iterations() const {return iterations_;}
@@ -148,6 +160,8 @@ namespace fec {
     void setDecoderOptions(const DecoderOptions& decoder) {structure_.setDecoderOptions(decoder);}
     void setEncoderOptions(const EncoderOptions& encoder) {structure_.setEncoderOptions(encoder);}
     DecoderOptions getDecoderOptions() const {return structure_.getDecoderOptions();}
+    
+    Permutation createPermutation(const PermuteOptions& options) {return structure_.createPermutation(options);}
     
   protected:
     Ldpc() = default;

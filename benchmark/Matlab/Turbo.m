@@ -20,7 +20,8 @@ function results = Turbo(snrdb, T, N, M, z)
     
     msg = int8(randi([0 1],codec{1}.msgSize,N));
     parity = int8(codec{1}.encode(msg));
-         
+    pi = codec(codec{1}.createPermutation());
+
     snr = 10.0.^(snrdb/10.0);
     symbol = double( -2*double(parity)+1 );
     signal = symbol + randn(size(parity)) / sqrt(2*snr);
@@ -41,7 +42,7 @@ function results = Turbo(snrdb, T, N, M, z)
         codec{i}.workGroupSize = 4;
         results.decoding.(config{i}).fec4 = fecDecode(codec{i}, msg, llr, M, z);
 
-        results.decoding.(config{i}).matlab = matlabDecode(matlabDecoder{i}, msg, llr, M, z);
+        results.decoding.(config{i}).matlab = matlabDecode(matlabDecoder{i}, msg, pi.permute(llr), M, z);
     end
 
 end

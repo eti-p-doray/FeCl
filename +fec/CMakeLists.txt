@@ -16,6 +16,7 @@ set(SOURCES
   @Turbo/Turbo_get_decoderOptions.cpp
   @Turbo/Turbo_set_encoderOptions.cpp
   @Turbo/Turbo_set_decoderOptions.cpp
+  @Turbo/Turbo_createPermutation.cpp
   @Ldpc/Ldpc_constructor.cpp
   @Ldpc/Ldpc_get_decoderOptions.cpp
   @Ldpc/Ldpc_set_encoderOptions.cpp
@@ -32,7 +33,7 @@ if(MATLAB_FOUND)
   target_include_directories(wrap PRIVATE ${MATLAB_INCLUDE_DIRS})
   target_include_directories(wrap PRIVATE ${Boost_INCLUDE_DIRS})
   target_include_directories(wrap PRIVATE ${CMAKE_SOURCE_DIR}/src)
-  target_link_libraries(wrap fecStatic)
+  target_link_libraries(wrap FeClStatic)
   target_link_libraries(wrap ${Boost_LIBRARIES})
   target_link_libraries(wrap ${MATLAB_LIBRARIES})
 

@@ -266,3 +266,22 @@ void Convolutional::Structure::encode(std::vector<BitField<size_t>>::const_itera
   
   assert(state == 0);
 }
+
+Permutation Convolutional::Structure::createPermutation(const PermuteOptions& options) const
+{
+  //permutations_ = Permutation
+  std::vector<size_t> perms;
+  /*for (size_t i = 0; i < length()*trellis().outputSize(); ) {
+    for (size_t j = 0; j < options.parityPattern_.size(); ++j) {
+      if (options.parityPattern_[j]) {
+        perms.push_back(i);
+        ++i;
+      }
+    }
+  }*/
+  for (size_t i = 0; i < innerParitySize(); ++i) {
+    perms.push_back(i);
+  }
+  
+  return Permutation(perms, innerParitySize());
+}

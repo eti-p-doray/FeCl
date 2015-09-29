@@ -27,17 +27,17 @@ template <class LlrMetrics, template <class> class BoxSumAlg>
 BpDecoderImpl<LlrMetrics, BoxSumAlg>::BpDecoderImpl(const Ldpc::Structure& structure) :
 BpDecoder(structure)
 {
-  hardParity_.resize(this->structure().paritySize());
-  parity_.resize(this->structure().paritySize());
+  hardParity_.resize(this->structure().checks().cols());
+  parity_.resize(this->structure().checks().cols());
   checkMetrics_.resize(this->structure().checks().size());
   checkMetricsBuffer_.resize(this->structure().checks().size());
-  bitMetrics_.resize(this->structure().paritySize());
+  bitMetrics_.resize(this->structure().checks().cols());
 }
 
 template <class LlrMetrics, template <class> class BoxSumAlg>
 void BpDecoderImpl<LlrMetrics, BoxSumAlg>::decodeBlock(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg)
 {
-  std::copy(parity, parity+structure().paritySize(), parity_.begin());
+  std::copy(parity, parity+structure().innerParitySize(), parity_.begin());
 
   if (structure().iterations() > 0) {
     for (size_t i = 0; i < structure().checks().size(); ++i) {
@@ -50,7 +50,7 @@ void BpDecoderImpl<LlrMetrics, BoxSumAlg>::decodeBlock(std::vector<LlrType>::con
     checkUpdate();
     bitUpdate();
     
-    for (size_t j = 0; j < structure().paritySize(); ++j) {
+    for (size_t j = 0; j < structure().innerParitySize(); ++j) {
       hardParity_[j] = (bitMetrics_[j] >= 0.0);
     }
     if (structure().check(hardParity_.begin())) {
@@ -72,7 +72,7 @@ void BpDecoderImpl<LlrMetrics, BoxSumAlg>::decodeBlock(std::vector<LlrType>::con
 template <class LlrMetrics, template <class> class BoxSumAlg>
 void BpDecoderImpl<LlrMetrics, BoxSumAlg>::soDecodeBlock(Codec::InputIterator input, Codec::OutputIterator output)
 {
-  std::copy(input.parity(), input.parity()+structure().paritySize(), parity_.begin());
+  std::copy(input.parity(), input.parity()+structure().innerParitySize(), parity_.begin());
   if (input.hasSyst()) {
     for (size_t i = 0; i < structure().systSize(); ++i) {
       parity_[i] += input.syst()[i];
@@ -98,7 +98,7 @@ void BpDecoderImpl<LlrMetrics, BoxSumAlg>::soDecodeBlock(Codec::InputIterator in
     checkUpdate();
     bitUpdate();
     
-    for (size_t j = 0; j < structure().paritySize(); ++j) {
+    for (size_t j = 0; j < structure().innerParitySize(); ++j) {
       hardParity_[j] = (bitMetrics_[j] >= 0.0);
     }
     if (structure().check(hardParity_.begin())) {
@@ -117,7 +117,7 @@ void BpDecoderImpl<LlrMetrics, BoxSumAlg>::soDecodeBlock(Codec::InputIterator in
     std::copy(bitMetrics_.begin(), bitMetrics_.begin()+structure().systSize(), output.syst());
   }
   if (output.hasParity()) {
-    std::copy(bitMetrics_.begin(), bitMetrics_.begin()+structure().paritySize(), output.parity());
+    std::copy(bitMetrics_.begin(), bitMetrics_.begin()+structure().innerParitySize(), output.parity());
   }
   if (output.hasState()) {
     std::copy(checkMetrics_.begin(), checkMetrics_.end(), output.state());

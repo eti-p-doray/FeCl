@@ -75,6 +75,9 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
     case Turbo_set_encoderOptions_id:
       Turbo_set_encoderOptions(nlhs, plhs, nrhs, prhs);
       break;
+    case Turbo_createPermutation_id:
+      Turbo_createPermutation(nlhs, plhs, nrhs, prhs);
+      break;
     case Ldpc_constructor_id:
       Ldpc_constructor(nlhs, plhs, nrhs, prhs);
       break;

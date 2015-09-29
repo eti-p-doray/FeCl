@@ -19,38 +19,23 @@
  along with C3rel.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#ifndef TO_INTERLEAVER_H
-#define TO_INTERLEAVER_H
-
-#include <memory>
-#include <math.h>
-#include <vector>
 #include <mex.h>
 
-#include "MexConversion.h"
-#include "Structure/Interleaver.h"
+#include "Turbo/Turbo.h"
+#include "Structure/Serialization.h"
+#include "../util/MexConversion.h"
+#include "MexPermuteOptions.h"
 
-template <>
-class mxArrayTo<fec::Interleaver> {
-public:
-  static fec::Interleaver f(const mxArray* in) {
-    if (in == nullptr) {
-      throw std::invalid_argument("null");
-    }
-    std::vector<size_t> perm = mxArrayTo<std::vector<size_t>>::f(in);
-    for (auto & i : perm) {
-      i--;
-    }
-    return fec::Interleaver(perm);
-  }
-};
+using namespace fec;
 
-inline mxArray* toMxArray(const fec::Interleaver& in) {
-  std::vector<size_t> indices(in.outputSize());
-  for (size_t i = 0; i < indices.size(); ++i) {
-    indices[i] = in[i]+1;
+const int inputCount = 2;
+const int outputCount = 1;
+
+void Turbo_createPermutation( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
+{
+  if (nrhs != inputCount || nlhs != outputCount) {
+    throw std::invalid_argument("Wrong arg count");
   }
-  return toMxArray(indices);
+  auto codec = mxArrayTo<MexHandle<Turbo>>::f(prhs[0]);
+  plhs[0] = toMxArray(codec->createPermutation(mxArrayTo<Turbo::PermuteOptions>::f(prhs[1])));
 }
-
-#endif

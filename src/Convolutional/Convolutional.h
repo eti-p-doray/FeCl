@@ -24,6 +24,7 @@
 
 #include "../Codec.h"
 #include "../Structure/Trellis.h"
+#include "../Structure/Permutation.h"
 
 namespace fec {
   
@@ -77,6 +78,16 @@ namespace fec {
       
       Codec::DecoderAlgorithm algorithm_ = Approximate;
     };
+    struct PermuteOptions {
+    public:
+      PermuteOptions() = default;
+      
+      //PermuteOptions& parityPattern(std::vector<bool> pattern) {parityPattern_ = pattern; return *this;}
+      //PermuteOptions& systPattern(std::vector<bool> pattern) {tailPattern_ = pattern; return *this;}
+      
+      //std::vector<bool> parityPattern_;
+      //std::vector<bool> tailPattern_;
+    };
     /**
      *  This class represents a convolutional code structure.
      *  It provides a usefull interface to store and acces the structure information.
@@ -98,13 +109,15 @@ namespace fec {
       
       inline size_t length() const {return length_;}
       inline size_t tailSize() const {return tailSize_;}
-      inline size_t msgTailSize() const {return tailSize_ * trellis().inputSize();}
+      inline size_t systTailSize() const {return tailSize_ * trellis().inputSize();}
       inline Termination termination() const {return termination_;}
       inline const Trellis& trellis() const {return trellis_;}
       
       virtual bool check(std::vector<BitField<size_t>>::const_iterator parity) const;
       virtual void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const;
       void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity, std::vector<BitField<size_t>>::iterator tail) const;
+      
+      Permutation createPermutation(const PermuteOptions& options) const;
       
     private:
       template <typename Archive>
@@ -136,6 +149,8 @@ namespace fec {
     void setDecoderOptions(const DecoderOptions& decoder) {structure_.setDecoderOptions(decoder);}
     void setEncoderOptions(const EncoderOptions& encoder) {structure_.setEncoderOptions(encoder);}
     DecoderOptions getDecoderOptions() const {return structure_.getDecoderOptions();}
+    
+    Permutation createPermutation(const PermuteOptions& options) {return structure_.createPermutation(options);}
     
   protected:
     virtual void decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const;

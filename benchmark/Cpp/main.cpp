@@ -112,7 +112,7 @@ ptree speed_Turbo()
   ivec itppPermIdx(permIdx.size());
   for (size_t i = 0; i < permIdx.size(); ++i) {itppPermIdx[i] = permIdx[i];}
   
-  auto encOpt = fec::Turbo::EncoderOptions(trellis, {{}, permIdx}).termination(fec::Convolutional::Tail).bitOrdering(fec::Turbo::Alternate);
+  auto encOpt = fec::Turbo::EncoderOptions(trellis, {{}, permIdx}).termination(fec::Convolutional::Tail);
   auto decOpt = fec::Turbo::DecoderOptions().algorithm(fec::Codec::Exact).iterations(4).scheduling(fec::Turbo::Serial);
   codecs.push_back(fec::Turbo(encOpt, decOpt,1));
   decOpt.algorithm(fec::Codec::Linear);

@@ -49,7 +49,7 @@ public:
 inline mxArray* toMxArray(const fec::Trellis& trellis)
 {
   const char* fieldnames[] = {"numInputSymbols", "numOutputSymbols", "numStates", "nextStates", "outputs"};
-  mxArray* out = mxCreateStructMatrix(1,1,1, fieldnames);
+  mxArray* out = mxCreateStructMatrix(1,1,5, fieldnames);
   
   mxSetField(out, 0, fieldnames[0], toMxArray(trellis.inputCount()));
   mxSetField(out, 0, fieldnames[1], toMxArray(trellis.outputCount()));
