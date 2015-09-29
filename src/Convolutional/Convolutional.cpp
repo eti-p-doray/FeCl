@@ -269,19 +269,31 @@ void Convolutional::Structure::encode(std::vector<BitField<size_t>>::const_itera
 
 Permutation Convolutional::Structure::createPermutation(const PermuteOptions& options) const
 {
-  //permutations_ = Permutation
   std::vector<size_t> perms;
-  /*for (size_t i = 0; i < length()*trellis().outputSize(); ) {
-    for (size_t j = 0; j < options.parityPattern_.size(); ++j) {
-      if (options.parityPattern_[j]) {
+  if (options.parityMask_.size() > 0) {
+    for (size_t i = 0; i < length() * trellis().outputSize(); ++i) {
+      if (options.parityMask_[i % options.parityMask_.size()]) {
         perms.push_back(i);
-        ++i;
       }
     }
-  }*/
-  for (size_t i = 0; i < innerParitySize(); ++i) {
-    perms.push_back(i);
+  } else {
+    for (size_t i = 0; i < length() * trellis().outputSize(); ++i) {
+      perms.push_back(i);
+    }
+  }
+  if (options.tailMask_.size() > 0) {
+    for (size_t i = 0; i < tailSize()*trellis().outputSize(); ++i) {
+      if (options.tailMask_[i % options.tailMask_.size()]) {
+        perms.push_back(length()*trellis().outputSize()+i);
+      }
+    }
+  } else {
+    for (size_t i = 0; i < tailSize()*trellis().outputSize(); ++i) {
+      if (options.tailMask_[(length()*trellis().outputSize()+i) % options.tailMask_.size()]) {
+        perms.push_back(length()*trellis().outputSize()+i);
+      }
+    }
   }
   
-  return Permutation(perms, innerParitySize());
+  return Permutation(perms, paritySize());
 }

@@ -83,7 +83,6 @@ public:
     inline size_t systSize() const {return systSize_;} /**< Access the size of the msg in each code bloc. */
     inline size_t paritySize() const {return paritySize_;} /**< Access the size of the parity in each code bloc. */
     inline size_t stateSize() const {return stateSize_;} /**< Access the size of the extrinsic in each code bloc. */
-    inline size_t innerParitySize() const {return paritySize_;} /**< Access the size of the parity in each code bloc. */
     DecoderAlgorithm decoderAlgorithm() const {return decoderAlgorithm_;}
     Permutation permutations() const {return permutations_;}
     

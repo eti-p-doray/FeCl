@@ -61,34 +61,35 @@ ptree speed_Convolutional()
     codecs.push_back(fec::Convolutional(encOpt,1));
     
     itppCodecs.push_back(itpp::Convolutional_Code());
-    ivec generator(3);
+    ivec generator(2);
     generator(0)=017;
     generator(1)=015;
-    generator(2)=017;
+    //generator(2)=017;
     itppCodecs[0].set_generator_polynomials(generator, 4);
     itppCodecs[0].set_method(Trunc);
     
     std::vector<BitField<size_t>> msg = randomBits<std::vector<BitField<size_t>>>(N * T);
-    bvec itppMsg = randomBits<bvec>(N * T);
+    bvec itppMsg = randomBits<bvec>(T);
     
     codecs[0].setWorkGroupSize(1);
-    encResults.put_child("fec1", fecEncode(codecs[0], msg, M));
+    encResults.put_child("fecl1", fecEncode(codecs[0], msg, M));
     codecs[0].setWorkGroupSize(4);
-    encResults.put_child("fec4", fecEncode(codecs[0], msg, M));
+    encResults.put_child("fecl4", fecEncode(codecs[0], msg, M));
     encResults.put_child("itpp", itppEncode(itppCodecs[0], itppMsg, M));
     
     std::vector<BitField<size_t>> parity;
     codecs[0].encode(msg, parity);
     std::vector<LlrType> llr = distort(parity, -5.0);
     codecs[0].setWorkGroupSize(1);
-    decResults.put_child("fec1", fecDecode(codecs[0], llr, M));
+    decResults.put_child("fecl1", fecDecode(codecs[0], llr, M));
     codecs[0].setWorkGroupSize(4);
-    decResults.put_child("fec4", fecDecode(codecs[0], llr, M));
+    decResults.put_child("fecl4", fecDecode(codecs[0], llr, M));
     
     bvec itppParity;
+    
     itppCodecs[0].encode(itppMsg, itppParity);
     vec itppLlr = distort(itppParity, -5.0);
-    decResults.put_child("itpp", itppDecode(itppCodecs[0],itppLlr, M));
+    decResults.put_child("itpp", itppDecode(itppCodecs[0],itppLlr, M, N));
     
     results.put_child("encoding", encResults);
     results.put_child("decoding", decResults);
@@ -131,12 +132,12 @@ ptree speed_Turbo()
   itppCodecs[2].set_parameters(gen, gen, 4, itppPermIdx, 4, "LOGMAX");
   
   std::vector<BitField<size_t>> msg = randomBits<std::vector<BitField<size_t>>>(N * T);
-  bvec itppMsg = randomBits<bvec>(N * T);
+  bvec itppMsg = randomBits<bvec>(T);
   
   codecs[0].setWorkGroupSize(1);
-  encResults.put_child("fec1", fecEncode(codecs[0], msg, M));
+  encResults.put_child("fecl1", fecEncode(codecs[0], msg, M));
   codecs[0].setWorkGroupSize(4);
-  encResults.put_child("fec4", fecEncode(codecs[0], msg, M));
+  encResults.put_child("fecl4", fecEncode(codecs[0], msg, M));
   encResults.put_child("itpp", itppEncode(itppCodecs[0], itppMsg, M));
   
   std::vector<BitField<size_t>> parity;
@@ -146,9 +147,9 @@ ptree speed_Turbo()
   std::vector<std::string> config = {"Exact", "Table", "Approximate"};
   for (int i = 0; i < codecs.size(); ++i) {
     codecs[i].setWorkGroupSize(1);
-    decResults.put_child(config[i] + ".fec1", fecDecode(codecs[i], llr, M));
+    decResults.put_child(config[i] + ".fecl1", fecDecode(codecs[i], llr, M));
     codecs[i].setWorkGroupSize(4);
-    decResults.put_child(config[i] + ".fec4", fecDecode(codecs[i], llr, M));
+    decResults.put_child(config[i] + ".fecl4", fecDecode(codecs[i], llr, M));
   }
   
   bvec itppParity;
@@ -157,7 +158,7 @@ ptree speed_Turbo()
   
   std::vector<std::string> itppConfig = {"Exact", "Table", "Approximate"};
   for (size_t i = 0; i < itppCodecs.size(); ++i) {
-    decResults.put_child(itppConfig[i] + ".itpp", itppDecode(itppCodecs[i],itppLlr, M));
+    decResults.put_child(itppConfig[i] + ".itpp", itppDecode(itppCodecs[i],itppLlr, M, N));
   }
   
   results.put_child("encoding", encResults);
@@ -201,9 +202,9 @@ ptree speed_Ldpc()
   std::vector<BitField<size_t>> msg = randomBits<std::vector<BitField<size_t>>>(N * T);
   
   codecs[0].setWorkGroupSize(1);
-  encResults.put_child("fec1", fecEncode(codecs[0], msg, M));
+  encResults.put_child("fecl1", fecEncode(codecs[0], msg, M));
   codecs[0].setWorkGroupSize(4);
-  encResults.put_child("fec4", fecEncode(codecs[0], msg, M));
+  encResults.put_child("fecl4", fecEncode(codecs[0], msg, M));
   
   std::vector<BitField<size_t>> parity;
   codecs[0].encode(msg, parity);
@@ -212,9 +213,9 @@ ptree speed_Ldpc()
   std::vector<std::string> config = {"Exact", "Table", "Approximate"};
   for (int i = 0; i < codecs.size(); ++i) {
     codecs[i].setWorkGroupSize(1);
-    decResults.put_child(config[i] + ".fec1", fecDecode(codecs[i], llr, M));
+    decResults.put_child(config[i] + ".fecl1", fecDecode(codecs[i], llr, M));
     codecs[i].setWorkGroupSize(4);
-    decResults.put_child(config[i] + ".fec4", fecDecode(codecs[i], llr, M));
+    decResults.put_child(config[i] + ".fecl4", fecDecode(codecs[i], llr, M));
   }
   
   vec itppLlr(codecs[0].paritySize());

@@ -114,22 +114,20 @@ namespace fec {
     public:
       PermuteOptions() = default;
       
-      //PermuteOptions& systPattern(std::vector<bool> pattern) {systPattern_ = pattern; return *this;}
-      //PermuteOptions& systTailPattern(std::vector<bool> pattern) {systTailPattern_ = {pattern}; return *this;}
-      //PermuteOptions& systTailPattern(std::vector<std::vector<bool>> pattern) {systTailPattern_ = pattern; return *this;}
-      //PermuteOptions& parityPattern(std::vector<bool> pattern) {parityPattern_ = {pattern}; return *this;}
-      //PermuteOptions& parityPattern(std::vector<std::vector<bool>> pattern) {parityPattern_ = pattern; return *this;}
-      //PermuteOptions& tailPattern(std::vector<bool> pattern) {tailPattern_ = {pattern}; return *this;}
-      //PermuteOptions& tailPattern(std::vector<std::vector<bool>> pattern) {tailPattern_ = pattern; return *this;}
+      //PermuteOptions& systMask(std::vector<bool> pattern) {systPattern_ = pattern; return *this;}
+      //PermuteOptions& systTailMask(std::vector<bool> pattern) {systTailPattern_ = {pattern}; return *this;}
+      //PermuteOptions& systTailMask(std::vector<std::vector<bool>> pattern) {systTailPattern_ = pattern; return *this;}
+      //PermuteOptions& parityMask(std::vector<bool> pattern) {parityPattern_ = {pattern}; return *this;}
+      //PermuteOptions& parityMask(std::vector<std::vector<bool>> pattern) {parityPattern_ = pattern; return *this;}
+      //PermuteOptions& tailMask(std::vector<bool> pattern) {tailPattern_ = {pattern}; return *this;}
+      //PermuteOptions& tailMask(std::vector<std::vector<bool>> pattern) {tailPattern_ = pattern; return *this;}
       PermuteOptions& bitOrdering(BitOrdering ordering) {bitOrdering_ = ordering; return *this;}
-      //PermuteOptions& interleaver(Permutation interleaver) {interleaver_ = interleaver; return *this;}
       
-      //std::vector<bool> systPattern_;
-      //std::vector<std::vector<bool>> systTailPattern_;
-      //std::vector<std::vector<bool>> parityPattern_;
-      //std::vector<std::vector<bool>> tailPattern_;
+      //std::vector<bool> systMask_;
+      //std::vector<std::vector<bool>> systTailMask_;
+      //std::vector<std::vector<bool>> parityMask_;
+      //std::vector<std::vector<bool>> tailMask_;
       BitOrdering bitOrdering_ = Alternate;
-      //Permutation interleaver_;
     };
     /**
      *  This class represents a convolutional code structure.

@@ -82,11 +82,11 @@ namespace fec {
     public:
       PermuteOptions() = default;
       
-      //PermuteOptions& parityPattern(std::vector<bool> pattern) {parityPattern_ = pattern; return *this;}
-      //PermuteOptions& systPattern(std::vector<bool> pattern) {tailPattern_ = pattern; return *this;}
+      PermuteOptions& parityMask(std::vector<bool> pattern) {parityMask_ = pattern; return *this;}
+      PermuteOptions& tailMask(std::vector<bool> pattern) {tailMask_ = pattern; return *this;}
       
-      //std::vector<bool> parityPattern_;
-      //std::vector<bool> tailPattern_;
+      std::vector<bool> parityMask_;
+      std::vector<bool> tailMask_;
     };
     /**
      *  This class represents a convolutional code structure.

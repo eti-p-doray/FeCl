@@ -199,7 +199,7 @@ bool Ldpc::Structure::check(std::vector<BitField<size_t>>::const_iterator parity
 void Ldpc::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const
 {
   std::copy(msg, msg + msgSize(), parity);
-  std::fill(parity+msgSize(), parity+innerParitySize(), 0);
+  std::fill(parity+msgSize(), parity+paritySize(), 0);
   parity += msgSize();
   auto parityIt = parity;
   for (auto row = DC_.begin(); row < DC_.end(); ++row, ++parityIt) {
@@ -361,9 +361,9 @@ Permutation Ldpc::Structure::createPermutation(const PermuteOptions& options) co
    }
    }
    }*/
-  for (size_t i = 0; i < innerParitySize(); ++i) {
+  for (size_t i = 0; i < paritySize(); ++i) {
     perms.push_back(i);
   }
   
-  return Permutation(perms, innerParitySize());
+  return Permutation(perms, paritySize());
 }

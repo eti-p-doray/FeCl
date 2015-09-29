@@ -7,7 +7,7 @@ function results = Convolutional(snrdb, T, N, M, z)
 
     cmlSim.rate = 1/2;
     cmlSim.max_iterations = 1;
-    cmlSim.comment = 'Rate 1/2 K=7 NSC convolutional code w/ BPSK in AWGN';
+    cmlSim.comment = 'Conv';
     cmlSim.sim_type = 'coded';
     cmlSim.code_configuration = 0;
     cmlSim.SNR = -5.0;
@@ -44,18 +44,18 @@ function results = Convolutional(snrdb, T, N, M, z)
     llr = -4.0 * signal * snr;
    
     codec.workGroupSize = 1;
-    results.encoding.fec1 = fecEncode(codec, msg, M, z);
+    results.encoding.fecl1 = fecEncode(codec, msg, M, z);
     codec.workGroupSize = 4;
-    results.encoding.fec4 = fecEncode(codec, msg, M, z);
+    results.encoding.fecl4 = fecEncode(codec, msg, M, z);
 
     results.encoding.cml = cmlEncode(cmlSim, cmlCodec, msg, M, z);
 
     results.encoding.matlab = matlabEncode(matlabEncoder, msg, M, z);
     
     codec.workGroupSize = 1;
-    results.decoding.fec1 = fecDecode(codec, msg, llr, M, z);
+    results.decoding.fecl1 = fecDecode(codec, msg, llr, M, z);
     codec.workGroupSize = 4;
-    results.decoding.fec4 = fecDecode(codec, msg, llr, M, z);
+    results.decoding.fecl4 = fecDecode(codec, msg, llr, M, z);
 
     results.decoding.cml = cmlDecode(cmlSim, cmlCodec, msg, llr, M, z);
         

@@ -11,7 +11,7 @@ function results = Ldpc(snrdb, T, N, M, z)
     MINBER = 1e-5;
     effective_rate = '1/2';
     cmlSim{1}.rate = effective_rate;
-    cmlSim{1}.comment = strcat( 'Rate=', ' ', effective_rate, ' long DVB-S2 LDPC code w/ BPSK in AWGN' );
+    cmlSim{1}.comment = 'Ldpc';
     cmlSim{1}.sim_type = 'coded';
     cmlSim{1}.code_configuration = 2; % LDPC
     cmlSim{1}.SNR = -5.0;
@@ -49,9 +49,9 @@ function results = Ldpc(snrdb, T, N, M, z)
     llr = -4.0 * signal * snr;
 
     codec{1}.workGroupSize = 1;
-    results.encoding.fec1 = fecEncode(codec{1}, msg, M, z);
+    results.encoding.fecl1 = fecEncode(codec{1}, msg, M, z);
     codec{1}.workGroupSize = 4;
-    results.encoding.fec4 = fecEncode(codec{1}, msg, M, z);
+    results.encoding.fecl4 = fecEncode(codec{1}, msg, M, z);
 
     results.encoding.cml = cmlEncode(cmlSim{1}, cmlCodec{1}, msg, M, z);
 
@@ -60,9 +60,9 @@ function results = Ldpc(snrdb, T, N, M, z)
     config = {'Exact', 'Table', 'Approximate'};
     for i = 1:3
         codec{i}.workGroupSize = 1;
-        results.decoding.(config{i}).fec1 = fecDecode(codec{i}, msg, llr, M, z);
+        results.decoding.(config{i}).fecl1 = fecDecode(codec{i}, msg, llr, M, z);
         codec{i}.workGroupSize = 4;
-        results.decoding.(config{i}).fec4 = fecDecode(codec{i}, msg, llr, M, z);
+        results.decoding.(config{i}).fecl4 = fecDecode(codec{i}, msg, llr, M, z);
     end
 
     cmlConfig = {'Exact', 'Approximate'};
