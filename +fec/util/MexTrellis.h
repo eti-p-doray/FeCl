@@ -16,7 +16,7 @@
  GNU General Public License for more details.
  
  You should have received a copy of the Lesser General Public License
- along with C3rel.  If not, see <http://www.gnu.org/licenses/>.
+ along with FeCl.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
 #ifndef MEX_TRELLIS_H
@@ -34,15 +34,15 @@
 template<>
 class mxArrayTo<fec::Trellis> {
 public:
-  static fec::Trellis f(const mxArray* in) {
+  static fec::Trellis f(const mxArray* in, size_t i = 0) {
     if (in == nullptr) {
       throw std::invalid_argument("null");
     }
-    return fec::Trellis(mxArrayTo<std::vector<fec::BitField<size_t>>>::f(mxGetField(in, 0, "nextStates")),
-                            mxArrayTo<std::vector<fec::BitField<size_t>>>::f(mxGetField(in, 0, "outputs")),
-                            log2(mxArrayTo<size_t>::f(mxGetField(in, 0, "numInputSymbols"))),
-                            log2(mxArrayTo<size_t>::f(mxGetField(in, 0, "numOutputSymbols"))),
-                            log2(mxArrayTo<size_t>::f(mxGetField(in, 0, "numStates"))));
+    return fec::Trellis(mxArrayTo<std::vector<fec::BitField<size_t>>>::f(mxGetField(in, i, "nextStates")),
+                            mxArrayTo<std::vector<fec::BitField<size_t>>>::f(mxGetField(in, i, "outputs")),
+                            log2(mxArrayTo<size_t>::f(mxGetField(in, i, "numInputSymbols"))),
+                            log2(mxArrayTo<size_t>::f(mxGetField(in, i, "numOutputSymbols"))),
+                            log2(mxArrayTo<size_t>::f(mxGetField(in, i, "numStates"))));
   }
 };
 

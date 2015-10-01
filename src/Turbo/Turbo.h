@@ -16,7 +16,7 @@
  GNU General Public License for more details.
  
  You should have received a copy of the Lesser General Public License
- along with C3rel.  If not, see <http://www.gnu.org/licenses/>.
+ along with FeCl.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
 #ifndef FEC_TURBO_H
@@ -110,22 +110,15 @@ namespace fec {
       Scheduling scheduling_ = Serial;
       Codec::DecoderAlgorithm algorithm_ = Approximate;
     };
-    struct PermuteOptions {
+    struct PunctureOptions {
     public:
-      PermuteOptions() = default;
+      PunctureOptions(std::vector<std::vector<bool>> mask = {}) {mask_ = mask;};
       
-      PermuteOptions& systMask(std::vector<bool> mask) {systMask_ = mask; return *this;}
-      PermuteOptions& systTailMask(std::vector<bool> mask) {systTailMask_ = {mask}; return *this;}
-      PermuteOptions& systTailMask(std::vector<std::vector<bool>> mask) {systTailMask_ = mask; return *this;}
-      PermuteOptions& parityMask(std::vector<bool> mask) {parityMask_ = {mask}; return *this;}
-      PermuteOptions& parityMask(std::vector<std::vector<bool>> mask) {parityMask_ = mask; return *this;}
-      PermuteOptions& tailMask(std::vector<bool> mask) {tailMask_ = {mask}; return *this;}
-      PermuteOptions& tailMask(std::vector<std::vector<bool>> mask) {tailMask_ = mask; return *this;}
-      PermuteOptions& bitOrdering(BitOrdering ordering) {bitOrdering_ = ordering; return *this;}
+      //PunctureOptions& parityMask(std::vector<std::vector<bool>> mask) {parityMask_ = mask; return *this;}
+      PunctureOptions& tailMask(std::vector<std::vector<bool>> mask) {tailMask_ = mask; return *this;}
+      PunctureOptions& bitOrdering(BitOrdering ordering) {bitOrdering_ = ordering; return *this;}
       
-      std::vector<bool> systMask_;
-      std::vector<std::vector<bool>> systTailMask_;
-      std::vector<std::vector<bool>> parityMask_;
+      std::vector<std::vector<bool>> mask_;
       std::vector<std::vector<bool>> tailMask_;
       BitOrdering bitOrdering_ = Alternate;
     };
@@ -166,7 +159,7 @@ namespace fec {
       virtual bool check(std::vector<BitField<size_t>>::const_iterator parity) const;
       virtual void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const;
       
-      Permutation createPermutation(const PermuteOptions& options) const;
+      Permutation createPermutation(const PunctureOptions& options) const;
       
     private:
       template <typename Archive>
@@ -200,7 +193,8 @@ namespace fec {
     void setEncoderOptions(const EncoderOptions& encoder) {structure_.setEncoderOptions(encoder);}
     DecoderOptions getDecoderOptions() const {return structure_.getDecoderOptions();}
     
-    Permutation createPermutation(const PermuteOptions& options) {return structure_.createPermutation(options);}
+    Permutation createPermutation(const PunctureOptions& options) {return structure_.createPermutation(options);}
+    //std::vector<> puncture(const PunctureOptions& options) {return structure_.createPermutation(options);}
     
   protected:
     Turbo() = default;

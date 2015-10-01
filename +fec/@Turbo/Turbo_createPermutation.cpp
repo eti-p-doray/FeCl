@@ -16,7 +16,7 @@
  GNU General Public License for more details.
  
  You should have received a copy of the Lesser General Public License
- along with C3rel.  If not, see <http://www.gnu.org/licenses/>.
+ along with FeCl.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
 #include <mex.h>
@@ -24,7 +24,7 @@
 #include "Turbo/Turbo.h"
 #include "Structure/Serialization.h"
 #include "../util/MexConversion.h"
-#include "MexPermuteOptions.h"
+#include "MexPunctureOptions.h"
 
 using namespace fec;
 
@@ -37,5 +37,5 @@ void Turbo_createPermutation( int nlhs, mxArray *plhs[], int nrhs, const mxArray
     throw std::invalid_argument("Wrong arg count");
   }
   auto codec = mxArrayTo<MexHandle<Turbo>>::f(prhs[0]);
-  plhs[0] = toMxArray(codec->createPermutation(mxArrayTo<Turbo::PermuteOptions>::f(prhs[1])));
+  plhs[0] = toMxArray(codec->createPermutation(mxArrayTo<Turbo::PunctureOptions>::f(prhs[1])));
 }

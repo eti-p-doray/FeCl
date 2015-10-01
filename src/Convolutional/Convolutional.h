@@ -16,7 +16,7 @@
  GNU General Public License for more details.
  
  You should have received a copy of the Lesser General Public License
- along with C3rel.  If not, see <http://www.gnu.org/licenses/>.
+ along with FeCl.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
 #ifndef FEC_CONVOLUTIONAL_H
@@ -78,14 +78,14 @@ namespace fec {
       
       Codec::DecoderAlgorithm algorithm_ = Approximate;
     };
-    struct PermuteOptions {
+    struct PunctureOptions {
     public:
-      PermuteOptions() = default;
+      PunctureOptions(std::vector<bool> mask = {}) {mask_ = mask;};
       
-      PermuteOptions& parityMask(std::vector<bool> pattern) {parityMask_ = pattern; return *this;}
-      PermuteOptions& tailMask(std::vector<bool> pattern) {tailMask_ = pattern; return *this;}
+      //PunctureOptions& parityMask(std::vector<bool> pattern) {parityMask_ = pattern; return *this;}
+      PunctureOptions& tailMask(std::vector<bool> pattern) {tailMask_ = pattern; return *this;}
       
-      std::vector<bool> parityMask_;
+      std::vector<bool> mask_;
       std::vector<bool> tailMask_;
     };
     /**
@@ -117,7 +117,7 @@ namespace fec {
       virtual void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const;
       void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity, std::vector<BitField<size_t>>::iterator tail) const;
       
-      Permutation createPermutation(const PermuteOptions& options) const;
+      Permutation createPermutation(const PunctureOptions& options) const;
       
     private:
       template <typename Archive>
@@ -150,7 +150,7 @@ namespace fec {
     void setEncoderOptions(const EncoderOptions& encoder) {structure_.setEncoderOptions(encoder);}
     DecoderOptions getDecoderOptions() const {return structure_.getDecoderOptions();}
     
-    Permutation createPermutation(const PermuteOptions& options) {return structure_.createPermutation(options);}
+    Permutation createPermutation(const PunctureOptions& options) {return structure_.createPermutation(options);}
     
   protected:
     virtual void decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const;

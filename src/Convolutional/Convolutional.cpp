@@ -16,7 +16,7 @@
  GNU General Public License for more details.
  
  You should have received a copy of the Lesser General Public License
- along with C3rel.  If not, see <http://www.gnu.org/licenses/>.
+ along with FeCl.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
 #include "Convolutional.h"
@@ -267,18 +267,18 @@ void Convolutional::Structure::encode(std::vector<BitField<size_t>>::const_itera
   assert(state == 0);
 }
 
-Permutation Convolutional::Structure::createPermutation(const PermuteOptions& options) const
+Permutation Convolutional::Structure::createPermutation(const PunctureOptions& options) const
 {
   std::vector<size_t> perms;
   size_t systIdx = 0;
   for (size_t i = 0; i < length() * trellis().outputSize(); ++i) {
-    if (options.parityMask_.size() == 0 || options.parityMask_[i % options.parityMask_.size()]) {
+    if (options.mask_.size() == 0 || options.mask_[i % options.mask_.size()]) {
       perms.push_back(systIdx);
       ++systIdx;
     }
   }
   for (size_t i = 0; i < tailSize()*trellis().outputSize(); ++i) {
-    if ((options.tailMask_.size() == 0 && (options.parityMask_.size() == 0 || options.tailMask_[i % options.tailMask_.size()])) ||
+    if ((options.tailMask_.size() == 0 && (options.mask_.size() == 0 || options.tailMask_[i % options.tailMask_.size()])) ||
         (options.tailMask_.size() != 0 && (options.tailMask_[systIdx % options.tailMask_.size()]))) {
       perms.push_back(systIdx);
     }

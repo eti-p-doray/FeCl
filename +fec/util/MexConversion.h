@@ -16,7 +16,7 @@
  GNU General Public License for more details.
  
  You should have received a copy of the Lesser General Public License
- along with C3rel.  If not, see <http://www.gnu.org/licenses/>.
+ along with FeCl.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
 #ifndef MEX_CONVERSION
@@ -40,6 +40,10 @@ struct is_equiv_int : std::integral_constant<bool,
 (std::is_integral<T1>::value && std::is_integral<T2>::value) &&
 (std::is_signed<T1>::value == std::is_signed<T2>::value)>
 {};
+
+template<typename T> struct is_vector : public std::false_type {};
+template<typename T, typename A>
+struct is_vector<std::vector<T, A>> : public std::true_type {};
 
 template <typename T, class Enable = void> struct MexType {using ID = std::integral_constant<mxClassID, mxUNKNOWN_CLASS>; using isScalar = std::false_type;};
 
@@ -226,8 +230,101 @@ public:
   }
 };
 
+template <class T>
+class mxArrayTo<typename std::vector<typename std::vector<T>>, typename std::enable_if<std::is_arithmetic<T>::value>::type> {
+public:
+  static std::vector<std::vector<T>> f(const mxArray* in) {
+    if (in == nullptr) {
+      throw std::invalid_argument("null");
+    }
+    
+    if (mxIsCell(in)) {
+      std::vector<std::vector<T>> out(mxGetNumberOfElements(in));
+      for (size_t i = 0; i < out.size(); ++i) {
+        out[i] = mxArrayTo<std::vector<T>>::f(mxGetCell(in, i));
+      }
+      return out;
+    }
+    else {
+      if (mxIsComplex(in) || (mxGetData(in) == nullptr && mxGetNumberOfElements(in) != 0)) {
+        throw std::invalid_argument("invalid");
+      }
+      if (mxGetData(in) == nullptr && mxGetNumberOfElements(in) == 0) {
+        return std::vector<std::vector<T>>();
+      }
+      std::vector<std::vector<T>> out(mxGetM(in));
+      void* data = mxGetData(in);
+      for (size_t i = 0; i < out.size(); ++i) {
+        out[i].resize(mxGetN(in));
+        switch (mxGetClassID(in))
+        {
+          case mxLOGICAL_CLASS:
+            for (size_t j = 0; j < out[i].size(); ++j) {
+              out[i][j] = reinterpret_cast<mxLogical*>(data)[j*out.size()+i];
+            }
+            break;
+          case mxINT8_CLASS:
+            for (size_t j = 0; j < out[i].size(); ++j) {
+              out[i][j] = reinterpret_cast<int8_t*>(data)[j*out.size()+i];
+            }
+            break;
+          case mxUINT8_CLASS:
+            for (size_t j = 0; j < out[i].size(); ++j) {
+              out[i][j] = reinterpret_cast<uint8_t*>(data)[j*out.size()+i];
+            }
+            break;
+          case mxINT16_CLASS:
+            for (size_t j = 0; j < out[i].size(); ++j) {
+              out[i][j] = reinterpret_cast<int16_t*>(data)[j*out.size()+i];
+            }
+            break;
+          case mxUINT16_CLASS:
+            for (size_t j = 0; j < out[i].size(); ++j) {
+              out[i][j] = reinterpret_cast<uint16_t*>(data)[j*out.size()+i];
+            }
+            break;
+          case mxINT32_CLASS:
+            for (size_t j = 0; j < out[i].size(); ++j) {
+              out[i][j] = reinterpret_cast<int32_t*>(data)[j*out.size()+i];
+            }
+            break;
+          case mxUINT32_CLASS:
+            for (size_t j = 0; j < out[i].size(); ++j) {
+              out[i][j] = reinterpret_cast<uint32_t*>(data)[j*out.size()+i];
+            }
+            break;
+          case mxINT64_CLASS:
+            for (size_t j = 0; j < out[i].size(); ++j) {
+              out[i][j] = reinterpret_cast<int64_t*>(data)[j*out.size()+i];
+            }
+            break;
+          case mxUINT64_CLASS:
+            for (size_t j = 0; j < out[i].size(); ++j) {
+              out[i][j] = reinterpret_cast<uint64_t*>(data)[j*out.size()+i];
+            }
+            break;
+          case mxSINGLE_CLASS:
+            for (size_t j = 0; j < out[i].size(); ++j) {
+              out[i][j] = reinterpret_cast<float*>(data)[j*out.size()+i];
+            }
+            break;
+          case mxDOUBLE_CLASS:
+            for (size_t j = 0; j < out[i].size(); ++j) {
+              out[i][j] = reinterpret_cast<double*>(data)[j*out.size()+i];
+            }
+            break;
+          default:
+            throw std::invalid_argument("unknown");
+            break;
+        }
+      }
+      return out;
+    }
+  }
+};
+
 template <class T, class A>
-class mxArrayTo<typename std::vector<T,A>, typename std::enable_if<!std::is_arithmetic<T>::value>::type> {
+class mxArrayTo<typename std::vector<T,A>, typename std::enable_if<!std::is_arithmetic<T>::value && !is_vector<T>::value>::type> {
 public:
   static std::vector<T> f(const mxArray* in) {
     if (in == nullptr) {
@@ -236,7 +333,7 @@ public:
     if (!mxIsCell(in)) {
       throw std::invalid_argument("invalid");
     }
-    std::vector<T> out(mxGetNumberOfElements(in));
+    std::vector<T,A> out(mxGetNumberOfElements(in));
     for (size_t i = 0; i < out.size(); ++i) {
       out[i] = mxArrayTo<T>::f(mxGetCell(in, i));
     }

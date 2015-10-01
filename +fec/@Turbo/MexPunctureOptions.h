@@ -16,11 +16,11 @@
  GNU General Public License for more details.
  
  You should have received a copy of the Lesser General Public License
- along with C3rel.  If not, see <http://www.gnu.org/licenses/>.
+ along with FeCl.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#ifndef MEX_PERMUTE_OPTIONS
-#define MEX_PERMUTE_OPTIONS
+#ifndef MEX_PUNCTURE_OPTIONS
+#define MEX_PUNCTURE_OPTIONS
 
 #include <memory>
 #include <type_traits>
@@ -33,14 +33,13 @@
 #include "../util/MexConversion.h"
 
 template <>
-class mxArrayTo<fec::Turbo::PermuteOptions> {
+class mxArrayTo<fec::Turbo::PunctureOptions> {
 public:
-  static fec::Turbo::PermuteOptions f(const mxArray* in) {
-    fec::Turbo::PermuteOptions permuteOptions;
+  static fec::Turbo::PunctureOptions f(const mxArray* in) {
+    fec::Turbo::PunctureOptions punctureOptions(mxArrayTo<std::vector<std::vector<bool>>>::f(in));
+    punctureOptions.bitOrdering(mxArrayTo<fec::Turbo::BitOrdering>::f(mxGetField(in, 0, "bitOrdering")));
     
-    permuteOptions.bitOrdering(mxArrayTo<fec::Turbo::BitOrdering>::f(mxGetField(in, 0, "bitOrdering")));
-    
-    return permuteOptions;
+    return punctureOptions;
   }
 };
 

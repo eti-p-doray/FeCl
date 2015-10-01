@@ -16,7 +16,7 @@
  GNU General Public License for more details.
  
  You should have received a copy of the Lesser General Public License
- along with C3rel.  If not, see <http://www.gnu.org/licenses/>.
+ along with FeCl.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
 #include "Ldpc.h"
@@ -349,20 +349,20 @@ void Ldpc::Structure::computeGeneratorMatrix(SparseBitMatrix&& H)
   T_ = H_({0, tSize}, {H.cols()-tSize, H.cols()}).transpose();
 }
 
-Permutation Ldpc::Structure::createPermutation(const PermuteOptions& options) const
+Permutation Ldpc::Structure::createPermutation(const PunctureOptions& options) const
 {
   std::vector<size_t> perms;
   size_t idx = 0;
   for (size_t i = 0; i < systSize(); ++i) {
-    if ((options.systMask_.size() == 0 && (options.parityMask_.size() == 0 || options.parityMask_[i % options.parityMask_.size()])) ||
+    if ((options.systMask_.size() == 0 && (options.mask_.size() == 0 || options.mask_[i % options.mask_.size()])) ||
         (options.systMask_.size() != 0 && (options.systMask_[idx % options.systMask_.size()]))) {
       perms.push_back(idx);
       ++idx;
     }
   }
   for (size_t i = 0; i < paritySize() - systSize(); ++i) {
-    if ((options.systMask_.size() == 0 && (options.parityMask_.size() == 0 || options.parityMask_[i % options.parityMask_.size()])) ||
-        (options.systMask_.size() != 0 && (options.parityMask_.size() == 0 || options.parityMask_[idx % options.parityMask_.size()]))) {
+    if ((options.systMask_.size() == 0 && (options.mask_.size() == 0 || options.mask_[i % options.mask_.size()])) ||
+        (options.systMask_.size() != 0 && (options.mask_.size() == 0 || options.mask_[idx % options.mask_.size()]))) {
       perms.push_back(idx);
     }
     ++idx;

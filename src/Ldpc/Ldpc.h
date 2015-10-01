@@ -16,7 +16,7 @@
  GNU General Public License for more details.
  
  You should have received a copy of the Lesser General Public License
- along with C3rel.  If not, see <http://www.gnu.org/licenses/>.
+ along with FeCl.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
 #ifndef FEC_LDPC_H
@@ -87,15 +87,15 @@ namespace fec {
       Codec::DecoderAlgorithm algorithm_ = Approximate;
       size_t iterations_;
     };
-    struct PermuteOptions {
+    struct PunctureOptions {
     public:
-      PermuteOptions() = default;
+      PunctureOptions(std::vector<bool> mask = {}) {mask_ = mask;};
       
-      PermuteOptions& systMask(std::vector<bool> mask) {systMask_ = mask; return *this;}
-      PermuteOptions& parityMask(std::vector<bool> mask) {parityMask_ = mask; return *this;}
+      PunctureOptions& systMask(std::vector<bool> mask) {systMask_ = mask; return *this;}
+      //PunctureOptions& parityMask(std::vector<bool> mask) {parityMask_ = mask; return *this;}
       
       std::vector<bool> systMask_;
-      std::vector<bool> parityMask_;
+      std::vector<bool> mask_;
     };
     /**
      *  This class represents a ldpc code structure.
@@ -115,7 +115,7 @@ namespace fec {
       void setDecoderOptions(const DecoderOptions& decoder);
       void setEncoderOptions(const EncoderOptions& encoder);
       DecoderOptions getDecoderOptions() const;
-      Permutation createPermutation(const PermuteOptions& options) const;
+      Permutation createPermutation(const PunctureOptions& options) const;
       
       inline const SparseBitMatrix& checks() const {return H_;}
       inline size_t iterations() const {return iterations_;}
@@ -161,7 +161,7 @@ namespace fec {
     void setEncoderOptions(const EncoderOptions& encoder) {structure_.setEncoderOptions(encoder);}
     DecoderOptions getDecoderOptions() const {return structure_.getDecoderOptions();}
     
-    Permutation createPermutation(const PermuteOptions& options) {return structure_.createPermutation(options);}
+    Permutation createPermutation(const PunctureOptions& options) {return structure_.createPermutation(options);}
     
   protected:
     Ldpc() = default;
