@@ -102,6 +102,9 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
     case Convolutional_set_encoderOptions_id:
       Convolutional_set_encoderOptions(nlhs, plhs, nrhs, prhs);
       break;
+    case Convolutional_createPermutation_id:
+      Convolutional_createPermutation(nlhs, plhs, nrhs, prhs);
+      break;
     case Trellis_constructor_id:
       Trellis_constructor(nlhs, plhs, nrhs, prhs);
       break;

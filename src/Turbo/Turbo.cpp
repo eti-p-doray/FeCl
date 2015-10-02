@@ -256,16 +256,16 @@ Permutation Turbo::Structure::createPermutation(const PunctureOptions& options) 
         size_t systTailIdx = 0;
         for (size_t j = 0; j < constituent(i).tailSize(); ++j) {
           for (size_t k = 0; k < constituent(i).trellis().inputSize(); ++k) {
-            if ((tailMask_.size() == 0 && (mask_[0][systIdx % mask_.size()])) ||
-                (tailMask_.size() != 0 && (tailMask_[i*2][systTailIdx % tailMask_.size()]))) {
+            if ((tailMask_.size() == 0 && (mask_[0][systIdx % mask_[0].size()])) ||
+                (tailMask_.size() != 0 && (tailMask_[i*2][systTailIdx % tailMask_[i*2].size()]))) {
               perms.push_back(systIdx);
             }
             ++systIdx;
             ++systTailIdx;
           }
           for (size_t k = 0; k < constituent(i).trellis().outputSize(); ++k) {
-            if ((tailMask_.size() == 0 && (mask_[i+1][parityIdx % mask_.size()])) ||
-                (tailMask_.size() != 0 && (tailMask_[i*2+1][tailIdx % tailMask_.size()]))) {
+            if ((tailMask_.size() == 0 && (mask_[i+1][parityIdx % mask_[i+1].size()])) ||
+                (tailMask_.size() != 0 && (tailMask_[i*2+1][tailIdx % tailMask_[i*2+1].size()]))) {
               perms.push_back(parityIdx);
             }
             ++parityIdx;
@@ -279,7 +279,7 @@ Permutation Turbo::Structure::createPermutation(const PunctureOptions& options) 
     case Group: {
       size_t idx = 0;
       for (size_t i = 0; i < msgSize(); ++i) {
-        if (mask_[0][idx % mask_.size()]) {
+        if (mask_[0][idx % mask_[0].size()]) {
           perms.push_back(idx);
         }
         ++idx;
@@ -297,11 +297,12 @@ Permutation Turbo::Structure::createPermutation(const PunctureOptions& options) 
       }
       for (size_t i = 0; i < constituentCount(); ++i) {
         size_t parityIdx = 0;
-        for (size_t j = 0; j < constituent(i).paritySize() * constituent(i).trellis().outputSize(); ++j) {
-            if (mask_[j+1][parityIdx % mask_[j+1].size()]) {
-              perms.push_back(idx);
-            }
-            ++idx;
+        for (size_t j = 0; j < constituent(i).length() * constituent(i).trellis().outputSize(); ++j) {
+          if (mask_[i+1][parityIdx % mask_[i+1].size()]) {
+            perms.push_back(idx);
+          }
+          ++parityIdx;
+          ++idx;
         }
         size_t tailIdx = 0;
         for (size_t j = 0; j < constituent(i).tailSize() * constituent(i).trellis().outputSize(); ++j) {

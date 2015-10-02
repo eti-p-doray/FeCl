@@ -23,11 +23,11 @@ classdef Turbo < fec.Codec
               self.mexHandle_ = fec.bin.wrap(uint32(fec.WrapFcnId.Turbo_constructor), self.structure.getEncoderOptions, self.structure.getDecoderOptions);
             end
         end
-        function perms = createPermutation(self, options)
+        function perms = createPermutation(self, varargin)
             if (nargin < 2)
-                options = {};
+                varargin = {[]};
             end
-            options = fec.Turbo.PermuteOptions(options);
+            options = fec.Turbo.PunctureOptions(varargin{:});
             perms = fec.Permutation(fec.bin.wrap(uint32(fec.WrapFcnId.Turbo_createPermutation), self, options.get()), self.paritySize);
         end
 

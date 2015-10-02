@@ -25,6 +25,7 @@ set(SOURCES
   @Convolutional/Convolutional_get_decoderOptions.cpp
   @Convolutional/Convolutional_set_encoderOptions.cpp
   @Convolutional/Convolutional_set_decoderOptions.cpp
+  @Convolutional/Convolutional_createPermutation.cpp
   @Trellis/Trellis_constructor.cpp
 )
 

@@ -19,28 +19,23 @@
  along with FeCl.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#ifndef TURBO_MEX_PUNCTURE_OPTIONS
-#define TURBO_MEX_PUNCTURE_OPTIONS
-
-#include <memory>
-#include <type_traits>
-
 #include <mex.h>
 
-#include "Turbo/Turbo.h"
-#include "../util/MexPermutation.h"
+#include "Convolutional/Convolutional.h"
+#include "Structure/Serialization.h"
 #include "../util/MexConversion.h"
+#include "MexPunctureOptions.h"
 
-template <>
-class mxArrayTo<fec::Turbo::PunctureOptions> {
-public:
-  static fec::Turbo::PunctureOptions f(const mxArray* in) {
-    fec::Turbo::PunctureOptions punctureOptions(mxArrayTo<std::vector<std::vector<bool>>>::f(mxGetField(in, 0, "mask")));
-    punctureOptions.tailMask(mxArrayTo<std::vector<std::vector<bool>>>::f(mxGetField(in, 0, "tailMask")));
-    punctureOptions.bitOrdering(mxArrayTo<fec::Turbo::BitOrdering>::f(mxGetField(in, 0, "bitOrdering")));
-    
-    return punctureOptions;
+using namespace fec;
+
+const int inputCount = 2;
+const int outputCount = 1;
+
+void Convolutional_createPermutation( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
+{
+  if (nrhs != inputCount || nlhs != outputCount) {
+    throw std::invalid_argument("Wrong arg count");
   }
-};
-
-#endif
+  auto codec = mxArrayTo<MexHandle<Convolutional>>::f(prhs[0]);
+  plhs[0] = toMxArray(codec->createPermutation(mxArrayTo<Convolutional::PunctureOptions>::f(prhs[1])));
+}

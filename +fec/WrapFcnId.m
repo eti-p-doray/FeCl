@@ -25,6 +25,7 @@ classdef WrapFcnId < uint32
     Convolutional_get_decoderOptions(22)
     Convolutional_set_decoderOptions(23)
     Convolutional_set_encoderOptions(24)
-    Trellis_constructor(25)
+    Convolutional_createPermutation(25)
+    Trellis_constructor(26)
   end
 end

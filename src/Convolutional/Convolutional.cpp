@@ -274,11 +274,11 @@ Permutation Convolutional::Structure::createPermutation(const PunctureOptions& o
   for (size_t i = 0; i < length() * trellis().outputSize(); ++i) {
     if (options.mask_.size() == 0 || options.mask_[i % options.mask_.size()]) {
       perms.push_back(systIdx);
-      ++systIdx;
     }
+    ++systIdx;
   }
   for (size_t i = 0; i < tailSize()*trellis().outputSize(); ++i) {
-    if ((options.tailMask_.size() == 0 && (options.mask_.size() == 0 || options.tailMask_[i % options.tailMask_.size()])) ||
+    if ((options.tailMask_.size() == 0 && (options.mask_.size() == 0 || options.mask_[i % options.mask_.size()])) ||
         (options.tailMask_.size() != 0 && (options.tailMask_[systIdx % options.tailMask_.size()]))) {
       perms.push_back(systIdx);
     }

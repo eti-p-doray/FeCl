@@ -114,7 +114,6 @@ namespace fec {
     public:
       PunctureOptions(std::vector<std::vector<bool>> mask = {}) {mask_ = mask;};
       
-      //PunctureOptions& parityMask(std::vector<std::vector<bool>> mask) {parityMask_ = mask; return *this;}
       PunctureOptions& tailMask(std::vector<std::vector<bool>> mask) {tailMask_ = mask; return *this;}
       PunctureOptions& bitOrdering(BitOrdering ordering) {bitOrdering_ = ordering; return *this;}
       

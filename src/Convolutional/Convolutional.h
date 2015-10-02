@@ -82,8 +82,7 @@ namespace fec {
     public:
       PunctureOptions(std::vector<bool> mask = {}) {mask_ = mask;};
       
-      //PunctureOptions& parityMask(std::vector<bool> pattern) {parityMask_ = pattern; return *this;}
-      PunctureOptions& tailMask(std::vector<bool> pattern) {tailMask_ = pattern; return *this;}
+      PunctureOptions& tailMask(std::vector<bool> mask) {tailMask_ = mask; return *this;}
       
       std::vector<bool> mask_;
       std::vector<bool> tailMask_;

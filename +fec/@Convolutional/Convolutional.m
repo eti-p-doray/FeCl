@@ -21,6 +21,13 @@ classdef Convolutional < fec.Codec
               self.mexHandle_ = fec.bin.wrap(uint32(fec.WrapFcnId.Convolutional_constructor), self.structure.getEncoderOptions, self.structure.getDecoderOptions);
             end
         end
+        function perms = createPermutation(self, varargin)
+            if (nargin < 2)
+                varargin = {[]};
+            end
+            options = fec.Convolutional.PunctureOptions(varargin{:});
+            perms = fec.Permutation(fec.bin.wrap(uint32(fec.WrapFcnId.Convolutional_createPermutation), self, options.get()), self.paritySize);
+        end
         function val = get.algorithm(self)
             val = fec.Codec.DecoderAlgorithm(self.decoderOptions.algorithm).char;
         end

@@ -1,22 +1,26 @@
-classdef PermuteOptions < hgsetget
+classdef PunctureOptions < hgsetget
     properties
+        mask;
+        tailMask = [];
         bitOrdering = uint32(fec.Turbo.BitOrdering.('Alternate'));
     end
 
     methods
-        function self = PermuteOptions(varargin)
+        function self = PunctureOptions(varargin)
             if (nargin == 1 && isa(varargin{1}, 'fec.Turbo.PermuteOptions'))
                 self.set(varargin{1}.get());
             elseif (nargin == 1 && isstruct(varargin{1}))
                 self.set(varargin{1});
             elseif (nargin == 1 && iscell(varargin{1}))
                 varargin = varargin{1};
-                if (~isempty(varargin))
-                    self.set(varargin{1:end});
+                self.mask = varargin{1};
+                if (~isempty(varargin(2:end)))
+                    self.set(varargin{2:end});
                 end
             else
-                if (~isempty(varargin))
-                    self.set(varargin{:});
+                self.mask = varargin{1};
+                if (~isempty(varargin(2:end)))
+                    self.set(varargin{2:end});
                 end
             end
         end
