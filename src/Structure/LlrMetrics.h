@@ -32,7 +32,6 @@
 
 #undef max
 
-//chanco
 namespace fec {
   
   using LlrType = double;
@@ -43,6 +42,13 @@ namespace fec {
     static inline Type max() {return std::numeric_limits<Type>::infinity();}
   };
   
+  template <typename LlrMetrics>
+  struct AlgorithmOptions {
+    typename LlrMetrics::Type gain_ = 1.0; /**< Gain coefficient used in decoder. */
+    typename LlrMetrics::Type step_ = 4.0;
+    size_t length_ = 8;
+  };
+  
   /**
    *  This class contains implementation of log sum operation.
    */
@@ -50,6 +56,8 @@ namespace fec {
   class LogSum {
   public:
     using isRecursive = std::false_type;
+    
+    LogSum(AlgorithmOptions<LlrMetrics> options = {}) {}
     
     /**
      * Computes log sum operation.
@@ -77,7 +85,7 @@ namespace fec {
   public:
     using isRecursive = std::true_type;
     
-    MaxLogSum(typename LlrMetrics::Type gain = 1.0) {gain_ = gain;}
+    MaxLogSum(AlgorithmOptions<LlrMetrics> options = {}) {gain_ = options.gain_;}
     
     /**
      * Computes log add operation with max approximation.
@@ -100,7 +108,7 @@ namespace fec {
   public:
     using isRecursive = std::true_type;
     
-    LinearLogSum(typename LlrMetrics::Type step = 4, size_t length = 8) : log1pexpm(step, length) {}
+    LinearLogSum(AlgorithmOptions<LlrMetrics> options = {}) : log1pexpm(options.step_, options.length_) {}
     /**
      * Computes log add operation with max approximation.
      *  \param  a First operand
@@ -126,7 +134,8 @@ namespace fec {
   class BoxSum {
   public:
     using isRecursive = std::true_type;
-    //typedef std::false_type isRecursive;
+    
+    BoxSum(AlgorithmOptions<LlrMetrics> options = {}) {}
     
     /**
      * Computes log add operation with max approximation.
@@ -143,7 +152,7 @@ namespace fec {
   public:
     using isRecursive = std::true_type;
     
-    LinearBoxSum(typename LlrMetrics::Type step = 4, size_t length = 8) : log1pexpm(step, length) {}
+    LinearBoxSum(AlgorithmOptions<LlrMetrics> options = {}) : log1pexpm(options.step_, options.length_) {}
     /**
      * Computes log add operation with max approximation.
      *  \param  a First operand
@@ -173,7 +182,7 @@ namespace fec {
   public:
     using isRecursive = std::true_type;
     
-    MinBoxSum(typename LlrMetrics::Type gain = 1.0) {gain_ = gain;}
+    MinBoxSum(AlgorithmOptions<LlrMetrics> options = {}) {gain_ = options.gain_;}
     
     /**
      * Computes log add operation with max approximation.

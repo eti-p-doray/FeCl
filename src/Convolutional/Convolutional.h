@@ -75,8 +75,10 @@ namespace fec {
       DecoderOptions() = default;
       
       DecoderOptions& algorithm(Codec::DecoderAlgorithm algorithm) {algorithm_ = algorithm; return *this;}
+      DecoderOptions& gain(double gain) {gain_ = gain; return *this;}
       
       Codec::DecoderAlgorithm algorithm_ = Approximate;
+      double gain_ = 1.0;
     };
     struct PunctureOptions {
     public:

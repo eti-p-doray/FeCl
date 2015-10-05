@@ -117,6 +117,7 @@ void Convolutional::Structure::setEncoderOptions(const EncoderOptions& encoder)
 void Convolutional::Structure::setDecoderOptions(const DecoderOptions& decoder)
 {
   decoderAlgorithm_ = decoder.algorithm_;
+  algorithm_.gain_ = decoder.gain_;
 }
 
 Convolutional::DecoderOptions Convolutional::Structure::getDecoderOptions() const

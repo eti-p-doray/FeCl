@@ -48,14 +48,13 @@ class Codec
   friend class boost::serialization::access;
 public:
 
+  /**
+   *  This enum lists the types of decoder algorithm.
+   */
   enum DecoderAlgorithm {
     Exact, /**< No approximation is used and the L-values are computed in logarithmic domain. */
-    Linear, /**< A lookup table is used  */
+    Linear, /**< A lookup table with linear interpolation is used  */
     Approximate,  /**< An approximation is used */
-  };
-  enum MetricType {
-    Floating, /**< Floating point is used in decoding. */
-    Fixed, /**< Fixed type */
   };
   
   /**
@@ -83,8 +82,9 @@ public:
     inline size_t systSize() const {return systSize_;} /**< Access the size of the msg in each code bloc. */
     inline size_t paritySize() const {return paritySize_;} /**< Access the size of the parity in each code bloc. */
     inline size_t stateSize() const {return stateSize_;} /**< Access the size of the extrinsic in each code bloc. */
-    DecoderAlgorithm decoderAlgorithm() const {return decoderAlgorithm_;}
-    Permutation permutations() const {return permutations_;}
+    DecoderAlgorithm decoderAlgorithm() const {return decoderAlgorithm_;} /**< Access the algorithm used in decoder. */
+    AlgorithmOptions<FloatLlrMetrics> algorithmOptions() const {return algorithm_;} /**< Access the algorithm options used in decoder. */
+    double gain() const {return algorithm_.gain_;} /**< Access the gain value used in decoder. */
     
     virtual void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const = 0;
     virtual bool check(std::vector<BitField<size_t>>::const_iterator parity) const = 0;
@@ -99,15 +99,15 @@ public:
       ar & BOOST_SERIALIZATION_NVP(paritySize_);
       ar & BOOST_SERIALIZATION_NVP(stateSize_);
       ar & BOOST_SERIALIZATION_NVP(decoderAlgorithm_);
-      ar & BOOST_SERIALIZATION_NVP(permutations_);
+      ar & ::BOOST_SERIALIZATION_NVP(algorithm_.gain_);
     }
     
     size_t msgSize_=0;/**< Size of the msg in each code bloc. */
     size_t systSize_=0;/**< Size of the msg in each code bloc. */
     size_t paritySize_=0;/**< Size of the parity in each code bloc. */
     size_t stateSize_=0;/**< Size of the extrinsic in each code bloc. */
-    DecoderAlgorithm decoderAlgorithm_;
-    Permutation permutations_;
+    DecoderAlgorithm decoderAlgorithm_; /**< Algorithm type used in decoder. */
+    AlgorithmOptions<FloatLlrMetrics> algorithm_;
   };
   template <class Iterator>
   class InfoIterator {
@@ -256,13 +256,13 @@ public:
   int getWorkGroupSize() const {return workGroupSize_;}
   void setWorkGroupSize(int size) {workGroupSize_ = size;}
   
-  template <template <typename> class A> bool check(const std::vector<BitField<size_t>,A<BitField<size_t>>>& parity) const;
-  
-  template <template <typename> class A> void encode(const std::vector<BitField<size_t>,A<BitField<size_t>>>& message, std::vector<BitField<size_t>,A<BitField<size_t>>>& parity) const;
+  template <template <typename> class A>
+  bool check(const std::vector<BitField<size_t>,A<BitField<size_t>>>& parity) const;
   
   template <template <typename> class A>
+  void encode(const std::vector<BitField<size_t>,A<BitField<size_t>>>& message, std::vector<BitField<size_t>,A<BitField<size_t>>>& parity) const;
+  template <template <typename> class A>
   void decode(const std::vector<LlrType,A<LlrType>>& parity, std::vector<BitField<size_t>,A<BitField<size_t>>>& msg) const;
-  
   template <template <typename> class A>
   void soDecode(Input<A> input, Output<A> output) const;
 

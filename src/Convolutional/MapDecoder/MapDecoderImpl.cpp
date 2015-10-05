@@ -30,15 +30,16 @@ using namespace fec;
  */
 template <class LlrMetrics, template <class> class LogSumAlg>
 MapDecoderImpl<LlrMetrics, LogSumAlg>::MapDecoderImpl(const Convolutional::Structure& structure) :
-MapDecoder(structure)
+MapDecoder(structure),
+logSum_(this->structure().algorithmOptions())
 {
-  branchMetrics_.resize((structure.length()+structure.tailSize())*structure.trellis().inputCount()*structure.trellis().stateCount());
-  forwardMetrics_.resize((structure.length()+structure.tailSize())*structure.trellis().stateCount());
-  backwardMetrics_.resize((structure.length()+structure.tailSize())*structure.trellis().stateCount());
+  branchMetrics_.resize((this->structure().length()+this->structure().tailSize())*this->structure().trellis().inputCount()*this->structure().trellis().stateCount());
+  forwardMetrics_.resize((this->structure().length()+this->structure().tailSize())*this->structure().trellis().stateCount());
+  backwardMetrics_.resize((this->structure().length()+this->structure().tailSize())*this->structure().trellis().stateCount());
   
-  bufferMetrics_.resize(std::max(structure.trellis().outputCount(), structure.trellis().inputCount()));
+  bufferMetrics_.resize(std::max(this->structure().trellis().outputCount(), this->structure().trellis().inputCount()));
   if (!LogSumAlg<LlrMetrics>::isRecursive::value) {
-    bufferMetrics_.resize(structure.trellis().stateCount()*(structure.trellis().inputCount()+1));
+    bufferMetrics_.resize(this->structure().trellis().stateCount()*(this->structure().trellis().inputCount()+1));
   }
 }
 
