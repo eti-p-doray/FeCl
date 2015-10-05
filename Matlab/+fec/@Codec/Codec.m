@@ -130,7 +130,16 @@ classdef (Abstract) Codec < fec.WrapObject
                 varargout{i} = reshape(varargout{i}, [], size(parity,2));
             end
         end
-        
+
+        function parity = puncture(self, parity, options)
+            perms = self.createPermutation(options);
+            parity = perms.permute(parity);
+        end
+        function parity = unPuncture(self, parity, options)
+            perms = self.createPermutation(options);
+            parity = perms.dePermute(parity);
+        end
+
         function delete(self)
         %   Free underlying cpp ressources
             self.wrapHandle_ = fec.bin.wrap(uint32(fec.WrapFcnId.Codec_destroy), self);

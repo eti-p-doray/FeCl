@@ -30,7 +30,6 @@ classdef Turbo < fec.Codec
             options = fec.Turbo.PunctureOptions(varargin{:});
             perms = fec.Permutation(fec.bin.wrap(uint32(fec.WrapFcnId.Turbo_createPermutation), self, options.get()), self.paritySize);
         end
-
         function val = get.iterations(self)
             val = self.decoderOptions.iterations;
         end
