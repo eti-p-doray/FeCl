@@ -69,7 +69,6 @@ public:
     inputSize_ = inputSize;
   }
   
-  size_t& inputSize() {return inputSize_;}
   size_t inputSize() const {return inputSize_;}
   size_t outputSize() const {return sequence_.size();}
   
@@ -78,37 +77,18 @@ public:
   template <typename T1, typename T2=T1> void permute(const std::vector<T1>& input, std::vector<T2>& output) const;
   template <typename T1, typename T2=T1> void dePermute(const std::vector<T1>& input, std::vector<T2>& output) const;
   
-  template <typename T1, typename T2=T1> std::vector<T1> permute(const std::vector<T2>& input) const {
-    std::vector<T2> output;
-    interleave(input, output);
-    return output;
-  }
-  template <typename T1, typename T2=T1> std::vector<T1> dePermute(const std::vector<T2>& input) const {
-    std::vector<T2> output;
-    dePermute<T1,T2>(input, output);
-    return output;
-  }
+  template <typename T1, typename T2=T1> std::vector<T1> permute(const std::vector<T2>& input) const;
+  template <typename T1, typename T2=T1> std::vector<T1> dePermute(const std::vector<T2>& input) const;
   
-  template <typename T1, typename T2=T1> void permuteBlocks(typename std::vector<T1>::const_iterator input, typename std::vector<T2>::iterator output, size_t n) const
-  {
-    for (size_t i = 0; i < n; i++) {
-      permuteBlock<T1,T2>(input, output);
-      input += inputSize();
-      output += outputSize();
-    }
-  }
+  template <typename T1, typename T2=T1>
+  void permuteBlocks(typename std::vector<T1>::const_iterator input, typename std::vector<T2>::iterator output, size_t n) const;
+  template <typename T1, typename T2=T1>
+  void dePermuteBlocks(typename std::vector<T1>::const_iterator input, typename std::vector<T2>::iterator output, size_t n) const;
   
-  template <typename T1, typename T2=T1> void dePermuteBlocks(typename std::vector<T1>::const_iterator input, typename std::vector<T2>::iterator output, size_t n) const
-  {
-    for (size_t i = 0; i < n; i++) {
-      dePermuteBlock<T1,T2>(input, output);
-      input += outputSize();
-      output += inputSize();
-    }
-  }
-  
-  template <typename T1, typename T2=T1> void permuteBlock(typename std::vector<T1>::const_iterator input, typename std::vector<T2>::iterator output) const;
-  template <typename T1, typename T2=T1> void dePermuteBlock(typename std::vector<T1>::const_iterator input, typename std::vector<T2>::iterator output) const;
+  template <typename T1, typename T2=T1>
+  void permuteBlock(typename std::vector<T1>::const_iterator input, typename std::vector<T2>::iterator output) const;
+  template <typename T1, typename T2=T1>
+  void dePermuteBlock(typename std::vector<T1>::const_iterator input, typename std::vector<T2>::iterator output) const;
   
 private:
   template <typename Archive>
@@ -145,6 +125,42 @@ void fec::Permutation::dePermute(const std::vector<T1>& input, std::vector<T2>& 
   auto outputIt = output.begin();
   for (; inputIt < input.end(); inputIt += sequence_.size(), outputIt += sequence_.size()) {
     dePermuteBlock<T1,T2>(inputIt, outputIt);
+  }
+}
+
+template <typename T1, typename T2>
+std::vector<T1> fec::Permutation::permute(const std::vector<T2>& input) const
+{
+  std::vector<T2> output;
+  interleave(input, output);
+  return output;
+}
+
+template <typename T1, typename T2>
+std::vector<T1> fec::Permutation::dePermute(const std::vector<T2>& input) const
+{
+  std::vector<T2> output;
+  dePermute<T1,T2>(input, output);
+  return output;
+}
+
+template <typename T1, typename T2>
+void fec::Permutation::permuteBlocks(typename std::vector<T1>::const_iterator input, typename std::vector<T2>::iterator output, size_t n) const
+{
+  for (size_t i = 0; i < n; i++) {
+    permuteBlock<T1,T2>(input, output);
+    input += inputSize();
+    output += outputSize();
+  }
+}
+
+template <typename T1, typename T2>
+void fec::Permutation::dePermuteBlocks(typename std::vector<T1>::const_iterator input, typename std::vector<T2>::iterator output, size_t n) const
+{
+  for (size_t i = 0; i < n; i++) {
+    dePermuteBlock<T1,T2>(input, output);
+    input += outputSize();
+    output += inputSize();
   }
 }
 

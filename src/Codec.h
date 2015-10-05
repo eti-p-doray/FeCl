@@ -41,7 +41,7 @@
 namespace fec {
 /**
  *  This class represents a general encoder / decoder.
- *  It offers methods to encode and to decode data given a code structure.
+ *  It offers methods to encode and to decode data given a codec structure.
  */
 class Codec
 {
@@ -264,11 +264,15 @@ public:
   template <template <typename> class A>
   void decode(const std::vector<LlrType,A<LlrType>>& parity, std::vector<BitField<size_t>,A<BitField<size_t>>>& msg) const;
   template <template <typename> class A>
+  std::vector<BitField<size_t>,A<BitField<size_t>>> encode(const std::vector<BitField<size_t>,A<BitField<size_t>>>& message) const;
+  template <template <typename> class A>
+  std::vector<BitField<size_t>,A<BitField<size_t>>> decode(const std::vector<LlrType,A<LlrType>>& parity) const;
+  template <template <typename> class A>
   void soDecode(Input<A> input, Output<A> output) const;
 
 protected:
   Codec() = default;
-  Codec(Structure* structure, int workGroupdSize = 4);
+  Codec(Structure* structure, int workGroupSize = 4);
   Codec(const Codec& other) {*this = other;}
   Codec& operator=(const Codec& other) {workGroupSize_ = other.workGroupSize(); return *this;}
   
@@ -344,6 +348,22 @@ bool fec::Codec::check(const std::vector<BitField<size_t>,A<BitField<size_t>>>& 
     throw std::invalid_argument("Invalid size for parity");
   }
   return checkBlocks(parity.begin(), blockCount);
+}
+
+template <template <typename> class A>
+std::vector<fec::BitField<size_t>,A<fec::BitField<size_t>>> fec::Codec::encode(const std::vector<fec::BitField<size_t>,A<fec::BitField<size_t>>>& message) const
+{
+  std::vector<fec::BitField<size_t>,A<fec::BitField<size_t>>> parity;
+  encode(message, parity);
+  return parity;
+}
+
+template <template <typename> class A>
+std::vector<fec::BitField<size_t>,A<fec::BitField<size_t>>> fec::Codec::decode(const std::vector<fec::LlrType,A<fec::LlrType>>& parity) const
+{
+  std::vector<fec::BitField<size_t>,A<fec::BitField<size_t>>> message;
+  decode(parity, message);
+  return message;
 }
 
 /**
