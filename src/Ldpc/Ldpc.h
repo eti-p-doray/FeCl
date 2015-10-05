@@ -65,6 +65,7 @@ namespace fec {
       
       static const std::array<size_t, 2> length_;
       static const std::vector<std::vector<double>> rate_;
+      static const std::vector<std::vector<size_t>> q_;
       static const std::vector<std::vector<std::vector<std::vector<size_t>>>> index_;
     };
     

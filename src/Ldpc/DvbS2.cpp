@@ -26,7 +26,11 @@ using namespace fec;
 const std::array<size_t, 2> Ldpc::DvbS2::length_ = {64800, 16200};
 const std::vector<std::vector<double>> Ldpc::DvbS2::rate_ = {
   {1.0/4.0, 1.0/3.0, 2.0/5.0, 1.0/2.0, 3.0/5.0, 2.0/3.0, 3.0/4.0, 4.0/5.0, 5.0/6.0, 8.0/9.0, 9.0/10.0},
-  {1.0/5.0, 1.0/3.0, 2.0/5.0, 4.0/9.0, 3.0/5.0, 2.0/3.0, 11.0/15.0, 7.0/9.0, 37.0/49.0, 8.0/9.0}};
+  {1.0/4.0, 1.0/3.0, 2.0/5.0, 1.0/2.0, 3.0/5.0, 2.0/3.0, 3.0/4.0, 4.0/5.0, 5.0/6.0, 8.0/9.0}};
+
+const std::vector<std::vector<size_t>> Ldpc::DvbS2::q_ = {
+  {135, 120, 108, 90, 72, 60, 45, 36, 30, 20, 18},
+  {36, 30, 27, 25, 18, 15, 12, 10, 8, 5}};
 
 const std::vector<std::vector<std::vector<std::vector<size_t>>>> Ldpc::DvbS2::index_ = {
   {
@@ -1327,7 +1331,7 @@ const std::vector<std::vector<std::vector<std::vector<size_t>>>> Ldpc::DvbS2::in
       {4844, 9609, 2707},
       {6883, 3237, 1714},
       {4768, 3878, 10017},
-      {10127, 3334, 8267, },
+      {10127, 3334, 8267},
     },
     {
       {5650, 4143, 8750, 583, 6720, 8071, 635, 1767, 1344, 6922, 738, 6658},
@@ -1347,7 +1351,7 @@ const std::vector<std::vector<std::vector<std::vector<size_t>>>> Ldpc::DvbS2::in
       {6724, 9015, 5646},
       {4502, 4439, 8474},
       {5107, 7342, 9442},
-      {1387, 8910, 2660, },
+      {1387, 8910, 2660},
     },
     {
       {20, 712, 2386, 6354, 4061, 1062, 5045, 5158},
@@ -1502,7 +1506,7 @@ const std::vector<std::vector<std::vector<std::vector<size_t>>>> Ldpc::DvbS2::in
       {6, 3460, 945},
       {7, 2049, 1746},
       {8, 566, 1427},
-      {9, 3545, 1168, },
+      {9, 3545, 1168},
     },
     {
       {3, 2409, 499, 1481, 908, 559, 716, 1270, 333, 2508, 2264, 1702, 2805},
@@ -1541,7 +1545,7 @@ const std::vector<std::vector<std::vector<std::vector<size_t>>>> Ldpc::DvbS2::in
       {4, 1738, 68},
       {5, 2392, 951},
       {6, 163, 645},
-      {7, 2644, 1704, },
+      {7, 2644, 1704},
     },
     {
       {0, 1558, 712, 805},
@@ -1612,11 +1616,11 @@ SparseBitMatrix Ldpc::DvbS2::matrix(size_t n, double rate)
     throw std::invalid_argument("Invalid rate");
   }
   
-  size_t k = rate*n;
-  size_t p = (n-k) / 360;
+  size_t q = q_[lengthIdx][rateIdx];
+  size_t k = q * 360;
   
   std::vector<size_t> rowSizes(n);
-  for (size_t i = 0; i < n-k; ++i) {
+  for (size_t i = 0; i < k; ++i) {
     rowSizes[i] = index_[lengthIdx][rateIdx][i/360].size();
   }
   for (size_t i = n-k; i < n; ++i) {
@@ -1625,10 +1629,10 @@ SparseBitMatrix Ldpc::DvbS2::matrix(size_t n, double rate)
   rowSizes[n-1] = 1;
   
   SparseBitMatrix H(rowSizes, n-k);
-  for (size_t i = 0; i < k; ++i) {
+  for (size_t i = 0; i < n-k; ++i) {
     auto row = H[i];
     for (size_t j = 0; j < index_[lengthIdx][rateIdx][i/360].size(); ++j) {
-      size_t col = ( index_[lengthIdx][rateIdx][i/360][j]+(i%360)*p ) % H.cols();
+      size_t col = ( index_[lengthIdx][rateIdx][i/360][j]+(i%360)*q ) % H.cols();
       row.set(col);
     }
   }
