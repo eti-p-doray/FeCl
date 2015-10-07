@@ -19,49 +19,49 @@
  along with FeCl.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#include "PuncturedTurbo.h"
-#include "TurboDecoder/TurboDecoder.h"
+#include "PuncturedLdpc.h"
+#include "BpDecoder/BpDecoder.h"
 
 using namespace fec;
 
-BOOST_CLASS_EXPORT_IMPLEMENT(PuncturedTurbo);
-BOOST_CLASS_EXPORT_IMPLEMENT(PuncturedTurbo::Structure);
+BOOST_CLASS_EXPORT_IMPLEMENT(PuncturedLdpc);
+BOOST_CLASS_EXPORT_IMPLEMENT(PuncturedLdpc::Structure);
 
-const char * PuncturedTurbo::get_key() const {
-  return boost::serialization::type_info_implementation<PuncturedTurbo>::type::get_const_instance().get_key();
+const char * PuncturedLdpc::get_key() const {
+  return boost::serialization::type_info_implementation<PuncturedLdpc>::type::get_const_instance().get_key();
 }
 
-const char * PuncturedTurbo::Structure::get_key() const {
-  return boost::serialization::type_info_implementation<PuncturedTurbo::Structure>::type::get_const_instance().get_key();
+const char * PuncturedLdpc::Structure::get_key() const {
+  return boost::serialization::type_info_implementation<PuncturedLdpc::Structure>::type::get_const_instance().get_key();
 }
 
 /**
- *  Turbo constructor
+ *  Ldpc constructor
  *  \param  codeStructure Codec structure used for encoding and decoding
  *  \param  workGroupSize Number of thread used for decoding
  */
-PuncturedTurbo::PuncturedTurbo(const Structure& structure,  int workGroupSize) :
-Turbo(std::unique_ptr<Structure>(new Structure(structure)), workGroupSize)
+PuncturedLdpc::PuncturedLdpc(const Structure& structure,  int workGroupSize) :
+Ldpc(std::unique_ptr<Structure>(new Structure(structure)), workGroupSize)
 {
 }
-PuncturedTurbo::PuncturedTurbo(const EncoderOptions& encoder, const PunctureOptions& puncture, const DecoderOptions& decoder, int workGroupSize) :
-Turbo(std::unique_ptr<Structure>(new Structure(encoder, puncture, decoder)), workGroupSize)
+PuncturedLdpc::PuncturedLdpc(const EncoderOptions& encoder, const PunctureOptions& puncture, const DecoderOptions& decoder, int workGroupSize) :
+Ldpc(std::unique_ptr<Structure>(new Structure(encoder, puncture, decoder)), workGroupSize)
 {
 }
-PuncturedTurbo::PuncturedTurbo(const EncoderOptions& encoder, const PunctureOptions& puncture, int workGroupSize) :
-Turbo(std::unique_ptr<Structure>(new Structure(encoder, puncture)), workGroupSize)
+PuncturedLdpc::PuncturedLdpc(const EncoderOptions& encoder, const PunctureOptions& puncture, int workGroupSize) :
+Ldpc(std::unique_ptr<Structure>(new Structure(encoder, puncture)), workGroupSize)
 {
 }
 
-void PuncturedTurbo::decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const
+void PuncturedLdpc::decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const
 {
   std::vector<LlrType> parityTmp(structure().paritySize(), 0.0);
   structure().permutation().dePermuteBlocks<LlrType>(parity, parityTmp.begin(), n);
-  auto worker = TurboDecoder::create(structure());
+  auto worker = BpDecoder::create(structure());
   worker->decodeBlocks(parityTmp.begin(), msg, n);
 }
 
-void PuncturedTurbo::soDecodeBlocks(InputIterator input, OutputIterator output, size_t n) const
+void PuncturedLdpc::soDecodeBlocks(InputIterator input, OutputIterator output, size_t n) const
 {
   std::vector<LlrType> parityTmp(structure().paritySize(), 0.0);
   structure().permutation().dePermuteBlocks<LlrType>(input.parity(), parityTmp.begin(), n);
@@ -70,7 +70,7 @@ void PuncturedTurbo::soDecodeBlocks(InputIterator input, OutputIterator output, 
   if (outputTmp.hasParity()) {
     outputTmp.parity(parityTmp.begin());
   }
-  auto worker = TurboDecoder::create(structure());
+  auto worker = BpDecoder::create(structure());
   worker->soDecodeBlocks(input, outputTmp, n);
   if (output.hasParity()) {
     structure().permutation().permuteBlocks<LlrType>(outputTmp.parity(), output.parity(), n);
@@ -78,40 +78,40 @@ void PuncturedTurbo::soDecodeBlocks(InputIterator input, OutputIterator output, 
 }
 
 
-PuncturedTurbo::Structure::Structure(const EncoderOptions& encoder, const PunctureOptions& puncture, const DecoderOptions& decoder)
+PuncturedLdpc::Structure::Structure(const EncoderOptions& encoder, const PunctureOptions& puncture, const DecoderOptions& decoder)
 {
   setEncoderOptions(encoder);
   setPunctureOptions(puncture);
   setDecoderOptions(decoder);
 }
-PuncturedTurbo::Structure::Structure(const EncoderOptions& encoder, const PunctureOptions& puncture)
+PuncturedLdpc::Structure::Structure(const EncoderOptions& encoder, const PunctureOptions& puncture)
 {
   setEncoderOptions(encoder);
   setPunctureOptions(puncture);
   setDecoderOptions(DecoderOptions());
 }
 
-void PuncturedTurbo::Structure::setEncoderOptions(const fec::Turbo::EncoderOptions& encoder)
+void PuncturedLdpc::Structure::setEncoderOptions(const fec::Ldpc::EncoderOptions& encoder)
 {
-  Turbo::Structure::setEncoderOptions(encoder);
+  Ldpc::Structure::setEncoderOptions(encoder);
   permutation_ = createPermutation({});
 }
 
-void PuncturedTurbo::Structure::setPunctureOptions(const fec::Turbo::PunctureOptions& puncture)
+void PuncturedLdpc::Structure::setPunctureOptions(const fec::Ldpc::PunctureOptions& puncture)
 {
   permutation_ = createPermutation(puncture);
 }
 
-void PuncturedTurbo::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const
+void PuncturedLdpc::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const
 {
   std::vector<BitField<size_t>> parityTmp(paritySize(), 0);
-  Turbo::Structure::encode(msg, parityTmp.begin());
+  Ldpc::Structure::encode(msg, parityTmp.begin());
   permutation().permuteBlock<BitField<size_t>>(parityTmp.begin(), parity);
 }
 
-bool PuncturedTurbo::Structure::check(std::vector<BitField<size_t>>::const_iterator parity) const
+bool PuncturedLdpc::Structure::check(std::vector<BitField<size_t>>::const_iterator parity) const
 {
   std::vector<BitField<size_t>> parityTmp(paritySize(), 0);
   permutation().dePermuteBlock<BitField<size_t>>(parity, parityTmp.begin());
-  return Turbo::Structure::check(parityTmp.begin());
+  return Ldpc::Structure::check(parityTmp.begin());
 }

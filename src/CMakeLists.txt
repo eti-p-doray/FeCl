@@ -2,6 +2,7 @@ set(SOURCES
   Codec.cpp
   Structure/Trellis.cpp
   Convolutional/Convolutional.cpp
+  Convolutional/PuncturedConvolutional.cpp
   Convolutional/MapDecoder/MapDecoder.cpp
   Convolutional/MapDecoder/MapDecoderImpl.cpp
   Convolutional/ViterbiDecoder/ViterbiDecoder.cpp
@@ -11,6 +12,7 @@ set(SOURCES
   Turbo/TurboDecoder/TurboDecoder.cpp
   Turbo/TurboDecoder/TurboDecoderImpl.cpp
   Ldpc/Ldpc.cpp
+  Ldpc/PuncturedLdpc.cpp
   Ldpc/DvbS2.cpp
   Ldpc/BpDecoder/BpDecoder.cpp
   Ldpc/BpDecoder/BpDecoderImpl.cpp

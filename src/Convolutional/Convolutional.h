@@ -154,6 +154,8 @@ namespace fec {
     Permutation createPermutation(const PunctureOptions& options) {return structure().createPermutation(options);}
     
   protected:
+    Convolutional(std::unique_ptr<Structure>&& structure, int workGroupSize = 4) : Codec(std::move(structure), workGroupSize) {}
+    
     inline Structure& structure() {return dynamic_cast<Structure&>(Codec::structure());}
     
     virtual void decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const;

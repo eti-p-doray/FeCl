@@ -95,6 +95,7 @@ namespace fec {
       
     private:
       static const std::array<size_t, 2> length_;
+      static const std::array<double, 2> rate_;
       static const std::vector<std::vector<size_t>> parameter_;
     };
     
