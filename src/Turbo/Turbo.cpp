@@ -41,30 +41,27 @@ const char * Turbo::Structure::get_key() const {
  *  \param  workGroupSize Number of thread used for decoding
  ******************************************************************************/
 Turbo::Turbo(const Structure& structure,  int workGroupSize) :
-structure_(structure),
-Codec(&structure_, workGroupSize)
+Codec(std::unique_ptr<Structure>(new Structure(structure)), workGroupSize)
 {
 }
 Turbo::Turbo(const EncoderOptions& encoder, const DecoderOptions& decoder, int workGroupSize) :
-structure_(encoder, decoder),
-Codec(&structure_, workGroupSize)
+Codec(std::unique_ptr<Structure>(new Structure(encoder, decoder)), workGroupSize)
 {
 }
 Turbo::Turbo(const EncoderOptions& encoder, int workGroupSize) :
-structure_(encoder),
-Codec(&structure_, workGroupSize)
+Codec(std::unique_ptr<Structure>(new Structure(encoder)), workGroupSize)
 {
 }
 
 void Turbo::decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const
 {
-  auto worker = TurboDecoder::create(structure_);
+  auto worker = TurboDecoder::create(structure());
   worker->decodeBlocks(parity, msg, n);
 }
 
 void Turbo::soDecodeBlocks(InputIterator input, OutputIterator output, size_t n) const
 {
-  auto worker = TurboDecoder::create(structure_);
+  auto worker = TurboDecoder::create(structure());
   worker->soDecodeBlocks(input, output, n);
 }
 

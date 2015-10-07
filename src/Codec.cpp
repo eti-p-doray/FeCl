@@ -21,45 +21,12 @@
 
 #include "Codec.h"
 
-#include "Convolutional/Convolutional.h"
-#include "Turbo/Turbo.h"
-#include "Ldpc/Ldpc.h"
-
 using namespace fec;
 
 BOOST_CLASS_EXPORT_IMPLEMENT(Codec);
 BOOST_CLASS_EXPORT_IMPLEMENT(Codec::Structure);
 
-/**
- *  Codec creator function.
- *  Construct in a factory behavior a code object corresponding to the structure.
- *  \param codeStructure Codec object structure
- *  \param codeStructure Decoder parameters
- *  \param workGroupSize Number of thread used in encoding and decoding.
- */
-std::unique_ptr<Codec> Codec::create(const Codec::Structure& structure, int workGroupSize)
-{
-  switch (structure.type()) {
-    case Codec::Structure::Convolutional:
-      return std::unique_ptr<Codec>(new Convolutional(dynamic_cast<const Convolutional::Structure&>(structure),
-                                                     workGroupSize));
-      break;
-      
-    case Codec::Structure::Turbo:
-      return std::unique_ptr<Codec>(new Turbo(dynamic_cast<const Turbo::Structure&>(structure), workGroupSize));
-      break;
-      
-    case Codec::Structure::Ldpc:
-      return std::unique_ptr<Codec>(new Ldpc(dynamic_cast<const Ldpc::Structure&>(structure), workGroupSize));
-      break;
-      
-    default:
-      break;
-  }
-  return std::unique_ptr<Codec>();
-}
-
-Codec::Codec(Codec::Structure* structure, int workGroupSize) : structureRef_(structure)
+Codec::Codec(std::unique_ptr<Codec::Structure>&& structure, int workGroupSize) : structure_(std::move(structure))
 {
   workGroupSize_ = workGroupSize;
 }

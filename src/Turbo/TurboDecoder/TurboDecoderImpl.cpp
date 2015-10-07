@@ -205,11 +205,3 @@ void TurboDecoderImpl::serialSharingUpdate(size_t i)
   structure().interleaver(i).template permuteBlock<LlrType>(syst, extrinsicTmp);
 }
 
-//Explicit instantiation
-/*template class fec::TurboDecoderImpl<FloatLlrMetrics, LogSum>;
-template class fec::TurboDecoderImpl<FloatLlrMetrics, MaxLogSum>;
-template class fec::TurboDecoderImpl<FloatLlrMetrics, TableLogSum>;
-
-template class fec::TurboDecoderImpl<FixLlrMetrics, LogSum>;
-template class fec::TurboDecoderImpl<FixLlrMetrics, MaxLogSum>;
-template class fec::TurboDecoderImpl<FixLlrMetrics, TableLogSum>;*/

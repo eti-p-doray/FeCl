@@ -85,6 +85,19 @@ namespace fec {
       Group,
     };
     
+    struct Lte3Gpp {
+    public:
+      static Trellis trellis();
+      static Permutation interleaver(size_t lenght);
+      static Structure structure();
+      static Turbo codec();
+      static Permutation permutation();
+      
+    private:
+      static const std::array<size_t, 2> length_;
+      static const std::vector<std::vector<size_t>> parameter_;
+    };
+    
     struct EncoderOptions {
       friend class Structure;
     public:
@@ -134,10 +147,9 @@ namespace fec {
       virtual ~Structure() = default;
       
       virtual const char * get_key() const;
-      virtual Codec::Structure::Type type() const {return Codec::Structure::Turbo;}
       
-      void setDecoderOptions(const DecoderOptions& decoder);
-      void setEncoderOptions(const EncoderOptions& encoder);
+      virtual void setDecoderOptions(const DecoderOptions& decoder);
+      virtual void setEncoderOptions(const EncoderOptions& encoder);
       DecoderOptions getDecoderOptions() const;
       
       /**
@@ -179,24 +191,27 @@ namespace fec {
       Scheduling scheduling_;
     };
     
+    Turbo() = default;
     Turbo(const Structure& structure, int workGroupSize = 8);
     Turbo(const EncoderOptions& encoder, const DecoderOptions& decoder, int workGroupSize = 8);
     Turbo(const EncoderOptions& encoder, int workGroupSize = 8);
-    Turbo(const Turbo& other) : Codec(&structure_) {*this = other;}
+    Turbo(const Turbo& other) {*this = other;}
     virtual ~Turbo() = default;
+    Turbo& operator=(const Turbo& other) {Codec::operator=(other); structure_ = std::unique_ptr<Structure>(new Structure(other.structure())); return *this;}
     
     virtual const char * get_key() const;
     
-    inline const Structure& structure() const {return structure_;}
-    void setDecoderOptions(const DecoderOptions& decoder) {structure_.setDecoderOptions(decoder);}
-    void setEncoderOptions(const EncoderOptions& encoder) {structure_.setEncoderOptions(encoder);}
-    DecoderOptions getDecoderOptions() const {return structure_.getDecoderOptions();}
+    inline const Structure& structure() const {return dynamic_cast<const Structure&>(Codec::structure());}
+    void setDecoderOptions(const DecoderOptions& decoder) {structure().setDecoderOptions(decoder);}
+    void setEncoderOptions(const EncoderOptions& encoder) {structure().setEncoderOptions(encoder);}
+    DecoderOptions getDecoderOptions() const {return structure().getDecoderOptions();}
     
-    Permutation createPermutation(const PunctureOptions& options) {return structure_.createPermutation(options);}
-    //std::vector<> puncture(const PunctureOptions& options) {return structure_.createPermutation(options);}
+    Permutation createPermutation(const PunctureOptions& options) {return structure().createPermutation(options);}
     
   protected:
-    Turbo() = default;
+    Turbo(std::unique_ptr<Structure>&& structure, int workGroupSize = 4) : Codec(std::move(structure), workGroupSize) {}
+    
+    inline Structure& structure() {return dynamic_cast<Structure&>(Codec::structure());}
     
     virtual void decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const;
     virtual void soDecodeBlocks(InputIterator input, OutputIterator output, size_t n) const;
@@ -205,12 +220,9 @@ namespace fec {
     template <typename Archive>
     void serialize(Archive & ar, const unsigned int version) {
       using namespace boost::serialization;
-      ar & ::BOOST_SERIALIZATION_NVP(structure_);
       ar.template register_type<Structure>();
       ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(Codec);
     }
-    
-    Structure structure_;
   };
   
 }

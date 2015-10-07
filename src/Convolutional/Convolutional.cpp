@@ -43,18 +43,15 @@ const char * Convolutional::Structure::get_key() const {
  *  \param  workGroupSize Number of thread used for decoding
  */
 Convolutional::Convolutional(const Structure& structure,  int workGroupSize) :
-structure_(structure),
-Codec(&structure_, workGroupSize)
+Codec(std::unique_ptr<Structure>(new Structure(structure)), workGroupSize)
 {
 }
 Convolutional::Convolutional(const EncoderOptions& encoder, const DecoderOptions& decoder, int workGroupSize) :
-structure_(encoder, decoder),
-Codec(&structure_, workGroupSize)
+Codec(std::unique_ptr<Structure>(new Structure(encoder, decoder)), workGroupSize)
 {
 }
 Convolutional::Convolutional(const EncoderOptions& encoder, int workGroupSize) :
-structure_(encoder),
-Codec(&structure_, workGroupSize)
+Codec(std::unique_ptr<Structure>(new Structure(encoder)), workGroupSize)
 {
 }
 

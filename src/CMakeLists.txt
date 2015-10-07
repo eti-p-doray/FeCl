@@ -7,6 +7,7 @@ set(SOURCES
   Convolutional/ViterbiDecoder/ViterbiDecoder.cpp
   Convolutional/ViterbiDecoder/ViterbiDecoderImpl.cpp
   Turbo/Turbo.cpp
+  Turbo/PuncturedTurbo.cpp
   Turbo/TurboDecoder/TurboDecoder.cpp
   Turbo/TurboDecoder/TurboDecoderImpl.cpp
   Ldpc/Ldpc.cpp

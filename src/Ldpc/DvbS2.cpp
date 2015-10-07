@@ -28,7 +28,7 @@ const std::vector<std::vector<double>> Ldpc::DvbS2::rate_ = {
   {1.0/4.0, 1.0/3.0, 2.0/5.0, 1.0/2.0, 3.0/5.0, 2.0/3.0, 3.0/4.0, 4.0/5.0, 5.0/6.0, 8.0/9.0, 9.0/10.0},
   {1.0/4.0, 1.0/3.0, 2.0/5.0, 1.0/2.0, 3.0/5.0, 2.0/3.0, 3.0/4.0, 4.0/5.0, 5.0/6.0, 8.0/9.0}};
 
-const std::vector<std::vector<size_t>> Ldpc::DvbS2::q_ = {
+const std::vector<std::vector<size_t>> Ldpc::DvbS2::parameter_ = {
   {135, 120, 108, 90, 72, 60, 45, 36, 30, 20, 18},
   {36, 30, 27, 25, 18, 15, 12, 10, 8, 5}};
 
@@ -1616,7 +1616,7 @@ SparseBitMatrix Ldpc::DvbS2::matrix(size_t n, double rate)
     throw std::invalid_argument("Invalid rate");
   }
   
-  size_t q = q_[lengthIdx][rateIdx];
+  size_t q = parameter_[lengthIdx][rateIdx];
   size_t k = q * 360;
   
   std::vector<size_t> rowSizes(n);

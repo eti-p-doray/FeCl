@@ -64,19 +64,10 @@ public:
   class Structure {
     friend class boost::serialization::access;
   public:
-    /**
-     *  This enum lists the implemented code structures.
-     */
-    enum Type {
-      Convolutional, /**< Convolutional code following a trellis structure */
-      Turbo,  /**< Parallel concatenated convolutional codes */
-      Ldpc  /**< Low-density parity check code */
-    };
     
     virtual ~Structure() = default;
     
     virtual const char * get_key() const = 0; /**< Access the type info key. */
-    virtual Type type() const = 0; /**< Access the code structure type as an enumerated type. */
     
     inline size_t msgSize() const {return msgSize_;} /**< Access the size of the msg in each code bloc. */
     inline size_t systSize() const {return systSize_;} /**< Access the size of the msg in each code bloc. */
@@ -241,17 +232,16 @@ public:
   template <template <typename> class A = std::allocator>
   using Output = Info<std::vector<LlrType,A<LlrType>>>;
   
-  static std::unique_ptr<Codec> create(const Structure& Structure, int workGroupdSize = 4);
   virtual ~Codec() = default;
   
   virtual const char * get_key() const = 0; /**< Access the type info key. */
   
-  inline const Structure& structure() const {return *(structureRef_);}
+  inline const Structure& structure() const {return *structure_;}
   
-  inline size_t msgSize() const {return structure().msgSize();} /**< Access the size of the msg in each code bloc. */
-  inline size_t systSize() const {return structure().systSize();} /**< Access the size of the msg in each code bloc. */
-  inline size_t paritySize() const {return structure().paritySize();} /**< Access the size of the parity in each code bloc. */
-  inline size_t stateSize() const {return structure().stateSize();} /**< Access the size of the extrinsic in each code bloc. */
+  virtual size_t msgSize() const {return structure().msgSize();} /**< Access the size of the msg in each code bloc. */
+  virtual size_t systSize() const {return structure().systSize();} /**< Access the size of the msg in each code bloc. */
+  virtual size_t paritySize() const {return structure().paritySize();} /**< Access the size of the parity in each code bloc. */
+  virtual size_t stateSize() const {return structure().stateSize();} /**< Access the size of the extrinsic in each code bloc. */
   
   int getWorkGroupSize() const {return workGroupSize_;}
   void setWorkGroupSize(int size) {workGroupSize_ = size;}
@@ -272,11 +262,11 @@ public:
 
 protected:
   Codec() = default;
-  Codec(Structure* structure, int workGroupSize = 4);
+  Codec(std::unique_ptr<Structure>&&, int workGroupSize = 8);
   Codec(const Codec& other) {*this = other;}
-  Codec& operator=(const Codec& other) {workGroupSize_ = other.workGroupSize(); return *this;}
+  Codec& operator=(const Codec& other) {workGroupSize_ = other.getWorkGroupSize(); return *this;}
   
-  inline int workGroupSize() const {return workGroupSize_;}
+  inline Structure& structure() {return *structure_;}
   
   virtual bool checkBlocks(std::vector<BitField<size_t>>::const_iterator parity, size_t n) const;
   /**
@@ -307,29 +297,30 @@ protected:
    */
   virtual void soDecodeBlocks(InputIterator input, OutputIterator output, size_t n) const = 0;
   
+  std::unique_ptr<Structure> structure_;
+  
 private:
   template <typename Archive>
   void serialize(Archive & ar, const unsigned int version) {
     using namespace boost::serialization;
     ar & ::BOOST_SERIALIZATION_NVP(workGroupSize_);
-    ar & ::BOOST_SERIALIZATION_NVP(structureRef_);
+    ar & ::BOOST_SERIALIZATION_NVP(structure_);
   }
   
   std::vector<std::thread> createWorkGroup() const {
     std::vector<std::thread> threadGroup;
-    threadGroup.reserve(workGroupSize());
+    threadGroup.reserve(getWorkGroupSize());
     return threadGroup;
   }
   size_t taskSize(size_t blockCount) const {
     int n = std::thread::hardware_concurrency();
-    if (n > workGroupSize() || n == 0) {
-      n = workGroupSize();
+    if (n > getWorkGroupSize() || n == 0) {
+      n = getWorkGroupSize();
     }
     return (blockCount+n-1)/n;
   }
   
   int workGroupSize_;
-  Structure* structureRef_;
 };
   
 }
