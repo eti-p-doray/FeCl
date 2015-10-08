@@ -29,6 +29,7 @@
 
 #include "Convolutional/Convolutional.h"
 #include "Turbo/Turbo.h"
+#include "Turbo/PuncturedTurbo.h"
 #include "Ldpc/Ldpc.h"
 
 #include "util/WrapConversion.h"
@@ -220,6 +221,21 @@ const std::vector<std::function<WrapFcn>> wrapFcns = {
   {
     checkArgCount(nlhs, nrhs, 2, 1);
     plhs[0] = toMxArray(mxArrayTo<WrapHandle<Turbo>>::f(prhs[0])->createPermutation(mxArrayTo<Turbo::PunctureOptions>::f(prhs[1])));
+  },
+  
+  [](int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) //PuncturedTurbo_constructor
+  {
+    mexLock();
+    checkArgCount(nlhs, nrhs, 3, 1);
+    PuncturedTurbo::Structure structure(mxArrayTo<Turbo::EncoderOptions>::f(prhs[0]), mxArrayTo<Turbo::PunctureOptions>::f(prhs[1]), mxArrayTo<Turbo::DecoderOptions>::f(prhs[2]));
+    WrapHandle<Codec> codec(new PuncturedTurbo(structure));
+    plhs[0] = toMxArray(std::move(codec));
+  },
+  
+  [](int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) //PuncturedTurbo_set_punctureOptions
+  {
+    checkArgCount(nlhs, nrhs, 2, 0);
+    mxArrayTo<WrapHandle<PuncturedTurbo>>::f(prhs[0])->setPunctureOptions(mxArrayTo<Turbo::PunctureOptions>::f(prhs[1]));
   },
   
   [](int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) //Ldpc_constructor
