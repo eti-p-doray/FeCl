@@ -17,7 +17,9 @@ classdef PunctureOptions < hgsetget
                     self.set(varargin{2:end});
                 end
             else
-                self.mask = varargin{1};
+                if (~isempty(varargin))
+                    self.mask = varargin{1};
+                end
                 if (~isempty(varargin(2:end)))
                     self.set(varargin{2:end});
                 end

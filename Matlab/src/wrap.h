@@ -28,9 +28,11 @@
 #include <boost/archive/binary_oarchive.hpp>
 
 #include "Convolutional/Convolutional.h"
+#include "Convolutional/PuncturedConvolutional.h"
 #include "Turbo/Turbo.h"
 #include "Turbo/PuncturedTurbo.h"
 #include "Ldpc/Ldpc.h"
+#include "Ldpc/PuncturedLdpc.h"
 
 #include "util/WrapConversion.h"
 #include "util/WrapHandle.h"
@@ -271,6 +273,21 @@ const std::vector<std::function<WrapFcn>> wrapFcns = {
     plhs[0] = toMxArray(mxArrayTo<WrapHandle<Ldpc>>::f(prhs[0])->createPermutation(mxArrayTo<Ldpc::PunctureOptions>::f(prhs[1])));
   },
   
+  [](int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) //PuncturedLdpc_constructor
+  {
+    mexLock();
+    checkArgCount(nlhs, nrhs, 3, 1);
+    PuncturedLdpc::Structure structure(mxArrayTo<Ldpc::EncoderOptions>::f(prhs[0]), mxArrayTo<Ldpc::PunctureOptions>::f(prhs[1]), mxArrayTo<Ldpc::DecoderOptions>::f(prhs[2]));
+    WrapHandle<Codec> codec(new PuncturedLdpc(structure));
+    plhs[0] = toMxArray(std::move(codec));
+  },
+  
+  [](int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) //PuncturedLdpc_set_punctureOptions
+  {
+    checkArgCount(nlhs, nrhs, 2, 0);
+    mxArrayTo<WrapHandle<PuncturedLdpc>>::f(prhs[0])->setPunctureOptions(mxArrayTo<Ldpc::PunctureOptions>::f(prhs[1]));
+  },
+  
   [](int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) //Convolutional_constructor
   {
     mexLock();
@@ -302,6 +319,21 @@ const std::vector<std::function<WrapFcn>> wrapFcns = {
   {
     checkArgCount(nlhs, nrhs, 2, 1);
     plhs[0]  = toMxArray(mxArrayTo<WrapHandle<Convolutional>>::f(prhs[0])->createPermutation(mxArrayTo<Convolutional::PunctureOptions>::f(prhs[1])));
+  },
+  
+  [](int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) //PuncturedLdpc_constructor
+  {
+    mexLock();
+    checkArgCount(nlhs, nrhs, 3, 1);
+    PuncturedConvolutional::Structure structure(mxArrayTo<Convolutional::EncoderOptions>::f(prhs[0]), mxArrayTo<Convolutional::PunctureOptions>::f(prhs[1]), mxArrayTo<Convolutional::DecoderOptions>::f(prhs[2]));
+    WrapHandle<Codec> codec(new PuncturedConvolutional(structure));
+    plhs[0] = toMxArray(std::move(codec));
+  },
+  
+  [](int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) //PuncturedLdpc_set_punctureOptions
+  {
+    checkArgCount(nlhs, nrhs, 2, 0);
+    mxArrayTo<WrapHandle<PuncturedConvolutional>>::f(prhs[0])->setPunctureOptions(mxArrayTo<Convolutional::PunctureOptions>::f(prhs[1]));
   },
   
   [](int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) //Trellis_constructor

@@ -78,9 +78,12 @@ namespace fec {
     virtual size_t paritySize() const {return structure().permutation().outputSize();} /**< Access the size of the parity in each code bloc. */
     
     inline const Structure& structure() const {return dynamic_cast<const Structure&>(Codec::structure());}
+    void setPunctureOptions(const PunctureOptions& puncture) {structure().setPunctureOptions(puncture);}
     
   protected:
     PuncturedLdpc() = default;
+    
+    inline Structure& structure() {return dynamic_cast<Structure&>(Codec::structure());}
     
     virtual void decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const;
     virtual void soDecodeBlocks(InputIterator input, OutputIterator output, size_t n) const;

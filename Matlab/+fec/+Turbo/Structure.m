@@ -23,7 +23,7 @@ classdef Structure < hgsetget
                     end
                 else
                     self.encoderOptions = fec.Turbo.EncoderOptions(varargin{1}, varargin{2});
-                    if (~isempty({varargin{3:end}}))
+                    if (~isempty(varargin(3:end)))
                         self.set(varargin{3:end});
                     end
                 end

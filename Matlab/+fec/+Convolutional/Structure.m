@@ -13,15 +13,17 @@ classdef Structure < hgsetget
 
     methods
         function self = Structure(varargin)
-            if (isa(varargin{1}, 'fec.Convolutional.EncoderOptions') || (isfield(varargin{1}, 'trellis') && isfield(varargin{1}, 'length')) || iscell(varargin{1}))
-                self.encoderOptions = fec.Convolutional.EncoderOptions(varargin{1});
-                if (nargin > 1)
-                    self.decoderOptions = fec.Convolutional.DecoderOptions(varargin{2});
-                end
-            else
-                self.encoderOptions = fec.Convolutional.EncoderOptions(varargin{1}, varargin{2});
-                if (~isempty({varargin{3:end}}))
-                    self.set(varargin{3:end});
+            if (nargin > 0)
+                if (isa(varargin{1}, 'fec.Convolutional.EncoderOptions') || (isfield(varargin{1}, 'trellis') && isfield(varargin{1}, 'length')) || iscell(varargin{1}))
+                    self.encoderOptions = fec.Convolutional.EncoderOptions(varargin{1});
+                    if (nargin > 1)
+                        self.decoderOptions = fec.Convolutional.DecoderOptions(varargin{2});
+                    end
+                else
+                    self.encoderOptions = fec.Convolutional.EncoderOptions(varargin{1}, varargin{2});
+                    if (~isempty({varargin{3:end}}))
+                        self.set(varargin{3:end});
+                    end
                 end
             end
         end
