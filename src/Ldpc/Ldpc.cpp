@@ -146,6 +146,7 @@ void Ldpc::Structure::setDecoderOptions(const DecoderOptions& decoder)
 {
   decoderAlgorithm_ = decoder.algorithm_;
   iterations_ = decoder.iterations_;
+  algorithmOptions_.gain_ = decoder.gain_;
 }
 
 fec::Ldpc::DecoderOptions Ldpc::Structure::getDecoderOptions() const

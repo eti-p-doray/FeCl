@@ -59,11 +59,6 @@ namespace fec {
     
     LogSum(AlgorithmOptions<LlrMetrics> options = {}) {}
     
-    /**
-     * Computes log sum operation.
-     *  \param  a First operand
-     *  \param  b Second operand
-     */
     static inline typename LlrMetrics::Type prior(typename LlrMetrics::Type x) {return x;}
     static inline typename LlrMetrics::Type max(typename LlrMetrics::Type a, typename LlrMetrics::Type b) {return std::max(a,b);}
     static inline typename LlrMetrics::Type prior(typename LlrMetrics::Type x, typename LlrMetrics::Type max) {
@@ -72,13 +67,18 @@ namespace fec {
       }
       return std::exp(x - max);
     }
+    /**
+     * Computes log sum operation.
+     *  \param  a Left-hand operand.
+     *  \param  b Right-hand operand.
+     */
     static inline typename LlrMetrics::Type sum(typename LlrMetrics::Type a, typename LlrMetrics::Type b) {return a+b;}
     static inline typename LlrMetrics::Type post(typename LlrMetrics::Type x, typename LlrMetrics::Type max) {return std::log(x) + max;}
     static inline typename LlrMetrics::Type post(typename LlrMetrics::Type x) {return x;}
   };
   
   /**
-   *  This class contains implementation of the max approximation for log add operation.
+   *  This class contains implementation of the max approximation for log sum operation.
    */
   template <typename LlrMetrics>
   class MaxLogSum {
@@ -88,9 +88,9 @@ namespace fec {
     MaxLogSum(AlgorithmOptions<LlrMetrics> options = {}) {gain_ = options.gain_;}
     
     /**
-     * Computes log add operation with max approximation.
-     *  \param  a First operand
-     *  \param  b Second operand
+     * Computes log sum operation.
+     *  \param  a Left-hand operand.
+     *  \param  b Right-hand operand.
      */
     static inline typename LlrMetrics::Type sum(typename LlrMetrics::Type a, typename LlrMetrics::Type b) {return std::max(a,b);}
     static inline typename LlrMetrics::Type prior(typename LlrMetrics::Type x) {return x;}
@@ -101,7 +101,7 @@ namespace fec {
   };
   
   /**
-   *  This class contains implementation of the max approximation for log add operation.
+   *  This class contains implementation of the piece-wise linear approximation for log sum operation.
    */
   template <typename LlrMetrics>
   class LinearLogSum {
@@ -109,10 +109,11 @@ namespace fec {
     using isRecursive = std::true_type;
     
     LinearLogSum(AlgorithmOptions<LlrMetrics> options = {}) : log1pexpm(options.step_, options.length_) {}
+    
     /**
-     * Computes log add operation with max approximation.
-     *  \param  a First operand
-     *  \param  b Second operand
+     * Computes log sum operation.
+     *  \param  a Left-hand operand.
+     *  \param  b Right-hand operand.
      */
     inline typename LlrMetrics::Type sum(typename LlrMetrics::Type a, typename LlrMetrics::Type b) const {
       if (a == b) {
@@ -128,7 +129,7 @@ namespace fec {
   };
   
   /**
-   *  This class contains implementation of the max approximation for log add operation.
+   *  This class contains implementation of the box sum operation.
    */
   template <typename LlrMetrics>
   class BoxSum {
@@ -138,9 +139,9 @@ namespace fec {
     BoxSum(AlgorithmOptions<LlrMetrics> options = {}) {}
     
     /**
-     * Computes log add operation with max approximation.
-     *  \param  a First operand
-     *  \param  b Second operand
+     * Computes log sum operation.
+     *  \param  a Left-hand operand.
+     *  \param  b Right-hand operand.
      */
     static inline typename LlrMetrics::Type sum(typename LlrMetrics::Type a, typename LlrMetrics::Type b) {return a*b;}
     static inline typename LlrMetrics::Type prior(typename LlrMetrics::Type x) {return tanh(-x/2.0);}
@@ -153,10 +154,11 @@ namespace fec {
     using isRecursive = std::true_type;
     
     LinearBoxSum(AlgorithmOptions<LlrMetrics> options = {}) : log1pexpm(options.step_, options.length_) {}
+    
     /**
-     * Computes log add operation with max approximation.
-     *  \param  a First operand
-     *  \param  b Second operand
+     * Computes log sum operation.
+     *  \param  a Left-hand operand.
+     *  \param  b Right-hand operand.
      */
     inline typename LlrMetrics::Type sum(typename LlrMetrics::Type a, typename LlrMetrics::Type b) const {
       if (std::signbit(a) ^ std::signbit(b)) {
@@ -175,7 +177,7 @@ namespace fec {
 
   
   /**
-   *  This class contains implementation of the max approximation for log add operation.
+   *  This class contains implementation of the min approximation for box sum operation.
    */
   template <typename LlrMetrics>
   class MinBoxSum {
@@ -185,9 +187,9 @@ namespace fec {
     MinBoxSum(AlgorithmOptions<LlrMetrics> options = {}) {gain_ = options.gain_;}
     
     /**
-     * Computes log add operation with max approximation.
-     *  \param  a First operand
-     *  \param  b Second operand
+     * Computes log sum operation.
+     *  \param  a Left-hand operand.
+     *  \param  b Right-hand operand.
      */
     static inline typename LlrMetrics::Type sum(typename LlrMetrics::Type a, typename LlrMetrics::Type b) {
       if (std::signbit(a) ^ std::signbit(b)) {

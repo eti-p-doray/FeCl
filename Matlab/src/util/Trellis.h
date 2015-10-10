@@ -27,7 +27,7 @@
 #include <vector>
 #include <mex.h>
 
-#include "Structure/Trellis.h"
+#include "Trellis.h"
 #include "WrapConversion.h"
 #include "BitField.h"
 

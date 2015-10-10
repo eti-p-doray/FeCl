@@ -36,13 +36,17 @@ template <>
 class mxArrayTo<fec::Turbo::EncoderOptions> {
 public:
   static fec::Turbo::EncoderOptions f(const mxArray* in) {
-    auto trellis = mxArrayTo<std::vector<fec::Trellis>>::f(mxGetField(in, 0, "trellis"));
-    auto interl = mxArrayTo<std::vector<fec::Permutation>>::f(mxGetField(in, 0, "interleaver"));
-    fec::Turbo::EncoderOptions encoderOptions(trellis, interl);
-    
-    encoderOptions.termination(mxArrayTo<std::vector<fec::Convolutional::Termination>>::f(mxGetField(in, 0, "termination")));
-    
-    return encoderOptions;
+    try {
+      auto trellis = mxArrayTo<std::vector<fec::Trellis>>::f(mxGetField(in, 0, "trellis"));
+      auto interl = mxArrayTo<std::vector<fec::Permutation>>::f(mxGetField(in, 0, "interleaver"));
+      fec::Turbo::EncoderOptions encoderOptions(trellis, interl);
+      
+      encoderOptions.termination(mxArrayTo<std::vector<fec::Convolutional::Termination>>::f(mxGetField(in, 0, "termination")));
+      
+      return encoderOptions;
+    } catch (std::exception& e) {
+      throw std::invalid_argument("In encoder options: " + std::string(e.what()));
+    }
   }
 };
 

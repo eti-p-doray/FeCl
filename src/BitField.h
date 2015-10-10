@@ -74,6 +74,7 @@ public:
   inline BitReference operator[](size_t i) {return BitReference(&at<uint8_t>(i/8), i%8);}
   inline bool operator[](size_t i) const {return (value_>>i) & 1;}
   inline bool test(size_t i) const {return value_ & (size_t(1)<<i);}
+  inline BitField<T> test(size_t i, size_t size) const {return (value_ >> i) % (size);}
   inline void set(size_t i) {value_ |= (size_t(1)<<i);}
   inline void set(size_t i, bool val) {value_ &= ~(size_t(1)<<i); value_ |= size_t(val) << i;}
   inline void clear(size_t i) {value_ &= ~(size_t(1)<<i);}

@@ -28,7 +28,7 @@
 #include <mex.h>
 #include <matrix.h>
 
-#include "Structure/BitMatrix.h"
+#include "BitMatrix.h"
 #include "WrapConversion.h"
 #include "BitField.h"
 

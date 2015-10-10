@@ -34,7 +34,7 @@
 
 #include <mex.h>
 
-#include "Structure/Serialization.h"
+#include "Serialization.h"
 #include "WrapConversion.h"
 
 template <class T, class DerivedTypeHolder>

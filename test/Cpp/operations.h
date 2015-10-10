@@ -24,7 +24,7 @@
 #include <memory>
 #include <cstdint>
 
-#include "Structure/Serialization.h"
+#include "Serialization.h"
 #include "Codec.h"
 #include "Convolutional/Convolutional.h"
 #include "Turbo/Turbo.h"

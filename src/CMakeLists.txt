@@ -1,6 +1,6 @@
 set(SOURCES
   Codec.cpp
-  Structure/Trellis.cpp
+  Trellis.cpp
   Convolutional/Convolutional.cpp
   Convolutional/PuncturedConvolutional.cpp
   Convolutional/MapDecoder/MapDecoder.cpp

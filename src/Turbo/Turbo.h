@@ -26,7 +26,7 @@
 
 #include "../Codec.h"
 #include "../Convolutional/Convolutional.h"
-#include "../Structure/Permutation.h"
+#include "../Permutation.h"
 
 namespace fec {
   
@@ -85,10 +85,11 @@ namespace fec {
       Group,
     };
     
-    struct Lte3Gpp {
+    //will be there soon
+    /*struct Lte3Gpp {
     public:
       static Trellis trellis();
-      static Permutation interleaver(size_t lenght);
+      static Permutation interleaver(size_t length);
       static Structure structure();
       static Turbo codec();
       static Permutation permutation();
@@ -97,7 +98,7 @@ namespace fec {
       static const std::array<size_t, 2> length_;
       static const std::array<double, 2> rate_;
       static const std::vector<std::vector<size_t>> parameter_;
-    };
+    };*/
     
     struct EncoderOptions {
       friend class Structure;
@@ -119,10 +120,12 @@ namespace fec {
       DecoderOptions& iterations(size_t count) {iterations_ = count; return *this;}
       DecoderOptions& scheduling(Scheduling type) {scheduling_ = type; return *this;}
       DecoderOptions& algorithm(Codec::DecoderAlgorithm algorithm) {algorithm_ = algorithm; return *this;}
+      DecoderOptions& gain(double gain) {gain_ = gain; return *this;}
       
       size_t iterations_ = 6;
       Scheduling scheduling_ = Serial;
       Codec::DecoderAlgorithm algorithm_ = Approximate;
+      double gain_ = 1.0;
     };
     struct PunctureOptions {
     public:

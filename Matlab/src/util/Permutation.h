@@ -28,7 +28,7 @@
 #include <mex.h>
 
 #include "WrapConversion.h"
-#include "Structure/Permutation.h"
+#include "Permutation.h"
 
 template <>
 class mxArrayTo<fec::Permutation> {

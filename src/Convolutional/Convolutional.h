@@ -23,8 +23,8 @@
 #define FEC_CONVOLUTIONAL_H
 
 #include "../Codec.h"
-#include "../Structure/Trellis.h"
-#include "../Structure/Permutation.h"
+#include "../Trellis.h"
+#include "../Permutation.h"
 
 namespace fec {
   

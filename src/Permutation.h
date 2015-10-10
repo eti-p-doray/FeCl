@@ -32,12 +32,11 @@
 namespace fec {
 
 /**
-  * This class represents an interleaver.
-  * An interleaver generates a sequence of output data where each element 
+  * This class represents a permutation vector.
+  * An permutation generates a sequence of output data where each element
   * is picked at a specific index from the input sequence. 
   * The index is defined by the index sequence given at the construction.
-  * The interleaver can interleave many independant sequences at once.
-  * An interleaver is most usefull in concatenated codes such as turbo code.
+  * The permutation can permute many independant sequences at once.
   */
 class Permutation {
   friend class boost::serialization::access;

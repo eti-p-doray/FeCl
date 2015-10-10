@@ -89,6 +89,21 @@ const std::vector<std::function<WrapFcn>> wrapFcns = {
     plhs[0] = toMxArray(std::move(codec));
   },
   
+  [](int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) //Codec_check
+  {
+    checkArgCount(nlhs, nrhs, 2, 1);
+    
+    auto codec = mxArrayTo<WrapHandle<Codec>>::f(prhs[0], derivedCodec);
+    
+    std::vector<BitField<size_t>,Allocator<BitField<size_t>>::type> parity;
+    try {
+      parity = mxArrayTo<std::vector<BitField<size_t>,Allocator<BitField<size_t>>::type>>::f(prhs[1]);
+    } catch (std::exception& e) {
+      throw std::invalid_argument("Parity vector is invalid");
+    }
+    plhs[0] = toMxArray(codec->check(parity));
+  },
+  
   [](int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) //Codec_encode
   {
     checkArgCount(nlhs, nrhs, 2, 1);

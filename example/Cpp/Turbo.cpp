@@ -35,9 +35,9 @@ int main( int argc, char* argv[] )
   //! [Creating a trellis]
   /*
    We are creating a trellis structure with 1 input bit.
-   The constraint length is 3, which means there are 2 registers associated
+   The constraint length is 4, which means there are 3 registers associated
    with the input bit.
-   There is one output bits, with generator 5 (in octal) associated
+   There is one output bits, with generator 17 (in octal) associated
    with the input bit.
    */
   fec::Trellis trellis({4}, {{017}}, {015});

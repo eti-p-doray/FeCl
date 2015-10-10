@@ -26,7 +26,7 @@
 
 #include <mex.h>
 
-#include "Structure/BitField.h"
+#include "BitField.h"
 #include "WrapConversion.h"
 
 template <typename T> struct MexType<fec::BitField<T>> {using ID = typename MexType<T>::ID; using isScalar = std::true_type;};

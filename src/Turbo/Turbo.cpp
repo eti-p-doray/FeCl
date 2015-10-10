@@ -140,8 +140,9 @@ void Turbo::Structure::setDecoderOptions(const fec::Turbo::DecoderOptions &decod
   iterations_ = decoder.iterations_;
   scheduling_ = decoder.scheduling_;
   decoderAlgorithm_ = decoder.algorithm_;
+  algorithmOptions_.gain_ = decoder.gain_;
   for (size_t i = 0; i < interleaver_.size(); ++i) {
-    auto constituentOptions = Convolutional::DecoderOptions().algorithm(decoder.algorithm_);
+    auto constituentOptions = Convolutional::DecoderOptions().algorithm(decoder.algorithm_).gain(decoder.gain_);
     constituents_[i].setDecoderOptions(constituentOptions);
   }
 }

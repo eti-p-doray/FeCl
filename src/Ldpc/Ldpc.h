@@ -30,7 +30,7 @@
 #include <boost/serialization/export.hpp>
 
 #include "../Codec.h"
-#include "../Structure/BitMatrix.h"
+#include "../BitMatrix.h"
 
 namespace fec {
   
@@ -85,9 +85,11 @@ namespace fec {
       
       DecoderOptions& algorithm(Codec::DecoderAlgorithm algorithm) {algorithm_ = algorithm; return *this;}
       DecoderOptions& iterations(size_t n) {iterations_ = n; return *this;}
+      DecoderOptions& gain(double gain) {gain_ = gain; return *this;}
       
       Codec::DecoderAlgorithm algorithm_ = Approximate;
       size_t iterations_;
+      double gain_ = 1.0;
     };
     struct PunctureOptions {
     public:

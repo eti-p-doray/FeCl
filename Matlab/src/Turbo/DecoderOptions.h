@@ -34,12 +34,16 @@ template <>
 class mxArrayTo<fec::Turbo::DecoderOptions> {
 public:
   static fec::Turbo::DecoderOptions f(const mxArray* in) {
-    fec::Turbo::DecoderOptions decoderOptions;
-    decoderOptions.iterations(  mxArrayTo<size_t>::f(mxGetField(in, 0, "iterations")) );
-    decoderOptions.scheduling(  mxArrayTo<fec::Turbo::Scheduling>::f(mxGetField(in, 0, "scheduling")) );
-    decoderOptions.algorithm(  mxArrayTo<fec::Codec::DecoderAlgorithm>::f(mxGetField(in, 0, "algorithm")) );
-    
-    return decoderOptions;
+    try {
+      fec::Turbo::DecoderOptions decoderOptions;
+      decoderOptions.iterations(  mxArrayTo<size_t>::f(mxGetField(in, 0, "iterations")) );
+      decoderOptions.scheduling(  mxArrayTo<fec::Turbo::Scheduling>::f(mxGetField(in, 0, "scheduling")) );
+      decoderOptions.algorithm(  mxArrayTo<fec::Codec::DecoderAlgorithm>::f(mxGetField(in, 0, "algorithm")) );
+      
+      return decoderOptions;
+    } catch (std::exception& e) {
+      throw std::invalid_argument("In decoder options: " + std::string(e.what()));
+    }
   }
 };
 

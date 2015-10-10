@@ -63,6 +63,10 @@ classdef (Abstract) Codec < fec.WrapObject
             fec.bin.wrap(uint32(fec.WrapFcnId.Codec_set_workGroupSize), self, val);
         end
 
+        function consistent = check(self, parity)
+            consistent = fec.bin.wrap(uint32(fec.WrapFcnId.Codec_check), self, parity);
+        end
+
         function parity = encode(self, msg)
         % Encode several blocs of data according to the object code
         % structure.
@@ -129,15 +133,6 @@ classdef (Abstract) Codec < fec.WrapObject
             for i = 1:nargout
                 varargout{i} = reshape(varargout{i}, [], size(parity,2));
             end
-        end
-
-        function parity = puncture(self, parity, options)
-            perms = self.createPermutation(options);
-            parity = perms.permute(parity);
-        end
-        function parity = unPuncture(self, parity, options)
-            perms = self.createPermutation(options);
-            parity = perms.dePermute(parity);
         end
 
         function delete(self)
