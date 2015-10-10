@@ -58,7 +58,7 @@
 using namespace fec;
 
 using WrapFcn = void(int, mxArray_tag **, int, const mxArray_tag **);
-const DerivedTypeHolder<Convolutional,Turbo,Ldpc> derivedCodec = {};
+const DerivedTypeHolder<Convolutional,PuncturedConvolutional,Turbo,PuncturedTurbo,Ldpc,PuncturedLdpc> derivedCodec = {};
 
 const std::vector<std::function<WrapFcn>> wrapFcns = {
   [](int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) //Codec_destroy

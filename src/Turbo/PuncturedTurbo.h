@@ -62,8 +62,8 @@ namespace fec {
   public:
     struct Lte3Gpp : public Turbo::Lte3Gpp {
     public:
-      static Structure structure();
-      static PuncturedTurbo codec();
+      //static Structure structure();
+      //static PuncturedTurbo codec();
     };
     
     /**

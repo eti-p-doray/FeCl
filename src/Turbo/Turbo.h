@@ -86,19 +86,19 @@ namespace fec {
     };
     
     //will be there soon
-    /*struct Lte3Gpp {
+    struct Lte3Gpp {
     public:
-      static Trellis trellis();
-      static Permutation interleaver(size_t length);
-      static Structure structure();
-      static Turbo codec();
-      static Permutation permutation();
+      //static Trellis trellis();
+      //static Permutation interleaver(size_t length);
+      //static Structure structure();
+      //static Turbo codec();
+      //static Permutation permutation();
       
     private:
       static const std::array<size_t, 2> length_;
       static const std::array<double, 2> rate_;
       static const std::vector<std::vector<size_t>> parameter_;
-    };*/
+    };
     
     struct EncoderOptions {
       friend class Structure;
