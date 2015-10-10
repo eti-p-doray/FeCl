@@ -31,4 +31,4 @@ build
 # Outputs
 build*
 gh-pages/
-FeCl.zip
+release*
