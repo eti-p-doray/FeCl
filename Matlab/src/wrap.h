@@ -240,6 +240,12 @@ const std::vector<std::function<WrapFcn>> wrapFcns = {
     plhs[0] = toMxArray(mxArrayTo<WrapHandle<Turbo>>::f(prhs[0])->createPermutation(mxArrayTo<Turbo::PunctureOptions>::f(prhs[1])));
   },
   
+  [](int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) //Turbo_Lte3Gpp_interleaver
+  {
+    checkArgCount(nlhs, nrhs, 1, 1);
+    plhs[0] = toMxArray(Turbo::Lte3Gpp::interleaver(mxArrayTo<size_t>::f(prhs[0])));
+  },
+  
   [](int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) //PuncturedTurbo_constructor
   {
     mexLock();
@@ -286,6 +292,12 @@ const std::vector<std::function<WrapFcn>> wrapFcns = {
   {
     checkArgCount(nlhs, nrhs, 2, 1);
     plhs[0] = toMxArray(mxArrayTo<WrapHandle<Ldpc>>::f(prhs[0])->createPermutation(mxArrayTo<Ldpc::PunctureOptions>::f(prhs[1])));
+  },
+  
+  [](int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) //Ldpc_DvbS2_matrix
+  {
+    checkArgCount(nlhs, nrhs, 2, 1);
+    plhs[0] = toMxArray(Ldpc::DvbS2::matrix(mxArrayTo<size_t>::f(prhs[0]), mxArrayTo<double>::f(prhs[1])));
   },
   
   [](int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) //PuncturedLdpc_constructor

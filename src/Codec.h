@@ -127,10 +127,10 @@ namespace fec {
        */
       InfoIterator(const Structure* structureRef) : structureRef_(structureRef) {}
       
-      InfoIterator& syst(Iterator syst) {syst_ = syst; hasSyst_ = true; return *this;}
-      InfoIterator& parity(Iterator parity) {parity_ = parity; hasParity_ = true; return *this;}
-      InfoIterator& state(Iterator state) {state_ = state; hasState_ = true; return *this;}
-      InfoIterator& msg(Iterator msg) {msg_ = msg; hasMsg_ = true; return *this;}
+      InfoIterator& syst(Iterator syst) {syst_ = syst; hasSyst_ = true; return *this;} /**< Link systematic extrinsics. */
+      InfoIterator& parity(Iterator parity) {parity_ = parity; hasParity_ = true; return *this;} /**< Link parity extrinsics. */
+      InfoIterator& state(Iterator state) {state_ = state; hasState_ = true; return *this;} /**< Link state extrinsics. */
+      InfoIterator& msg(Iterator msg) {msg_ = msg; hasMsg_ = true; return *this;} /**< Link msg data. */
       
       inline void operator++() {
         syst_ += structureRef_->systSize();
