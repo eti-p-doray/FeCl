@@ -36,7 +36,8 @@ class mxArrayTo<fec::Convolutional::PunctureOptions> {
 public:
   static fec::Convolutional::PunctureOptions f(const mxArray* in) {
     try {
-      fec::Convolutional::PunctureOptions punctureOptions(mxArrayTo<std::vector<bool>>::f(mxGetField(in, 0, "mask")));
+      fec::Convolutional::PunctureOptions punctureOptions;
+      punctureOptions.mask(mxArrayTo<std::vector<bool>>::f(mxGetField(in, 0, "mask")));
       punctureOptions.tailMask(mxArrayTo<std::vector<bool>>::f(mxGetField(in, 0, "tailMask")));
       
       return punctureOptions;

@@ -20,10 +20,7 @@ classdef Structure < fec.Ldpc.Structure
             else
                 self.encoderOptions = fec.Ldpc.EncoderOptions(varargin{1});
                 if (~isempty(varargin(2:end)))
-                    self.punctureOptions = fec.Ldpc.PunctureOptions(varargin{2});
-                    if (~isempty(varargin(3:end)))
-                        self.set(varargin{3:end});
-                    end
+                    self.set(varargin{3:end});
                 end
             end
         end

@@ -213,13 +213,9 @@ Permutation Turbo::Structure::createPermutation(const PunctureOptions& options) 
   }
   std::vector<std::vector<bool>> tailMask_ = options.tailMask_;
   if (tailMask_.size() == 0) {
-    
+    tailMask_.resize(constituentCount()*2, {});
   } else if (tailMask_.size() == constituentCount()*2) {
-    for (size_t i = 0; i < constituentCount()*2; ++i) {
-      if (tailMask_[i].size() == 0) {
-        tailMask_[i] = {true};
-      }
-    }
+
   } else {
     throw std::invalid_argument("Invalid size for tail mask");
   }
@@ -254,16 +250,16 @@ Permutation Turbo::Structure::createPermutation(const PunctureOptions& options) 
         size_t systTailIdx = 0;
         for (size_t j = 0; j < constituent(i).tailSize(); ++j) {
           for (size_t k = 0; k < constituent(i).trellis().inputSize(); ++k) {
-            if ((tailMask_.size() == 0 && (mask_[0][systIdx % mask_[0].size()])) ||
-                (tailMask_.size() != 0 && (tailMask_[i*2][systTailIdx % tailMask_[i*2].size()]))) {
+            if ((tailMask_[i*2].size() == 0 && (mask_[0][systIdx % mask_[0].size()])) ||
+                (tailMask_[i*2].size() != 0 && (tailMask_[i*2][systTailIdx % tailMask_[i*2].size()]))) {
               perms.push_back(systIdx);
             }
             ++systIdx;
             ++systTailIdx;
           }
           for (size_t k = 0; k < constituent(i).trellis().outputSize(); ++k) {
-            if ((tailMask_.size() == 0 && (mask_[i+1][parityIdx % mask_[i+1].size()])) ||
-                (tailMask_.size() != 0 && (tailMask_[i*2+1][tailIdx % tailMask_[i*2+1].size()]))) {
+            if ((tailMask_[i*2+1].size() == 0 && (mask_[i+1][parityIdx % mask_[i+1].size()])) ||
+                (tailMask_[i*2+1].size() != 0 && (tailMask_[i*2+1][tailIdx % tailMask_[i*2+1].size()]))) {
               perms.push_back(parityIdx);
             }
             ++parityIdx;
@@ -285,12 +281,12 @@ Permutation Turbo::Structure::createPermutation(const PunctureOptions& options) 
       for (size_t i = 0; i < constituentCount(); ++i) {
         size_t tailIdx = 0;
         for (size_t j = 0; j < constituent(i).tailSize() * constituent(i).trellis().inputSize(); ++j) {
-            if ((tailMask_.size() == 0 && (mask_[0][idx % mask_[0].size()])) ||
-                (tailMask_.size() != 0 && (tailMask_[i*2][tailIdx % tailMask_[i*2].size()]))) {
-              perms.push_back(idx);
-            }
-            ++idx;
-            ++tailIdx;
+          if ((tailMask_[i*2].size() == 0 && (mask_[0][idx % mask_[0].size()])) ||
+              (tailMask_[i*2].size() != 0 && (tailMask_[i*2][tailIdx % tailMask_[i*2].size()]))) {
+            perms.push_back(idx);
+          }
+          ++idx;
+          ++tailIdx;
         }
       }
       for (size_t i = 0; i < constituentCount(); ++i) {
@@ -304,8 +300,8 @@ Permutation Turbo::Structure::createPermutation(const PunctureOptions& options) 
         }
         size_t tailIdx = 0;
         for (size_t j = 0; j < constituent(i).tailSize() * constituent(i).trellis().outputSize(); ++j) {
-          if ((tailMask_.size() == 0 && (mask_[i+1][parityIdx % mask_[i+1].size()])) ||
-              (tailMask_.size() != 0 && (tailMask_[i*2+1][tailIdx % tailMask_[i*2+1].size()]))) {
+          if ((tailMask_[i*2+1].size() == 0 && (mask_[i+1][parityIdx % mask_[i+1].size()])) ||
+              (tailMask_[i*2+1].size() != 0 && (tailMask_[i*2+1][tailIdx % tailMask_[i*2+1].size()]))) {
             perms.push_back(idx);
           }
           ++idx;

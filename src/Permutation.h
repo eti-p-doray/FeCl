@@ -103,6 +103,15 @@ private:
   
 }
 
+/*fec::Permutation range(size_t begin, size_t end)
+{
+  std::vector<size_t> perm;
+  for (size_t i = 0; i < end-begin; ++i) {
+    perm[i] = i+begin;
+  }
+  return fec::Permutation(perm);
+}*/
+
 template <typename T1, typename T2>
 void fec::Permutation::permute(const std::vector<T1>& input, std::vector<T2>& output) const
 {

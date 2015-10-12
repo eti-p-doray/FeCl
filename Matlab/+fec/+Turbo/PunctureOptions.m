@@ -1,6 +1,6 @@
 classdef PunctureOptions < hgsetget
     properties
-        mask;
+        mask = [];
         tailMask = [];
         bitOrdering = uint32(fec.Turbo.BitOrdering.('Alternate'));
     end
@@ -13,10 +13,7 @@ classdef PunctureOptions < hgsetget
                 self.set(varargin{1});
             else
                 if (~isempty(varargin))
-                    self.mask = varargin{1};
-                end
-                if (~isempty(varargin(2:end)))
-                    self.set(varargin{2:end});
+                    self.set(varargin);
                 end
             end
         end

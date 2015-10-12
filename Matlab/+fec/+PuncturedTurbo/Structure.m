@@ -21,10 +21,7 @@ classdef Structure < fec.Turbo.Structure
             else
                 self.encoderOptions = fec.Turbo.EncoderOptions(varargin{1}, varargin{2});
                 if (~isempty(varargin(3:end)))
-                    self.punctureOptions = fec.Turbo.PunctureOptions(varargin{3});
-                    if (~isempty(varargin(4:end)))
-                        self.set(varargin{4:end});
-                    end
+                    self.set(varargin{3:end});
                 end
             end
         end

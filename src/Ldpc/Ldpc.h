@@ -93,10 +93,10 @@ namespace fec {
     };
     struct PunctureOptions {
     public:
-      PunctureOptions(std::vector<bool> mask = {}) {mask_ = mask;};
+      PunctureOptions() = default;
       
+      PunctureOptions& mask(std::vector<bool> mask) {mask_ = mask; return *this;}
       PunctureOptions& systMask(std::vector<bool> mask) {systMask_ = mask; return *this;}
-      //PunctureOptions& parityMask(std::vector<bool> mask) {parityMask_ = mask; return *this;}
       
       std::vector<bool> systMask_;
       std::vector<bool> mask_;

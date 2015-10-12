@@ -35,7 +35,8 @@ template <>
 class mxArrayTo<fec::Turbo::PunctureOptions> {
 public:
   static fec::Turbo::PunctureOptions f(const mxArray* in) {
-    fec::Turbo::PunctureOptions punctureOptions(mxArrayTo<std::vector<std::vector<bool>>>::f(mxGetField(in, 0, "mask")));
+    fec::Turbo::PunctureOptions punctureOptions;
+    punctureOptions.mask(mxArrayTo<std::vector<std::vector<bool>>>::f(mxGetField(in, 0, "mask")));
     punctureOptions.tailMask(mxArrayTo<std::vector<std::vector<bool>>>::f(mxGetField(in, 0, "tailMask")));
     punctureOptions.bitOrdering(mxArrayTo<fec::Turbo::BitOrdering>::f(mxGetField(in, 0, "bitOrdering")));
     

@@ -55,7 +55,7 @@ int main( int argc, char* argv[] )
    The trellis and interleaver indices are used to create a code structure.
    */
   auto encoder = fec::Turbo::EncoderOptions({trellis, trellis}, {{}, permIdx}).termination(fec::Convolutional::Truncate);
-  auto puncture = fec::Turbo::PunctureOptions({{1, 1}, {1, 0}, {0, 1}});
+  auto puncture = fec::Turbo::PunctureOptions({{1, 0}, {1, 0}, {0, 1}});
   auto decoder = fec::Turbo::DecoderOptions().algorithm(fec::Codec::Exact).iterations(10).scheduling(fec::Turbo::Serial);
   fec::PuncturedTurbo::Structure structure(encoder, puncture, decoder);
   //! [Creating a Turbo code structure]

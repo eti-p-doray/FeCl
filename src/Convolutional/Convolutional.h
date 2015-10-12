@@ -82,8 +82,9 @@ namespace fec {
     };
     struct PunctureOptions {
     public:
-      PunctureOptions(std::vector<bool> mask = {}) {mask_ = mask;};
+      PunctureOptions() = default;
       
+      PunctureOptions& mask(std::vector<bool> mask) {mask_ = mask; return *this;}
       PunctureOptions& tailMask(std::vector<bool> mask) {tailMask_ = mask; return *this;}
       
       std::vector<bool> mask_;

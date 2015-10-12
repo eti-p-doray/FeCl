@@ -7,6 +7,8 @@ classdef DecoderOptions < hgsetget
         function self = DecoderOptions(varargin)
             if (nargin == 1 && isa(varargin{1}, 'fec.Turbo.DecoderOptions'))
                 self.set(varargin{1}.get());
+            elseif (nargin == 1 && isstruct(varargin{1}))
+                self.set(varargin{1});
             elseif (nargin == 1 && iscell(varargin{1}))
                 varargin = varargin{1};
                 if (~isempty(varargin))

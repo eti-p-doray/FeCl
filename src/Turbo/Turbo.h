@@ -129,11 +129,16 @@ namespace fec {
     };
     struct PunctureOptions {
     public:
-      PunctureOptions(std::vector<std::vector<bool>> mask = {}) {mask_ = mask;};
+      PunctureOptions() = default;
       
+      //PunctureOptions& permutation(std::vector<Permutation> permutation) {permutation_ = permutation; return *this;}
+      PunctureOptions& mask(std::vector<std::vector<bool>> mask) {tailMask_ = mask; return *this;}
+      //PunctureOptions& tailPermutation(std::vector<Permutation> permutation) {tailPermutation_ = permutation; return *this;}
       PunctureOptions& tailMask(std::vector<std::vector<bool>> mask) {tailMask_ = mask; return *this;}
       PunctureOptions& bitOrdering(BitOrdering ordering) {bitOrdering_ = ordering; return *this;}
       
+      //std::vector<Permutation> permutation_;
+      //std::vector<Permutation> tailPermutation_;
       std::vector<std::vector<bool>> mask_;
       std::vector<std::vector<bool>> tailMask_;
       BitOrdering bitOrdering_ = Alternate;
