@@ -19,25 +19,34 @@
  along with FeCl.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#ifndef WRAP_LDPC_ENCODER_OPTIONS
-#define WRAP_LDPC_ENCODER_OPTIONS
+#ifndef WRAP_TURBO_ENCODER_OPTIONS
+#define WRAP_TURBO_ENCODER_OPTIONS
 
 #include <memory>
 #include <type_traits>
 
 #include <mex.h>
 
-#include "Ldpc/Ldpc.h"
-#include "../util/BitMatrix.h"
-#include "../util/WrapConversion.h"
+#include "Turbo/Turbo.h"
+#include "../util/Trellis.h"
+#include "../util/Permutation.h"
+#include "../util/Conversion.h"
 
 template <>
-class mxArrayTo<fec::Ldpc::EncoderOptions> {
+class mxArrayTo<fec::Turbo::EncoderOptions> {
 public:
-  static fec::Ldpc::EncoderOptions f(const mxArray* in) {
-    auto checkMatrix = mxArrayTo<fec::SparseBitMatrix>::f(mxGetField(in, 0, "checkMatrix"));
-    fec::Ldpc::EncoderOptions encoderOptions(checkMatrix);
-    return encoderOptions;
+  static fec::Turbo::EncoderOptions f(const mxArray* in) {
+    try {
+      auto trellis = mxArrayTo<std::vector<fec::Trellis>>::f(mxGetField(in, 0, "trellis"));
+      auto interl = mxArrayTo<std::vector<fec::Permutation>>::f(mxGetField(in, 0, "interleaver"));
+      fec::Turbo::EncoderOptions encoderOptions(trellis, interl);
+      
+      encoderOptions.termination(mxArrayTo<std::vector<fec::Convolutional::Termination>>::f(mxGetField(in, 0, "termination")));
+      
+      return encoderOptions;
+    } catch (std::exception& e) {
+      throw std::invalid_argument("In encoder options: " + std::string(e.what()));
+    }
   }
 };
 

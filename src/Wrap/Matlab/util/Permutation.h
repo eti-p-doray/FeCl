@@ -19,34 +19,38 @@
  along with FeCl.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#ifndef WRAP_CONVOLUTIONAL_ENCODER_OPTIONS
-#define WRAP_CONVOLUTIONAL_ENCODER_OPTIONS
+#ifndef WRAP_INTERLEAVER_H
+#define WRAP_INTERLEAVER_H
 
 #include <memory>
-#include <type_traits>
-
+#include <math.h>
+#include <vector>
 #include <mex.h>
 
-#include "Convolutional/Convolutional.h"
-#include "../util/Trellis.h"
-#include "../util/WrapConversion.h"
+#include "Conversion.h"
+#include "Permutation.h"
 
 template <>
-class mxArrayTo<fec::Convolutional::EncoderOptions> {
+class mxArrayTo<fec::Permutation> {
 public:
-  static fec::Convolutional::EncoderOptions f(const mxArray* in) {
-    try {
-      auto trellis = mxArrayTo<fec::Trellis>::f(mxGetField(in, 0, "trellis"));
-      size_t length = mxArrayTo<size_t>::f(mxGetField(in, 0, "length"));
-      fec::Convolutional::EncoderOptions encoderOptions(trellis, length);
-    
-      encoderOptions.termination(mxArrayTo<fec::Convolutional::Termination>::f(mxGetField(in, 0, "termination")));
-    
-      return encoderOptions;
-    } catch (std::exception& e) {
-      throw std::invalid_argument("In encoder options: " + std::string(e.what()));
+  static fec::Permutation f(const mxArray* in) {
+    if (in == nullptr) {
+      throw std::invalid_argument("null");
     }
+    std::vector<size_t> perm = mxArrayTo<std::vector<size_t>>::f(in);
+    for (auto & i : perm) {
+      i--;
+    }
+    return fec::Permutation(perm);
   }
 };
+
+inline mxArray* toMxArray(const fec::Permutation& in) {
+  std::vector<size_t> indices(in.outputSize());
+  for (size_t i = 0; i < indices.size(); ++i) {
+    indices[i] = in[i]+1;
+  }
+  return toMxArray(indices);
+}
 
 #endif

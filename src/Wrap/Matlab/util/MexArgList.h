@@ -19,39 +19,36 @@
  along with FeCl.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#ifndef WRAP_LDPC_DECODER_OPTIONS
-#define WRAP_LDPC_DECODER_OPTIONS
+#ifndef MEX_ARG_LIST
+#define MEX_ARG_LIST
 
 #include <memory>
 #include <type_traits>
 
 #include <mex.h>
 
-#include "Turbo/Turbo.h"
-#include "../util/WrapConversion.h"
-
-template <>
-class mxArrayTo<fec::Ldpc::DecoderOptions> {
+template <typename T>
+class MexArgList {
 public:
-  static fec::Ldpc::DecoderOptions f(const mxArray* in) {
-    fec::Ldpc::DecoderOptions decoderOptions;
-    decoderOptions.iterations(  mxArrayTo<size_t>::f(mxGetField(in, 0, "iterations")) );
-    decoderOptions.algorithm(  mxArrayTo<fec::Codec::DecoderAlgorithm>::f(mxGetField(in, 0, "algorithm")) );
-
-    return decoderOptions;
-  }
-};
-
-
-inline mxArray* toMxArray(fec::Ldpc::DecoderOptions decoder)
-{
-  const char* fieldnames[] = {"iterations", "algorithm"};
-  mxArray* out = mxCreateStructMatrix(1,1,2, fieldnames);
+  MexArgList(int size, T list[]) : list_(list) {size_ = size;}
   
-  mxSetField(out, 0, fieldnames[0], toMxArray(decoder.iterations_));
-  mxSetField(out, 0, fieldnames[1], toMxArray(decoder.algorithm_));
-    
-  return out;
-}
+  size_t size() const {return size_;}
+  const mxArray* operator[](size_t i) const {
+    if (i > size()) {
+      throw std::invalid_argument("Wrong arg count");
+    }
+    return list_[i];
+  }
+  mxArray*& operator[](size_t i) {
+    if (i > size()) {
+      throw std::invalid_argument("Wrong arg count");
+    }
+    return list_[i];
+  }
+  
+private:
+  size_t size_;
+  T* list_;
+};
 
 #endif

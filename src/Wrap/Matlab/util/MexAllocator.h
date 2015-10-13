@@ -28,19 +28,19 @@
 #include <mex.h>
 
 template<typename T>
-class WrapAllocator {
+class MexAllocator {
 public :
   typedef T value_type;
   typedef std::true_type propagate_on_container_copy_assignment;
   typedef std::true_type propagate_on_container_move_assignment;
   typedef std::true_type propagate_on_container_swap;
   
-  inline WrapAllocator() = default;
-  inline WrapAllocator(const mxArray* array) {size_ = mxGetNumberOfElements(array); ptr_ = mxGetPr(array);}
-  inline WrapAllocator(const WrapAllocator&) = default;
-  inline ~WrapAllocator() {}
+  inline MexAllocator() = default;
+  inline MexAllocator(const mxArray* array) {size_ = mxGetNumberOfElements(array); ptr_ = mxGetPr(array);}
+  inline MexAllocator(const MexAllocator&) = default;
+  inline ~MexAllocator() {}
   
-  inline WrapAllocator select_on_container_copy_construction() const {return WrapAllocator();}
+  inline MexAllocator select_on_container_copy_construction() const {return MexAllocator();}
   
   //    memory allocation
   inline T* allocate(size_t size)
@@ -66,8 +66,8 @@ public :
   inline T* ptr() {return reinterpret_cast<T*>(ptr_);}
   inline size_t size() const {return size_;}
   
-  inline bool operator==(const WrapAllocator& b) const { return false; }
-  inline bool operator!=(const WrapAllocator& b) const { return !operator==(b); }
+  inline bool operator==(const MexAllocator& b) const { return false; }
+  inline bool operator!=(const MexAllocator& b) const { return !operator==(b); }
   
 private:
   void* ptr_ = nullptr;
@@ -75,15 +75,15 @@ private:
 };    //    end of class Allocator
 
 template <typename T, class Enable = void>
-struct Allocator
+struct MexAllocatorHolder
 {
   using type = std::allocator<T>;
 };
 
 template <typename T>
-struct Allocator<T, typename std::enable_if<std::is_convertible<typename std::vector<T, WrapAllocator<T>>::iterator, typename std::vector<T>::iterator>::value>::type>
+struct MexAllocatorHolder<T, typename std::enable_if<std::is_convertible<typename std::vector<T, MexAllocator<T>>::iterator, typename std::vector<T>::iterator>::value>::type>
 {
-  using type = WrapAllocator<T>;
+  using type = MexAllocator<T>;
 };
 
 

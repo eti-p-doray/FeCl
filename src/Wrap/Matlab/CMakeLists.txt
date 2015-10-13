@@ -1,6 +1,6 @@
 
 if(MATLAB_FOUND)
-  add_library(MatlabWrap MODULE src/wrap.cpp src/Matlabdef.def)
+  add_library(MatlabWrap MODULE wrap.cpp Matlabdef.def)
   target_include_directories(MatlabWrap PRIVATE ${MATLAB_INCLUDE_DIRS})
   target_include_directories(MatlabWrap PRIVATE ${Boost_INCLUDE_DIRS})
   target_include_directories(MatlabWrap PRIVATE ${CMAKE_SOURCE_DIR}/src)
@@ -19,7 +19,7 @@ if(MATLAB_FOUND)
     set_target_properties(MatlabWrap PROPERTIES LINK_FLAGS -Wl,--version-script,"${MATLAB_MAP}")
   endif (APPLE)
 
-  install(TARGETS MatlabWrap DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/+fec/+bin)
+  install(TARGETS MatlabWrap DESTINATION ${CMAKE_SOURCE_DIR}/Matlab/+fec/+bin)
 endif(MATLAB_FOUND)
 
 

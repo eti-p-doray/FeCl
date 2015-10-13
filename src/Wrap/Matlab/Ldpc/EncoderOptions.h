@@ -19,36 +19,26 @@
  along with FeCl.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#ifndef WRAP_HANDLE
-#define WRAP_HANDLE
+#ifndef WRAP_LDPC_ENCODER_OPTIONS
+#define WRAP_LDPC_ENCODER_OPTIONS
 
 #include <memory>
 #include <type_traits>
 
 #include <mex.h>
 
-template<typename T>
-class WrapHandle {
-public :
-  WrapHandle() = default;
-  WrapHandle(T* ptr) {ptr_ = ptr;}
-  WrapHandle(WrapHandle&& other) {ptr_ = other.ptr_; other.ptr_ = nullptr;}
-  WrapHandle(const WrapHandle&) = delete;
-  WrapHandle& operator=(WrapHandle&& other) {ptr_ = other.ptr_; other.ptr_ = nullptr; return *this;}
-  ~WrapHandle() = default;
-  
-  T* get() {return ptr_;}
-  const T* get() const {return ptr_;}
-  void reset() {delete ptr_; ptr_ = nullptr;}
-  
-  T& operator*() {return *ptr_;}
-  const T& operator*() const {return *ptr_;}
-  
-  T* operator->() {return ptr_;}
-  const T* operator->() const {return ptr_;}
-  
-private:
-  T* ptr_ = nullptr;
-};    //    end of class Allocator
+#include "Ldpc/Ldpc.h"
+#include "../util/BitMatrix.h"
+#include "../util/Conversion.h"
+
+template <>
+class mxArrayTo<fec::Ldpc::EncoderOptions> {
+public:
+  static fec::Ldpc::EncoderOptions f(const mxArray* in) {
+    auto checkMatrix = mxArrayTo<fec::SparseBitMatrix>::f(mxGetField(in, 0, "checkMatrix"));
+    fec::Ldpc::EncoderOptions encoderOptions(checkMatrix);
+    return encoderOptions;
+  }
+};
 
 #endif

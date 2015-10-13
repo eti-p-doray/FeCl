@@ -19,21 +19,39 @@
  along with FeCl.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#ifndef WRAP_BITFIELD_H
-#define WRAP_BITFIELD_H
+#ifndef WRAP_LDPC_DECODER_OPTIONS
+#define WRAP_LDPC_DECODER_OPTIONS
 
+#include <memory>
 #include <type_traits>
 
 #include <mex.h>
 
-#include "BitField.h"
-#include "WrapConversion.h"
+#include "Turbo/Turbo.h"
+#include "../util/Conversion.h"
 
-template <typename T> struct MexType<fec::BitField<T>> {using ID = typename MexType<T>::ID; using isScalar = std::true_type;};
+template <>
+class mxArrayTo<fec::Ldpc::DecoderOptions> {
+public:
+  static fec::Ldpc::DecoderOptions f(const mxArray* in) {
+    fec::Ldpc::DecoderOptions decoderOptions;
+    decoderOptions.iterations(  mxArrayTo<size_t>::f(mxGetField(in, 0, "iterations")) );
+    decoderOptions.algorithm(  mxArrayTo<fec::Codec::DecoderAlgorithm>::f(mxGetField(in, 0, "algorithm")) );
 
-namespace std {
-  template< class T >
-  struct is_arithmetic<fec::BitField<T>> : std::true_type {};
-}
+    return decoderOptions;
+  }
+};
+
+
+inline mxArray* toMxArray(fec::Ldpc::DecoderOptions decoder)
+{
+  const char* fieldnames[] = {"iterations", "algorithm"};
+  mxArray* out = mxCreateStructMatrix(1,1,2, fieldnames);
   
+  mxSetField(out, 0, fieldnames[0], toMxArray(decoder.iterations_));
+  mxSetField(out, 0, fieldnames[1], toMxArray(decoder.algorithm_));
+    
+  return out;
+}
+
 #endif

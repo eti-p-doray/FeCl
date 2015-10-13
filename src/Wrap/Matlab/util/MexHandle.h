@@ -19,28 +19,38 @@
  along with FeCl.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#ifndef WRAP_LDPC_PUNCTURE_OPTIONS
-#define WRAP_LDPC_PUNCTURE_OPTIONS
+#ifndef MEX_HANDLE
+#define MEX_HANDLE
 
 #include <memory>
 #include <type_traits>
 
 #include <mex.h>
 
-#include "Ldpc/Ldpc.h"
-#include "../util/Trellis.h"
-#include "../util/Permutation.h"
-#include "../util/WrapConversion.h"
-
-template <>
-class mxArrayTo<fec::Ldpc::PunctureOptions> {
-public:
-  static fec::Ldpc::PunctureOptions f(const mxArray* in) {
-    fec::Ldpc::PunctureOptions punctureOptions;
-    punctureOptions.mask(mxArrayTo<std::vector<bool>>::f(mxGetField(in, 0, "mask")));
-    punctureOptions.systMask(mxArrayTo<std::vector<bool>>::f(mxGetField(in, 0, "systMask")));
-    return punctureOptions;
-  }
-};
+template<typename T>
+class MexHandle {
+public :
+  MexHandle() = default;
+  MexHandle(T* ptr) {mexLock(); ptr_ = ptr;}
+  MexHandle(MexHandle&& other) {ptr_ = other.ptr_; other.ptr_ = nullptr;}
+  MexHandle(const MexHandle&) = delete;
+  MexHandle& operator=(MexHandle&& other) {ptr_ = other.ptr_; other.ptr_ = nullptr; return *this;}
+  ~MexHandle() = default;
+  
+  T* get() {return ptr_;}
+  const T* get() const {return ptr_;}
+  void reset() {delete ptr_; ptr_ = nullptr; mexUnlock();}
+  
+  T& operator*() {return *ptr_;}
+  const T& operator*() const {return *ptr_;}
+  
+  T* operator->() {return ptr_;}
+  const T* operator->() const {return ptr_;}
+  
+  void set(T* ptr) {ptr_ = ptr;}
+  
+private:
+  T* ptr_ = nullptr;
+};    //    end of class Allocator
 
 #endif

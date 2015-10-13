@@ -31,8 +31,8 @@
 
 #include <mex.h>
 
-#include "WrapAllocator.h"
-#include "WrapHandle.h"
+#include "MexAllocator.h"
+#include "MexHandle.h"
 
 template <typename T1, typename T2>
 struct is_equiv_int : std::integral_constant<bool,
@@ -75,13 +75,6 @@ template <typename T> struct MexType<T, typename std::enable_if<is_equiv_int<T,u
 
 template <> struct MexType<float> {using ID = std::integral_constant<mxClassID, mxSINGLE_CLASS>; using isScalar = std::true_type;};
 template <> struct MexType<double> {using ID = std::integral_constant<mxClassID, mxDOUBLE_CLASS>; using isScalar = std::true_type;};
-
-void checkArgCount(int nlhs, int nrhs, int inputCount, int outputCount)
-{
-  if (nrhs != inputCount || nlhs != outputCount) {
-    throw std::invalid_argument("Wrong arg count");
-  }
-}
 
 template <class T, class Enable = void>
 class mxArrayTo {};
@@ -139,7 +132,7 @@ public:
 };
 
 template <class T, class A>
-class mxArrayTo<typename std::vector<T,A>, typename std::enable_if<std::is_arithmetic<T>::value && !std::is_same<A,  WrapAllocator<T>>::value>::type> {
+class mxArrayTo<typename std::vector<T,A>, typename std::enable_if<std::is_arithmetic<T>::value && !std::is_same<A,  MexAllocator<T>>::value>::type> {
 public:
   static std::vector<T,A> f(const mxArray* in) {
     if (in == nullptr) {
@@ -220,9 +213,9 @@ public:
 };
 
 template <class T>
-class mxArrayTo<typename std::vector<T,  WrapAllocator<T>>, typename std::enable_if<std::is_arithmetic<T>::value>::type> {
+class mxArrayTo<typename std::vector<T,  MexAllocator<T>>, typename std::enable_if<std::is_arithmetic<T>::value>::type> {
 public:
-  static std::vector<T,  WrapAllocator<T>> f(const mxArray* in) {
+  static std::vector<T,  MexAllocator<T>> f(const mxArray* in) {
     if (in == nullptr) {
       throw std::invalid_argument("Null input");
     }
@@ -233,16 +226,16 @@ public:
       throw std::invalid_argument("Input is invalid");
     }
     if (mxGetData(in) == nullptr && mxGetNumberOfElements(in) == 0) {
-      return std::vector<T, WrapAllocator<T>>();
+      return std::vector<T, MexAllocator<T>>();
     }
     if (MexType<T>::ID::value != mxGetClassID(in)) {
-      std::vector<T,  WrapAllocator<T>> vec;
+      std::vector<T,  MexAllocator<T>> vec;
       vec.resize(mxGetNumberOfElements(in));
       mxArrayTo<std::vector<T>>::copy(in, vec.begin());
       return vec;
     }
     else {
-      std::vector<T,  WrapAllocator<T>> vec(( WrapAllocator<T>(in)));
+      std::vector<T,  MexAllocator<T>> vec(( MexAllocator<T>(in)));
       vec.resize(mxGetNumberOfElements(in));
       return vec;
     }
@@ -364,32 +357,26 @@ public:
 };
 
 template <class T>
-class mxArrayTo<WrapHandle<T>,void> {
+class mxArrayTo<MexHandle<T>,void> {
 public:
-  template <class DerivedTypeHolder>
-  static WrapHandle<T> f(const mxArray* in, DerivedTypeHolder derived) {
-    derived.register_type();
-    return mxArrayTo<WrapHandle<T>>::f(in);
-  }
-  static WrapHandle<T> f(const mxArray* in) {
+  static MexHandle<T> f(const mxArray* in) {
     if (in == nullptr) {
       throw std::invalid_argument("Null object");
     }
-    if (mxGetProperty(in, 0, "wrapHandle_") == nullptr) {
+    if (mxGetProperty(in, 0, "MexHandle_") == nullptr) {
       throw std::invalid_argument("Invalid object");
     }
-    if (mxGetData(mxGetProperty(in, 0, "wrapHandle_")) == nullptr) {
+    if (mxGetData(mxGetProperty(in, 0, "MexHandle_")) == nullptr) {
       throw std::invalid_argument("Invalid object");
     }
-    T* ptr = reinterpret_cast<T*>(*((uint64_t *)mxGetData(mxGetProperty(in, 0, "wrapHandle_"))));
+    T* ptr = reinterpret_cast<T*>(*((uint64_t *)mxGetData(mxGetProperty(in, 0, "MexHandle_"))));
     ptr = dynamic_cast<T*>(ptr);
     if (ptr == nullptr) {
       throw std::invalid_argument("Null object");
     }
-    //if (boost::serialization::type_info_implementation<T>::type::get_const_instance().get_derived_extended_type_info(*ptr) == nullptr) {
-    //  throw std::invalid_argument("Invalid object");
-    //}
-    return WrapHandle<T>(ptr);
+    MexHandle<T> handle;
+    handle.set(ptr);
+    return handle;
   }
 };
 
@@ -424,7 +411,7 @@ mxArray* toMxArray(const std::vector<T, A<T>>& vec) {
 }
 
 template <class T>
-mxArray* toMxArray(const std::vector<T,  WrapAllocator<T>>& vec) {
+mxArray* toMxArray(const std::vector<T,  MexAllocator<T>>& vec) {
   auto all = vec.get_allocator();
   mxArray* out = mxCreateNumericMatrix(0, 0, MexType<T>::ID::value, mxREAL);
   mxSetData(out, all.ptr());
@@ -434,7 +421,7 @@ mxArray* toMxArray(const std::vector<T,  WrapAllocator<T>>& vec) {
 }
 
 template <typename T>
-mxArray* toMxArray(WrapHandle<T>&& u) {
+mxArray* toMxArray(MexHandle<T>&& u) {
   mxArray* out = mxCreateNumericMatrix(1, 1, mxUINT64_CLASS, mxREAL);
   *((uint64_t *)mxGetData(out)) = reinterpret_cast<uint64_t>(u.get());
   return out;

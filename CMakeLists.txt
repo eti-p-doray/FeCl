@@ -23,6 +23,5 @@ enable_testing()
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/libs/serialization)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src)
-add_subdirectory(${CMAKE_SOURCE_DIR}/Matlab)
 add_subdirectory(${CMAKE_SOURCE_DIR}/test)
 add_subdirectory(${CMAKE_SOURCE_DIR}/benchmark)

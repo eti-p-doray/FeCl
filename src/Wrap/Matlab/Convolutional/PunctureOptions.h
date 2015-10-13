@@ -19,28 +19,31 @@
  along with FeCl.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#ifndef WRAP_TURBO_PUNCTURE_OPTIONS
-#define WRAP_TURBO_PUNCTURE_OPTIONS
+#ifndef WRAP_CONVOLUTIONAL_PUNCTURE_OPTIONS
+#define WRAP_CONVOLUTIONAL_PUNCTURE_OPTIONS
 
 #include <memory>
 #include <type_traits>
 
 #include <mex.h>
 
-#include "Turbo/Turbo.h"
+#include "Convolutional/Convolutional.h"
 #include "../util/Permutation.h"
-#include "../util/WrapConversion.h"
+#include "../util/Conversion.h"
 
 template <>
-class mxArrayTo<fec::Turbo::PunctureOptions> {
+class mxArrayTo<fec::Convolutional::PunctureOptions> {
 public:
-  static fec::Turbo::PunctureOptions f(const mxArray* in) {
-    fec::Turbo::PunctureOptions punctureOptions;
-    punctureOptions.mask(mxArrayTo<std::vector<std::vector<bool>>>::f(mxGetField(in, 0, "mask")));
-    punctureOptions.tailMask(mxArrayTo<std::vector<std::vector<bool>>>::f(mxGetField(in, 0, "tailMask")));
-    punctureOptions.bitOrdering(mxArrayTo<fec::Turbo::BitOrdering>::f(mxGetField(in, 0, "bitOrdering")));
-    
-    return punctureOptions;
+  static fec::Convolutional::PunctureOptions f(const mxArray* in) {
+    try {
+      fec::Convolutional::PunctureOptions punctureOptions;
+      punctureOptions.mask(mxArrayTo<std::vector<bool>>::f(mxGetField(in, 0, "mask")));
+      punctureOptions.tailMask(mxArrayTo<std::vector<bool>>::f(mxGetField(in, 0, "tailMask")));
+      
+      return punctureOptions;
+    } catch (std::exception& e) {
+      throw std::invalid_argument("In puncture options: " + std::string(e.what()));
+    }
   }
 };
 

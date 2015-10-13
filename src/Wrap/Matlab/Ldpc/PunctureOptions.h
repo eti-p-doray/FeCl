@@ -19,34 +19,27 @@
  along with FeCl.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#ifndef WRAP_TURBO_ENCODER_OPTIONS
-#define WRAP_TURBO_ENCODER_OPTIONS
+#ifndef WRAP_LDPC_PUNCTURE_OPTIONS
+#define WRAP_LDPC_PUNCTURE_OPTIONS
 
 #include <memory>
 #include <type_traits>
 
 #include <mex.h>
 
-#include "Turbo/Turbo.h"
+#include "Ldpc/Ldpc.h"
 #include "../util/Trellis.h"
 #include "../util/Permutation.h"
-#include "../util/WrapConversion.h"
+#include "../util/Conversion.h"
 
 template <>
-class mxArrayTo<fec::Turbo::EncoderOptions> {
+class mxArrayTo<fec::Ldpc::PunctureOptions> {
 public:
-  static fec::Turbo::EncoderOptions f(const mxArray* in) {
-    try {
-      auto trellis = mxArrayTo<std::vector<fec::Trellis>>::f(mxGetField(in, 0, "trellis"));
-      auto interl = mxArrayTo<std::vector<fec::Permutation>>::f(mxGetField(in, 0, "interleaver"));
-      fec::Turbo::EncoderOptions encoderOptions(trellis, interl);
-      
-      encoderOptions.termination(mxArrayTo<std::vector<fec::Convolutional::Termination>>::f(mxGetField(in, 0, "termination")));
-      
-      return encoderOptions;
-    } catch (std::exception& e) {
-      throw std::invalid_argument("In encoder options: " + std::string(e.what()));
-    }
+  static fec::Ldpc::PunctureOptions f(const mxArray* in) {
+    fec::Ldpc::PunctureOptions punctureOptions;
+    punctureOptions.mask(mxArrayTo<std::vector<bool>>::f(mxGetField(in, 0, "mask")));
+    punctureOptions.systMask(mxArrayTo<std::vector<bool>>::f(mxGetField(in, 0, "systMask")));
+    return punctureOptions;
   }
 };
 

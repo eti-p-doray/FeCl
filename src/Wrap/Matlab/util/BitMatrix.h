@@ -29,7 +29,7 @@
 #include <matrix.h>
 
 #include "BitMatrix.h"
-#include "WrapConversion.h"
+#include "Conversion.h"
 #include "BitField.h"
 
 template <>

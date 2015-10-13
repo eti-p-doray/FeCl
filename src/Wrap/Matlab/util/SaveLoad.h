@@ -35,10 +35,10 @@
 #include <mex.h>
 
 #include "Serialization.h"
-#include "WrapConversion.h"
+#include "Conversion.h"
 
 template <class T, class DerivedTypeHolder>
-mxArray* save(const  WrapHandle<T>& u,  DerivedTypeHolder derived)
+mxArray* save(const  MexHandle<T>& u,  DerivedTypeHolder derived)
 {
   const T* base_pointer = u.get();
   
@@ -50,7 +50,7 @@ mxArray* save(const  WrapHandle<T>& u,  DerivedTypeHolder derived)
 }
 
 template <class T, class DerivedTypeHolder>
- WrapHandle<T> load(const mxArray* in, DerivedTypeHolder derived)
+ MexHandle<T> load(const mxArray* in, DerivedTypeHolder derived)
 {
   if (in == nullptr) {
     std::invalid_argument("null");
@@ -59,7 +59,7 @@ template <class T, class DerivedTypeHolder>
     std::invalid_argument("invalid");
   }
   auto ptr = load<T>(reinterpret_cast<const char*>(mxGetData(in)), mxGetNumberOfElements(in), derived);
-  return  WrapHandle<T>(ptr.release());
+  return  MexHandle<T>(ptr.release());
 }
 
 #endif

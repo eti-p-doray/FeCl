@@ -28,7 +28,7 @@
 #include <mex.h>
 
 #include "Trellis.h"
-#include "WrapConversion.h"
+#include "Conversion.h"
 #include "BitField.h"
 
 template<>

@@ -19,27 +19,24 @@
  along with FeCl.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#ifndef WRAP_TURBO_DECODER_OPTIONS
-#define WRAP_TURBO_DECODER_OPTIONS
+#ifndef WRAP_CONVOLUTIONAL_DECODER_OPTIONS
+#define WRAP_CONVOLUTIONAL_DECODER_OPTIONS
 
 #include <memory>
 #include <type_traits>
 
 #include <mex.h>
 
-#include "Turbo/Turbo.h"
-#include "../util/WrapConversion.h"
+#include "Convolutional/Convolutional.h"
+#include "../util/Conversion.h"
 
 template <>
-class mxArrayTo<fec::Turbo::DecoderOptions> {
+class mxArrayTo<fec::Convolutional::DecoderOptions> {
 public:
-  static fec::Turbo::DecoderOptions f(const mxArray* in) {
+  static fec::Convolutional::DecoderOptions f(const mxArray* in) {
     try {
-      fec::Turbo::DecoderOptions decoderOptions;
-      decoderOptions.iterations(  mxArrayTo<size_t>::f(mxGetField(in, 0, "iterations")) );
-      decoderOptions.scheduling(  mxArrayTo<fec::Turbo::Scheduling>::f(mxGetField(in, 0, "scheduling")) );
+      fec::Convolutional::DecoderOptions decoderOptions;
       decoderOptions.algorithm(  mxArrayTo<fec::Codec::DecoderAlgorithm>::f(mxGetField(in, 0, "algorithm")) );
-      
       return decoderOptions;
     } catch (std::exception& e) {
       throw std::invalid_argument("In decoder options: " + std::string(e.what()));
@@ -48,14 +45,12 @@ public:
 };
 
 
-inline mxArray* toMxArray(fec::Turbo::DecoderOptions decoder)
+inline mxArray* toMxArray(fec::Convolutional::DecoderOptions decoder)
 {
-  const char* fieldnames[] = {"iterations", "scheduling", "algorithm"};
-  mxArray* out = mxCreateStructMatrix(1,1, 3, fieldnames);
+  const char* fieldnames[] = {"algorithm"};
+  mxArray* out = mxCreateStructMatrix(1,1,1, fieldnames);
   
-  mxSetField(out, 0, fieldnames[0], toMxArray(decoder.iterations_));
-  mxSetField(out, 0, fieldnames[1], toMxArray(decoder.scheduling_));
-  mxSetField(out, 0, fieldnames[2], toMxArray(decoder.algorithm_));
+  mxSetField(out, 0, fieldnames[0], toMxArray(decoder.algorithm_));
     
   return out;
 }

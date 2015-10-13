@@ -19,38 +19,21 @@
  along with FeCl.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#ifndef WRAP_INTERLEAVER_H
-#define WRAP_INTERLEAVER_H
+#ifndef WRAP_BITFIELD_H
+#define WRAP_BITFIELD_H
 
-#include <memory>
-#include <math.h>
-#include <vector>
+#include <type_traits>
+
 #include <mex.h>
 
-#include "WrapConversion.h"
-#include "Permutation.h"
+#include "BitField.h"
+#include "Conversion.h"
 
-template <>
-class mxArrayTo<fec::Permutation> {
-public:
-  static fec::Permutation f(const mxArray* in) {
-    if (in == nullptr) {
-      throw std::invalid_argument("null");
-    }
-    std::vector<size_t> perm = mxArrayTo<std::vector<size_t>>::f(in);
-    for (auto & i : perm) {
-      i--;
-    }
-    return fec::Permutation(perm);
-  }
-};
+template <typename T> struct MexType<fec::BitField<T>> {using ID = typename MexType<T>::ID; using isScalar = std::true_type;};
 
-inline mxArray* toMxArray(const fec::Permutation& in) {
-  std::vector<size_t> indices(in.outputSize());
-  for (size_t i = 0; i < indices.size(); ++i) {
-    indices[i] = in[i]+1;
-  }
-  return toMxArray(indices);
+namespace std {
+  template< class T >
+  struct is_arithmetic<fec::BitField<T>> : std::true_type {};
 }
-
+  
 #endif
