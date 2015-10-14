@@ -91,7 +91,7 @@ namespace fec {
       std::vector<bool> tailMask_;
     };
     /**
-     *  This class represents a convolutional code structure.
+     *  This class represents a convolutional codec structure.
      *  It provides a usefull interface to store and acces the structure information.
      */
     class Structure : public Codec::Structure {

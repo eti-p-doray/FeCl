@@ -27,7 +27,7 @@ For C++ API, refer to the [web documentation](http://eti-p-doray.github.io/FeCl/
 Instructions:
 
 To install the Matlab API from pre-compiled binaries, download from [releases](https://github.com/eti-p-doray/FeCl/releases) and add the project to your Matlab path or move the project in your Matlab directory. <br/>
-Currently, the toolbox is built for the following architectures<br/>
+The toolbox is built for the following architectures<br/>
 * win64 
 * maci64 
 * glnxa64 

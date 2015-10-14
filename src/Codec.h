@@ -35,7 +35,7 @@
 #include <boost/serialization/extended_type_info_no_rtti.hpp>
 
 #include "BitField.h"
-#include "LlrMetrics.h"
+#include "LlrMetrics/LlrMetrics.h"
 #include "Permutation.h"
 
 namespace fec {
@@ -43,6 +43,7 @@ namespace fec {
   /**
    *  This class represents a general encoder / decoder.
    *  It offers methods to encode and to decode data given a codec structure.
+   *  Several specialisations of this class define different codec types.
    */
   class Codec
   {
@@ -70,10 +71,10 @@ namespace fec {
       
       virtual const char * get_key() const = 0; /**< Access the type info key. */
       
-      inline size_t msgSize() const {return msgSize_;} /**< Access the size of the msg in each code bloc. */
-      inline size_t systSize() const {return systSize_;} /**< Access the size of the msg in each code bloc. */
-      inline size_t paritySize() const {return paritySize_;} /**< Access the size of the parity in each code bloc. */
-      inline size_t stateSize() const {return stateSize_;} /**< Access the size of the extrinsic in each code bloc. */
+      inline size_t msgSize() const {return msgSize_;} /**< Access the size of msg in each code bloc. */
+      inline size_t systSize() const {return systSize_;} /**< Access the size of systematics in each code bloc. */
+      inline size_t paritySize() const {return paritySize_;} /**< Access the size of parities in each code bloc. */
+      inline size_t stateSize() const {return stateSize_;} /**< Access the size of state information in each code bloc. */
       
       DecoderAlgorithm decoderAlgorithm() const {return decoderAlgorithm_;} /**< Access the algorithm used in decoder. */
       AlgorithmOptions<FloatLlrMetrics> algorithmOptions() const {return algorithmOptions_;} /**< Access the algorithm options used in decoder. */
@@ -95,10 +96,10 @@ namespace fec {
       virtual bool check(std::vector<BitField<size_t>>::const_iterator parity) const = 0;
       
     protected:
-      size_t msgSize_ = 0;/**< Size of the msg in each code bloc. */
-      size_t systSize_ = 0;/**< Size of the msg in each code bloc. */
-      size_t paritySize_ = 0;/**< Size of the parity in each code bloc. */
-      size_t stateSize_ = 0;/**< Size of the extrinsic in each code bloc. */
+      size_t msgSize_ = 0;/**< Size of msg in each code bloc. */
+      size_t systSize_ = 0;/**< Size of systematics in each code bloc. */
+      size_t paritySize_ = 0;/**< Size of parities in each code bloc. */
+      size_t stateSize_ = 0;/**< Size of state information in each code bloc. */
       DecoderAlgorithm decoderAlgorithm_; /**< Algorithm type used in decoder. */
       AlgorithmOptions<FloatLlrMetrics> algorithmOptions_; /**< Algorithm options used in decoder. */
       

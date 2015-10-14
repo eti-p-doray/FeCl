@@ -33,7 +33,7 @@ namespace fec {
 
 /**
   * This class represents a permutation vector.
-  * An permutation generates a sequence of output data where each element
+  * A permutation generates a sequence of output data where each element
   * is picked at a specific index from the input sequence. 
   * The index is defined by the index sequence given at the construction.
   * The permutation can permute many independant sequences at once.

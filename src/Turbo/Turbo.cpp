@@ -36,7 +36,7 @@ const char * Turbo::Structure::get_key() const {
 }
 
 /*******************************************************************************
- *  Turbo constructor
+ *  Turbo constructor.
  *  \param  codeStructure Codec structure used for encoding and decoding
  *  \param  workGroupSize Number of thread used for decoding
  ******************************************************************************/
