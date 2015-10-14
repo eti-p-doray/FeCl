@@ -1,0 +1,21 @@
+var searchData=
+[
+  ['codec_5fcheck',['Codec_check',['../classfec_1_1_wrap_fcn_id.html#a88cfb03cace4452627805e83218508a6a4e9380165470172f4c2713580d09c9ea',1,'fec::WrapFcnId']]],
+  ['codec_5fdecode',['Codec_decode',['../classfec_1_1_wrap_fcn_id.html#a88cfb03cace4452627805e83218508a6a99e091fc86eb202c2781b7f38b4fb148',1,'fec::WrapFcnId']]],
+  ['codec_5fdestroy',['Codec_destroy',['../classfec_1_1_wrap_fcn_id.html#a88cfb03cace4452627805e83218508a6adf8843674a2a85c7cd547ba9619c0031',1,'fec::WrapFcnId']]],
+  ['codec_5fencode',['Codec_encode',['../classfec_1_1_wrap_fcn_id.html#a88cfb03cace4452627805e83218508a6a6044fcd7b9149b284c173019bf142144',1,'fec::WrapFcnId']]],
+  ['codec_5fget_5fmsgsize',['Codec_get_msgSize',['../classfec_1_1_wrap_fcn_id.html#a88cfb03cace4452627805e83218508a6a94fe181e55af68f77698b74d81afafd6',1,'fec::WrapFcnId']]],
+  ['codec_5fget_5fparitysize',['Codec_get_paritySize',['../classfec_1_1_wrap_fcn_id.html#a88cfb03cace4452627805e83218508a6a583fccc09b7cc9064eebfe4a247d8491',1,'fec::WrapFcnId']]],
+  ['codec_5fget_5fstatesize',['Codec_get_stateSize',['../classfec_1_1_wrap_fcn_id.html#a88cfb03cace4452627805e83218508a6a584917bcd76bda90c01516f7c60b10ca',1,'fec::WrapFcnId']]],
+  ['codec_5fget_5fsystsize',['Codec_get_systSize',['../classfec_1_1_wrap_fcn_id.html#a88cfb03cace4452627805e83218508a6a69154e6ae6663d9f555e2d17707afb53',1,'fec::WrapFcnId']]],
+  ['codec_5fget_5fworkgroupsize',['Codec_get_workGroupSize',['../classfec_1_1_wrap_fcn_id.html#a88cfb03cace4452627805e83218508a6a25deb3d6d6f2cf78f112db057ba2e0cb',1,'fec::WrapFcnId']]],
+  ['codec_5fload',['Codec_load',['../classfec_1_1_wrap_fcn_id.html#a88cfb03cace4452627805e83218508a6aaf17a1a4c432b713e749ac77796a7d29',1,'fec::WrapFcnId']]],
+  ['codec_5fsave',['Codec_save',['../classfec_1_1_wrap_fcn_id.html#a88cfb03cace4452627805e83218508a6aa53a318744f20501675ea99836d4d118',1,'fec::WrapFcnId']]],
+  ['codec_5fset_5fworkgroupsize',['Codec_set_workGroupSize',['../classfec_1_1_wrap_fcn_id.html#a88cfb03cace4452627805e83218508a6a03990926c5add2d7fb3acc1fcb439442',1,'fec::WrapFcnId']]],
+  ['codec_5fsodecode',['Codec_soDecode',['../classfec_1_1_wrap_fcn_id.html#a88cfb03cace4452627805e83218508a6ac1453a8bb252461aa6bdb5326d8b1163',1,'fec::WrapFcnId']]],
+  ['convolutional_5fconstructor',['Convolutional_constructor',['../classfec_1_1_wrap_fcn_id.html#a88cfb03cace4452627805e83218508a6ad1295810c43a5ddc52e3c8aca3eb5797',1,'fec::WrapFcnId']]],
+  ['convolutional_5fcreatepermutation',['Convolutional_createPermutation',['../classfec_1_1_wrap_fcn_id.html#a88cfb03cace4452627805e83218508a6ac702493d9ade77c7b5c18167f98f5107',1,'fec::WrapFcnId']]],
+  ['convolutional_5fget_5fdecoderoptions',['Convolutional_get_decoderOptions',['../classfec_1_1_wrap_fcn_id.html#a88cfb03cace4452627805e83218508a6af03e9e100474d049e7071c66098b7e75',1,'fec::WrapFcnId']]],
+  ['convolutional_5fset_5fdecoderoptions',['Convolutional_set_decoderOptions',['../classfec_1_1_wrap_fcn_id.html#a88cfb03cace4452627805e83218508a6ac7b606836fb830e5af13a2190cdfac40',1,'fec::WrapFcnId']]],
+  ['convolutional_5fset_5fencoderoptions',['Convolutional_set_encoderOptions',['../classfec_1_1_wrap_fcn_id.html#a88cfb03cace4452627805e83218508a6a474bea0f01e0eb4668ff4acd8e599700',1,'fec::WrapFcnId']]]
+];
