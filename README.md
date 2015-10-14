@@ -1,4 +1,4 @@
-FeCl {#mainpage}
+FeCl
 =================
 
 [![Build Status](https://travis-ci.org/eti-p-doray/FeCl.svg?branch=master)](https://travis-ci.org/eti-p-doray/FeCl)
