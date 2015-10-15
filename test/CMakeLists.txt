@@ -15,3 +15,5 @@ foreach(TEST ${CPP_TESTS})
   target_link_libraries(test_cpp_${TEST_NAME} ${Boost_LIBRARIES})
   add_test(NAME ${TEST_NAME} COMMAND test_cpp_${TEST_NAME} --log_level=test_suite)
 endforeach()
+
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Wrap)
