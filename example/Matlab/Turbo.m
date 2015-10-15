@@ -36,7 +36,7 @@ codec = fec.Turbo(trellis, interl, 'termination', term)
 codec = fec.Turbo(trellis, interl, 'termination', term, 'iterations', 4);
 
 % Or we can change it after creation
-codec.iterationCount = 6;
+codec.iterations = 6;
 
 %We can specify the decoder scheduling type.
 %In serial decoding,
@@ -50,7 +50,7 @@ codec = fec.Turbo(trellis, interl, 'termination', term, 'iterations', 4, 'schedu
 
 %We can also specify the decoder algorithm.:
 %   Exact | Linear | Approximate default = Linear
-code = fec.TurboCode(trellis, interl, 'termination', term, 'iterations', 4, 'scheduling', 'Parallel', 'algorithm' 'Approximate')
+codec = fec.Turbo(trellis, interl, 'termination', term, 'iterations', 4, 'scheduling', 'Parallel', 'algorithm', 'Approximate')
 
 %And as all codecs, with can change the number of thread used for
 %operations. In this case, we are using 2 threads.

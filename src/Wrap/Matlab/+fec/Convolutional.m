@@ -22,9 +22,6 @@ classdef Convolutional < fec.Codec
             end
         end
         function perms = createPermutation(self, varargin)
-            if (nargin < 2)
-                varargin = {[]};
-            end
             options = fec.Convolutional.PunctureOptions(varargin{:});
             perms = fec.Permutation(fec.bin.wrap(uint32(fec.WrapFcnId.Convolutional_createPermutation), self, options.get()), self.paritySize);
         end

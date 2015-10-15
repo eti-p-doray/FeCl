@@ -33,7 +33,7 @@ msgPost = codec.soDecode(llr);
 % decoder state and parity bits
 %Here, we are actually giving a sequence of zero as a priori
 % This will yield the exact same result as before.
-[msgPost, systExtr, stateExtr, parityExtr] = code.soDecode(llr, zeros(code.stateSize,5), zeros(code.systSize,5));
+[msgPost, systExtr, stateExtr, parityExtr] = codec.soDecode(llr, zeros(codec.stateSize,5), zeros(codec.systSize,5));
 
 %Lets now count the errors in the decoded msg
 errorCount = sum(sum((((msgDecoded)>0)-double(msg))~=0) ~= 0)

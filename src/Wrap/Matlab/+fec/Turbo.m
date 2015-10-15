@@ -61,9 +61,6 @@ classdef Turbo < fec.Codec
         %>  @param  punctureOptions structure, object or Name, Value list containing the permutation properties.
         %>  @return Generated permutation that will apply the specify punctureOptions
         function perms = createPermutation(self, varargin)
-            if (nargin < 2)
-                varargin = {[]};
-            end
             options = fec.Turbo.PunctureOptions(varargin{:});
             perms = fec.Permutation(fec.bin.wrap(uint32(fec.WrapFcnId.Turbo_createPermutation), self, options.get()), self.paritySize);
         end
@@ -101,7 +98,7 @@ classdef Turbo < fec.Codec
         end
         %>  Modify the Turbo::decoderOptions property.
         function set.decoderOptions(self,val)
-            self.structure.decoderOptions = fec.Turbo.DecoderOptions(val);
+            self.structure.decoderOptions = fec.Turbo.DecoderOptions(val)
             fec.bin.wrap(uint32(fec.WrapFcnId.Turbo_set_decoderOptions), self, self.structure.decoderOptions.get());
         end
         %>  Modify the Turbo::encoderOptions property.

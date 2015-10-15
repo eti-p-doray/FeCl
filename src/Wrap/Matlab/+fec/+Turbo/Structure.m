@@ -16,7 +16,7 @@ classdef Structure < hgsetget
     methods
         function self = Structure(varargin)
             if (nargin > 0)
-                if (isa(varargin{1}, 'fec.Turbo.EncoderOptions') || (isfield(varargin{1}, 'trellis') && isfield(varargin{1}, 'interleaver')) || iscell(varargin{1}))
+                if (isa(varargin{1}, 'fec.Turbo.EncoderOptions') || (isfield(varargin{1}, 'trellis') && isfield(varargin{1}, 'interleaver')))
                     self.encoderOptions = fec.Turbo.EncoderOptions(varargin{1});
                     if (nargin > 1)
                         self.decoderOptions = fec.Turbo.DecoderOptions(varargin{2});

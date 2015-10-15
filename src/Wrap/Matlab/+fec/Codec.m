@@ -127,7 +127,7 @@ classdef (Abstract) Codec < fec.WrapObject
         %>
         function varargout = soDecode(self, parity, varargin)
             varargout = cell(nargout,1);
-            varargout{:} = fec.bin.wrap(uint32(fec.WrapFcnId.Codec_soDecode), self, parity, varargin{:});
+            [varargout{:}] = fec.bin.wrap(uint32(fec.WrapFcnId.Codec_soDecode), self, parity, varargin{:});
             for i = 1:nargout
                 varargout{i} = reshape(varargout{i}, [], size(parity,2));
             end

@@ -23,9 +23,6 @@ classdef Ldpc < fec.Codec
             end
         end
         function perms = createPermutation(self, varargin)
-            if (nargin < 2)
-                varargin = {[]};
-            end
             options = fec.Ldpc.PunctureOptions(varargin{:});
             perms = fec.Permutation(fec.bin.wrap(uint32(fec.WrapFcnId.Ldpc_createPermutation), self, options.get()), self.paritySize);
         end

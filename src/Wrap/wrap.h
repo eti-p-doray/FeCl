@@ -141,15 +141,15 @@ const std::vector<std::function<typename WrapFcn<Wrap>::Signature>> WrapFcn<Wrap
     std::vector<LlrType,Allocator<LlrType>> stateOut;
     std::vector<LlrType,Allocator<LlrType>> parityOut;
     output.msg(msg);
-    if (in.size() > 1) output.syst(systOut);
-    if (in.size() > 2) output.state(stateOut);
-    if (in.size() > 3) output.parity(parityOut);
+    if (out.size() > 1) output.syst(systOut);
+    if (out.size() > 2) output.state(stateOut);
+    if (out.size() > 3) output.parity(parityOut);
     codec->soDecode(input, output);
     
     out[0] = toWrap(msg);
-    if (in.size() > 1) out[1] = toWrap(systOut);
-    if (in.size() > 2) out[2] = toWrap(stateOut);
-    if (in.size() > 3) out[3] = toWrap(parityOut);
+    if (out.size() > 1) out[1] = toWrap(systOut);
+    if (out.size() > 2) out[2] = toWrap(stateOut);
+    if (out.size() > 3) out[3] = toWrap(parityOut);
   },
   
   [](const InArgList in, OutArgList out) //Codec_get_msgSize
@@ -196,7 +196,7 @@ const std::vector<std::function<typename WrapFcn<Wrap>::Signature>> WrapFcn<Wrap
   
   [](const InArgList in, OutArgList out) //Turbo_setDecoderOptions
   {
-    wrapTo<Handle<Turbo>>::f(in[0])->setEncoderOptions(wrapTo<Turbo::EncoderOptions>::f(in[1]));
+    wrapTo<Handle<Turbo>>::f(in[0])->setDecoderOptions(wrapTo<Turbo::DecoderOptions>::f(in[1]));
   },
   
   [](const InArgList in, OutArgList out) //Turbo_setEncoderOptions
@@ -241,7 +241,7 @@ const std::vector<std::function<typename WrapFcn<Wrap>::Signature>> WrapFcn<Wrap
   
   [](const InArgList in, OutArgList out) //Ldpc_setDecoderOptions
   {
-    wrapTo<Handle<Ldpc>>::f(in[0])->setEncoderOptions(wrapTo<Ldpc::EncoderOptions>::f(in[1]));
+    wrapTo<Handle<Ldpc>>::f(in[0])->setDecoderOptions(wrapTo<Ldpc::DecoderOptions>::f(in[1]));
   },
   
   [](const InArgList in, OutArgList out) //Ldpc_setEncoderOptions
@@ -287,7 +287,7 @@ const std::vector<std::function<typename WrapFcn<Wrap>::Signature>> WrapFcn<Wrap
   
   [](const InArgList in, OutArgList out) //Convolutional_setDecoderOptions
   {
-    wrapTo<Handle<Convolutional>>::f(in[0])->setEncoderOptions(wrapTo<Convolutional::EncoderOptions>::f(in[1]));
+    wrapTo<Handle<Convolutional>>::f(in[0])->setDecoderOptions(wrapTo<Convolutional::DecoderOptions>::f(in[1]));
   },
   
   [](const InArgList in, OutArgList out) //Convolutional_setEncoderOptions
