@@ -363,13 +363,13 @@ public:
     if (in == nullptr) {
       throw std::invalid_argument("Null object");
     }
-    if (mxGetProperty(in, 0, "MexHandle_") == nullptr) {
+    if (mxGetProperty(in, 0, "mexHandle_") == nullptr) {
       throw std::invalid_argument("Invalid object");
     }
-    if (mxGetData(mxGetProperty(in, 0, "MexHandle_")) == nullptr) {
+    if (mxGetData(mxGetProperty(in, 0, "mexHandle_")) == nullptr) {
       throw std::invalid_argument("Invalid object");
     }
-    T* ptr = reinterpret_cast<T*>(*((uint64_t *)mxGetData(mxGetProperty(in, 0, "MexHandle_"))));
+    T* ptr = reinterpret_cast<T*>(*((uint64_t *)mxGetData(mxGetProperty(in, 0, "mexHandle_"))));
     ptr = dynamic_cast<T*>(ptr);
     if (ptr == nullptr) {
       throw std::invalid_argument("Null object");

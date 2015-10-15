@@ -18,7 +18,7 @@ classdef Convolutional < fec.Codec
         function self = Convolutional(varargin)
             if (nargin > 0)
               self.structure = fec.Convolutional.Structure(varargin{:});
-              self.wrapHandle_ = fec.bin.wrap(uint32(fec.WrapFcnId.Convolutional_constructor), self.structure.getEncoderOptions, self.structure.getDecoderOptions);
+              self.mexHandle_ = fec.bin.wrap(uint32(fec.WrapFcnId.Convolutional_constructor), self.structure.getEncoderOptions, self.structure.getDecoderOptions);
             end
         end
         function perms = createPermutation(self, varargin)

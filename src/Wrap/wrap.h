@@ -297,7 +297,7 @@ const std::vector<std::function<typename WrapFcn<Wrap>::Signature>> WrapFcn<Wrap
   
   [](const InArgList in, OutArgList out) //Convolutional_createPermutation
   {
-    out[0]  = toWrap(wrapTo<Handle<Convolutional>>::f(in[0])->createPermutation(wrapTo<Convolutional::PunctureOptions>::f(in[1])));
+    out[0] = toWrap(wrapTo<Handle<Convolutional>>::f(in[0])->createPermutation(wrapTo<Convolutional::PunctureOptions>::f(in[1])));
   },
   
   [](const InArgList in, OutArgList out) //PuncturedLdpc_constructor

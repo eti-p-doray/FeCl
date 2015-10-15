@@ -8,7 +8,11 @@ classdef Permutation
         function self = Permutation(sequence, inputSize)
             if (nargin > 0)
                 self.sequence = sequence;
-                self.inputSize = inputSize;
+                if (nargin > 1)
+                    self.inputSize = inputSize;
+                else
+                    self.inputSize = max(sequence);
+                end
             end
         end
 

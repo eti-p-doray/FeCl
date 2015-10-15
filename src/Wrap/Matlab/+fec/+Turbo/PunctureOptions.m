@@ -13,7 +13,7 @@ classdef PunctureOptions < hgsetget
                 self.set(varargin{1});
             else
                 if (~isempty(varargin))
-                    self.set(varargin);
+                    self.set(varargin{:});
                 end
             end
         end

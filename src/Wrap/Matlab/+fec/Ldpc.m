@@ -19,7 +19,7 @@ classdef Ldpc < fec.Codec
         function self = Ldpc(varargin)
             if (nargin > 0)
               self.structure = fec.Ldpc.Structure(varargin{:});
-              self.wrapHandle_ = fec.bin.wrap(uint32(fec.WrapFcnId.Ldpc_constructor), self.structure.getEncoderOptions, self.structure.getDecoderOptions);
+              self.mexHandle_ = fec.bin.wrap(uint32(fec.WrapFcnId.Ldpc_constructor), self.structure.getEncoderOptions, self.structure.getDecoderOptions);
             end
         end
         function perms = createPermutation(self, varargin)

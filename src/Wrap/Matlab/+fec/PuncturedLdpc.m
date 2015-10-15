@@ -17,7 +17,7 @@ classdef PuncturedLdpc < fec.Ldpc
         function self = PuncturedLdpc(varargin)
             if (nargin > 0)
               self.structure = fec.PuncturedLdpc.Structure(varargin{:});
-              self.wrapHandle_ = fec.bin.wrap(uint32(fec.WrapFcnId.PuncturedLdpc_constructor), self.structure.getEncoderOptions, self.structure.getPunctureOptions, self.structure.getDecoderOptions);
+              self.mexHandle_ = fec.bin.wrap(uint32(fec.WrapFcnId.PuncturedLdpc_constructor), self.structure.getEncoderOptions, self.structure.getPunctureOptions, self.structure.getDecoderOptions);
             end
         end
         function set.punctureOptions(self,val)

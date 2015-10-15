@@ -117,7 +117,7 @@ classdef (Abstract) Codec < fec.WrapObject
         %>       Many parity blocs can be decoded at once.
         %>  @param [state] A-priori state information from previous decoding attempts.
         %>       Can be empty.
-        %>  @param [syst] A-priori systematic bits infomartion L-values.
+        %>  @param [syst] A-priori systematic bits information L-values.
         %>       Can be empty.
         %>
         %>  @param[out] msg A-posteriori msg information.
@@ -135,14 +135,14 @@ classdef (Abstract) Codec < fec.WrapObject
 
         %>  Free underlying cpp ressources
         function delete(self)
-            self.wrapHandle_ = fec.bin.wrap(uint32(fec.WrapFcnId.Codec_destroy), self);
+            self.mexHandle_ = fec.bin.wrap(uint32(fec.WrapFcnId.Codec_destroy), self);
         end
     end
-    methods (Access = private)
+    methods (Access = protected)
         function self = reload(self, s)
         % Implementation of the loadobj method
         %   Allocate underlying ressources from saved configuration.
-            self.wrapHandle_ = fec.bin.wrap(uint32(fec.WrapFcnId.Codec_load), s.archive);
+            self.mexHandle_ = fec.bin.wrap(uint32(fec.WrapFcnId.Codec_load), s.archive);
             self.structure = s.structure;
         end
     end

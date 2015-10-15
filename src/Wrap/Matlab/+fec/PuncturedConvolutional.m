@@ -17,7 +17,7 @@ classdef PuncturedConvolutional < fec.Convolutional
         function self = PuncturedConvolutional(varargin)
             if (nargin > 0)
               self.structure = fec.PuncturedConvolutional.Structure(varargin{:});
-              self.wrapHandle_ = fec.bin.wrap(uint32(fec.WrapFcnId.PuncturedConvolutional_constructor), self.structure.getEncoderOptions, self.structure.getPunctureOptions, self.structure.getDecoderOptions);
+              self.mexHandle_ = fec.bin.wrap(uint32(fec.WrapFcnId.PuncturedConvolutional_constructor), self.structure.getEncoderOptions, self.structure.getPunctureOptions, self.structure.getDecoderOptions);
             end
         end
         function set.punctureOptions(self,val)
