@@ -100,7 +100,6 @@ test_suite* init_unit_test_suite( int argc, char* argv[] )
   auto decoder = fec::Convolutional::DecoderOptions().algorithm(fec::Codec::Exact);
   auto puncture = fec::Convolutional::PunctureOptions().mask({1, 0, 0, 1});
   
-  auto structure = fec::Convolutional::Structure(encoder, decoder);
   framework::master_test_suite().add(test_convolutional(encoder, decoder, puncture, 3.0, "default"));
   
   encoder.termination(fec::Convolutional::Tail);

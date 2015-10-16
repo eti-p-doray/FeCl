@@ -55,7 +55,7 @@ Turbo(std::unique_ptr<Structure>(new Structure(encoder, puncture)), workGroupSiz
 
 void PuncturedTurbo::decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const
 {
-  std::vector<LlrType> parityTmp(structure().innerParitySize(), 0.0);
+  std::vector<LlrType> parityTmp(structure().innerParitySize()*n, 0.0);
   structure().permutation().dePermuteBlocks<LlrType>(parity, parityTmp.begin(), n);
   auto worker = TurboDecoder::create(structure());
   worker->decodeBlocks(parityTmp.begin(), msg, n);
@@ -63,7 +63,7 @@ void PuncturedTurbo::decodeBlocks(std::vector<LlrType>::const_iterator parity, s
 
 void PuncturedTurbo::soDecodeBlocks(InputIterator input, OutputIterator output, size_t n) const
 {
-  std::vector<LlrType> parityTmp(structure().innerParitySize(), 0.0);
+  std::vector<LlrType> parityTmp(structure().innerParitySize()*n, 0.0);
   structure().permutation().dePermuteBlocks<LlrType>(input.parity(), parityTmp.begin(), n);
   input.parity(parityTmp.begin());
   auto outputTmp = output;
