@@ -14,7 +14,7 @@ before_script:
   - cmake ..
 script:
   - make
-  - make test
+  - make test ARGS="-V"
 
 branches:
   only:

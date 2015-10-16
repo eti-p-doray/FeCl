@@ -77,7 +77,6 @@ test_suite* test_convolutional(const fec::Convolutional::EncoderOptions& encoder
   ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_0stateIn, codec, 1) ));
   ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_0systIn, codec, 1) ));
   ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_systIn, codec, -5.0, 1) ));
-  //ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_systIn, puncturedCodec, -5.0, 1) ));
   
   ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_2phases, codec, codec, 1)));
   ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_2phases, puncturedCodec, puncturedCodec, 1)));
@@ -96,7 +95,7 @@ test_suite* test_convolutional(const fec::Convolutional::EncoderOptions& encoder
 test_suite* init_unit_test_suite( int argc, char* argv[] )
 {
   fec::Trellis trellis({4}, {{015, 017}}, {015});
-  size_t length = 1024;
+  size_t length = 32;
   auto encoder = fec::Convolutional::EncoderOptions(trellis, length).termination(fec::Convolutional::Truncate);
   auto decoder = fec::Convolutional::DecoderOptions().algorithm(fec::Codec::Exact);
   auto puncture = fec::Convolutional::PunctureOptions().mask({1, 0, 0, 1});
