@@ -1,7 +1,7 @@
 var searchData=
 [
   ['check',['check',['../classfec_1_1_codec.html#a2dbc54cf4c62e6cbba9a660e0387a383',1,'fec::Codec']]],
-  ['checkmatrix',['checkMatrix',['../classfec_1_1_ldpc_1_1_encoder_options.html#a161a4c4ed69d977186048b9cf12b9511',1,'fec::Ldpc::EncoderOptions::checkMatrix()'],['../classfec_1_1_ldpc_1_1_structure.html#a8a79f385523d07f5ee1570c1c52b03db',1,'fec::Ldpc::Structure::checkMatrix()'],['../classfec_1_1_ldpc_1_1_structure.html#a9d8c076a2519ea496e9d714ba6c9e451',1,'fec::Ldpc::Structure::checkMatrix(in self, in val)']]],
+  ['checkmatrix',['checkMatrix',['../classfec_1_1_ldpc_1_1_encoder_options.html#a161a4c4ed69d977186048b9cf12b9511',1,'fec::Ldpc::EncoderOptions']]],
   ['codec',['Codec',['../classfec_1_1_codec.html',1,'fec']]],
   ['codec_2em',['Codec.m',['../_codec_8m.html',1,'']]],
   ['codec_5fcheck',['Codec_check',['../classfec_1_1_wrap_fcn_id.html#a88cfb03cace4452627805e83218508a6a4e9380165470172f4c2713580d09c9ea',1,'fec::WrapFcnId']]],
@@ -17,13 +17,12 @@ var searchData=
   ['codec_5fsave',['Codec_save',['../classfec_1_1_wrap_fcn_id.html#a88cfb03cace4452627805e83218508a6aa53a318744f20501675ea99836d4d118',1,'fec::WrapFcnId']]],
   ['codec_5fset_5fworkgroupsize',['Codec_set_workGroupSize',['../classfec_1_1_wrap_fcn_id.html#a88cfb03cace4452627805e83218508a6a03990926c5add2d7fb3acc1fcb439442',1,'fec::WrapFcnId']]],
   ['codec_5fsodecode',['Codec_soDecode',['../classfec_1_1_wrap_fcn_id.html#a88cfb03cace4452627805e83218508a6ac1453a8bb252461aa6bdb5326d8b1163',1,'fec::WrapFcnId']]],
-  ['convolutional',['Convolutional',['../classfec_1_1_convolutional.html#a779a398abaa42259361abdf8a02d1477',1,'fec::Convolutional']]],
   ['convolutional',['Convolutional',['../classfec_1_1_convolutional.html',1,'fec']]],
+  ['convolutional',['Convolutional',['../classfec_1_1_convolutional.html#a779a398abaa42259361abdf8a02d1477',1,'fec::Convolutional']]],
   ['convolutional_2em',['Convolutional.m',['../_convolutional_8m.html',1,'']]],
   ['convolutional_5fconstructor',['Convolutional_constructor',['../classfec_1_1_wrap_fcn_id.html#a88cfb03cace4452627805e83218508a6ad1295810c43a5ddc52e3c8aca3eb5797',1,'fec::WrapFcnId']]],
-  ['convolutional_5fcreatepermutation',['Convolutional_createPermutation',['../classfec_1_1_wrap_fcn_id.html#a88cfb03cace4452627805e83218508a6ac702493d9ade77c7b5c18167f98f5107',1,'fec::WrapFcnId']]],
   ['convolutional_5fget_5fdecoderoptions',['Convolutional_get_decoderOptions',['../classfec_1_1_wrap_fcn_id.html#a88cfb03cace4452627805e83218508a6af03e9e100474d049e7071c66098b7e75',1,'fec::WrapFcnId']]],
+  ['convolutional_5fpuncturing',['Convolutional_puncturing',['../classfec_1_1_wrap_fcn_id.html#a88cfb03cace4452627805e83218508a6a56aa95c06e5242125558acd33334ce9c',1,'fec::WrapFcnId']]],
   ['convolutional_5fset_5fdecoderoptions',['Convolutional_set_decoderOptions',['../classfec_1_1_wrap_fcn_id.html#a88cfb03cace4452627805e83218508a6ac7b606836fb830e5af13a2190cdfac40',1,'fec::WrapFcnId']]],
-  ['convolutional_5fset_5fencoderoptions',['Convolutional_set_encoderOptions',['../classfec_1_1_wrap_fcn_id.html#a88cfb03cace4452627805e83218508a6a474bea0f01e0eb4668ff4acd8e599700',1,'fec::WrapFcnId']]],
-  ['createpermutation',['createPermutation',['../classfec_1_1_convolutional.html#a87fdf0ca65017ebc170e3d776264a089',1,'fec::Convolutional::createPermutation()'],['../classfec_1_1_ldpc.html#a92202b7b7b2e539e873afd5e24b3821b',1,'fec::Ldpc::createPermutation()'],['../classfec_1_1_turbo.html#ace2c0af5b47daaf46a46bffcba4ee89b',1,'fec::Turbo::createPermutation()']]]
+  ['convolutional_5fset_5fencoderoptions',['Convolutional_set_encoderOptions',['../classfec_1_1_wrap_fcn_id.html#a88cfb03cace4452627805e83218508a6a474bea0f01e0eb4668ff4acd8e599700',1,'fec::WrapFcnId']]]
 ];

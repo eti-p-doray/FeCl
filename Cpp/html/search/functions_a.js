@@ -5,5 +5,5 @@ var searchData=
   ['move',['move',['../classfec_1_1_sparse_bit_matrix_1_1_row_ref.html#a1388767ca19292ec3fc25cb8c2b25f69',1,'fec::SparseBitMatrix::RowRef::move()'],['../classfec_1_1_bit_matrix_1_1_row.html#a341bb18426ee75789f3deb2df480a156',1,'fec::BitMatrix::Row::move()']]],
   ['movecol',['moveCol',['../classfec_1_1_sparse_bit_matrix.html#a5cff11ec3011f698c7de26ce962172b1',1,'fec::SparseBitMatrix::moveCol()'],['../classfec_1_1_bit_matrix.html#a286b0a8190103eb5beaa4cc88639ae18',1,'fec::BitMatrix::moveCol()']]],
   ['msg',['msg',['../classfec_1_1_codec_1_1_info_iterator.html#ad151f011412003a8ad2d8b2fcdccfc75',1,'fec::Codec::InfoIterator::msg(Iterator msg)'],['../classfec_1_1_codec_1_1_info_iterator.html#aa69b52ff75c6111b13e8262787e5d5e6',1,'fec::Codec::InfoIterator::msg() const '],['../classfec_1_1_codec_1_1_info.html#a619eacb5689399ee7c7e2bf9c491cbbd',1,'fec::Codec::Info::msg(Vector &amp;msg)'],['../classfec_1_1_codec_1_1_info.html#abee117d700d4da35040e7845fac41b28',1,'fec::Codec::Info::msg() const ']]],
-  ['msgsize',['msgSize',['../classfec_1_1_codec_1_1_structure.html#aa88b44f36c74a114c45c80927d6b7ac6',1,'fec::Codec::Structure::msgSize()'],['../classfec_1_1_codec.html#a6c3c446d817597c78a418e6d94a08bad',1,'fec::Codec::msgSize()']]]
+  ['msgsize',['msgSize',['../classfec_1_1_codec.html#a6c3c446d817597c78a418e6d94a08bad',1,'fec::Codec']]]
 ];

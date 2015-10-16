@@ -90,13 +90,18 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 <a href="_scheduling_8m.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno"><a class="line" href="classfec_1_1_turbo_1_1_scheduling.html">    1</a></span>&#160;classdef <a class="code" href="classfec_1_1_turbo_1_1_scheduling.html#a8c61068e46730f4e9553fc309c7eaf1d">Scheduling</a> &lt; <a class="code" href="classuint32.html">uint32</a></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;    enumeration</div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;        Serial(0)</div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;        Parallel(1)</div>
-<div class="line"><a name="l00005"></a><span class="lineno"><a class="line" href="classfec_1_1_turbo_1_1_scheduling.html#a8c61068e46730f4e9553fc309c7eaf1d">    5</a></span>&#160;    end</div>
-<div class="line"><a name="l00006"></a><span class="lineno"><a class="line" href="classfec_1_1_turbo_1_1_scheduling.html#a8c61068e46730f4e9553fc309c7eaf1da1fc5498bea5113162cc6c0853480547f">    6</a></span>&#160;end</div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;    %&gt;  Algorithm used in decoding.</div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;    %&gt;  This defines the scheduling of extrinsic communication between code constituents.</div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;    enumeration</div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;        %&gt; Each constituent tries to decode and gives its extrinsic information to the next constituent in a serial behavior.</div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;        Serial(0)</div>
+<div class="line"><a name="l00007"></a><span class="lineno"><a class="line" href="classfec_1_1_turbo_1_1_scheduling.html#a8c61068e46730f4e9553fc309c7eaf1d">    7</a></span>&#160;        %&gt;  Each constituent tries to decode in parallel.</div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;        %&gt;  The extrinsic information is then combined and shared to every constituents similar to the Belief Propagation algorithm used in ldpc.</div>
+<div class="line"><a name="l00009"></a><span class="lineno"><a class="line" href="classfec_1_1_turbo_1_1_scheduling.html#a8c61068e46730f4e9553fc309c7eaf1da1fc5498bea5113162cc6c0853480547f">    9</a></span>&#160;        Parallel(1)</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    end</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;end</div>
 <div class="ttc" id="classuint32_html"><div class="ttname"><a href="classuint32.html">uint32</a></div></div>
-<div class="ttc" id="classfec_1_1_turbo_1_1_scheduling_html_a8c61068e46730f4e9553fc309c7eaf1d"><div class="ttname"><a href="classfec_1_1_turbo_1_1_scheduling.html#a8c61068e46730f4e9553fc309c7eaf1d">fec::Turbo::Scheduling::Scheduling</a></div><div class="ttdeci">Scheduling</div><div class="ttdef"><b>Definition:</b> <a href="_scheduling_8m_source.html#l00005">Scheduling.m:5</a></div></div>
+<div class="ttc" id="classfec_1_1_turbo_1_1_scheduling_html_a8c61068e46730f4e9553fc309c7eaf1d"><div class="ttname"><a href="classfec_1_1_turbo_1_1_scheduling.html#a8c61068e46730f4e9553fc309c7eaf1d">fec::Turbo::Scheduling::Scheduling</a></div><div class="ttdeci">Scheduling</div><div class="ttdoc">Algorithm used in decoding. </div><div class="ttdef"><b>Definition:</b> <a href="_scheduling_8m_source.html#l00007">Scheduling.m:7</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -90,13 +90,20 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 <a href="_bit_ordering_8m.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno"><a class="line" href="classfec_1_1_turbo_1_1_bit_ordering.html">    1</a></span>&#160;classdef <a class="code" href="classfec_1_1_turbo_1_1_bit_ordering.html#a391d70a7e7269ec034b5b6951259d448">BitOrdering</a> &lt; <a class="code" href="classuint32.html">uint32</a></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;    enumeration</div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;        Alternate(0)</div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;        Group(1)</div>
-<div class="line"><a name="l00005"></a><span class="lineno"><a class="line" href="classfec_1_1_turbo_1_1_bit_ordering.html#a391d70a7e7269ec034b5b6951259d448">    5</a></span>&#160;    end</div>
-<div class="line"><a name="l00006"></a><span class="lineno"><a class="line" href="classfec_1_1_turbo_1_1_bit_ordering.html#a391d70a7e7269ec034b5b6951259d448aaa283b0536a8d609930d0d4ad6bb24c4">    6</a></span>&#160;end</div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;    %&gt;  Ordering of parity bits in <a class="code" href="classfec_1_1_turbo.html">Turbo</a></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;    %&gt;  This defines the ordering of parity bits that are output from a <a class="code" href="classfec_1_1_turbo.html">Turbo</a> permutation of a <a class="code" href="classfec_1_1_punctured_turbo.html">PuncturedTurbo</a> <a class="code" href="classfec_1_1_codec.html">Codec</a>.</div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;    enumeration</div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;        %&gt;  Systematic and parity bits are alternated</div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;        Alternate(0)</div>
+<div class="line"><a name="l00007"></a><span class="lineno"><a class="line" href="classfec_1_1_turbo_1_1_bit_ordering.html#a391d70a7e7269ec034b5b6951259d448">    7</a></span>&#160;        %&gt;  Systematic bits are group together and parity bits from each constituents are grouped together.</div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;        Group(1)</div>
+<div class="line"><a name="l00009"></a><span class="lineno"><a class="line" href="classfec_1_1_turbo_1_1_bit_ordering.html#a391d70a7e7269ec034b5b6951259d448aaa283b0536a8d609930d0d4ad6bb24c4">    9</a></span>&#160;    end</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;end</div>
 <div class="ttc" id="classuint32_html"><div class="ttname"><a href="classuint32.html">uint32</a></div></div>
-<div class="ttc" id="classfec_1_1_turbo_1_1_bit_ordering_html_a391d70a7e7269ec034b5b6951259d448"><div class="ttname"><a href="classfec_1_1_turbo_1_1_bit_ordering.html#a391d70a7e7269ec034b5b6951259d448">fec::Turbo::BitOrdering::BitOrdering</a></div><div class="ttdeci">BitOrdering</div><div class="ttdef"><b>Definition:</b> <a href="_bit_ordering_8m_source.html#l00005">BitOrdering.m:5</a></div></div>
+<div class="ttc" id="classfec_1_1_punctured_turbo_html"><div class="ttname"><a href="classfec_1_1_punctured_turbo.html">fec::PuncturedTurbo</a></div><div class="ttdef"><b>Definition:</b> <a href="_punctured_turbo_8m_source.html#l00001">PuncturedTurbo.m:1</a></div></div>
+<div class="ttc" id="classfec_1_1_codec_html"><div class="ttname"><a href="classfec_1_1_codec.html">fec::Codec</a></div><div class="ttdoc">This class represents a general encoder / decoder. </div><div class="ttdef"><b>Definition:</b> <a href="_codec_8m_source.html#l00007">Codec.m:7</a></div></div>
+<div class="ttc" id="classfec_1_1_turbo_html"><div class="ttname"><a href="classfec_1_1_turbo.html">fec::Turbo</a></div><div class="ttdoc">This class represents a turbo encode / decoder. </div><div class="ttdef"><b>Definition:</b> <a href="_turbo_8m_source.html#l00021">Turbo.m:21</a></div></div>
+<div class="ttc" id="classfec_1_1_turbo_1_1_bit_ordering_html_a391d70a7e7269ec034b5b6951259d448"><div class="ttname"><a href="classfec_1_1_turbo_1_1_bit_ordering.html#a391d70a7e7269ec034b5b6951259d448">fec::Turbo::BitOrdering::BitOrdering</a></div><div class="ttdeci">BitOrdering</div><div class="ttdoc">Ordering of parity bits in Turbo This defines the ordering of parity bits that are output from a Turb...</div><div class="ttdef"><b>Definition:</b> <a href="_bit_ordering_8m_source.html#l00007">BitOrdering.m:7</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

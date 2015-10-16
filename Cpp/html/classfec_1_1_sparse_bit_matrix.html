@@ -136,11 +136,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:abb549c041f631d7d9e0f12e3130c484b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_sparse_bit_matrix.html#abb549c041f631d7d9e0f12e3130c484b">SparseBitMatrix</a> (const <a class="el" href="classfec_1_1_bit_matrix.html">BitMatrix</a> &amp;b)</td></tr>
 <tr class="memdesc:abb549c041f631d7d9e0f12e3130c484b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor.  <a href="#abb549c041f631d7d9e0f12e3130c484b">More...</a><br /></td></tr>
 <tr class="separator:abb549c041f631d7d9e0f12e3130c484b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a25a0905e6f24a3f1623cf538589dfbb8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_sparse_bit_matrix.html#a25a0905e6f24a3f1623cf538589dfbb8">SparseBitMatrix</a> (<a class="el" href="classfec_1_1_sparse_bit_matrix.html">SparseBitMatrix</a> &amp;&amp;b)</td></tr>
-<tr class="memdesc:a25a0905e6f24a3f1623cf538589dfbb8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move constructor.  <a href="#a25a0905e6f24a3f1623cf538589dfbb8">More...</a><br /></td></tr>
-<tr class="separator:a25a0905e6f24a3f1623cf538589dfbb8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acb282deceb52ce47707d86fac582d80e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_sparse_bit_matrix.html#acb282deceb52ce47707d86fac582d80e">SparseBitMatrix</a> (size_t <a class="el" href="classfec_1_1_sparse_bit_matrix.html#a76ab085ebc7410c7a1cb9319e5f745b3">rows</a>, size_t <a class="el" href="classfec_1_1_sparse_bit_matrix.html#aa315de3b9ee8db4403bd98ad419937fc">cols</a>, size_t <a class="el" href="classfec_1_1_sparse_bit_matrix.html#ac62074d8b8a6ac9a540aeb014475570b">rowSizes</a>)</td></tr>
-<tr class="memdesc:acb282deceb52ce47707d86fac582d80e"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classfec_1_1_sparse_bit_matrix.html" title="This class represents a sparse bit matrix. ">SparseBitMatrix</a> constructor.  <a href="#acb282deceb52ce47707d86fac582d80e">More...</a><br /></td></tr>
+<tr class="memdesc:acb282deceb52ce47707d86fac582d80e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move constructor.  <a href="#acb282deceb52ce47707d86fac582d80e">More...</a><br /></td></tr>
 <tr class="separator:acb282deceb52ce47707d86fac582d80e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abc69d248f0eac275eff1fadf8b607632"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_sparse_bit_matrix.html#abc69d248f0eac275eff1fadf8b607632">SparseBitMatrix</a> (const ::std::vector&lt; size_t &gt; &amp;<a class="el" href="classfec_1_1_sparse_bit_matrix.html#ac62074d8b8a6ac9a540aeb014475570b">rowSizes</a>, size_t <a class="el" href="classfec_1_1_sparse_bit_matrix.html#aa315de3b9ee8db4403bd98ad419937fc">cols</a>)</td></tr>
 <tr class="memdesc:abc69d248f0eac275eff1fadf8b607632"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classfec_1_1_sparse_bit_matrix.html" title="This class represents a sparse bit matrix. ">SparseBitMatrix</a> constructor.  <a href="#abc69d248f0eac275eff1fadf8b607632">More...</a><br /></td></tr>
@@ -317,32 +314,6 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a25a0905e6f24a3f1623cf538589dfbb8"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">fec::SparseBitMatrix::SparseBitMatrix </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classfec_1_1_sparse_bit_matrix.html">SparseBitMatrix</a> &amp;&amp;&#160;</td>
-          <td class="paramname"><em>b</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Move constructor. </p>
-
-</div>
-</div>
 <a class="anchor" id="acb282deceb52ce47707d86fac582d80e"></a>
 <div class="memitem">
 <div class="memproto">
@@ -381,8 +352,8 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p><a class="el" href="classfec_1_1_sparse_bit_matrix.html" title="This class represents a sparse bit matrix. ">SparseBitMatrix</a> constructor. </p>
-<p>Allocates space for the specified matrix structure. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Move constructor. </p>
+<p><a class="el" href="classfec_1_1_sparse_bit_matrix.html" title="This class represents a sparse bit matrix. ">SparseBitMatrix</a> constructor. Allocates space for the specified matrix structure. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">rows</td><td>Number of row </td></tr>
     <tr><td class="paramname">cols</td><td>Number of columns </td></tr>

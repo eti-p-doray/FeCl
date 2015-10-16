@@ -109,6 +109,7 @@ Public Types</h2></td></tr>
 <tr class="memitem:a8c61068e46730f4e9553fc309c7eaf1d"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_turbo_1_1_scheduling.html#a8c61068e46730f4e9553fc309c7eaf1d">Scheduling</a> { <a class="el" href="classfec_1_1_turbo_1_1_scheduling.html#a8c61068e46730f4e9553fc309c7eaf1da1fc5498bea5113162cc6c0853480547f">Serial</a> =(0), 
 <a class="el" href="classfec_1_1_turbo_1_1_scheduling.html#a8c61068e46730f4e9553fc309c7eaf1da66616f109cbc2861cd33add847c14d4e">Parallel</a> =(1)
  }</td></tr>
+<tr class="memdesc:a8c61068e46730f4e9553fc309c7eaf1d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Algorithm used in decoding.  <a href="classfec_1_1_turbo_1_1_scheduling.html#a8c61068e46730f4e9553fc309c7eaf1d">More...</a><br /></td></tr>
 <tr class="separator:a8c61068e46730f4e9553fc309c7eaf1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -124,14 +125,20 @@ Public Types</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Algorithm used in decoding. </p>
+<p>This defines the scheduling of extrinsic communication between code constituents. </p>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a class="anchor" id="a8c61068e46730f4e9553fc309c7eaf1da1fc5498bea5113162cc6c0853480547f"></a>Serial&#160;</td><td class="fielddoc">
+<p>Each constituent tries to decode and gives its extrinsic information to the next constituent in a serial behavior. </p>
 </td></tr>
 <tr><td class="fieldname"><a class="anchor" id="a8c61068e46730f4e9553fc309c7eaf1da66616f109cbc2861cd33add847c14d4e"></a>Parallel&#160;</td><td class="fielddoc">
+<p>Each constituent tries to decode in parallel. </p>
+<p>The extrinsic information is then combined and shared to every constituents similar to the Belief Propagation algorithm used in ldpc. </p>
 </td></tr>
 </table>
 
-<p>Definition at line <a class="el" href="_scheduling_8m_source.html#l00005">5</a> of file <a class="el" href="_scheduling_8m_source.html">Scheduling.m</a>.</p>
+<p>Definition at line <a class="el" href="_scheduling_8m_source.html#l00007">7</a> of file <a class="el" href="_scheduling_8m_source.html">Scheduling.m</a>.</p>
 
 </div>
 </div>
