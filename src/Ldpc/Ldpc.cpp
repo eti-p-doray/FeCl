@@ -137,7 +137,7 @@ void Ldpc::Structure::setEncoderOptions(const EncoderOptions& encoder)
   paritySize_ = encoder.checkMatrix_.cols();
   stateSize_ = encoder.checkMatrix_.size();
   
-  computeGeneratorMatrix(SparseBitMatrix(encoder.checkMatrix_));
+  computeGeneratorMatrix(encoder.checkMatrix_);
   
   systSize_ = msgSize_;
 }
@@ -197,7 +197,7 @@ bool Ldpc::Structure::check(std::vector<BitField<size_t>>::const_iterator parity
 void Ldpc::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const
 {
   std::copy(msg, msg + msgSize(), parity);
-  std::fill(parity+msgSize(), parity+paritySize(), 0);
+  std::fill(parity+msgSize(), parity+innerParitySize(), 0);
   parity += msgSize();
   auto parityIt = parity;
   for (auto row = DC_.begin(); row < DC_.end(); ++row, ++parityIt) {
@@ -230,7 +230,7 @@ void Ldpc::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg, 
  *  The matrix is transformed in a partial triangular shape.
  *  \param  H The original ldpc matrix
  */
-void Ldpc::Structure::computeGeneratorMatrix(SparseBitMatrix&& H)
+void Ldpc::Structure::computeGeneratorMatrix(SparseBitMatrix H)
 {
   std::vector<size_t> colSizes;
   size_t maxRow = H.rows();
@@ -289,7 +289,7 @@ void Ldpc::Structure::computeGeneratorMatrix(SparseBitMatrix&& H)
   
   BitMatrix CDE = H({tSize, H.rows()}, {0, H.cols()});
   
-  for (int64_t i = tSize; i >= 0; --i) {
+  for (int64_t i = tSize-1; i >= 0; --i) {
     for (auto row = CDE.begin(); row < CDE.end(); ++row) {
       if (row->test(i+CDE.cols()-tSize)) {
         *row += H[i];
@@ -339,7 +339,7 @@ void Ldpc::Structure::computeGeneratorMatrix(SparseBitMatrix&& H)
       }
     }
   }
-  
+  //std::cout << H << std::endl;
   H_ = H;
   DC_ = CDE({0, CDE.cols()-msgSize()-tSize}, {0, msgSize()});
   A_ = H_({0, tSize}, {0, msgSize()});
@@ -347,7 +347,7 @@ void Ldpc::Structure::computeGeneratorMatrix(SparseBitMatrix&& H)
   T_ = H_({0, tSize}, {H.cols()-tSize, H.cols()}).transpose();
 }
 
-Permutation Ldpc::Structure::createPermutation(const PunctureOptions& options) const
+Permutation Ldpc::Structure::puncturing(const PunctureOptions& options) const
 {
   std::vector<size_t> perms;
   size_t idx = 0;
@@ -358,7 +358,7 @@ Permutation Ldpc::Structure::createPermutation(const PunctureOptions& options) c
       ++idx;
     }
   }
-  for (size_t i = 0; i < paritySize() - systSize(); ++i) {
+  for (size_t i = 0; i < innerParitySize() - systSize(); ++i) {
     if ((options.systMask_.size() == 0 && (options.mask_.size() == 0 || options.mask_[i % options.mask_.size()])) ||
         (options.systMask_.size() != 0 && (options.mask_.size() == 0 || options.mask_[idx % options.mask_.size()]))) {
       perms.push_back(idx);
@@ -366,5 +366,5 @@ Permutation Ldpc::Structure::createPermutation(const PunctureOptions& options) c
     ++idx;
   }
   
-  return Permutation(perms, paritySize());
+  return Permutation(perms, innerParitySize());
 }

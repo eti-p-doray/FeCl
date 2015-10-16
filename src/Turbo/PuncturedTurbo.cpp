@@ -55,7 +55,7 @@ Turbo(std::unique_ptr<Structure>(new Structure(encoder, puncture)), workGroupSiz
 
 void PuncturedTurbo::decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const
 {
-  std::vector<LlrType> parityTmp(structure().paritySize(), 0.0);
+  std::vector<LlrType> parityTmp(structure().innerParitySize(), 0.0);
   structure().permutation().dePermuteBlocks<LlrType>(parity, parityTmp.begin(), n);
   auto worker = TurboDecoder::create(structure());
   worker->decodeBlocks(parityTmp.begin(), msg, n);
@@ -63,7 +63,7 @@ void PuncturedTurbo::decodeBlocks(std::vector<LlrType>::const_iterator parity, s
 
 void PuncturedTurbo::soDecodeBlocks(InputIterator input, OutputIterator output, size_t n) const
 {
-  std::vector<LlrType> parityTmp(structure().paritySize(), 0.0);
+  std::vector<LlrType> parityTmp(structure().innerParitySize(), 0.0);
   structure().permutation().dePermuteBlocks<LlrType>(input.parity(), parityTmp.begin(), n);
   input.parity(parityTmp.begin());
   auto outputTmp = output;
@@ -80,7 +80,7 @@ void PuncturedTurbo::soDecodeBlocks(InputIterator input, OutputIterator output, 
 
 PuncturedTurbo::Structure::Structure(const EncoderOptions& encoder, const PunctureOptions& puncture, const DecoderOptions& decoder)
 {
-  setEncoderOptions(encoder);
+  Turbo::Structure::setEncoderOptions(encoder);
   setPunctureOptions(puncture);
   setDecoderOptions(decoder);
 }
@@ -94,24 +94,24 @@ PuncturedTurbo::Structure::Structure(const EncoderOptions& encoder, const Punctu
 void PuncturedTurbo::Structure::setEncoderOptions(const fec::Turbo::EncoderOptions& encoder)
 {
   Turbo::Structure::setEncoderOptions(encoder);
-  permutation_ = createPermutation({});
+  permutation_ = puncturing({});
 }
 
 void PuncturedTurbo::Structure::setPunctureOptions(const fec::Turbo::PunctureOptions& puncture)
 {
-  permutation_ = createPermutation(puncture);
+  permutation_ = puncturing(puncture);
 }
 
 void PuncturedTurbo::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const
 {
-  std::vector<BitField<size_t>> parityTmp(paritySize(), 0);
+  std::vector<BitField<size_t>> parityTmp(innerParitySize(), 0);
   Turbo::Structure::encode(msg, parityTmp.begin());
   permutation().permuteBlock<BitField<size_t>>(parityTmp.begin(), parity);
 }
 
 bool PuncturedTurbo::Structure::check(std::vector<BitField<size_t>>::const_iterator parity) const
 {
-  std::vector<BitField<size_t>> parityTmp(paritySize(), 0);
+  std::vector<BitField<size_t>> parityTmp(innerParitySize(), 0);
   permutation().dePermuteBlock<BitField<size_t>>(parity, parityTmp.begin());
   return Turbo::Structure::check(parityTmp.begin());
 }

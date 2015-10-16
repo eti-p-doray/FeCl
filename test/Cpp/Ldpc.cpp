@@ -48,37 +48,54 @@ void test_ldpc_soDecode_systOut(const fec::Ldpc& code, size_t n = 1)
   }
 }
 
-test_suite* test_ldpc(const fec::Ldpc::Structure& structure, double snr, const std::string& name)
+test_suite* test_ldpc(const fec::Ldpc::EncoderOptions& encoder, const fec::Ldpc::DecoderOptions& decoder, const fec::Ldpc::PunctureOptions& puncture, double snr, const std::string& name)
 {
   test_suite* ts = BOOST_TEST_SUITE(name);
   
+  auto structure = fec::Ldpc::Structure(encoder, decoder);
+  
+  //std::cout << structure.checks() << std::endl;
+  
+  auto puncturedStructure = fec::PuncturedLdpc::Structure(encoder, puncture, decoder);
+  
+  //std::cout << puncturedStructure.checks() << std::endl;
+  
+  auto codec = fec::Ldpc(structure);
+  auto puncturedCodec = fec::PuncturedLdpc(puncturedStructure);
+  auto perm = puncturedStructure.permutation();
+
   ts->add( BOOST_TEST_CASE(std::bind(&test_encodeBlock, structure )));
-  ts->add( BOOST_TEST_CASE(std::bind(&test_encode, fec::Ldpc(structure,1), 1 )));
-  ts->add( BOOST_TEST_CASE(std::bind(&test_encode, fec::Ldpc(structure,1), 5 )));
-  ts->add( BOOST_TEST_CASE(std::bind(&test_encode, fec::Ldpc(structure,2), 5 )));
-  ts->add( BOOST_TEST_CASE(std::bind(&test_encode_badMsgSize, fec::Ldpc(structure) )));
+  ts->add( BOOST_TEST_CASE(std::bind(&test_encode, codec, 1 )));
+  ts->add( BOOST_TEST_CASE(std::bind(&test_encode_puncture, codec, perm, puncturedCodec, 1 )));
+  ts->add( BOOST_TEST_CASE(std::bind(&test_encode, codec, 5 )));
+  ts->add( BOOST_TEST_CASE(std::bind(&test_encode_puncture, codec, perm, puncturedCodec, 5 )));
+  ts->add( BOOST_TEST_CASE(std::bind(&test_encode_badMsgSize, codec )));
   
-  ts->add( BOOST_TEST_CASE(std::bind( &test_decode, fec::Ldpc(structure,1), snr, 1) ));
-  ts->add( BOOST_TEST_CASE(std::bind( &test_decode, fec::Ldpc(structure,1), snr, 5) ));
-  ts->add( BOOST_TEST_CASE(std::bind( &test_decode, fec::Ldpc(structure,2), snr, 5) ));
-  ts->add( BOOST_TEST_CASE(std::bind( &test_decode_badParitySize, fec::Ldpc(structure) )));
+  ts->add( BOOST_TEST_CASE(std::bind( &test_decode, codec, snr, 1) ));
+  ts->add( BOOST_TEST_CASE(std::bind( &test_decode, codec, snr, 5) ));
+  ts->add( BOOST_TEST_CASE(std::bind( &test_decode_puncture, codec, perm, puncturedCodec, -5.0, 5) ));
+  ts->add( BOOST_TEST_CASE(std::bind( &test_decode_badParitySize, codec )));
+
+  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode, codec, -5.0, 1) ));
+  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_puncture, codec, perm, puncturedCodec, -5.0, 5) ));
+  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_parityOut, codec, snr, 1) ));
+  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_0stateIn, codec, 1) ));
+  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_0systIn, codec, 1) ));
+  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_systIn, codec, -5.0, 1) ));
+  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_systIn, puncturedCodec, -5.0, 1) ));
   
-  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode, fec::Ldpc(structure), -5.0, 1) ));
-  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_parityOut, fec::Ldpc(structure), snr, 1) ));
-  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_0stateIn, fec::Ldpc(structure), 1) ));
-  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_0systIn, fec::Ldpc(structure), 1) ));
-  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_systIn, fec::Ldpc(structure), -5.0, 1) ));
   auto structure2 = structure;
-  auto decoder = structure2.getDecoderOptions();
-  decoder.iterations_ = 2*decoder.iterations_;
-  structure2.setDecoderOptions(decoder);
-  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_2phases, fec::Ldpc(structure), fec::Ldpc(structure2), 1)));
-  ts->add( BOOST_TEST_CASE(std::bind( &test_ldpc_soDecode_systOut, fec::Ldpc(structure), 1)));
+  auto decoder2 = structure.getDecoderOptions();
+  decoder2.iterations(2*decoder2.iterations_);
+  structure2.setDecoderOptions(decoder2);
+  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_2phases, codec, fec::Ldpc(structure2), 1)));
+  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_2phases, puncturedCodec, fec::PuncturedLdpc(encoder, puncture, decoder2), 1)));
+  ts->add( BOOST_TEST_CASE(std::bind( &test_ldpc_soDecode_systOut, codec, 1)));
   
-  ts->add( BOOST_TEST_CASE(std::bind(&test_soDecode_badParitySize, fec::Ldpc(structure) )));
-  ts->add( BOOST_TEST_CASE(std::bind(&test_soDecode_badSystSize, fec::Ldpc(structure) )));
-  ts->add( BOOST_TEST_CASE(std::bind(&test_soDecode_badStateSize, fec::Ldpc(structure) )));
-  ts->add( BOOST_TEST_CASE(std::bind(&test_soDecode_noParity, fec::Ldpc(structure) )));
+  ts->add( BOOST_TEST_CASE(std::bind(&test_soDecode_badParitySize, codec )));
+  ts->add( BOOST_TEST_CASE(std::bind(&test_soDecode_badSystSize, codec )));
+  ts->add( BOOST_TEST_CASE(std::bind(&test_soDecode_badStateSize, codec )));
+  ts->add( BOOST_TEST_CASE(std::bind(&test_soDecode_noParity, codec )));
   
   ts->add( BOOST_TEST_CASE(std::bind(&test_saveLoad, fec::Ldpc(structure) )));
   
@@ -92,17 +109,15 @@ init_unit_test_suite( int argc, char* argv[] )
   auto checkMatrix = fec::Ldpc::Gallager::matrix(2048, 3, 5, seed);
   auto encoder = fec::Ldpc::EncoderOptions(checkMatrix);
   auto decoder = fec::Ldpc::DecoderOptions().algorithm(fec::Codec::Exact).iterations(30);
+  auto puncture = fec::Ldpc::PunctureOptions().mask({1,0}).systMask({1});
   
-  auto structure = fec::Ldpc::Structure(encoder, decoder);
-  framework::master_test_suite().add(test_ldpc(structure, 2.0, "exact"));
+  framework::master_test_suite().add(test_ldpc(encoder,decoder,puncture, 2.0, "exact"));
   
   decoder.algorithm(fec::Codec::Linear);
-  structure.setDecoderOptions(decoder);
-  framework::master_test_suite().add(test_ldpc(structure, 2.0, "linear"));
+  framework::master_test_suite().add(test_ldpc(encoder,decoder,puncture, 2.0, "linear"));
   
   decoder.algorithm(fec::Codec::Approximate);
-  structure.setDecoderOptions(decoder);
-  framework::master_test_suite().add(test_ldpc(structure, 2.0, "approximate"));
+  framework::master_test_suite().add(test_ldpc(encoder,decoder,puncture, 2.0, "approximate"));
   
   return 0;
 }

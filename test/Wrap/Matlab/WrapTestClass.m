@@ -1,18 +1,18 @@
 classdef WrapTestClass < matlab.unittest.TestCase
     methods (Test)
-        function testScalarConversion(testCase)
+        function scalarConversion(testCase)
             res = testWrap(uint32(TestWrapFcnId.scalarConversion), 2);
             testCase.verifyEqual(res, 2);
         end
-        function testVectorConversion(testCase)
+        function vectorConversion(testCase)
             res = testWrap(uint32(TestWrapFcnId.vectorConversion), [0; 1; 2]);
             testCase.verifyEqual(res, [0; 1; 2]);
         end
-        function testCellConversion(testCase)
+        function cellConversion(testCase)
             res = testWrap(uint32(TestWrapFcnId.vectorConversion), {0; 1; 2});
             testCase.verifyEqual(res, [0; 1; 2]);
         end
-        function testTrellisConversion(testCase)
+        function trellisConversion(testCase)
             trellis = fec.Trellis(4, 13, 15);
             trellis.numInputSymbols = double(trellis.numInputSymbols);
             trellis.numOutputSymbols = double(trellis.numOutputSymbols);
@@ -21,5 +21,10 @@ classdef WrapTestClass < matlab.unittest.TestCase
             trellis.outputs = double(reshape(trellis.outputs,[],2));
             testCase.verifyEqual(trellis, poly2trellis(4, 13, 15));
         end
+
+        %function turboConstruct(testCase)
+        %    codec = fec.Turbo(fec.Trellis(4, 13, 15), )
+%
+ %       end
     end
 end

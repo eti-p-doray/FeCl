@@ -69,13 +69,12 @@ namespace fec {
                 constituents similar to the Belief Propagation algorithm used in ldpc. */
     };
     /**
-     *  Algorithm used in decoding.
-     *  This defines the scheduling of extrinsic communication between code
-     *    constituents.
+     *  Ordering of parity bit in Turbo
+     *  This defines the ordering of parity bits that are output from a Turbo permutation of a PuncturedTurbo Codec.
      */
     enum BitOrdering {
-      Alternate,
-      Group,
+      Alternate,/**< Systematic and parity bits are alternated */
+      Group,/**< Systematic bits are group together and parity bits from each constituents are grouped together. */
     };
     
     //will be there soon
@@ -105,6 +104,9 @@ namespace fec {
       std::vector<Permutation> interleaver_;
       std::vector<Convolutional::Termination> termination_ = std::vector<Convolutional::Termination>(1,Convolutional::Tail);
     };
+    /**
+     *  This class gathers options affecting decoder in Turbo Codec.
+     */
     struct DecoderOptions {
       friend class Structure;
     public:
@@ -172,7 +174,7 @@ namespace fec {
       virtual bool check(std::vector<BitField<size_t>>::const_iterator parity) const;
       virtual void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const;
       
-      Permutation createPermutation(const PunctureOptions& options) const;
+      Permutation puncturing(const PunctureOptions& options) const;
       
     private:
       template <typename Archive>
@@ -203,16 +205,16 @@ namespace fec {
     
     virtual const char * get_key() const;
     
-    inline const Structure& structure() const {return dynamic_cast<const Structure&>(Codec::structure());}
     void setDecoderOptions(const DecoderOptions& decoder) {structure().setDecoderOptions(decoder);}
     void setEncoderOptions(const EncoderOptions& encoder) {structure().setEncoderOptions(encoder);}
     DecoderOptions getDecoderOptions() const {return structure().getDecoderOptions();}
     
-    Permutation createPermutation(const PunctureOptions& options) {return structure().createPermutation(options);}
+    Permutation puncturing(const PunctureOptions& options) {return structure().puncturing(options);}
     
   protected:
     Turbo(std::unique_ptr<Structure>&& structure, int workGroupSize = 4) : Codec(std::move(structure), workGroupSize) {}
     
+    inline const Structure& structure() const {return dynamic_cast<const Structure&>(Codec::structure());}
     inline Structure& structure() {return dynamic_cast<Structure&>(Codec::structure());}
     
     virtual void decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const;

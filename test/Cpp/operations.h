@@ -27,8 +27,11 @@
 #include "Serialization.h"
 #include "Codec.h"
 #include "Convolutional/Convolutional.h"
+#include "Convolutional/PuncturedConvolutional.h"
 #include "Turbo/Turbo.h"
+#include "Turbo/PuncturedTurbo.h"
 #include "Ldpc/Ldpc.h"
+#include "Ldpc/PuncturedLdpc.h"
 
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const std::vector<T>& a)
@@ -68,6 +71,19 @@ void test_encodeBlock(const fec::Codec::Structure& structure)
   std::vector<fec::BitField<size_t>> msg1(structure.msgSize(), 1);
   structure.encode(msg1.begin(), parity.begin());
   BOOST_CHECK(structure.check(parity.begin()));
+}
+
+void test_encode_puncture(const fec::Codec& codec, const fec::Permutation& perm, const fec::Codec& puncturedCodec, size_t n)
+{
+  std::vector<fec::BitField<size_t>> msg(codec.msgSize()*n, 1);
+  std::vector<fec::BitField<size_t>> parity = codec.encode(msg);
+  std::vector<fec::BitField<size_t>> puncturedParity1 = perm.permute(parity);
+  std::vector<fec::BitField<size_t>> puncturedParity2 = puncturedCodec.encode(msg);
+  
+  BOOST_REQUIRE(puncturedParity1.size() == puncturedParity2.size());
+  for (size_t i = 0; i < puncturedParity1.size(); ++i) {
+    BOOST_REQUIRE(puncturedParity1[i] == puncturedParity2[i]);
+  }
 }
 
 void test_encode(const fec::Codec& code, size_t n)
@@ -113,6 +129,24 @@ void test_decode(const fec::Codec& code, double snr, size_t n = 1)
   }
 }
 
+void test_decode_puncture(const fec::Codec& codec, const fec::Permutation& perm, const fec::Codec& puncturedCodec, double snr, size_t n)
+{
+  std::vector<fec::BitField<size_t>> msg(puncturedCodec.msgSize()*n, 1);
+  std::vector<fec::BitField<size_t>> puncturedParity = puncturedCodec.encode(msg);
+  
+  std::vector<fec::LlrType> puncturedParityIn = distort(puncturedParity, snr);
+  
+  std::vector<fec::LlrType> parityIn = perm.dePermute(puncturedParityIn);
+  
+  auto msg1 = codec.decode(parityIn);
+  auto msg2 = puncturedCodec.decode(puncturedParityIn);
+  
+  BOOST_REQUIRE(msg1.size() == msg2.size());
+  for (size_t i = 0; i < msg1.size(); ++i) {
+    BOOST_REQUIRE(msg1[i] == msg2[i]);
+  }
+}
+
 void test_decode_badParitySize(const fec::Codec& code)
 {
   std::vector<fec::LlrType> parityIn(code.paritySize()+1);
@@ -141,7 +175,38 @@ void test_soDecode(const fec::Codec& code, double snr, size_t n = 1)
   
   BOOST_REQUIRE(msgOut.size() == code.msgSize()*n);
   for (size_t i = 0; i < msg.size(); ++i) {
+    if (msgDec[i] != (msgOut[i]>0)) {
+      std::cout << i << std::endl;
+    }
     BOOST_REQUIRE(msgDec[i] == (msgOut[i]>0));
+  }
+}
+
+void test_soDecode_puncture(const fec::Codec& codec, const fec::Permutation& perm, const fec::Codec& puncturedCodec, double snr, size_t n)
+{
+  std::vector<fec::BitField<size_t>> msg(puncturedCodec.msgSize()*n, 1);
+  std::vector<fec::BitField<size_t>> puncturedParity = puncturedCodec.encode(msg);
+  
+  std::vector<fec::LlrType> puncturedParityIn = distort(puncturedParity, snr);
+  
+  std::vector<fec::LlrType> parityIn = perm.dePermute(puncturedParityIn);
+  
+  std::vector<fec::LlrType> msgOut1;
+  std::vector<fec::LlrType> msgOut2;
+  std::vector<fec::LlrType> parityOut1;
+  std::vector<fec::LlrType> parityOut2;
+  
+  codec.soDecode(fec::Codec::Input<>().parity(parityIn), fec::Codec::Output<>().msg(msgOut1).parity(parityOut1));
+  puncturedCodec.soDecode(fec::Codec::Input<>().parity(puncturedParityIn), fec::Codec::Output<>().msg(msgOut2).parity(parityOut2));
+  parityOut1 = perm.permute(parityOut1);
+  
+  BOOST_REQUIRE(msgOut1.size() == msgOut2.size());
+  for (size_t i = 0; i < msgOut1.size(); ++i) {
+    BOOST_REQUIRE(msgOut1[i] == msgOut2[i]);
+  }
+  BOOST_REQUIRE(parityOut1.size() == parityOut2.size());
+  for (size_t i = 0; i < parityOut1.size(); ++i) {
+    BOOST_REQUIRE(parityOut1[i] == parityOut2[i]);
   }
 }
 

@@ -442,7 +442,7 @@ public:
   /**
    *  Move constructor.
    */
-  SparseBitMatrix(SparseBitMatrix&& b) {cols_ = b.cols_; ::std::swap(elementIdx_, b.elementIdx_); ::std::swap(rowIdx_, b.rowIdx_);}
+  //SparseBitMatrix(SparseBitMatrix&& b) {cols_ = b.cols_; ::std::swap(elementIdx_, b.elementIdx_); ::std::swap(rowIdx_, b.rowIdx_);}
   /**
    *  SparseBitMatrix constructor.
    *  Allocates space for the specified matrix structure.
@@ -617,7 +617,7 @@ private:
     ar & BOOST_SERIALIZATION_NVP(rowIdx_);
   }
   
-  size_t cols_;
+  size_t cols_ = 0;
   ::std::vector<size_t> elementIdx_;
   ::std::vector<RowIdx> rowIdx_;
 };
@@ -765,7 +765,7 @@ private:
   
   inline void resize(size_t rows, size_t cols);
   
-  size_t cols_;
+  size_t cols_ = 0;
   std::vector<Row> rows_;
 };
   
@@ -930,7 +930,7 @@ fec::SparseBitMatrix fec::SparseBitMatrix::operator() (const size_t rowRange[2],
 
 void fec::SparseBitMatrix::colSizes(const size_t rowRange[2], const size_t colRange[2], std::vector<size_t>& dst) const
 {
-  dst.resize(colRange[1] - colRange[0]);
+  dst.resize(colRange[1] - colRange[0], 0);
   std::fill(dst.begin(), dst.end(), 0);
   for (auto row = begin()+rowRange[0]; row < begin()+rowRange[1]; ++row) {
     auto elem = row->begin();

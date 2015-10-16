@@ -80,6 +80,8 @@ namespace fec {
       
       virtual const char * get_key() const;
       
+      virtual size_t paritySize() const {return permutation_.outputSize();}
+      
       virtual void setEncoderOptions(const EncoderOptions& encoder);
       virtual void setPunctureOptions(const PunctureOptions& puncture);
       
@@ -108,14 +110,12 @@ namespace fec {
     
     virtual const char * get_key() const;
     
-    virtual size_t paritySize() const {return structure().permutation().outputSize();} /**< Access the size of the parity in each code bloc. */
-    
-    inline const Structure& structure() const {return dynamic_cast<const Structure&>(Codec::structure());}
     void setPunctureOptions(const PunctureOptions& puncture) {structure().setPunctureOptions(puncture);}
     
   protected:
     PuncturedTurbo() = default;
     
+    inline const Structure& structure() const {return dynamic_cast<const Structure&>(Codec::structure());}
     inline Structure& structure() {return dynamic_cast<Structure&>(Codec::structure());}
     
     virtual void decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const;

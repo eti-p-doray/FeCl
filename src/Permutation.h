@@ -94,10 +94,10 @@ private:
   void serialize(Archive & ar, const unsigned int version) {
     using namespace boost::serialization;
     ar & BOOST_SERIALIZATION_NVP(sequence_);
+    ar & BOOST_SERIALIZATION_NVP(inputSize_);
   }
   
   std::vector<size_t> sequence_;
-  size_t outputSize_ = 0;
   size_t inputSize_ = 0;
 };
   
@@ -119,7 +119,7 @@ void fec::Permutation::permute(const std::vector<T1>& input, std::vector<T2>& ou
   
   auto inputIt = input.begin();
   auto outputIt = output.begin();
-  for (; inputIt < input.end(); inputIt += sequence_.size(), outputIt += sequence_.size()) {
+  for (; inputIt < input.end(); inputIt += inputSize(), outputIt += outputSize()) {
     permuteBlock<T1,T2>(inputIt, outputIt);
   }
 }
@@ -127,11 +127,11 @@ void fec::Permutation::permute(const std::vector<T1>& input, std::vector<T2>& ou
 template <typename T1, typename T2>
 void fec::Permutation::dePermute(const std::vector<T1>& input, std::vector<T2>& output) const
 {
-  output.resize(input.size() / inputSize() * outputSize());
+  output.resize(input.size() / outputSize() * inputSize());
   
   auto inputIt = input.begin();
   auto outputIt = output.begin();
-  for (; inputIt < input.end(); inputIt += sequence_.size(), outputIt += sequence_.size()) {
+  for (; inputIt < input.end(); inputIt += outputSize(), outputIt += inputSize()) {
     dePermuteBlock<T1,T2>(inputIt, outputIt);
   }
 }

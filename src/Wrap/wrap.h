@@ -204,9 +204,9 @@ const std::vector<std::function<typename WrapFcn<Wrap>::Signature>> WrapFcn<Wrap
     wrapTo<Handle<Turbo>>::f(in[0])->setEncoderOptions(wrapTo<Turbo::EncoderOptions>::f(in[1]));
   },
   
-  [](const InArgList in, OutArgList out) //Turbo_createPermutation
+  [](const InArgList in, OutArgList out) //Turbo_puncturing
   {
-    out[0] = toWrap(wrapTo<Handle<Turbo>>::f(in[0])->createPermutation(wrapTo<Turbo::PunctureOptions>::f(in[1])));
+    out[0] = toWrap(wrapTo<Handle<Turbo>>::f(in[0])->puncturing(wrapTo<Turbo::PunctureOptions>::f(in[1])));
   },
   
   [](const InArgList in, OutArgList out) //Turbo_Lte3Gpp_interleaver
@@ -249,9 +249,9 @@ const std::vector<std::function<typename WrapFcn<Wrap>::Signature>> WrapFcn<Wrap
     wrapTo<Handle<Ldpc>>::f(in[0])->setEncoderOptions(wrapTo<Ldpc::EncoderOptions>::f(in[1]));
   },
   
-  [](const InArgList in, OutArgList out) //Ldpc_createPermutation
+  [](const InArgList in, OutArgList out) //Ldpc_puncturing
   {
-    out[0] = toWrap(wrapTo<Handle<Ldpc>>::f(in[0])->createPermutation(wrapTo<Ldpc::PunctureOptions>::f(in[1])));
+    out[0] = toWrap(wrapTo<Handle<Ldpc>>::f(in[0])->puncturing(wrapTo<Ldpc::PunctureOptions>::f(in[1])));
   },
   
   [](const InArgList in, OutArgList out) //Ldpc_DvbS2_matrix
@@ -295,9 +295,9 @@ const std::vector<std::function<typename WrapFcn<Wrap>::Signature>> WrapFcn<Wrap
     wrapTo<Handle<Convolutional>>::f(in[0])->setEncoderOptions(wrapTo<Convolutional::EncoderOptions>::f(in[1]));
   },
   
-  [](const InArgList in, OutArgList out) //Convolutional_createPermutation
+  [](const InArgList in, OutArgList out) //Convolutional_puncturing
   {
-    out[0] = toWrap(wrapTo<Handle<Convolutional>>::f(in[0])->createPermutation(wrapTo<Convolutional::PunctureOptions>::f(in[1])));
+    out[0] = toWrap(wrapTo<Handle<Convolutional>>::f(in[0])->puncturing(wrapTo<Convolutional::PunctureOptions>::f(in[1])));
   },
   
   [](const InArgList in, OutArgList out) //PuncturedLdpc_constructor

@@ -265,7 +265,7 @@ void Convolutional::Structure::encode(std::vector<BitField<size_t>>::const_itera
   assert(state == 0);
 }
 
-Permutation Convolutional::Structure::createPermutation(const PunctureOptions& options) const
+Permutation Convolutional::Structure::puncturing(const PunctureOptions& options) const
 {
   std::vector<size_t> perms;
   size_t systIdx = 0;
@@ -283,5 +283,5 @@ Permutation Convolutional::Structure::createPermutation(const PunctureOptions& o
     ++systIdx;
   }
   
-  return Permutation(perms, paritySize());
+  return Permutation(perms, innerParitySize());
 }

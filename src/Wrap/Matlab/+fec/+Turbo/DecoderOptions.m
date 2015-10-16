@@ -1,5 +1,7 @@
+%>  This class gathers options affecting decoder in Turbo Codec.
 classdef DecoderOptions < hgsetget
     properties
+        %>  Number of iterations in decoder.
         iterations = 5;
         algorithm = uint32(fec.Codec.DecoderAlgorithm.('Linear'));
         scheduling = uint32(fec.Turbo.Scheduling.('Serial'));

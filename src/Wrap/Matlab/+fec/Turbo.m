@@ -60,9 +60,9 @@ classdef Turbo < fec.Codec
         %>
         %>  @param  punctureOptions structure, object or Name, Value list containing the permutation properties.
         %>  @return Generated permutation that will apply the specify punctureOptions
-        function perms = createPermutation(self, varargin)
+        function perms = puncturing(self, varargin)
             options = fec.Turbo.PunctureOptions(varargin{:});
-            perms = fec.Permutation(fec.bin.wrap(uint32(fec.WrapFcnId.Turbo_createPermutation), self, options.get()), self.paritySize);
+            perms = fec.Permutation(fec.bin.wrap(uint32(fec.WrapFcnId.Turbo_puncturing), self, options.get()), self.paritySize);
         end
         %>  Access the Turbo::iterations property.
         function val = get.iterations(self)

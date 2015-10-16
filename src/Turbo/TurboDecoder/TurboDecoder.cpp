@@ -36,8 +36,8 @@ TurboDecoder::TurboDecoder(const Turbo::Structure& structure) : structure_(struc
   }
   extrinsic_.resize(this->structure().stateSize());
   extrinsicBuffer_.resize(this->structure().stateSize());;
-  parityIn_.resize(this->structure().paritySize());
-  parityOut_.resize(this->structure().paritySize());
+  parityIn_.resize(this->structure().innerParitySize());
+  parityOut_.resize(this->structure().innerParitySize());
 }
 
 void TurboDecoder::decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n)

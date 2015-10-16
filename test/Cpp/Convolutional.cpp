@@ -48,33 +48,45 @@ void test_convo_soDecode_systOut(const fec::Codec& code, size_t n = 1)
   }
 }
 
-test_suite* test_convolutional(const fec::Convolutional::Structure& structure, double snr, const std::string& name)
+test_suite* test_convolutional(const fec::Convolutional::EncoderOptions& encoder, const fec::Convolutional::DecoderOptions& decoder, const fec::Convolutional::PunctureOptions& puncture, double snr, const std::string& name)
 {
   test_suite* ts = BOOST_TEST_SUITE(name);
   
+  auto structure = fec::Convolutional::Structure(encoder, decoder);
+  auto puncturedStructure = fec::PuncturedConvolutional::Structure(encoder, puncture, decoder);
+  
+  auto codec = fec::Convolutional(structure);
+  auto puncturedCodec = fec::PuncturedConvolutional(puncturedStructure);
+  auto perm = puncturedStructure.permutation();
+  
   ts->add( BOOST_TEST_CASE(std::bind(&test_encodeBlock, structure )));
-  ts->add( BOOST_TEST_CASE(std::bind(&test_encode, fec::Convolutional(structure,1), 1 )));
-  ts->add( BOOST_TEST_CASE(std::bind(&test_encode, fec::Convolutional(structure,1), 5 )));
-  ts->add( BOOST_TEST_CASE(std::bind(&test_encode, fec::Convolutional(structure,2), 5 )));
-  ts->add( BOOST_TEST_CASE(std::bind(&test_encode_badMsgSize, fec::Convolutional(structure) )));
+  ts->add( BOOST_TEST_CASE(std::bind(&test_encode, codec, 1 )));
+  ts->add( BOOST_TEST_CASE(std::bind(&test_encode_puncture, codec, perm, puncturedCodec, 1 )));
+  ts->add( BOOST_TEST_CASE(std::bind(&test_encode, codec, 5 )));
+  ts->add( BOOST_TEST_CASE(std::bind(&test_encode_puncture, codec, perm, puncturedCodec, 5 )));
+  ts->add( BOOST_TEST_CASE(std::bind(&test_encode_badMsgSize, codec )));
   
-  ts->add( BOOST_TEST_CASE(std::bind( &test_decode, fec::Convolutional(structure,1), snr, 1) ));
-  ts->add( BOOST_TEST_CASE(std::bind( &test_decode, fec::Convolutional(structure,1), snr, 5) ));
-  ts->add( BOOST_TEST_CASE(std::bind( &test_decode, fec::Convolutional(structure,2), snr, 5) ));
-  ts->add( BOOST_TEST_CASE(std::bind( &test_decode_badParitySize, fec::Convolutional(structure) )));
+  ts->add( BOOST_TEST_CASE(std::bind( &test_decode, codec, snr, 1) ));
+  ts->add( BOOST_TEST_CASE(std::bind( &test_decode, codec, snr, 5) ));
+  ts->add( BOOST_TEST_CASE(std::bind( &test_decode_puncture, codec, perm, puncturedCodec, -5.0, 5) ));
+  ts->add( BOOST_TEST_CASE(std::bind( &test_decode_badParitySize, codec )));
   
-  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode, fec::Convolutional(structure), snr, 1) ));
-  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_parityOut, fec::Convolutional(structure), snr, 1) ));
-  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_0stateIn, fec::Convolutional(structure), 1) ));
-  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_0systIn, fec::Convolutional(structure), 1) ));
-  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_systIn, fec::Convolutional(structure), -5.0, 1) ));
-  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_2phases, fec::Convolutional(structure), fec::Convolutional(structure), 1)));
-  ts->add( BOOST_TEST_CASE(std::bind( &test_convo_soDecode_systOut, fec::Convolutional(structure), 1)));
+  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode, codec, snr, 1) ));
+  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_puncture, codec, perm, puncturedCodec, -5.0, 5) ));
+  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_parityOut, codec, snr, 1) ));
+  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_0stateIn, codec, 1) ));
+  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_0systIn, codec, 1) ));
+  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_systIn, codec, -5.0, 1) ));
+  //ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_systIn, puncturedCodec, -5.0, 1) ));
   
-  ts->add( BOOST_TEST_CASE(std::bind(&test_soDecode_badParitySize, fec::Convolutional(structure) )));
-  ts->add( BOOST_TEST_CASE(std::bind(&test_soDecode_badSystSize, fec::Convolutional(structure) )));
-  ts->add( BOOST_TEST_CASE(std::bind(&test_soDecode_badStateSize, fec::Convolutional(structure) )));
-  ts->add( BOOST_TEST_CASE(std::bind(&test_soDecode_noParity, fec::Convolutional(structure) )));
+  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_2phases, codec, codec, 1)));
+  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_2phases, puncturedCodec, puncturedCodec, 1)));
+  ts->add( BOOST_TEST_CASE(std::bind( &test_convo_soDecode_systOut, codec, 1)));
+  
+  ts->add( BOOST_TEST_CASE(std::bind(&test_soDecode_badParitySize, codec )));
+  ts->add( BOOST_TEST_CASE(std::bind(&test_soDecode_badSystSize, codec )));
+  ts->add( BOOST_TEST_CASE(std::bind(&test_soDecode_badStateSize, codec )));
+  ts->add( BOOST_TEST_CASE(std::bind(&test_soDecode_noParity, codec )));
   
   ts->add( BOOST_TEST_CASE(std::bind(&test_saveLoad, fec::Convolutional(structure) )));
   
@@ -87,29 +99,25 @@ test_suite* init_unit_test_suite( int argc, char* argv[] )
   size_t length = 1024;
   auto encoder = fec::Convolutional::EncoderOptions(trellis, length).termination(fec::Convolutional::Truncate);
   auto decoder = fec::Convolutional::DecoderOptions().algorithm(fec::Codec::Exact);
+  auto puncture = fec::Convolutional::PunctureOptions().mask({1, 0, 0, 1});
   
   auto structure = fec::Convolutional::Structure(encoder, decoder);
-  framework::master_test_suite().add(test_convolutional(structure, 3.0, "default"));
+  framework::master_test_suite().add(test_convolutional(encoder, decoder, puncture, 3.0, "default"));
   
   encoder.termination(fec::Convolutional::Tail);
-  structure.setEncoderOptions(encoder);
-  framework::master_test_suite().add(test_convolutional(structure, 3.0, "tail"));
+  framework::master_test_suite().add(test_convolutional(encoder, decoder, puncture, 3.0, "tail"));
   
   decoder.algorithm(fec::Codec::Linear);
-  structure.setDecoderOptions(decoder);
-  framework::master_test_suite().add(test_convolutional(structure, 3.0, "table"));
+  framework::master_test_suite().add(test_convolutional(encoder, decoder, puncture, 3.0, "table"));
 
   decoder.algorithm(fec::Codec::Approximate);
-  structure.setDecoderOptions(decoder);
-  framework::master_test_suite().add(test_convolutional(structure, 3.0, "approximate"));
+  framework::master_test_suite().add(test_convolutional(encoder, decoder, puncture, 3.0, "approximate"));
   
   encoder = fec::Convolutional::EncoderOptions(fec::Trellis({3, 3}, {{05, 03, 0}, {0, 03, 07}}, {07, 05}), length).termination(fec::Convolutional::Truncate);
-  structure.setEncoderOptions(encoder);
-  framework::master_test_suite().add(test_convolutional(structure, 6.0, "2 inputs"));
+  framework::master_test_suite().add(test_convolutional(encoder, decoder, {}, 6.0, "2 inputs"));
   
   encoder.termination(fec::Convolutional::Tail);
-  structure.setEncoderOptions(encoder);
-  framework::master_test_suite().add(test_convolutional(structure, 5.0, "2 inputs + tail"));
+  framework::master_test_suite().add(test_convolutional(encoder, decoder, {}, 5.0, "2 inputs + tail"));
   
   return 0;
 }

@@ -118,7 +118,7 @@ namespace fec {
       virtual void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const;
       void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity, std::vector<BitField<size_t>>::iterator tail) const;
       
-      Permutation createPermutation(const PunctureOptions& options) const;
+      Permutation puncturing(const PunctureOptions& options) const;
       
     private:
       template <typename Archive>
@@ -147,16 +147,16 @@ namespace fec {
     
     virtual const char * get_key() const;
     
-    inline const Structure& structure() const {return dynamic_cast<const Structure&>(Codec::structure());}
     void setDecoderOptions(const DecoderOptions& decoder) {structure().setDecoderOptions(decoder);}
     void setEncoderOptions(const EncoderOptions& encoder) {structure().setEncoderOptions(encoder);}
     DecoderOptions getDecoderOptions() const {return structure().getDecoderOptions();}
     
-    Permutation createPermutation(const PunctureOptions& options) {return structure().createPermutation(options);}
+    Permutation puncturing(const PunctureOptions& options) {return structure().puncturing(options);}
     
   protected:
     Convolutional(std::unique_ptr<Structure>&& structure, int workGroupSize = 4) : Codec(std::move(structure), workGroupSize) {}
     
+    inline const Structure& structure() const {return dynamic_cast<const Structure&>(Codec::structure());}
     inline Structure& structure() {return dynamic_cast<Structure&>(Codec::structure());}
     
     virtual void decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const;

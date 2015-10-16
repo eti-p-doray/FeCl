@@ -31,6 +31,7 @@
 
 #include "../Codec.h"
 #include "../BitMatrix.h"
+#include "../Permutation.h"
 
 namespace fec {
   
@@ -118,7 +119,7 @@ namespace fec {
       void setDecoderOptions(const DecoderOptions& decoder);
       void setEncoderOptions(const EncoderOptions& encoder);
       DecoderOptions getDecoderOptions() const;
-      Permutation createPermutation(const PunctureOptions& options) const;
+      Permutation puncturing(const PunctureOptions& options) const;
       
       inline const SparseBitMatrix& checks() const {return H_;}
       inline size_t iterations() const {return iterations_;}
@@ -140,7 +141,7 @@ namespace fec {
         ar & ::BOOST_SERIALIZATION_NVP(iterations_);
       }
       
-      void computeGeneratorMatrix(SparseBitMatrix&& H);
+      void computeGeneratorMatrix(SparseBitMatrix H);
       
       SparseBitMatrix H_;
       SparseBitMatrix DC_;
@@ -161,16 +162,16 @@ namespace fec {
     
     virtual const char * get_key() const;
     
-    inline const Structure& structure() const {return dynamic_cast<const Structure&>(Codec::structure());}
     void setDecoderOptions(const DecoderOptions& decoder) {structure().setDecoderOptions(decoder);}
     void setEncoderOptions(const EncoderOptions& encoder) {structure().setEncoderOptions(encoder);}
     DecoderOptions getDecoderOptions() const {return structure().getDecoderOptions();}
     
-    Permutation createPermutation(const PunctureOptions& options) {return structure().createPermutation(options);}
+    Permutation puncturing(const PunctureOptions& options) {return structure().puncturing(options);}
     
   protected:
     Ldpc(std::unique_ptr<Structure>&& structure, int workGroupSize = 4) : Codec(std::move(structure), workGroupSize) {}
     
+    inline const Structure& structure() const {return dynamic_cast<const Structure&>(Codec::structure());}
     inline Structure& structure() {return dynamic_cast<Structure&>(Codec::structure());}
     
     virtual void decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const;

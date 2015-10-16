@@ -36,7 +36,6 @@
 
 #include "BitField.h"
 #include "LlrMetrics/LlrMetrics.h"
-#include "Permutation.h"
 
 namespace fec {
   
@@ -73,8 +72,10 @@ namespace fec {
       
       inline size_t msgSize() const {return msgSize_;} /**< Access the size of msg in each code bloc. */
       inline size_t systSize() const {return systSize_;} /**< Access the size of systematics in each code bloc. */
-      inline size_t paritySize() const {return paritySize_;} /**< Access the size of parities in each code bloc. */
+      virtual size_t paritySize() const {return paritySize_;} /**< Access the size of parities in each code bloc. */
       inline size_t stateSize() const {return stateSize_;} /**< Access the size of state information in each code bloc. */
+      
+      inline size_t innerParitySize() const {return paritySize_;}
       
       DecoderAlgorithm decoderAlgorithm() const {return decoderAlgorithm_;} /**< Access the algorithm used in decoder. */
       AlgorithmOptions<FloatLlrMetrics> algorithmOptions() const {return algorithmOptions_;} /**< Access the algorithm options used in decoder. */
@@ -126,7 +127,8 @@ namespace fec {
        *  Constructor.
        *  \param  structureRef Pointer to the codec structure associated with the info.
        */
-      InfoIterator(const Structure* structureRef) : structureRef_(structureRef) {}
+      InfoIterator(const Codec* structureRef) : structureRef_(structureRef) {}
+      InfoIterator() = default;
       
       InfoIterator& syst(Iterator syst) {syst_ = syst; hasSyst_ = true; return *this;} /**< Link systematic extrinsics. */
       InfoIterator& parity(Iterator parity) {parity_ = parity; hasParity_ = true; return *this;} /**< Link parity extrinsics. */
@@ -183,7 +185,7 @@ namespace fec {
       bool hasParity_ = false;
       bool hasState_ = false;
       bool hasMsg_ = false;
-      const Structure* structureRef_;
+      const Codec* structureRef_;
     };
     using InputIterator = InfoIterator<std::vector<LlrType>::const_iterator>;
     using OutputIterator = InfoIterator<std::vector<LlrType>::iterator>;
@@ -210,7 +212,7 @@ namespace fec {
       bool hasState() const {return state_ != nullptr;}
       bool hasMsg() const {return msg_ != nullptr;}
       
-      Iterator begin(const Structure& structure) const {
+      Iterator begin(const Codec& structure) const {
         auto it = Iterator(&structure);
         if (hasSyst()) {
           it.syst(syst().begin());
@@ -226,7 +228,7 @@ namespace fec {
         }
         return it;
       }
-      Iterator end(const Structure& structure) const {
+      Iterator end(const Codec& structure) const {
         auto it = Iterator(&structure);
         if (hasSyst()) {
           it.syst(syst().end());
@@ -259,8 +261,6 @@ namespace fec {
     
     virtual const char * get_key() const = 0; /**< Access the type info key. */
     
-    inline const Structure& structure() const {return *structure_;}
-    
     virtual size_t msgSize() const {return structure().msgSize();} /**< Access the size of the msg in each code bloc. */
     virtual size_t systSize() const {return structure().systSize();} /**< Access the size of the msg in each code bloc. */
     virtual size_t paritySize() const {return structure().paritySize();} /**< Access the size of the parity in each code bloc. */
@@ -291,6 +291,7 @@ namespace fec {
     Codec(const Codec& other) {*this = other;}
     Codec& operator=(const Codec& other) {workGroupSize_ = other.getWorkGroupSize(); return *this;}
     
+    inline const Structure& structure() const {return *structure_;}
     inline Structure& structure() {return *structure_;}
     
     virtual bool checkBlocks(std::vector<BitField<size_t>>::const_iterator parity, size_t n) const;
@@ -504,8 +505,8 @@ void fec::Codec::soDecode(Input<A> input, Output<A> output) const
   if (output.hasMsg()) {
     output.msg().resize(blockCount * msgSize());
   }
-  auto inputIt = input.begin(structure());
-  auto outputIt = output.begin(structure());
+  auto inputIt = input.begin(*this);
+  auto outputIt = output.begin(*this);
   
   auto threadGroup = createWorkGroup();
   auto thread = threadGroup.begin();
@@ -520,7 +521,7 @@ void fec::Codec::soDecode(Input<A> input, Output<A> output) const
     
     thread++;
   }
-  if (outputIt != output.end(structure())) {
+  if (outputIt != output.end(*this)) {
     soDecodeBlocks(inputIt, outputIt, blockCount % step);
   }
   for (auto & thread : threadGroup) {

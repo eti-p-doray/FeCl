@@ -56,7 +56,7 @@ Convolutional(std::unique_ptr<Structure>(new Structure(encoder, puncture)), work
 
 void PuncturedConvolutional::decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const
 {
-  std::vector<LlrType> parityTmp(structure().paritySize(), 0.0);
+  std::vector<LlrType> parityTmp(structure().innerParitySize(), 0.0);
   structure().permutation().dePermuteBlocks<LlrType>(parity, parityTmp.begin(), n);
   auto worker = ViterbiDecoder::create(structure());
   worker->decodeBlocks(parityTmp.begin(), msg, n);
@@ -64,7 +64,7 @@ void PuncturedConvolutional::decodeBlocks(std::vector<LlrType>::const_iterator p
 
 void PuncturedConvolutional::soDecodeBlocks(InputIterator input, OutputIterator output, size_t n) const
 {
-  std::vector<LlrType> parityTmp(structure().paritySize(), 0.0);
+  std::vector<LlrType> parityTmp(structure().innerParitySize(), 0.0);
   structure().permutation().dePermuteBlocks<LlrType>(input.parity(), parityTmp.begin(), n);
   input.parity(parityTmp.begin());
   auto outputTmp = output;
@@ -95,24 +95,24 @@ PuncturedConvolutional::Structure::Structure(const EncoderOptions& encoder, cons
 void PuncturedConvolutional::Structure::setEncoderOptions(const fec::Convolutional::EncoderOptions& encoder)
 {
   Convolutional::Structure::setEncoderOptions(encoder);
-  permutation_ = createPermutation({});
+  permutation_ = puncturing({});
 }
 
 void PuncturedConvolutional::Structure::setPunctureOptions(const fec::Convolutional::PunctureOptions& puncture)
 {
-  permutation_ = createPermutation(puncture);
+  permutation_ = puncturing(puncture);
 }
 
 void PuncturedConvolutional::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const
 {
-  std::vector<BitField<size_t>> parityTmp(paritySize(), 0);
+  std::vector<BitField<size_t>> parityTmp(innerParitySize(), 0);
   Convolutional::Structure::encode(msg, parityTmp.begin());
   permutation().permuteBlock<BitField<size_t>>(parityTmp.begin(), parity);
 }
 
 bool PuncturedConvolutional::Structure::check(std::vector<BitField<size_t>>::const_iterator parity) const
 {
-  std::vector<BitField<size_t>> parityTmp(paritySize(), 0);
+  std::vector<BitField<size_t>> parityTmp(innerParitySize(), 0);
   permutation().dePermuteBlock<BitField<size_t>>(parity, parityTmp.begin());
   return Convolutional::Structure::check(parityTmp.begin());
 }

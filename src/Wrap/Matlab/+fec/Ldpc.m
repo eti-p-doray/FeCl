@@ -22,9 +22,9 @@ classdef Ldpc < fec.Codec
               self.mexHandle_ = fec.bin.wrap(uint32(fec.WrapFcnId.Ldpc_constructor), self.structure.getEncoderOptions, self.structure.getDecoderOptions);
             end
         end
-        function perms = createPermutation(self, varargin)
+        function perms = puncturing(self, varargin)
             options = fec.Ldpc.PunctureOptions(varargin{:});
-            perms = fec.Permutation(fec.bin.wrap(uint32(fec.WrapFcnId.Ldpc_createPermutation), self, options.get()), self.paritySize);
+            perms = fec.Permutation(fec.bin.wrap(uint32(fec.WrapFcnId.Ldpc_puncturing), self, options.get()), self.paritySize);
         end
         function val = get.iterations(self)
             val = self.decoderOptions.iterations;

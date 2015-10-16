@@ -18,8 +18,8 @@ function simulationHarq
         end
     end
 
-    parityPerm{1} = codec.createPermutation('mask', {1:constituentsLength{2}<=constituentsLength{1}, [1 0], [1 0], 0, 0});
-    parityPerm{2} = codec.createPermutation('mask', {1, 0, 0, [1 0], [1 0]});
+    parityPerm{1} = codec.puncturing('mask', {1:constituentsLength{2}<=constituentsLength{1}, [1 0], [1 0], 0, 0});
+    parityPerm{2} = codec.puncturing('mask', {1, 0, 0, [1 0], [1 0]});
 
     msgPerm{1} = fec.Permutation(1:128);
     msgPerm{2} = fec.Permutation(1:192);

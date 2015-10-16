@@ -61,7 +61,7 @@ function results = Turbo(snrdb, T, N, M, z)
    
     msg = int8(randi([0 1],codec{1}.msgSize,N));
     parity = int8(codec{1}.encode(msg));
-    perm = codec{1}.createPermutation();
+    perm = codec{1}.puncturing();
 
     snr = 10.0.^(snrdb/10.0);
     symbol = double( -2*double(parity)+1 );

@@ -128,7 +128,7 @@ void Turbo::Structure::setEncoderOptions(const fec::Turbo::EncoderOptions &encod
   stateSize_ = 0;
   for (auto & i : constituents()) {
     tailSize_ += i.systTailSize();
-    paritySize_ += i.paritySize();
+    paritySize_ += i.innerParitySize();
     stateSize_ += i.systSize();
   }
   systSize_ = msgSize_ + systTailSize();
@@ -165,7 +165,7 @@ void Turbo::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg,
     interleaver(i).permuteBlock<BitField<size_t>>(msg, messageInterl.begin());
     constituent(i).encode(messageInterl.begin(), parityOutIt, systTail);
     systTail += constituent(i).systTailSize();
-    parityOutIt += constituent(i).paritySize();
+    parityOutIt += constituent(i).innerParitySize();
   }
 }
 
@@ -181,7 +181,7 @@ bool Turbo::Structure::check(std::vector<BitField<size_t>>::const_iterator parit
   parityInIt += systSize();
   for (size_t i = 0; i < constituentCount(); ++i) {
     messageInterl.resize(constituent(i).msgSize());
-    parityTest.resize(constituent(i).paritySize());
+    parityTest.resize(constituent(i).innerParitySize());
     tailTest.resize(constituent(i).systTailSize());
     interleaver(i).permuteBlock<BitField<size_t>,BitField<size_t>>(systIt, messageInterl.begin());
     constituent(i).encode(messageInterl.begin(), parityTest.begin(), tailTest.begin());
@@ -191,13 +191,13 @@ bool Turbo::Structure::check(std::vector<BitField<size_t>>::const_iterator parit
     if (!std::equal(tailTest.begin(), tailTest.end(), tailIt)) {
       return false;
     }
-    parityInIt += constituent(i).paritySize();
+    parityInIt += constituent(i).innerParitySize();
     tailIt += constituent(i).systTailSize();
   }
   return true;
 }
 
-Permutation Turbo::Structure::createPermutation(const PunctureOptions& options) const
+Permutation Turbo::Structure::puncturing(const PunctureOptions& options) const
 {
   std::vector<std::vector<bool>> mask_ = options.mask_;
   if (mask_.size() == 0) {
@@ -240,12 +240,12 @@ Permutation Turbo::Structure::createPermutation(const PunctureOptions& options) 
               }
             }
           }
-          parityBaseIdx += constituent(j).paritySize();
+          parityBaseIdx += constituent(j).innerParitySize();
         }
       }
       size_t parityIdx = systSize();
       for (size_t i = 0; i < constituentCount(); ++i) {
-        parityIdx += constituent(i).paritySize() - constituent(i).tailSize() * constituent(i).trellis().outputSize();
+        parityIdx += constituent(i).innerParitySize() - constituent(i).tailSize() * constituent(i).trellis().outputSize();
         size_t tailIdx = 0;
         size_t systTailIdx = 0;
         for (size_t j = 0; j < constituent(i).tailSize(); ++j) {
@@ -316,5 +316,5 @@ Permutation Turbo::Structure::createPermutation(const PunctureOptions& options) 
       break;
   }
   
-  return Permutation(perms, paritySize());
+  return Permutation(perms, innerParitySize());
 }
