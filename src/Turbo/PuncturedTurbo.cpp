@@ -72,7 +72,7 @@ void PuncturedTurbo::soDecodeBlocks(InputIterator input, OutputIterator output, 
   }
   Turbo::Structure struc = structure();
   input.setStructureRef(&struc);
-  output.setStructureRef(&struc);
+  outputTmp.setStructureRef(&struc);
   auto worker = TurboDecoder::create(structure());
   worker->soDecodeBlocks(input, outputTmp, n);
   if (output.hasParity()) {

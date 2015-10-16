@@ -74,7 +74,7 @@ void PuncturedConvolutional::soDecodeBlocks(InputIterator input, OutputIterator 
   auto worker = MapDecoder::create(structure());
   Convolutional::Structure struc = structure();
   input.setStructureRef(&struc);
-  output.setStructureRef(&struc);
+  outputTmp.setStructureRef(&struc);
   worker->soDecodeBlocks(input, outputTmp, n);
   if (output.hasParity()) {
     structure().permutation().permuteBlocks<LlrType>(outputTmp.parity(), output.parity(), n);
