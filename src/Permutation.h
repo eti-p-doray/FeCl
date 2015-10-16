@@ -76,8 +76,8 @@ public:
   template <typename T1, typename T2=T1> void permute(const std::vector<T1>& input, std::vector<T2>& output) const;
   template <typename T1, typename T2=T1> void dePermute(const std::vector<T1>& input, std::vector<T2>& output) const;
   
-  template <typename T1, typename T2=T1> std::vector<T1> permute(const std::vector<T2>& input) const;
-  template <typename T1, typename T2=T1> std::vector<T1> dePermute(const std::vector<T2>& input) const;
+  template <typename T> std::vector<T> permute(const std::vector<T>& input) const;
+  template <typename T> std::vector<T> dePermute(const std::vector<T>& input) const;
   
   template <typename T1, typename T2=T1>
   void permuteBlocks(typename std::vector<T1>::const_iterator input, typename std::vector<T2>::iterator output, size_t n) const;
@@ -136,19 +136,19 @@ void fec::Permutation::dePermute(const std::vector<T1>& input, std::vector<T2>& 
   }
 }
 
-template <typename T1, typename T2>
-std::vector<T1> fec::Permutation::permute(const std::vector<T2>& input) const
+template <typename T>
+std::vector<T> fec::Permutation::permute(const std::vector<T>& input) const
 {
-  std::vector<T2> output;
-  interleave(input, output);
+  std::vector<T> output;
+  permute(input, output);
   return output;
 }
 
-template <typename T1, typename T2>
-std::vector<T1> fec::Permutation::dePermute(const std::vector<T2>& input) const
+template <typename T>
+std::vector<T> fec::Permutation::dePermute(const std::vector<T>& input) const
 {
-  std::vector<T2> output;
-  dePermute<T1,T2>(input, output);
+  std::vector<T> output;
+  dePermute<T>(input, output);
   return output;
 }
 
