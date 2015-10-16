@@ -71,6 +71,9 @@ void PuncturedLdpc::soDecodeBlocks(InputIterator input, OutputIterator output, s
     outputTmp.parity(parityTmp.begin());
   }
   auto worker = BpDecoder::create(structure());
+  Ldpc::Structure struc = structure();
+  input.setStructureRef(&struc);
+  output.setStructureRef(&struc);
   worker->soDecodeBlocks(input, outputTmp, n);
   if (output.hasParity()) {
     structure().permutation().permuteBlocks<LlrType>(outputTmp.parity(), output.parity(), n);

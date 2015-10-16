@@ -127,8 +127,9 @@ namespace fec {
        *  Constructor.
        *  \param  structureRef Pointer to the codec structure associated with the info.
        */
-      InfoIterator(const Codec* structureRef) : structureRef_(structureRef) {}
+      InfoIterator(const Structure* structureRef) : structureRef_(structureRef) {}
       InfoIterator() = default;
+      void setStructureRef(const Structure* structureRef) {structureRef_ = structureRef;}
       
       InfoIterator& syst(Iterator syst) {syst_ = syst; hasSyst_ = true; return *this;} /**< Link systematic extrinsics. */
       InfoIterator& parity(Iterator parity) {parity_ = parity; hasParity_ = true; return *this;} /**< Link parity extrinsics. */
@@ -185,7 +186,7 @@ namespace fec {
       bool hasParity_ = false;
       bool hasState_ = false;
       bool hasMsg_ = false;
-      const Codec* structureRef_;
+      const Structure* structureRef_;
     };
     using InputIterator = InfoIterator<std::vector<LlrType>::const_iterator>;
     using OutputIterator = InfoIterator<std::vector<LlrType>::iterator>;
@@ -212,7 +213,7 @@ namespace fec {
       bool hasState() const {return state_ != nullptr;}
       bool hasMsg() const {return msg_ != nullptr;}
       
-      Iterator begin(const Codec& structure) const {
+      Iterator begin(const Structure& structure) const {
         auto it = Iterator(&structure);
         if (hasSyst()) {
           it.syst(syst().begin());
@@ -228,7 +229,7 @@ namespace fec {
         }
         return it;
       }
-      Iterator end(const Codec& structure) const {
+      Iterator end(const Structure& structure) const {
         auto it = Iterator(&structure);
         if (hasSyst()) {
           it.syst(syst().end());
@@ -505,8 +506,8 @@ void fec::Codec::soDecode(Input<A> input, Output<A> output) const
   if (output.hasMsg()) {
     output.msg().resize(blockCount * msgSize());
   }
-  auto inputIt = input.begin(*this);
-  auto outputIt = output.begin(*this);
+  auto inputIt = input.begin(structure());
+  auto outputIt = output.begin(structure());
   
   auto threadGroup = createWorkGroup();
   auto thread = threadGroup.begin();
@@ -521,7 +522,7 @@ void fec::Codec::soDecode(Input<A> input, Output<A> output) const
     
     thread++;
   }
-  if (outputIt != output.end(*this)) {
+  if (outputIt != output.end(structure())) {
     soDecodeBlocks(inputIt, outputIt, blockCount % step);
   }
   for (auto & thread : threadGroup) {
