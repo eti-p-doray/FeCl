@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['group',['Group',['../classfec_1_1_turbo_1_1_bit_ordering.html#a391d70a7e7269ec034b5b6951259d448a637bff8a73a2c71437287f900cc09abd',1,'fec::Turbo::BitOrdering']]]
+  ['linear',['Linear',['../classfec_1_1_codec_1_1_decoder_algorithm.html#a800309c40d93682fd3c376a42875dc4da0d9aeba93ea1b36a0f278a782e500b9b',1,'fec::Codec::DecoderAlgorithm']]]
 ];

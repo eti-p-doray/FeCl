@@ -95,13 +95,15 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">fec::Turbo::PunctureOptions Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>This class gathers options affecting puncturing in <a class="el" href="classfec_1_1_turbo.html" title="This class represents a turbo encode / decoder. ">Turbo</a> <a class="el" href="classfec_1_1_codec.html" title="This class represents a general encoder / decoder. ">Codec</a>.  
+ <a href="classfec_1_1_turbo_1_1_puncture_options.html#details">More...</a></p>
 <div class="dynheader">
 Inheritance diagram for fec::Turbo::PunctureOptions:</div>
 <div class="dyncontent">
  <div class="center">
   <img src="classfec_1_1_turbo_1_1_puncture_options.png" usemap="#fec::Turbo::PunctureOptions_map" alt=""/>
   <map id="fec::Turbo::PunctureOptions_map" name="fec::Turbo::PunctureOptions_map">
-<area href="classhgsetget.html" alt="hgsetget" shape="rect" coords="0,0,169,24"/>
 </map>
  </div></div>
 <table class="memberdecls">
@@ -115,15 +117,19 @@ Public Member Functions</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:aef65fc817c25574f373441c0dc17db24"><td class="memItemLeft" align="right" valign="top">Property&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_turbo_1_1_puncture_options.html#aef65fc817c25574f373441c0dc17db24">mask</a></td></tr>
+<tr class="memdesc:aef65fc817c25574f373441c0dc17db24"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mask for systematic bits and parity bits for each constituent.  <a href="#aef65fc817c25574f373441c0dc17db24">More...</a><br /></td></tr>
 <tr class="separator:aef65fc817c25574f373441c0dc17db24"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8449f2ae7a1682d0d1ea110a3397f854"><td class="memItemLeft" align="right" valign="top">Property&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_turbo_1_1_puncture_options.html#a8449f2ae7a1682d0d1ea110a3397f854">tailMask</a></td></tr>
+<tr class="memdesc:a8449f2ae7a1682d0d1ea110a3397f854"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mask for systematic tail bits and parity tail bits for each constituent.  <a href="#a8449f2ae7a1682d0d1ea110a3397f854">More...</a><br /></td></tr>
 <tr class="separator:a8449f2ae7a1682d0d1ea110a3397f854"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a87e6aa84e524c580a96ab524ba4a9d37"><td class="memItemLeft" align="right" valign="top">Property&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_turbo_1_1_puncture_options.html#a87e6aa84e524c580a96ab524ba4a9d37">bitOrdering</a></td></tr>
+<tr class="memdesc:a87e6aa84e524c580a96ab524ba4a9d37"><td class="mdescLeft">&#160;</td><td class="mdescRight">Turbo::BitOreding type that is outputted.  <a href="#a87e6aa84e524c580a96ab524ba4a9d37">More...</a><br /></td></tr>
 <tr class="separator:a87e6aa84e524c580a96ab524ba4a9d37"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock">
-<p>Definition at line <a class="el" href="_09_turbo_2_puncture_options_8m_source.html#l00001">1</a> of file <a class="el" href="_09_turbo_2_puncture_options_8m_source.html">PunctureOptions.m</a>.</p>
+<div class="textblock"><p>This class gathers options affecting puncturing in <a class="el" href="classfec_1_1_turbo.html" title="This class represents a turbo encode / decoder. ">Turbo</a> <a class="el" href="classfec_1_1_codec.html" title="This class represents a general encoder / decoder. ">Codec</a>. </p>
+
+<p>Definition at line <a class="el" href="_09_turbo_2_puncture_options_8m_source.html#l00002">2</a> of file <a class="el" href="_09_turbo_2_puncture_options_8m_source.html">PunctureOptions.m</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="ab1b3f9a2206ff4900722ac85cba1b6d5"></a>
 <div class="memitem">
@@ -179,7 +185,10 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_09_turbo_2_puncture_options_8m_source.html#l00006">6</a> of file <a class="el" href="_09_turbo_2_puncture_options_8m_source.html">PunctureOptions.m</a>.</p>
+<p>Mask for systematic bits and parity bits for each constituent. </p>
+<p>This array has k+1 rows or cells with k the number of constituent. The first element is a mask for systematics bits in the form of a column vector. The k next elements are the masks for the output of each k constituents. Every mask is a sequence of 0 and 1, where only ones are kept. The mask sequence is repeated until the end of the parity sequence. Each mask sequence can have a different length by using a cell array instead of a matrix. </p>
+
+<p>Definition at line <a class="el" href="_09_turbo_2_puncture_options_8m_source.html#l00009">9</a> of file <a class="el" href="_09_turbo_2_puncture_options_8m_source.html">PunctureOptions.m</a>.</p>
 
 </div>
 </div>
@@ -193,7 +202,10 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_09_turbo_2_puncture_options_8m_source.html#l00008">8</a> of file <a class="el" href="_09_turbo_2_puncture_options_8m_source.html">PunctureOptions.m</a>.</p>
+<p>Mask for systematic tail bits and parity tail bits for each constituent. </p>
+<p>This array has k*2 rows or cells with k the number of constituent. Every (2*i)th element is the mask for systematic bits terminating the ith constituent and every (2*i+1)th element is the mask for parity bits generated by the ith constituent during termination. </p>
+
+<p>Definition at line <a class="el" href="_09_turbo_2_puncture_options_8m_source.html#l00013">13</a> of file <a class="el" href="_09_turbo_2_puncture_options_8m_source.html">PunctureOptions.m</a>.</p>
 
 </div>
 </div>
@@ -207,7 +219,9 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_09_turbo_2_puncture_options_8m_source.html#l00010">10</a> of file <a class="el" href="_09_turbo_2_puncture_options_8m_source.html">PunctureOptions.m</a>.</p>
+<p>Turbo::BitOreding type that is outputted. </p>
+
+<p>Definition at line <a class="el" href="_09_turbo_2_puncture_options_8m_source.html#l00016">16</a> of file <a class="el" href="_09_turbo_2_puncture_options_8m_source.html">PunctureOptions.m</a>.</p>
 
 </div>
 </div>

@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['termination',['Termination',['../classfec_1_1_convolutional_1_1_termination.html',1,'fec::Convolutional']]],
-  ['turbo',['Turbo',['../classfec_1_1_turbo.html',1,'fec']]]
+  ['wrapfcnid',['WrapFcnId',['../classfec_1_1_wrap_fcn_id.html',1,'fec']]],
+  ['wrapobject',['WrapObject',['../classfec_1_1_wrap_object.html',1,'fec']]]
 ];

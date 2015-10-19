@@ -94,13 +94,15 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">fec::Codec::DecoderAlgorithm Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>This class holds the <a class="el" href="classfec_1_1_codec_1_1_decoder_algorithm.html" title="This class holds the DecoderAlgorithm enumeration. ">DecoderAlgorithm</a> enumeration.  
+ <a href="classfec_1_1_codec_1_1_decoder_algorithm.html#details">More...</a></p>
 <div class="dynheader">
 Inheritance diagram for fec::Codec::DecoderAlgorithm:</div>
 <div class="dyncontent">
  <div class="center">
   <img src="classfec_1_1_codec_1_1_decoder_algorithm.png" usemap="#fec::Codec::DecoderAlgorithm_map" alt=""/>
   <map id="fec::Codec::DecoderAlgorithm_map" name="fec::Codec::DecoderAlgorithm_map">
-<area href="classuint32.html" alt="uint32" shape="rect" coords="0,0,181,24"/>
 </map>
  </div></div>
 <table class="memberdecls">
@@ -110,11 +112,13 @@ Public Types</h2></td></tr>
 <a class="el" href="classfec_1_1_codec_1_1_decoder_algorithm.html#a800309c40d93682fd3c376a42875dc4da0d9aeba93ea1b36a0f278a782e500b9b">Linear</a> =(1), 
 <a class="el" href="classfec_1_1_codec_1_1_decoder_algorithm.html#a800309c40d93682fd3c376a42875dc4da70a68dd79075fd54f143f1e9a0ae9297">Approximate</a> =(2)
  }</td></tr>
+<tr class="memdesc:a800309c40d93682fd3c376a42875dc4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type of decoder algorithm.  <a href="classfec_1_1_codec_1_1_decoder_algorithm.html#a800309c40d93682fd3c376a42875dc4d">More...</a><br /></td></tr>
 <tr class="separator:a800309c40d93682fd3c376a42875dc4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock">
-<p>Definition at line <a class="el" href="_decoder_algorithm_8m_source.html#l00001">1</a> of file <a class="el" href="_decoder_algorithm_8m_source.html">DecoderAlgorithm.m</a>.</p>
+<div class="textblock"><p>This class holds the <a class="el" href="classfec_1_1_codec_1_1_decoder_algorithm.html" title="This class holds the DecoderAlgorithm enumeration. ">DecoderAlgorithm</a> enumeration. </p>
+
+<p>Definition at line <a class="el" href="_decoder_algorithm_8m_source.html#l00002">2</a> of file <a class="el" href="_decoder_algorithm_8m_source.html">DecoderAlgorithm.m</a>.</p>
 </div><h2 class="groupheader">Member Enumeration Documentation</h2>
 <a class="anchor" id="a800309c40d93682fd3c376a42875dc4d"></a>
 <div class="memitem">
@@ -125,16 +129,22 @@ Public Types</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Type of decoder algorithm. </p>
+<p>This defines the type of algorithm used in decoding to compute the check update. </p>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a class="anchor" id="a800309c40d93682fd3c376a42875dc4da1852b8c95ed42dfafe27db99c6bb8573"></a>Exact&#160;</td><td class="fielddoc">
+<p>No approximation is used and the L-values are computed in logarithmic domain. </p>
 </td></tr>
 <tr><td class="fieldname"><a class="anchor" id="a800309c40d93682fd3c376a42875dc4da0d9aeba93ea1b36a0f278a782e500b9b"></a>Linear&#160;</td><td class="fielddoc">
+<p>A lookup table with linear interpolation is used to compute the correction term. </p>
 </td></tr>
 <tr><td class="fieldname"><a class="anchor" id="a800309c40d93682fd3c376a42875dc4da70a68dd79075fd54f143f1e9a0ae9297"></a>Approximate&#160;</td><td class="fielddoc">
+<p>The correction term is ignored. </p>
 </td></tr>
 </table>
 
-<p>Definition at line <a class="el" href="_decoder_algorithm_8m_source.html#l00005">5</a> of file <a class="el" href="_decoder_algorithm_8m_source.html">DecoderAlgorithm.m</a>.</p>
+<p>Definition at line <a class="el" href="_decoder_algorithm_8m_source.html#l00008">8</a> of file <a class="el" href="_decoder_algorithm_8m_source.html">DecoderAlgorithm.m</a>.</p>
 
 </div>
 </div>

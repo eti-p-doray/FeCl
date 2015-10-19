@@ -89,18 +89,19 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">Lte3Gpp.m</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="_lte3_gpp_8m.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno"><a class="line" href="classfec_1_1_turbo_1_1_lte3_gpp.html">    1</a></span>&#160;classdef <a class="code" href="classfec_1_1_turbo_1_1_lte3_gpp.html">Lte3Gpp</a></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;</div>
+<a href="_lte3_gpp_8m.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;%&gt; This <span class="keyword">class </span>contains functions associated with the 3GPP LTE standard.</div>
+<div class="line"><a name="l00002"></a><span class="lineno"><a class="line" href="classfec_1_1_turbo_1_1_lte3_gpp.html">    2</a></span>&#160;classdef <a class="code" href="classfec_1_1_turbo_1_1_lte3_gpp.html">Lte3Gpp</a></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;    methods (Static)</div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;        function perm = interleaver(length)</div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;            perm = <a class="code" href="namespacefec.html">fec</a>.bin.wrap(<a class="code" href="classuint32.html">uint32</a>(<a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_wrap_fcn_id.html">WrapFcnId</a>.Turbo_Lte3Gpp_interleaver), length);</div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;        end</div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;    end</div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;end</div>
-<div class="ttc" id="classuint32_html"><div class="ttname"><a href="classuint32.html">uint32</a></div></div>
-<div class="ttc" id="classfec_1_1_wrap_fcn_id_html"><div class="ttname"><a href="classfec_1_1_wrap_fcn_id.html">fec::WrapFcnId</a></div><div class="ttdef"><b>Definition:</b> <a href="_wrap_fcn_id_8m_source.html#l00001">WrapFcnId.m:1</a></div></div>
-<div class="ttc" id="namespacefec_html"><div class="ttname"><a href="namespacefec.html">fec</a></div></div>
-<div class="ttc" id="classfec_1_1_turbo_1_1_lte3_gpp_html"><div class="ttname"><a href="classfec_1_1_turbo_1_1_lte3_gpp.html">fec::Turbo::Lte3Gpp</a></div><div class="ttdef"><b>Definition:</b> <a href="_lte3_gpp_8m_source.html#l00001">Lte3Gpp.m:1</a></div></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;        %&gt;  Access an interleaver defined in the standard.</div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;        %&gt;  @param  length  Lenght of the interleaver to be created.</div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;        %&gt;  @<span class="keywordflow">return</span> An array of index of the specified length as defined in the standard.</div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;        <span class="keyword">function</span> perm = interleaver(length)</div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;            perm = <a class="code" href="namespacefec.html">fec</a>.bin.wrap(uint32(<a class="code" href="namespacefec.html">fec</a>.detail.WrapFcnId.Turbo_Lte3Gpp_interleaver), length);</div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;        end</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    end</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;end</div>
+<div class="ttc" id="namespacefec_html"><div class="ttname"><a href="namespacefec.html">fec</a></div><div class="ttdoc">Foward Error Correction namespace. </div></div>
+<div class="ttc" id="classfec_1_1_turbo_1_1_lte3_gpp_html"><div class="ttname"><a href="classfec_1_1_turbo_1_1_lte3_gpp.html">fec::Turbo::Lte3Gpp</a></div><div class="ttdoc">This class contains functions associated with the 3GPP LTE standard. </div><div class="ttdef"><b>Definition:</b> <a href="_lte3_gpp_8m_source.html#l00002">Lte3Gpp.m:2</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

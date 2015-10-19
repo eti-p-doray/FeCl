@@ -1,9 +1,26 @@
 var searchData=
 [
-  ['make',['make',['../make_8m.html#a2d2e1cc42b2e99d1b16dfd051ab5ff96',1,'make.m']]],
-  ['make_2em',['make.m',['../make_8m.html',1,'']]],
-  ['mask',['mask',['../classfec_1_1_convolutional_1_1_puncture_options.html#a91af8fba87db63fbd8025a69c39ce90b',1,'fec::Convolutional::PunctureOptions::mask()'],['../classfec_1_1_ldpc_1_1_puncture_options.html#a16318ac2ef4ec649ac38fa84c254dcf3',1,'fec::Ldpc::PunctureOptions::mask()'],['../classfec_1_1_turbo_1_1_puncture_options.html#aef65fc817c25574f373441c0dc17db24',1,'fec::Turbo::PunctureOptions::mask()']]],
-  ['matrix',['matrix',['../classfec_1_1_ldpc_1_1_dvb_s2.html#a96ef82ea76c9d91e6d743e6863cef0af',1,'fec::Ldpc::DvbS2']]],
-  ['mexhandle_5f',['mexHandle_',['../classfec_1_1_wrap_object.html#a7552dd414130e47cc6dcf3da970c4491',1,'fec::WrapObject']]],
-  ['msgsize',['msgSize',['../classfec_1_1_codec.html#a24d4f355c74da24a245da68faebf49c3',1,'fec::Codec::msgSize()'],['../classfec_1_1_codec.html#a6171fe4994fed91d53ecae09cf749f10',1,'fec::Codec::msgSize(in self)']]]
+  ['parallel',['Parallel',['../classfec_1_1_turbo_1_1_scheduling.html#a8c61068e46730f4e9553fc309c7eaf1da66616f109cbc2861cd33add847c14d4e',1,'fec::Turbo::Scheduling']]],
+  ['paritysize',['paritySize',['../classfec_1_1_codec.html#a511800e38028f060a3060d202e976db3',1,'fec::Codec::paritySize()'],['../classfec_1_1_codec.html#ad7c684559252b36abdf2a5b23a988d82',1,'fec::Codec::paritySize(in self)']]],
+  ['permutation',['Permutation',['../classfec_1_1_permutation.html#a4215a349a14757ac8a68f3df57c4f5c7',1,'fec::Permutation']]],
+  ['permutation',['Permutation',['../classfec_1_1_permutation.html',1,'fec']]],
+  ['permutation_2em',['Permutation.m',['../_permutation_8m.html',1,'']]],
+  ['permute',['permute',['../classfec_1_1_permutation.html#a3eee927cfd79b92745dec098849320d0',1,'fec::Permutation']]],
+  ['puncturedconvolutional',['PuncturedConvolutional',['../classfec_1_1_punctured_convolutional.html#a377c74f7d6f1e708c53b85d86dea785d',1,'fec::PuncturedConvolutional']]],
+  ['puncturedconvolutional',['PuncturedConvolutional',['../classfec_1_1_punctured_convolutional.html',1,'fec']]],
+  ['puncturedconvolutional_2em',['PuncturedConvolutional.m',['../_punctured_convolutional_8m.html',1,'']]],
+  ['puncturedldpc',['PuncturedLdpc',['../classfec_1_1_punctured_ldpc.html#afd2d8576acca03d4551efcbe77c512c8',1,'fec::PuncturedLdpc']]],
+  ['puncturedldpc',['PuncturedLdpc',['../classfec_1_1_punctured_ldpc.html',1,'fec']]],
+  ['puncturedldpc_2em',['PuncturedLdpc.m',['../_punctured_ldpc_8m.html',1,'']]],
+  ['puncturedturbo',['PuncturedTurbo',['../classfec_1_1_punctured_turbo.html',1,'fec']]],
+  ['puncturedturbo',['PuncturedTurbo',['../classfec_1_1_punctured_turbo.html#a82d9fc417cc55f77e735483515e4f3cd',1,'fec::PuncturedTurbo']]],
+  ['puncturedturbo_2em',['PuncturedTurbo.m',['../_punctured_turbo_8m.html',1,'']]],
+  ['punctureoptions',['PunctureOptions',['../classfec_1_1_turbo_1_1_puncture_options.html',1,'fec::Turbo']]],
+  ['punctureoptions',['PunctureOptions',['../classfec_1_1_convolutional_1_1_puncture_options.html#aeeec6c58eb634973dd17450e3cf79ad4',1,'fec::Convolutional::PunctureOptions::PunctureOptions()'],['../classfec_1_1_ldpc_1_1_puncture_options.html#ace2d22735d5d1fe506b38946a749c910',1,'fec::Ldpc::PunctureOptions::PunctureOptions()'],['../classfec_1_1_turbo_1_1_puncture_options.html#ab1b3f9a2206ff4900722ac85cba1b6d5',1,'fec::Turbo::PunctureOptions::PunctureOptions()'],['../classfec_1_1_punctured_convolutional.html#a99e9ba8853023ed0671cec3c8ed53d71',1,'fec::PuncturedConvolutional::punctureOptions()'],['../classfec_1_1_punctured_ldpc.html#a9e9ef3abaf5a90620f22efe8d494bbbd',1,'fec::PuncturedLdpc::punctureOptions()'],['../classfec_1_1_punctured_turbo.html#a454cbc1212d8977e6ddeca32bcd57bf4',1,'fec::PuncturedTurbo::punctureOptions()'],['../classfec_1_1_punctured_convolutional.html#a100efefd1561d35cf47a53ad756a0b57',1,'fec::PuncturedConvolutional::punctureOptions()'],['../classfec_1_1_punctured_ldpc.html#a0181a874e49471de7b1afa72e80a1de5',1,'fec::PuncturedLdpc::punctureOptions()'],['../classfec_1_1_punctured_turbo.html#a5da9ee53f7cc4715e5927de1861d29c5',1,'fec::PuncturedTurbo::punctureOptions()']]],
+  ['punctureoptions',['PunctureOptions',['../classfec_1_1_convolutional_1_1_puncture_options.html',1,'fec::Convolutional']]],
+  ['punctureoptions',['PunctureOptions',['../classfec_1_1_ldpc_1_1_puncture_options.html',1,'fec::Ldpc']]],
+  ['punctureoptions_2em',['PunctureOptions.m',['../_09_turbo_2_puncture_options_8m.html',1,'']]],
+  ['punctureoptions_2em',['PunctureOptions.m',['../_09_ldpc_2_puncture_options_8m.html',1,'']]],
+  ['punctureoptions_2em',['PunctureOptions.m',['../_09_convolutional_2_puncture_options_8m.html',1,'']]],
+  ['puncturing',['puncturing',['../classfec_1_1_convolutional.html#a775e65a887bf004862a5b40e79890f69',1,'fec::Convolutional::puncturing()'],['../classfec_1_1_ldpc.html#aaf8485bfdfb0217a85b515146321c4f8',1,'fec::Ldpc::puncturing()'],['../classfec_1_1_turbo.html#a25c357143c3ef178217889d40053bfe7',1,'fec::Turbo::puncturing()']]]
 ];

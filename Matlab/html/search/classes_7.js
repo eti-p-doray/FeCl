@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['scheduling',['Scheduling',['../classfec_1_1_turbo_1_1_scheduling.html',1,'fec::Turbo']]]
+  ['termination',['Termination',['../classfec_1_1_convolutional_1_1_termination.html',1,'fec::Convolutional']]],
+  ['turbo',['Turbo',['../classfec_1_1_turbo.html',1,'fec']]]
 ];

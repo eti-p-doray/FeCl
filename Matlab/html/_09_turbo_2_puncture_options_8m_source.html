@@ -89,38 +89,42 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">PunctureOptions.m</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="_09_turbo_2_puncture_options_8m.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno"><a class="line" href="classfec_1_1_turbo_1_1_puncture_options.html">    1</a></span>&#160;classdef <a class="code" href="classfec_1_1_turbo_1_1_puncture_options.html">PunctureOptions</a> &lt; <a class="code" href="classhgsetget.html">hgsetget</a></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;    properties</div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;        mask = [];</div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;        tailMask = [];</div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;        bitOrdering = <a class="code" href="classuint32.html">uint32</a>(<a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_turbo.html">Turbo</a>.<a class="code" href="classfec_1_1_turbo_1_1_bit_ordering.html">BitOrdering</a>.(<span class="stringliteral">&#39;Alternate&#39;</span>));</div>
-<div class="line"><a name="l00006"></a><span class="lineno"><a class="line" href="classfec_1_1_turbo_1_1_puncture_options.html#aef65fc817c25574f373441c0dc17db24">    6</a></span>&#160;    end</div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;</div>
-<div class="line"><a name="l00008"></a><span class="lineno"><a class="line" href="classfec_1_1_turbo_1_1_puncture_options.html#a8449f2ae7a1682d0d1ea110a3397f854">    8</a></span>&#160;    methods</div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;        <span class="keyword">function</span> <span class="keyword">self</span> = <a class="code" href="classfec_1_1_turbo_1_1_puncture_options.html">PunctureOptions</a>(varargin)</div>
-<div class="line"><a name="l00010"></a><span class="lineno"><a class="line" href="classfec_1_1_turbo_1_1_puncture_options.html#a87e6aa84e524c580a96ab524ba4a9d37">   10</a></span>&#160;            if (nargin == 1 &amp;&amp; isa(varargin{1}, <span class="stringliteral">&#39;fec.Turbo.PunctureOptions&#39;</span>))</div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;                <span class="keyword">self</span>.set(varargin{1}.get());</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;            elseif (nargin == 1 &amp;&amp; isstruct(varargin{1}))</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;                self.set(varargin{1});</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;            <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;                <span class="keywordflow">if</span> (~isempty(varargin))</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;                    <span class="keyword">self</span>.set(varargin{:});</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;                end</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;            end</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        end</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        <span class="keyword">function</span> <span class="keyword">self</span> = set.<a class="code" href="classfec_1_1_turbo_1_1_puncture_options.html#a87e6aa84e524c580a96ab524ba4a9d37">bitOrdering</a>(<span class="keyword">self</span>,val)</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;            <span class="keyword">self</span>.bitOrdering = <a class="code" href="classuint32.html">uint32</a>(<a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_turbo.html">Turbo</a>.<a class="code" href="classfec_1_1_turbo_1_1_bit_ordering.html">BitOrdering</a>.(val));</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        end</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    end</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;end</div>
-<div class="ttc" id="classuint32_html"><div class="ttname"><a href="classuint32.html">uint32</a></div></div>
-<div class="ttc" id="classfec_1_1_turbo_1_1_puncture_options_html_a87e6aa84e524c580a96ab524ba4a9d37"><div class="ttname"><a href="classfec_1_1_turbo_1_1_puncture_options.html#a87e6aa84e524c580a96ab524ba4a9d37">fec::Turbo::PunctureOptions::bitOrdering</a></div><div class="ttdeci">Property bitOrdering</div><div class="ttdef"><b>Definition:</b> <a href="_09_turbo_2_puncture_options_8m_source.html#l00010">PunctureOptions.m:10</a></div></div>
-<div class="ttc" id="classfec_1_1_turbo_1_1_bit_ordering_html"><div class="ttname"><a href="classfec_1_1_turbo_1_1_bit_ordering.html">fec::Turbo::BitOrdering</a></div><div class="ttdef"><b>Definition:</b> <a href="_bit_ordering_8m_source.html#l00001">BitOrdering.m:1</a></div></div>
-<div class="ttc" id="namespacefec_html"><div class="ttname"><a href="namespacefec.html">fec</a></div></div>
-<div class="ttc" id="classfec_1_1_turbo_1_1_puncture_options_html"><div class="ttname"><a href="classfec_1_1_turbo_1_1_puncture_options.html">fec::Turbo::PunctureOptions</a></div><div class="ttdef"><b>Definition:</b> <a href="_09_turbo_2_puncture_options_8m_source.html#l00001">PunctureOptions.m:1</a></div></div>
+<a href="_09_turbo_2_puncture_options_8m.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;%&gt;  This <span class="keyword">class </span>gathers options affecting puncturing in Turbo Codec.</div>
+<div class="line"><a name="l00002"></a><span class="lineno"><a class="line" href="classfec_1_1_turbo_1_1_puncture_options.html">    2</a></span>&#160;classdef <a class="code" href="classfec_1_1_turbo_1_1_puncture_options.html">PunctureOptions</a> &lt; hgsetget</div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;    properties</div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;        %&gt;  Mask <span class="keywordflow">for</span> systematic bits and parity bits <span class="keywordflow">for each</span> constituent.</div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;        %&gt; This array has k+1 rows or cells with k the number of constituent. The first element is a mask <span class="keywordflow">for</span> systematics bits in the form of a column vector. The k next elements are the masks <span class="keywordflow">for</span> the output of each k constituents. Every mask is a sequence of 0 and 1, where only ones are kept. The mask sequence is repeated until the end of the parity sequence. Each mask sequence can have a different length by <span class="keyword">using</span> a cell array instead of a matrix.</div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;        mask = [];</div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;        %&gt;  Mask <span class="keywordflow">for</span> systematic tail bits and parity tail bits <span class="keywordflow">for each</span> constituent.</div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;        %&gt;  This array has k*2 rows or cells with k the number of constituent. Every (2*i)th element is the mask for systematic bits terminating the ith constituent and every (2*i+1)th element is the mask for parity bits generated by the ith constituent during termination.</div>
+<div class="line"><a name="l00009"></a><span class="lineno"><a class="line" href="classfec_1_1_turbo_1_1_puncture_options.html#aef65fc817c25574f373441c0dc17db24">    9</a></span>&#160;        tailMask = [];</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;        %&gt;  <a class="code" href="classfec_1_1_turbo.html">Turbo</a>::BitOreding type that is outputted.</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;        bitOrdering = uint32(<a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_turbo.html">Turbo</a>.<a class="code" href="classfec_1_1_turbo_1_1_bit_ordering.html">BitOrdering</a>.(&#39;Alternate&#39;));</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    end</div>
+<div class="line"><a name="l00013"></a><span class="lineno"><a class="line" href="classfec_1_1_turbo_1_1_puncture_options.html#a8449f2ae7a1682d0d1ea110a3397f854">   13</a></span>&#160;</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    methods</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        function self = <a class="code" href="classfec_1_1_turbo_1_1_puncture_options.html">PunctureOptions</a>(varargin)</div>
+<div class="line"><a name="l00016"></a><span class="lineno"><a class="line" href="classfec_1_1_turbo_1_1_puncture_options.html#a87e6aa84e524c580a96ab524ba4a9d37">   16</a></span>&#160;            if (nargin == 1 &amp;&amp; isa(varargin{1}, <span class="stringliteral">&#39;fec.Turbo.PunctureOptions&#39;</span>))</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;                <span class="keyword">self</span>.set(varargin{1}.get());</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;            elseif (nargin == 1 &amp;&amp; isstruct(varargin{1}))</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;                self.set(varargin{1});</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;            <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;                <span class="keywordflow">if</span> (~isempty(varargin))</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;                    <span class="keyword">self</span>.set(varargin{:});</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;                end</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;            end</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        end</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        <span class="keyword">function</span> <span class="keyword">self</span> = set.<a class="code" href="classfec_1_1_turbo_1_1_puncture_options.html#a87e6aa84e524c580a96ab524ba4a9d37">bitOrdering</a>(<span class="keyword">self</span>,val)</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;            <span class="keyword">self</span>.bitOrdering = uint32(<a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_turbo.html">Turbo</a>.<a class="code" href="classfec_1_1_turbo_1_1_bit_ordering.html">BitOrdering</a>.(val));</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        end</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    end</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;endrity</div>
+<div class="ttc" id="classfec_1_1_turbo_1_1_puncture_options_html_a87e6aa84e524c580a96ab524ba4a9d37"><div class="ttname"><a href="classfec_1_1_turbo_1_1_puncture_options.html#a87e6aa84e524c580a96ab524ba4a9d37">fec::Turbo::PunctureOptions::bitOrdering</a></div><div class="ttdeci">Property bitOrdering</div><div class="ttdoc">Turbo::BitOreding type that is outputted. </div><div class="ttdef"><b>Definition:</b> <a href="_09_turbo_2_puncture_options_8m_source.html#l00016">PunctureOptions.m:16</a></div></div>
+<div class="ttc" id="classfec_1_1_turbo_1_1_bit_ordering_html"><div class="ttname"><a href="classfec_1_1_turbo_1_1_bit_ordering.html">fec::Turbo::BitOrdering</a></div><div class="ttdoc">This class holds the BitOrdering enumeration. </div><div class="ttdef"><b>Definition:</b> <a href="_bit_ordering_8m_source.html#l00002">BitOrdering.m:2</a></div></div>
+<div class="ttc" id="namespacefec_html"><div class="ttname"><a href="namespacefec.html">fec</a></div><div class="ttdoc">Foward Error Correction namespace. </div></div>
+<div class="ttc" id="classfec_1_1_turbo_1_1_puncture_options_html"><div class="ttname"><a href="classfec_1_1_turbo_1_1_puncture_options.html">fec::Turbo::PunctureOptions</a></div><div class="ttdoc">This class gathers options affecting puncturing in Turbo Codec. </div><div class="ttdef"><b>Definition:</b> <a href="_09_turbo_2_puncture_options_8m_source.html#l00002">PunctureOptions.m:2</a></div></div>
 <div class="ttc" id="classfec_1_1_turbo_html"><div class="ttname"><a href="classfec_1_1_turbo.html">fec::Turbo</a></div><div class="ttdoc">This class represents a turbo encode / decoder. </div><div class="ttdef"><b>Definition:</b> <a href="_turbo_8m_source.html#l00021">Turbo.m:21</a></div></div>
-<div class="ttc" id="classhgsetget_html"><div class="ttname"><a href="classhgsetget.html">hgsetget</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
