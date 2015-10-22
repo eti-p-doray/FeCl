@@ -8,6 +8,7 @@ classdef Structure < hgsetget
         
         iterations;
         algorithm;
+        gain;
     end
 
     methods
@@ -43,6 +44,9 @@ classdef Structure < hgsetget
         end
         function self = set.algorithm(self,val)
             self.decoderOptions.algorithm = val;
+        end
+        function self = set.gain(self,val)
+            self.decoderOptions.gain = val;
         end
     end
 end

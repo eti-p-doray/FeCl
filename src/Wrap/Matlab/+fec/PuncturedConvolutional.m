@@ -17,12 +17,12 @@ classdef PuncturedConvolutional < fec.Convolutional
         function self = PuncturedConvolutional(varargin)
             if (nargin > 0)
               self.structure = fec.PuncturedConvolutional.Structure(varargin{:});
-              self.mexHandle_ = fec.bin.wrap(uint32(fec.WrapFcnId.PuncturedConvolutional_constructor), self.structure.getEncoderOptions, self.structure.getPunctureOptions, self.structure.getDecoderOptions);
+              self.mexHandle_ = fec.bin.wrap(uint32(fec.detail.WrapFcnId.PuncturedConvolutional_constructor), self.structure.getEncoderOptions, self.structure.getPunctureOptions, self.structure.getDecoderOptions);
             end
         end
         function set.punctureOptions(self,val)
             self.structure.punctureOptions = fec.Convolutional.PunctureOptions(val);
-            fec.bin.wrap(uint32(fec.WrapFcnId.PuncturedConvolutional_set_punctureOptions), self, self.structure.punctureOptions.get());
+            fec.bin.wrap(uint32(fec.detail.WrapFcnId.PuncturedConvolutional_set_punctureOptions), self, self.structure.punctureOptions.get());
         end
 
         function setEncoderOptions(self,varargin)

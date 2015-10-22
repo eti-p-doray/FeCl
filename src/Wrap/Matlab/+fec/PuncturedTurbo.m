@@ -17,12 +17,12 @@ classdef PuncturedTurbo < fec.Turbo
         function self = PuncturedTurbo(varargin)
             if (nargin > 0)
               self.structure = fec.PuncturedTurbo.Structure(varargin{:});
-              self.mexHandle_ = fec.bin.wrap(uint32(fec.WrapFcnId.PuncturedTurbo_constructor), self.structure.getEncoderOptions, self.structure.getPunctureOptions, self.structure.getDecoderOptions);
+              self.mexHandle_ = fec.bin.wrap(uint32(fec.detail.WrapFcnId.PuncturedTurbo_constructor), self.structure.getEncoderOptions, self.structure.getPunctureOptions, self.structure.getDecoderOptions);
             end
         end
         function set.punctureOptions(self,val)
             self.structure.punctureOptions = fec.Turbo.PunctureOptions(val);
-            fec.bin.wrap(uint32(fec.WrapFcnId.PuncturedTurbo_set_punctureOptions), self, self.structure.punctureOptions.get());
+            fec.bin.wrap(uint32(fec.detail.WrapFcnId.PuncturedTurbo_set_punctureOptions), self, self.structure.punctureOptions.get());
         end
 
         function setEncoderOptions(self,varargin)

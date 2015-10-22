@@ -39,6 +39,7 @@ public:
       decoderOptions.iterations(  mxArrayTo<size_t>::f(mxGetField(in, 0, "iterations")) );
       decoderOptions.scheduling(  mxArrayTo<fec::Turbo::Scheduling>::f(mxGetField(in, 0, "scheduling")) );
       decoderOptions.algorithm(  mxArrayTo<fec::Codec::DecoderAlgorithm>::f(mxGetField(in, 0, "algorithm")) );
+      decoderOptions.gain(  mxArrayTo<fec::Codec::DecoderAlgorithm>::f(mxGetField(in, 0, "gain")) );
       
       return decoderOptions;
     } catch (std::exception& e) {
@@ -50,12 +51,13 @@ public:
 
 inline mxArray* toMxArray(fec::Turbo::DecoderOptions decoder)
 {
-  const char* fieldnames[] = {"iterations", "scheduling", "algorithm"};
+  const char* fieldnames[] = {"iterations", "scheduling", "algorithm", "gain"};
   mxArray* out = mxCreateStructMatrix(1,1, 3, fieldnames);
   
   mxSetField(out, 0, fieldnames[0], toMxArray(decoder.iterations_));
   mxSetField(out, 0, fieldnames[1], toMxArray(decoder.scheduling_));
   mxSetField(out, 0, fieldnames[2], toMxArray(decoder.algorithm_));
+  mxSetField(out, 0, fieldnames[3], toMxArray(decoder.gain_));
     
   return out;
 }

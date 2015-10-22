@@ -1,7 +1,11 @@
+%>  This class gathers options affecting the encoder in Turbo Codec.
 classdef EncoderOptions < hgsetget
     properties
+        %>  Trellis structure used by each constituent.
         trellis;
+        %>  Interleaver feeding every constituent.
         interleaver;
+        %>  Termination type of each constituent.
         termination = {uint32(fec.Convolutional.Termination.('Tail'))};
     end
 

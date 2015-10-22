@@ -162,10 +162,10 @@ namespace fec {
      */
     inline typename LlrMetrics::Type sum(typename LlrMetrics::Type a, typename LlrMetrics::Type b) const {
       if (std::signbit(a) ^ std::signbit(b)) {
-        return std::min(std::abs(a),std::abs(b)) + log1pexpm(std::abs(a+b)) - log1pexpm(std::abs(a-b));
+        return std::min(std::abs(a),std::abs(b)) - log1pexpm(std::abs(a+b)) + log1pexpm(std::abs(a-b));
       }
       else {
-        return -std::min(std::abs(a),std::abs(b)) + log1pexpm(std::abs(a+b)) - log1pexpm(std::abs(a-b));
+        return -std::min(std::abs(a),std::abs(b)) - log1pexpm(std::abs(a+b)) + log1pexpm(std::abs(a-b));
       }
     }
     static inline typename LlrMetrics::Type prior(typename LlrMetrics::Type x) {return x;}

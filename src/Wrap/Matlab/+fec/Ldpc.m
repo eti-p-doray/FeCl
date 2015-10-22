@@ -19,12 +19,12 @@ classdef Ldpc < fec.Codec
         function self = Ldpc(varargin)
             if (nargin > 0)
               self.structure = fec.Ldpc.Structure(varargin{:});
-              self.mexHandle_ = fec.bin.wrap(uint32(fec.WrapFcnId.Ldpc_constructor), self.structure.getEncoderOptions, self.structure.getDecoderOptions);
+              self.mexHandle_ = fec.bin.wrap(uint32(fec.detail.WrapFcnId.Ldpc_constructor), self.structure.getEncoderOptions, self.structure.getDecoderOptions);
             end
         end
         function perms = puncturing(self, varargin)
             options = fec.Ldpc.PunctureOptions(varargin{:});
-            perms = fec.Permutation(fec.bin.wrap(uint32(fec.WrapFcnId.Ldpc_puncturing), self, options.get()), self.paritySize);
+            perms = fec.Permutation(fec.bin.wrap(uint32(fec.detail.WrapFcnId.Ldpc_puncturing), self, options.get()), self.paritySize);
         end
         function val = get.iterations(self)
             val = self.decoderOptions.iterations;
@@ -46,11 +46,11 @@ classdef Ldpc < fec.Codec
         end
         function set.decoderOptions(self,val)
             self.structure.decoderOptions = fec.Ldpc.DecoderOptions(val);
-            fec.bin.wrap(uint32(fec.WrapFcnId.Ldpc_set_decoderOptions), self, decoderOptions.get());
+            fec.bin.wrap(uint32(fec.detail.WrapFcnId.Ldpc_set_decoderOptions), self, decoderOptions.get());
         end
         function set.encoderOptions(self,val)
             self.structure.encoderOptions = fec.Ldpc.EncoderOptions(val);
-            fec.bin.wrap(uint32(fec.WrapFcnId.Ldpc_set_encoderOptions), self, encoderOptions.get());
+            fec.bin.wrap(uint32(fec.detail.WrapFcnId.Ldpc_set_encoderOptions), self, encoderOptions.get());
         end
         function setDecoderOptions(self,varargin)
             decoderOptions = self.decoderOptions;

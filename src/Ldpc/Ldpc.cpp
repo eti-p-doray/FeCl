@@ -151,7 +151,7 @@ void Ldpc::Structure::setDecoderOptions(const DecoderOptions& decoder)
 
 fec::Ldpc::DecoderOptions Ldpc::Structure::getDecoderOptions() const
 {
-  return DecoderOptions().iterations(iterations()).algorithm(decoderAlgorithm());
+  return DecoderOptions().iterations(iterations()).algorithm(decoderAlgorithm()).gain(algorithmOptions_.gain_);;
 }
 
 /**
@@ -197,7 +197,7 @@ bool Ldpc::Structure::check(std::vector<BitField<size_t>>::const_iterator parity
 void Ldpc::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const
 {
   std::copy(msg, msg + msgSize(), parity);
-  std::fill(parity+msgSize(), parity+innerParitySize(), 0);
+  std::fill(parity+msgSize(), parity+checks().cols(), 0);
   parity += msgSize();
   auto parityIt = parity;
   for (auto row = DC_.begin(); row < DC_.end(); ++row, ++parityIt) {

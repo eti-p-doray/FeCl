@@ -1,6 +1,7 @@
+%> This class holds the BitOrdering enumeration.
 classdef BitOrdering < uint32
-    %>  Ordering of parity bits in Turbo
-    %>  This defines the ordering of parity bits that are output from a Turbo permutation of a PuncturedTurbo Codec.
+    %>  Ordering of parity bits in Turbo.
+    %>  This defines the ordering of parity bits that are output from a Turbo puncturing permutation of a PuncturedTurbo Codec.
     enumeration
         %>  Systematic and parity bits are alternated
         Alternate(0)

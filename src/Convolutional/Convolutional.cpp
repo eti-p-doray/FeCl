@@ -119,7 +119,7 @@ void Convolutional::Structure::setDecoderOptions(const DecoderOptions& decoder)
 
 Convolutional::DecoderOptions Convolutional::Structure::getDecoderOptions() const
 {
-  return DecoderOptions().algorithm(decoderAlgorithm_);
+  return DecoderOptions().algorithm(decoderAlgorithm_).gain(algorithmOptions_.gain_);;
 }
 
 void Convolutional::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const

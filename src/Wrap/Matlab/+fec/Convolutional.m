@@ -18,12 +18,12 @@ classdef Convolutional < fec.Codec
         function self = Convolutional(varargin)
             if (nargin > 0)
               self.structure = fec.Convolutional.Structure(varargin{:});
-              self.mexHandle_ = fec.bin.wrap(uint32(fec.WrapFcnId.Convolutional_constructor), self.structure.getEncoderOptions, self.structure.getDecoderOptions);
+              self.mexHandle_ = fec.bin.wrap(uint32(fec.detail.WrapFcnId.Convolutional_constructor), self.structure.getEncoderOptions, self.structure.getDecoderOptions);
             end
         end
         function perms = puncturing(self, varargin)
             options = fec.Convolutional.PunctureOptions(varargin{:});
-            perms = fec.Permutation(fec.bin.wrap(uint32(fec.WrapFcnId.Convolutional_puncturing), self, options.get()), self.paritySize);
+            perms = fec.Permutation(fec.bin.wrap(uint32(fec.detail.WrapFcnId.Convolutional_puncturing), self, options.get()), self.paritySize);
         end
         function val = get.algorithm(self)
             val = fec.Codec.DecoderAlgorithm(self.decoderOptions.algorithm).char;
@@ -39,11 +39,11 @@ classdef Convolutional < fec.Codec
         end
         function set.decoderOptions(self,val)
             self.structure.decoderOptions = fec.Convolutional.DecoderOptions(val);
-            fec.bin.wrap(uint32(fec.WrapFcnId.Convolutional_set_decoderOptions), self, decoderOptions.get());
+            fec.bin.wrap(uint32(fec.detail.WrapFcnId.Convolutional_set_decoderOptions), self, decoderOptions.get());
         end
         function set.encoderOptions(self,val)
             self.structure.encoderOptions = fec.Convolutional.EncoderOptions(val);
-            fec.bin.wrap(uint32(fec.WrapFcnId.Convolutional_set_encoderOptions), self, encoderOptions.get());
+            fec.bin.wrap(uint32(fec.detail.WrapFcnId.Convolutional_set_encoderOptions), self, encoderOptions.get());
         end
         function setDecoderOptions(self,varargin)
             decoderOptions = self.decoderOptions;

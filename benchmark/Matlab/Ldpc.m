@@ -63,6 +63,7 @@ function results = Ldpc(snrdb, T, N, M, z)
         results.decoding.(config{i}).fecl1 = fecDecode(codec{i}, msg, llr, M, z);
         codec{i}.workGroupSize = 4;
         results.decoding.(config{i}).fecl4 = fecDecode(codec{i}, msg, llr, M, z);
+        results.simul.(config{i}) = simulation(codec{i}, codec{i}.puncturing(), N, M, -3:0.1:-1.0);
     end
 
     cmlConfig = {'Exact', 'Approximate'};

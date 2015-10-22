@@ -1,10 +1,15 @@
+%> @namespace fec
+%> Foward Error Correction namespace.
+%> This namespace groups everything contained in the library related to channel coding.
+
+
 %> This class represents a general encoder / decoder.
 %> It offers methods to encode and to decode data given a codec structure.
 %> Several specialisations of this class define different codec types.
 %> Methods of this class are implemented in cpp using mex to provide good
 %> performances.
 %> This class directly handles the allocated ressources in cpp.
-classdef (Abstract) Codec < fec.WrapObject
+classdef (Abstract) Codec < fec.detail.WrapObject
     
     properties (Dependent = true)
         %> Size of msg in each bloc
@@ -35,7 +40,7 @@ classdef (Abstract) Codec < fec.WrapObject
         %> Overload of the saveobj method.
         %> Saves an archive of the object.
         function s = saveobj(self)
-            s.archive = fec.bin.wrap(uint32(fec.WrapFcnId.Codec_save), self);
+            s.archive = fec.bin.wrap(uint32(fec.detail.WrapFcnId.Codec_save), self);
             s.structure = self.structure;
             s.class = class(self);
             s.class = strrep(s.class, 'fec.', '');
@@ -43,27 +48,27 @@ classdef (Abstract) Codec < fec.WrapObject
 
         %> Access the msgSize property
         function val = get.msgSize(self)
-            val = fec.bin.wrap(uint32(fec.WrapFcnId.Codec_get_msgSize), self);
+            val = fec.bin.wrap(uint32(fec.detail.WrapFcnId.Codec_get_msgSize), self);
         end
         %> Access the systSize property
         function val = get.systSize(self)
-            val = fec.bin.wrap(uint32(fec.WrapFcnId.Codec_get_systSize), self);
+            val = fec.bin.wrap(uint32(fec.detail.WrapFcnId.Codec_get_systSize), self);
         end
         %> Access the stateSize property
         function val = get.stateSize(self)
-            val = fec.bin.wrap(uint32(fec.WrapFcnId.Codec_get_stateSize), self);
+            val = fec.bin.wrap(uint32(fec.detail.WrapFcnId.Codec_get_stateSize), self);
         end
         %> Access the paritySize property
         function val = get.paritySize(self)
-            val = fec.bin.wrap(uint32(fec.WrapFcnId.Codec_get_paritySize), self);
+            val = fec.bin.wrap(uint32(fec.detail.WrapFcnId.Codec_get_paritySize), self);
         end
         %> Access the workGroupSize property
         function val = get.workGroupSize(self)
-            val = fec.bin.wrap(uint32(fec.WrapFcnId.Codec_get_workGroupSize), self);
+            val = fec.bin.wrap(uint32(fec.detail.WrapFcnId.Codec_get_workGroupSize), self);
         end
         %> Modify the workGroupSize property
         function set.workGroupSize(self, val)
-            fec.bin.wrap(uint32(fec.WrapFcnId.Codec_set_workGroupSize), self, val);
+            fec.bin.wrap(uint32(fec.detail.WrapFcnId.Codec_set_workGroupSize), self, val);
         end
 
         %>  Checks the consistency of a parity sequence.
@@ -75,7 +80,7 @@ classdef (Abstract) Codec < fec.WrapObject
         %>
         %>  @return True if parity sequences are consistent.
         function consistent = check(self, parity)
-            consistent = fec.bin.wrap(uint32(fec.WrapFcnId.Codec_check), self, parity);
+            consistent = fec.bin.wrap(uint32(fec.detail.WrapFcnId.Codec_check), self, parity);
         end
 
         function parity = encode(self, msg)
@@ -87,7 +92,7 @@ classdef (Abstract) Codec < fec.WrapObject
         %>       Many msg blocs can be encoded at once.
         %>
         %>  @return parity Parity bits encoding the msg bits
-            parity = reshape(fec.bin.wrap(uint32(fec.WrapFcnId.Codec_encode), self, msg), [], size(msg,2));
+            parity = reshape(fec.bin.wrap(uint32(fec.detail.WrapFcnId.Codec_encode), self, msg), [], size(msg,2));
         end
 
         function msg = decode(self, parity)
@@ -103,7 +108,7 @@ classdef (Abstract) Codec < fec.WrapObject
         %>
         %> @return Decoded msg
         %>
-            msg = reshape(fec.bin.wrap(uint32(fec.WrapFcnId.Codec_decode), self, parity), [], size(parity,2));
+            msg = reshape(fec.bin.wrap(uint32(fec.detail.WrapFcnId.Codec_decode), self, parity), [], size(parity,2));
         end
 
         %> Decode several blocs of soft data according to the object structure, providing extrinsic information as outputs
@@ -127,7 +132,7 @@ classdef (Abstract) Codec < fec.WrapObject
         %>
         function varargout = soDecode(self, parity, varargin)
             varargout = cell(nargout,1);
-            [varargout{:}] = fec.bin.wrap(uint32(fec.WrapFcnId.Codec_soDecode), self, parity, varargin{:});
+            [varargout{:}] = fec.bin.wrap(uint32(fec.detail.WrapFcnId.Codec_soDecode), self, parity, varargin{:});
             for i = 1:nargout
                 varargout{i} = reshape(varargout{i}, [], size(parity,2));
             end
@@ -135,14 +140,14 @@ classdef (Abstract) Codec < fec.WrapObject
 
         %>  Free underlying cpp ressources
         function delete(self)
-            self.mexHandle_ = fec.bin.wrap(uint32(fec.WrapFcnId.Codec_destroy), self);
+            self.mexHandle_ = fec.bin.wrap(uint32(fec.detail.WrapFcnId.Codec_destroy), self);
         end
     end
     methods (Access = protected)
         function self = reload(self, s)
         % Implementation of the loadobj method
         %   Allocate underlying ressources from saved configuration.
-            self.mexHandle_ = fec.bin.wrap(uint32(fec.WrapFcnId.Codec_load), s.archive);
+            self.mexHandle_ = fec.bin.wrap(uint32(fec.detail.WrapFcnId.Codec_load), s.archive);
             self.structure = s.structure;
         end
     end

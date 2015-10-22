@@ -55,7 +55,7 @@ namespace fec {
     enum DecoderAlgorithm {
       Exact, /**< No approximation is used and the L-values are computed in logarithmic domain. */
       Linear, /**< A lookup table with linear interpolation is used to compute the correction term.  */
-      Approximate, /**< The correction term is discarded. */
+      Approximate, /**< The correction term is ignored. */
     };
     
     /**

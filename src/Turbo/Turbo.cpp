@@ -149,7 +149,7 @@ void Turbo::Structure::setDecoderOptions(const fec::Turbo::DecoderOptions &decod
 
 Turbo::DecoderOptions Turbo::Structure::getDecoderOptions() const
 {
-  return DecoderOptions().iterations(iterations()).scheduling(scheduling()).algorithm(decoderAlgorithm());
+  return DecoderOptions().iterations(iterations()).scheduling(scheduling()).algorithm(decoderAlgorithm()).gain(algorithmOptions_.gain_);
 }
 
 void Turbo::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const

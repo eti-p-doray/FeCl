@@ -1,6 +1,6 @@
 
-N = 4;
-M = 2;
+N = 32;
+M = 32;
 T = 32400;
 snrdb = -5.0;
 z = 1.96;
@@ -12,9 +12,10 @@ results.experiments = M;
 results.Convolutional = Convolutional(snrdb, T, N, M, z);
 results.Turbo = Turbo(snrdb, T, N, M, z);
 results.Ldpc = Ldpc(snrdb, T, N, M, z);
+results.TurboScheduling = TurboScheduling(T, N, M);
 
 savejson('', results, '../benchmarkMatlabResult.json');
 
 disp('done')
 
-exit;
+%exit;

@@ -6,10 +6,11 @@ function results = matlabDecode(decoder, msg, llr, N, z)
         tic;
         for j = 1:size(msg,2)
             decodedMsg = int8(decoder.step(llr(:,j)));
-            errorCount(i) = errorCount(i) + sum(sum((decodedMsg-msg(:,j))~=0));
+            errorCount(i) = errorCount(i) + sum(sum(decodedMsg~=msg(:,j)));
         end
         elapsedTime(i) = toc;
     end
     results.avg = mean(elapsedTime);
     results.intvl = std(elapsedTime) * z / sqrt(N);
+    results.per = errorCount;
 end

@@ -37,6 +37,7 @@ public:
     try {
       fec::Convolutional::DecoderOptions decoderOptions;
       decoderOptions.algorithm(  mxArrayTo<fec::Codec::DecoderAlgorithm>::f(mxGetField(in, 0, "algorithm")) );
+      decoderOptions.gain(  mxArrayTo<fec::Codec::DecoderAlgorithm>::f(mxGetField(in, 0, "gain")) );
       return decoderOptions;
     } catch (std::exception& e) {
       throw std::invalid_argument("In decoder options: " + std::string(e.what()));
@@ -47,10 +48,11 @@ public:
 
 inline mxArray* toMxArray(fec::Convolutional::DecoderOptions decoder)
 {
-  const char* fieldnames[] = {"algorithm"};
+  const char* fieldnames[] = {"algorithm", "gain"};
   mxArray* out = mxCreateStructMatrix(1,1,1, fieldnames);
   
   mxSetField(out, 0, fieldnames[0], toMxArray(decoder.algorithm_));
+  mxSetField(out, 0, fieldnames[1], toMxArray(decoder.gain_));
     
   return out;
 }

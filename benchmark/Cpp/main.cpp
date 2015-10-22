@@ -43,8 +43,8 @@ using namespace itpp;
 using namespace boost::property_tree;
 
 const size_t T = 32400;
-const size_t N = 4;
-const size_t M = 2;
+const size_t N = 32;
+const size_t M = 32;
 
 ptree speed_Convolutional()
 {

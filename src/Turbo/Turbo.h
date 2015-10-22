@@ -57,7 +57,7 @@ namespace fec {
   public:
     
     /**
-     *  Algorithm used in decoding.
+     *  Scheduling used in decoding.
      *  This defines the scheduling of extrinsic communication between code
      *    constituents.
      */
@@ -69,7 +69,7 @@ namespace fec {
                 constituents similar to the Belief Propagation algorithm used in ldpc. */
     };
     /**
-     *  Ordering of parity bit in Turbo
+     *  Ordering of parity bit in Turbo.
      *  This defines the ordering of parity bits that are output from a Turbo permutation of a PuncturedTurbo Codec.
      */
     enum BitOrdering {
@@ -77,10 +77,17 @@ namespace fec {
       Group,/**< Systematic bits are group together and parity bits from each constituents are grouped together. */
     };
     
-    //will be there soon
+    /**
+     *  This class contains functions associated with the 3GPP LTE standard.
+     */
     struct Lte3Gpp {
     public:
       //static Trellis trellis();
+      /*
+       *  Access an interleaver defined in the standard.
+       *  \param  length  Lenght of the interleaver to be created.
+       *  \return A Permutation of the specified length as defined in the standard.
+       */
       static Permutation interleaver(size_t length);
       //static Structure structure();
       //static Turbo codec();

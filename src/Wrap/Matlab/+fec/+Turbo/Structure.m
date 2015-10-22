@@ -11,6 +11,7 @@ classdef Structure < hgsetget
         iterations;
         algorithm;
         scheduling;
+        gain;
     end
 
     methods
@@ -56,6 +57,9 @@ classdef Structure < hgsetget
         end
         function self = set.scheduling(self,val)
             self.decoderOptions.scheduling = val;
+        end
+        function self = set.gain(self,val)
+            self.decoderOptions.gain = val;
         end
     end
 end

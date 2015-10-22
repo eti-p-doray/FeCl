@@ -1,5 +1,5 @@
 function results = Convolutional(snrdb, T, N, M, z)
-    trellis = poly2trellis(4, [17, 15], 17);
+    trellis = poly2trellis(4, [15, 17], 15);
     
     codec = fec.Convolutional(trellis, T, 'termination', 'Truncate');
     matlabEncoder = comm.ConvolutionalEncoder('TrellisStructure', trellis, 'TerminationMethod', 'Truncated');
@@ -56,6 +56,7 @@ function results = Convolutional(snrdb, T, N, M, z)
     results.decoding.fecl1 = fecDecode(codec, msg, llr, M, z);
     codec.workGroupSize = 4;
     results.decoding.fecl4 = fecDecode(codec, msg, llr, M, z);
+    results.simul = simulation(codec, codec.puncturing(), N, M, -3:0.1:-1.0);
 
     results.decoding.cml = cmlDecode(cmlSim, cmlCodec, msg, llr, M, z);
         

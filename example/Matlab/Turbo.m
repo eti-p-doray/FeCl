@@ -10,8 +10,8 @@ trellis{1} = fec.Trellis(4, [15], 13);
 trellis{2} = fec.Trellis(4, [15 17], 13);
 trellis{3} = fec.Trellis([3, 4], [3; 15], [7, 13]);
 
-%We define interleaved sequences of indices
-%These sequences will be used as interleaver for the first and
+% We define interleaved sequences of indices
+% These sequences will be used as interleaver for the first and
 %   second constituents of the parallel concatenated code.
 % The interleavers are used such that the entire sequence of bits
 %   is read out from a sequence of addresses that are
@@ -33,24 +33,41 @@ codec = fec.Turbo(trellis, interl, 'termination', term)
 
 % We can specify the number of iteration for decoding. default = 5
 % We are replacing the code object by a new one.
-codec = fec.Turbo(trellis, interl, 'termination', term, 'iterations', 4);
+codec = fec.Turbo(trellis, interl, 'iterations', 4)
 
 % Or we can change it after creation
 codec.iterations = 6;
 
-%We can specify the decoder scheduling type.
-%In serial decoding,
+% We can specify the decoder scheduling type.
+% In serial decoding,
 %   each constituent tries to decode and gives its extrinsic
 %   information to the next constituent in a serial behavior.
-%In parallel decoding, each constituent tries to decode in parallel.
+% In parallel decoding, each constituent tries to decode in parallel.
 %   The extrinsic information is then combined and shared to every
 %   constituents.
 %   Serial | Parallel default = Serial
-codec = fec.Turbo(trellis, interl, 'termination', term, 'iterations', 4, 'scheduling', 'Parallel')
+codec = fec.Turbo(trellis, interl, 'scheduling', 'Parallel')
 
-%We can also specify the decoder algorithm.:
+% We can also specify the decoder algorithm.:
 %   Exact | Linear | Approximate default = Linear
-codec = fec.Turbo(trellis, interl, 'termination', term, 'iterations', 4, 'scheduling', 'Parallel', 'algorithm', 'Approximate')
+codec = fec.Turbo(trellis, interl, 'algorithm', 'Approximate')
+
+% Suppose we are interested in applying a puncturing patern, but we do not want the puncturing
+% step to be part of the encoding / decoding scheme. This happens when simulationg harq models with incremental reduncdency.
+% The mother codec is a low rate codec that will be punctured with different masks to generate several transmitted frames.
+
+puncturingPermutation{1} = codec.puncturing('mask', [1 1; 1 0; 0 1]);
+puncturingPermutation{2} = codec.puncturing('mask', [1 1; 0 1; 1 0]);
+
+%>  [Puncturing mask]
+% We can define a puncturing pattern with a mask.
+codec = fec.PuncturedTurbo(trellis, interl, 'mask', [1 1; 1 0; 0 1])
+
+% In the example above, the mask will also extend to the tail bits.
+% We can define a different mask to be used on the tail.
+codec = fec.PuncturedTurbo(trellis, interl, 'mask', [1 1; 1 0; 0 1], 'tailMask', [1; 1; 1; 1]);
+%>  [Puncturing mask]
+
 
 %And as all codecs, with can change the number of thread used for
 %operations. In this case, we are using 2 threads.
