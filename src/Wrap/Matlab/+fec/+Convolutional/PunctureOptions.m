@@ -16,5 +16,11 @@ classdef PunctureOptions < hgsetget
                 end
             end
         end
+        function val = getEncoderOptions(self)
+            val = self.encoderOptions.get();
+        end
+        function val = getDecoderOptions(self)
+            val = self.decoderOptions.get();
+        end
     end
 end

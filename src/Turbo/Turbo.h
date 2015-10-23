@@ -145,6 +145,12 @@ namespace fec {
       std::vector<std::vector<bool>> tailMask_;
       BitOrdering bitOrdering_ = Alternate;
     };
+    struct Options : public EncoderOptions, DecoderOptions
+    {
+    public:
+      Options(const std::vector<Trellis>& trellis, const std::vector<Permutation>& interleaver) : EncoderOptions(trellis, interleaver) {}
+      Options(const Trellis& trellis, const std::vector<Permutation>& interleaver) : EncoderOptions(trellis, interleaver) {}
+    };
     /**
      *  This class represents a convolutional code structure.
      *  It provides a usefull interface to store and acces the structure information.
@@ -153,14 +159,14 @@ namespace fec {
       friend class ::boost::serialization::access;
     public:
       Structure() = default;
+      Structure(const Options& options);
       Structure(const EncoderOptions&, const DecoderOptions&);
       Structure(const EncoderOptions&);
       virtual ~Structure() = default;
       
       virtual const char * get_key() const;
       
-      virtual void setDecoderOptions(const DecoderOptions& decoder);
-      virtual void setEncoderOptions(const EncoderOptions& encoder);
+      void setDecoderOptions(const DecoderOptions& decoder);
       DecoderOptions getDecoderOptions() const;
       
       /**
@@ -183,6 +189,9 @@ namespace fec {
       
       Permutation puncturing(const PunctureOptions& options) const;
       
+    protected:
+      void setEncoderOptions(const EncoderOptions& encoder);
+      
     private:
       template <typename Archive>
       void serialize(Archive & ar, const unsigned int version) {
@@ -203,6 +212,7 @@ namespace fec {
     };
     
     Turbo() = default;
+    Turbo(const Options& options, int workGroupSize = 8);
     Turbo(const Structure& structure, int workGroupSize = 8);
     Turbo(const EncoderOptions& encoder, const DecoderOptions& decoder, int workGroupSize = 8);
     Turbo(const EncoderOptions& encoder, int workGroupSize = 8);
@@ -213,7 +223,6 @@ namespace fec {
     virtual const char * get_key() const;
     
     void setDecoderOptions(const DecoderOptions& decoder) {structure().setDecoderOptions(decoder);}
-    void setEncoderOptions(const EncoderOptions& encoder) {structure().setEncoderOptions(encoder);}
     DecoderOptions getDecoderOptions() const {return structure().getDecoderOptions();}
     
     Permutation puncturing(const PunctureOptions& options) {return structure().puncturing(options);}

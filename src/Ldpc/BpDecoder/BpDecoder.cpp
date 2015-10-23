@@ -47,7 +47,7 @@ void BpDecoder::decodeBlocks(std::vector<LlrType>::const_iterator parity, std::v
   for (size_t i = 0; i < n; ++i) {
     decodeBlock(parity, msg);
     parity += structure().innerParitySize();
-    msg += structure().msgSize();
+    msg += structure().innerMsgSize();
   }
 }
 

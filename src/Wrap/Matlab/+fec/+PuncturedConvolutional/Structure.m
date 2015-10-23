@@ -9,7 +9,7 @@ classdef Structure < fec.Convolutional.Structure
 
     methods
         function self = Structure(varargin)
-            if (isa(varargin{1}, 'fec.Convolutional.EncoderOptions') || (isfield(varargin{1}, 'trellis') && isfield(varargin{1}, 'length')) || iscell(varargin{1}))
+            if (isa(varargin{1}, 'fec.Convolutional.EncoderOptions') || (isfield(varargin{1}, 'trellis') && isfield(varargin{1}, 'length')))
                 self.encoderOptions = fec.Convolutional.EncoderOptions(varargin{1});
                 if (nargin > 1)
                     self.punctureOptions = fec.Convolutional.PunctureOptions(varargin{2});

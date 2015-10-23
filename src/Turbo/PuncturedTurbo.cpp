@@ -35,6 +35,10 @@ const char * PuncturedTurbo::Structure::get_key() const {
   return boost::serialization::type_info_implementation<PuncturedTurbo::Structure>::type::get_const_instance().get_key();
 }
 
+PuncturedTurbo::PuncturedTurbo(const Options& options,  int workGroupSize) :
+Turbo(std::unique_ptr<Structure>(new Structure(options)), workGroupSize)
+{
+}
 /**
  *  Turbo constructor
  *  \param  codeStructure Codec structure used for encoding and decoding
@@ -80,6 +84,12 @@ void PuncturedTurbo::soDecodeBlocks(InputIterator input, OutputIterator output, 
   }
 }
 
+PuncturedTurbo::Structure::Structure(const Options& options)
+{
+  setEncoderOptions(options);
+  setPunctureOptions(options);
+  setDecoderOptions(options);
+}
 
 PuncturedTurbo::Structure::Structure(const EncoderOptions& encoder, const PunctureOptions& puncture, const DecoderOptions& decoder)
 {
@@ -92,12 +102,6 @@ PuncturedTurbo::Structure::Structure(const EncoderOptions& encoder, const Punctu
   setEncoderOptions(encoder);
   setPunctureOptions(puncture);
   setDecoderOptions(DecoderOptions());
-}
-
-void PuncturedTurbo::Structure::setEncoderOptions(const fec::Turbo::EncoderOptions& encoder)
-{
-  Turbo::Structure::setEncoderOptions(encoder);
-  permutation_ = puncturing({});
 }
 
 void PuncturedTurbo::Structure::setPunctureOptions(const fec::Turbo::PunctureOptions& puncture)

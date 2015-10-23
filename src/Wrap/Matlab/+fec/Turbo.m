@@ -101,24 +101,12 @@ classdef Turbo < fec.Codec
             self.structure.decoderOptions = fec.Turbo.DecoderOptions(val)
             fec.bin.wrap(uint32(fec.detail.WrapFcnId.Turbo_set_decoderOptions), self, self.structure.decoderOptions.get());
         end
-        %>  Modify the Turbo::encoderOptions property.
-        function set.encoderOptions(self,val)
-            self.structure.encoderOptions = fec.Turbo.EncoderOptions(val);
-            fec.bin.wrap(uint32(fec.detail.WrapFcnId.Turbo_set_encoderOptions), self, self.structure.encoderOptions.get());
-        end
         %>  Modify the Turbo::decoderOptions property.
         %>  @param  Structure, cell, object or Name, Value list
         function setDecoderOptions(self,varargin)
             decoderOptions = self.decoderOptions;
             decoderOptions.set(varargin{:});
             self.decoderOptions = decoderOptions;
-        end
-        %>  Modify the Turbo::encoderOptions property.
-        %>  @param  Structure, cell, object or Name, Value list
-        function setEncoderOptions(self,varargin)
-            encoderOptions = self.encoderOptions;
-            encoderOptions.set(varargin{:});
-            self.encoderOptions = encoderOptions;
         end
     end
 

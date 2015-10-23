@@ -41,20 +41,20 @@ classdef Convolutional < fec.Codec
             self.structure.decoderOptions = fec.Convolutional.DecoderOptions(val);
             fec.bin.wrap(uint32(fec.detail.WrapFcnId.Convolutional_set_decoderOptions), self, decoderOptions.get());
         end
-        function set.encoderOptions(self,val)
-            self.structure.encoderOptions = fec.Convolutional.EncoderOptions(val);
-            fec.bin.wrap(uint32(fec.detail.WrapFcnId.Convolutional_set_encoderOptions), self, encoderOptions.get());
-        end
+        %function set.encoderOptions(self,val)
+        %    self.structure.encoderOptions = fec.Convolutional.EncoderOptions(val);
+        %    fec.bin.wrap(uint32(fec.detail.WrapFcnId.Convolutional_set_encoderOptions), self, encoderOptions.get());
+        %end
         function setDecoderOptions(self,varargin)
             decoderOptions = self.decoderOptions;
             decoderOptions.set(varargin{:});
             self.decoderOptions = decoderOptions;
         end
-        function setEncoderOptions(self,varargin)
-            encoderOptions = self.encoderOptions;
-            encoderOptions.set(varargin{:});
-            self.encoderOptions = encoderOptions;
-        end
+        %function setEncoderOptions(self,varargin)
+        %    encoderOptions = self.encoderOptions;
+        %    encoderOptions.set(varargin{:});
+        %    self.encoderOptions = encoderOptions;
+        %end
     end
 
 end

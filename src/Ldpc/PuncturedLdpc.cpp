@@ -35,6 +35,10 @@ const char * PuncturedLdpc::Structure::get_key() const {
   return boost::serialization::type_info_implementation<PuncturedLdpc::Structure>::type::get_const_instance().get_key();
 }
 
+PuncturedLdpc::PuncturedLdpc(const Options& options,  int workGroupSize) :
+Ldpc(std::unique_ptr<Structure>(new Structure(options)), workGroupSize)
+{
+}
 /**
  *  Ldpc constructor
  *  \param  codeStructure Codec structure used for encoding and decoding
@@ -80,6 +84,13 @@ void PuncturedLdpc::soDecodeBlocks(InputIterator input, OutputIterator output, s
   }
 }
 
+PuncturedLdpc::Structure::Structure(const Options& options)
+{
+  setEncoderOptions(options);
+  setPunctureOptions(options);
+  setDecoderOptions(options);
+}
+
 PuncturedLdpc::Structure::Structure(const EncoderOptions& encoder, const PunctureOptions& puncture, const DecoderOptions& decoder)
 {
   setEncoderOptions(encoder);
@@ -91,12 +102,6 @@ PuncturedLdpc::Structure::Structure(const EncoderOptions& encoder, const Punctur
   setEncoderOptions(encoder);
   setPunctureOptions(puncture);
   setDecoderOptions(DecoderOptions());
-}
-
-void PuncturedLdpc::Structure::setEncoderOptions(const fec::Ldpc::EncoderOptions& encoder)
-{
-  Ldpc::Structure::setEncoderOptions(encoder);
-  permutation_ = puncturing({});
 }
 
 void PuncturedLdpc::Structure::setPunctureOptions(const fec::Ldpc::PunctureOptions& puncture)

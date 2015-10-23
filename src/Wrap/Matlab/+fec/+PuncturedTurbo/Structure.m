@@ -10,7 +10,7 @@ classdef Structure < fec.Turbo.Structure
 
     methods
         function self = Structure(varargin)
-            if (isa(varargin{1}, 'fec.Turbo.EncoderOptions') || (isfield(varargin{1}, 'trellis') && isfield(varargin{1}, 'interleaver')) || iscell(varargin{1}))
+            if (isa(varargin{1}, 'fec.Turbo.EncoderOptions') || (isfield(varargin{1}, 'trellis') && isfield(varargin{1}, 'interleaver')))
                 self.encoderOptions = fec.Turbo.EncoderOptions(varargin{1});
                 if (nargin > 1)
                     self.punctureOptions = fec.Turbo.PunctureOptions(varargin{2});

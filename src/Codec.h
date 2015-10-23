@@ -70,12 +70,15 @@ namespace fec {
       
       virtual const char * get_key() const = 0; /**< Access the type info key. */
       
-      inline size_t msgSize() const {return msgSize_;} /**< Access the size of msg in each code bloc. */
-      inline size_t systSize() const {return systSize_;} /**< Access the size of systematics in each code bloc. */
+      virtual size_t msgSize() const {return msgSize_;} /**< Access the size of msg in each code bloc. */
+      virtual size_t systSize() const {return systSize_;} /**< Access the size of systematics in each code bloc. */
       virtual size_t paritySize() const {return paritySize_;} /**< Access the size of parities in each code bloc. */
-      inline size_t stateSize() const {return stateSize_;} /**< Access the size of state information in each code bloc. */
+      virtual size_t stateSize() const {return stateSize_;} /**< Access the size of state information in each code bloc. */
       
+      inline size_t innerMsgSize() const {return msgSize_;}
+      inline size_t innerSystSize() const {return systSize_;}
       inline size_t innerParitySize() const {return paritySize_;}
+      inline size_t innerStateSize() const {return stateSize_;}
       
       DecoderAlgorithm decoderAlgorithm() const {return decoderAlgorithm_;} /**< Access the algorithm used in decoder. */
       AlgorithmOptions<FloatLlrMetrics> algorithmOptions() const {return algorithmOptions_;} /**< Access the algorithm options used in decoder. */
@@ -262,10 +265,10 @@ namespace fec {
     
     virtual const char * get_key() const = 0; /**< Access the type info key. */
     
-    virtual size_t msgSize() const {return structure().msgSize();} /**< Access the size of the msg in each code bloc. */
-    virtual size_t systSize() const {return structure().systSize();} /**< Access the size of the msg in each code bloc. */
-    virtual size_t paritySize() const {return structure().paritySize();} /**< Access the size of the parity in each code bloc. */
-    virtual size_t stateSize() const {return structure().stateSize();} /**< Access the size of the extrinsic in each code bloc. */
+    size_t msgSize() const {return structure().msgSize();} /**< Access the size of the msg in each code bloc. */
+    size_t systSize() const {return structure().systSize();} /**< Access the size of the msg in each code bloc. */
+    size_t paritySize() const {return structure().paritySize();} /**< Access the size of the parity in each code bloc. */
+    size_t stateSize() const {return structure().stateSize();} /**< Access the size of the extrinsic in each code bloc. */
     
     int getWorkGroupSize() const {return workGroupSize_;}
     void setWorkGroupSize(int size) {workGroupSize_ = size;}

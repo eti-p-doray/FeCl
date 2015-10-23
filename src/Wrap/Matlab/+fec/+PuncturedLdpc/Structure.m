@@ -9,7 +9,7 @@ classdef Structure < fec.Ldpc.Structure
 
     methods
         function self = Structure(varargin)
-            if (isa(varargin{1}, 'fec.Ldpc.EncoderOptions') || isfield(varargin{1}, 'checkMatrix') || iscell(varargin{1}))
+            if (isa(varargin{1}, 'fec.Ldpc.EncoderOptions') || isfield(varargin{1}, 'checkMatrix'))
                 self.encoderOptions = fec.Ldpc.EncoderOptions(varargin{1});
                 if (nargin > 1)
                     self.punctureOptions = fec.Ldpc.PunctureOptions(varargin{2});

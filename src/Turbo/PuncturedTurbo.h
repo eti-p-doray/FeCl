@@ -65,7 +65,12 @@ namespace fec {
       //static Structure structure();
       //static PuncturedTurbo codec();
     };
-    
+    struct Options : public EncoderOptions, DecoderOptions, PunctureOptions
+    {
+    public:
+      Options(const std::vector<Trellis>& trellis, const std::vector<Permutation>& interleaver) : EncoderOptions(trellis, interleaver) {}
+      Options(const Trellis& trellis, const std::vector<Permutation>& interleaver) : EncoderOptions(trellis, interleaver) {}
+    };
     /**
      *  This class represents a convolutional code structure.
      *  It provides a usefull interface to store and acces the structure information.
@@ -74,6 +79,7 @@ namespace fec {
       friend class ::boost::serialization::access;
     public:
       Structure() = default;
+      Structure(const Options& options);
       Structure(const EncoderOptions&, const PunctureOptions&, const DecoderOptions&);
       Structure(const EncoderOptions&, const PunctureOptions&);
       virtual ~Structure() = default;
@@ -82,8 +88,7 @@ namespace fec {
       
       virtual size_t paritySize() const {return permutation_.outputSize();}
       
-      virtual void setEncoderOptions(const EncoderOptions& encoder);
-      virtual void setPunctureOptions(const PunctureOptions& puncture);
+      void setPunctureOptions(const PunctureOptions& puncture);
       
       inline Permutation permutation() const {return permutation_;}
       
@@ -101,6 +106,7 @@ namespace fec {
       Permutation permutation_;
     };
     
+    PuncturedTurbo(const Options& options, int workGroupSize = 8);
     PuncturedTurbo(const Structure& structure, int workGroupSize = 8);
     PuncturedTurbo(const EncoderOptions& encoder, const PunctureOptions& puncture, const DecoderOptions& decoder, int workGroupSize = 8);
     PuncturedTurbo(const EncoderOptions& encoder, const PunctureOptions& puncture, int workGroupSize = 8);

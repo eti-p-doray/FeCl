@@ -102,6 +102,11 @@ namespace fec {
       std::vector<bool> systMask_;
       std::vector<bool> mask_;
     };
+    struct Options : public EncoderOptions, DecoderOptions
+    {
+    public:
+      Options(const SparseBitMatrix& checkMatrix) : EncoderOptions(checkMatrix) {}
+    };
     /**
      *  This class represents a ldpc code structure.
      *  It provides a usefull interface to store and acces the structure information.
@@ -110,6 +115,7 @@ namespace fec {
       friend class ::boost::serialization::access;
     public:
       Structure() = default;
+      Structure(const Options& options);
       Structure(const EncoderOptions&, const DecoderOptions&);
       Structure(const EncoderOptions&);
       virtual ~Structure() = default;
@@ -117,7 +123,6 @@ namespace fec {
       virtual const char * get_key() const;
       
       void setDecoderOptions(const DecoderOptions& decoder);
-      void setEncoderOptions(const EncoderOptions& encoder);
       DecoderOptions getDecoderOptions() const;
       Permutation puncturing(const PunctureOptions& options) const;
       
@@ -127,6 +132,9 @@ namespace fec {
       void syndrome(std::vector<uint8_t>::const_iterator parity, std::vector<uint8_t>::iterator syndrome) const;
       virtual bool check(std::vector<BitField<size_t>>::const_iterator parity) const;
       virtual void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const;
+      
+    protected:
+      void setEncoderOptions(const EncoderOptions& encoder);
       
     private:
       template <typename Archive>
@@ -153,6 +161,7 @@ namespace fec {
     };
     
     Ldpc() = default;
+    Ldpc(const Options& options, int workGroupSize = 8);
     Ldpc(const Structure& structure, int workGroupSize = 8);
     Ldpc(const EncoderOptions& encoder, const DecoderOptions& decoder, int workGroupSize = 8);
     Ldpc(const EncoderOptions& encoder, int workGroupSize = 8);
@@ -163,7 +172,6 @@ namespace fec {
     virtual const char * get_key() const;
     
     void setDecoderOptions(const DecoderOptions& decoder) {structure().setDecoderOptions(decoder);}
-    void setEncoderOptions(const EncoderOptions& encoder) {structure().setEncoderOptions(encoder);}
     DecoderOptions getDecoderOptions() const {return structure().getDecoderOptions();}
     
     Permutation puncturing(const PunctureOptions& options) {return structure().puncturing(options);}

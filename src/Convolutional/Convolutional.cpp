@@ -36,6 +36,10 @@ const char * Convolutional::Structure::get_key() const {
   return boost::serialization::type_info_implementation<Convolutional::Structure>::type::get_const_instance().get_key();
 }
 
+Convolutional::Convolutional(const Options& options,  int workGroupSize) :
+Codec(std::unique_ptr<Structure>(new Structure(options)), workGroupSize)
+{
+}
 /**
  *  Constructor.
  *  \snippet Convolutional.cpp Creating a Convolutional code
@@ -65,6 +69,12 @@ void Convolutional::decodeBlocks(std::vector<LlrType>::const_iterator parity, st
 {
   auto worker = ViterbiDecoder::create(structure());
   worker->decodeBlocks(parity, msg, n);
+}
+
+Convolutional::Structure::Structure(const Options& options)
+{
+  setEncoderOptions(options);
+  setDecoderOptions(options);
 }
 
 /**

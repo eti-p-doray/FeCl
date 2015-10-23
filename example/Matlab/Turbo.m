@@ -56,16 +56,16 @@ codec = fec.Turbo(trellis, interl, 'algorithm', 'Approximate')
 % step to be part of the encoding / decoding scheme. This happens when simulationg harq models with incremental reduncdency.
 % The mother codec is a low rate codec that will be punctured with different masks to generate several transmitted frames.
 
-puncturingPermutation{1} = codec.puncturing('mask', [1 1; 1 0; 0 1]);
-puncturingPermutation{2} = codec.puncturing('mask', [1 1; 0 1; 1 0]);
+puncturingPermutation{1} = codec.puncturing('mask', [1 1; 1 0; 0 1; 0 0]);
+puncturingPermutation{2} = codec.puncturing('mask', [1 1; 0 1; 1 0; 0 0]);
 
 %>  [Puncturing mask]
 % We can define a puncturing pattern with a mask.
-codec = fec.PuncturedTurbo(trellis, interl, 'mask', [1 1; 1 0; 0 1])
+codec = fec.PuncturedTurbo(trellis, interl, 'mask', [1 1; 1 0; 0 1; 0 0])
 
 % In the example above, the mask will also extend to the tail bits.
 % We can define a different mask to be used on the tail.
-codec = fec.PuncturedTurbo(trellis, interl, 'mask', [1 1; 1 0; 0 1], 'tailMask', [1; 1; 1; 1]);
+codec = fec.PuncturedTurbo(trellis, interl, 'mask', [1 1; 1 0; 0 1; 0 0], 'tailMask', [1; 1; 1; 1; 0; 0]);
 %>  [Puncturing mask]
 
 

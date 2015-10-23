@@ -36,6 +36,10 @@ const char * PuncturedConvolutional::Structure::get_key() const {
   return boost::serialization::type_info_implementation<PuncturedConvolutional::Structure>::type::get_const_instance().get_key();
 }
 
+PuncturedConvolutional::PuncturedConvolutional(const Options& options,  int workGroupSize) :
+Convolutional(std::unique_ptr<Structure>(new Structure(options)), workGroupSize)
+{
+}
 /**
  *  Convolutional constructor
  *  \param  codeStructure Codec structure used for encoding and decoding
@@ -81,6 +85,12 @@ void PuncturedConvolutional::soDecodeBlocks(InputIterator input, OutputIterator 
   }
 }
 
+PuncturedConvolutional::Structure::Structure(const Options& options)
+{
+  setEncoderOptions(options);
+  setPunctureOptions(options);
+  setDecoderOptions(options);
+}
 
 PuncturedConvolutional::Structure::Structure(const EncoderOptions& encoder, const PunctureOptions& puncture, const DecoderOptions& decoder)
 {
@@ -93,12 +103,6 @@ PuncturedConvolutional::Structure::Structure(const EncoderOptions& encoder, cons
   setEncoderOptions(encoder);
   setPunctureOptions(puncture);
   setDecoderOptions(DecoderOptions());
-}
-
-void PuncturedConvolutional::Structure::setEncoderOptions(const fec::Convolutional::EncoderOptions& encoder)
-{
-  Convolutional::Structure::setEncoderOptions(encoder);
-  permutation_ = puncturing({});
 }
 
 void PuncturedConvolutional::Structure::setPunctureOptions(const fec::Convolutional::PunctureOptions& puncture)

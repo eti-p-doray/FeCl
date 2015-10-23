@@ -63,7 +63,7 @@ namespace fec {
     
     struct EncoderOptions {
     public:
-      EncoderOptions(Trellis trellis, size_t length) {trellis_ = trellis; length_ = length;}
+      EncoderOptions(const Trellis& trellis, size_t length) {trellis_ = trellis; length_ = length;}
       EncoderOptions& termination(Termination type) {termination_ = type; return *this;}
       
       Trellis trellis_;
@@ -90,6 +90,11 @@ namespace fec {
       std::vector<bool> mask_;
       std::vector<bool> tailMask_;
     };
+    struct Options : public EncoderOptions, DecoderOptions
+    {
+    public:
+      Options(const Trellis& trellis, size_t length) : EncoderOptions(trellis, length) {}
+    };
     /**
      *  This class represents a convolutional codec structure.
      *  It provides a usefull interface to store and acces the structure information.
@@ -98,6 +103,7 @@ namespace fec {
       friend class ::boost::serialization::access;
     public:
       Structure() = default;
+      Structure(const Options& options);
       Structure(const EncoderOptions& encoder, const DecoderOptions& decoder);
       Structure(const EncoderOptions& encoder);
       virtual ~Structure() = default;
@@ -105,7 +111,6 @@ namespace fec {
       virtual const char * get_key() const;
       
       void setDecoderOptions(const DecoderOptions& decoder);
-      void setEncoderOptions(const EncoderOptions& encoder);
       DecoderOptions getDecoderOptions() const;
       
       inline size_t length() const {return length_;}
@@ -119,6 +124,9 @@ namespace fec {
       void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity, std::vector<BitField<size_t>>::iterator tail) const;
       
       Permutation puncturing(const PunctureOptions& options) const;
+      
+    protected:
+      void setEncoderOptions(const EncoderOptions& encoder);
       
     private:
       template <typename Archive>
@@ -138,6 +146,7 @@ namespace fec {
     };
     
     Convolutional() = default;
+    Convolutional(const Options& options, int workGroupSize = 8);
     Convolutional(const Structure& structure, int workGroupSize = 8);
     Convolutional(const EncoderOptions& encoder, const DecoderOptions& decoder, int workGroupSize = 8);
     Convolutional(const EncoderOptions& encoder, int workGroupSize = 8);
@@ -148,7 +157,6 @@ namespace fec {
     virtual const char * get_key() const;
     
     void setDecoderOptions(const DecoderOptions& decoder) {structure().setDecoderOptions(decoder);}
-    void setEncoderOptions(const EncoderOptions& encoder) {structure().setEncoderOptions(encoder);}
     DecoderOptions getDecoderOptions() const {return structure().getDecoderOptions();}
     
     Permutation puncturing(const PunctureOptions& options) {return structure().puncturing(options);}

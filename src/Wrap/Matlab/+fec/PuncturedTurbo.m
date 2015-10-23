@@ -25,12 +25,6 @@ classdef PuncturedTurbo < fec.Turbo
             fec.bin.wrap(uint32(fec.detail.WrapFcnId.PuncturedTurbo_set_punctureOptions), self, self.structure.punctureOptions.get());
         end
 
-        function setEncoderOptions(self,varargin)
-            encoderOptions = self.encoderOptions;
-            encoderOptions.set(varargin{:});
-            self.encoderOptions = encoderOptions;
-            self.punctureOptions = self.punctureOptions;
-        end
         function setPunctureOptions(self,varargin)
             punctureOptions = self.punctureOptions;
             punctureOptions.set(varargin{:});

@@ -35,6 +35,10 @@ const char * Ldpc::Structure::get_key() const {
   return boost::serialization::type_info_implementation<Ldpc::Structure>::type::get_const_instance().get_key();
 }
 
+Ldpc::Ldpc(const Options& options,  int workGroupSize) :
+Codec(std::unique_ptr<Structure>(new Structure(options)), workGroupSize)
+{
+}
 /**
  *  Ldpc constructor
  *  \param  codeStructure Codec structure used for encoding and decoding
@@ -106,6 +110,12 @@ SparseBitMatrix Ldpc::Gallager::matrix(size_t n, size_t wc, size_t wr, uint64_t 
   }
   
   return H;
+}
+
+Ldpc::Structure::Structure(const Options& options)
+{
+  setEncoderOptions(options);
+  setDecoderOptions(options);
 }
 
 /**
@@ -196,9 +206,9 @@ bool Ldpc::Structure::check(std::vector<BitField<size_t>>::const_iterator parity
  */
 void Ldpc::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const
 {
-  std::copy(msg, msg + msgSize(), parity);
-  std::fill(parity+msgSize(), parity+checks().cols(), 0);
-  parity += msgSize();
+  std::copy(msg, msg + innerMsgSize(), parity);
+  std::fill(parity+innerMsgSize(), parity+checks().cols(), 0);
+  parity += innerMsgSize();
   auto parityIt = parity;
   for (auto row = DC_.begin(); row < DC_.end(); ++row, ++parityIt) {
     for (auto elem = row->begin(); elem != row->end(); ++elem) {
@@ -297,10 +307,10 @@ void Ldpc::Structure::computeGeneratorMatrix(SparseBitMatrix H)
     }
   }
   
-  for (size_t i = 0; i < CDE.cols()-tSize-msgSize(); ++i) {
+  for (size_t i = 0; i < CDE.cols()-tSize-innerMsgSize(); ++i) {
     uint8_t found = false;
     for (auto row = CDE.begin()+i; row < CDE.end(); ++row) {
-      if (row->test(i+msgSize())) {
+      if (row->test(i+innerMsgSize())) {
         std::swap(*row, CDE[i]);
         found = true;
         break;
@@ -310,8 +320,8 @@ void Ldpc::Structure::computeGeneratorMatrix(SparseBitMatrix H)
       for (auto row = CDE.begin()+i; row < CDE.end(); ++row) {
         size_t k = row->first();
         if (k != -1) {
-          H.swapCols(k, i+msgSize());
-          CDE.swapCols(k, i+msgSize());
+          H.swapCols(k, i+innerMsgSize());
+          CDE.swapCols(k, i+innerMsgSize());
           std::swap(*row, CDE[i]);
           found = true;
           break;
@@ -319,14 +329,14 @@ void Ldpc::Structure::computeGeneratorMatrix(SparseBitMatrix H)
       }
     }
     if (!found) {
-      H.moveCol(i+msgSize(), msgSize());
-      CDE.moveCol(i+msgSize(), msgSize());
+      H.moveCol(i+innerMsgSize(), innerMsgSize());
+      CDE.moveCol(i+innerMsgSize(), innerMsgSize());
       ++msgSize_;
       --i;
       continue;
     }
     for (auto row = CDE.begin()+i+1; row < CDE.end(); ++row) {
-      if (row->test(i+msgSize())) {
+      if (row->test(i+innerMsgSize())) {
         *row += CDE[i];
       }
     }
@@ -334,16 +344,16 @@ void Ldpc::Structure::computeGeneratorMatrix(SparseBitMatrix H)
   
   for (int64_t i = CDE.rows()-1; i >= 0; --i) {
     for (auto row = CDE.begin()+i-1; row >= CDE.begin(); --row) {
-      if (row->test(i+msgSize())) {
+      if (row->test(i+innerMsgSize())) {
         *row += CDE[i];
       }
     }
   }
   //std::cout << H << std::endl;
   H_ = H;
-  DC_ = CDE({0, CDE.cols()-msgSize()-tSize}, {0, msgSize()});
-  A_ = H_({0, tSize}, {0, msgSize()});
-  B_ = H_({0, tSize}, {msgSize(), msgSize()+DC_.rows()});
+  DC_ = CDE({0, CDE.cols()-innerMsgSize()-tSize}, {0, innerMsgSize()});
+  A_ = H_({0, tSize}, {0, innerMsgSize()});
+  B_ = H_({0, tSize}, {innerMsgSize(), innerMsgSize()+DC_.rows()});
   T_ = H_({0, tSize}, {H.cols()-tSize, H.cols()}).transpose();
 }
 
@@ -351,14 +361,14 @@ Permutation Ldpc::Structure::puncturing(const PunctureOptions& options) const
 {
   std::vector<size_t> perms;
   size_t idx = 0;
-  for (size_t i = 0; i < systSize(); ++i) {
+  for (size_t i = 0; i < innerSystSize(); ++i) {
     if ((options.systMask_.size() == 0 && (options.mask_.size() == 0 || options.mask_[i % options.mask_.size()])) ||
         (options.systMask_.size() != 0 && (options.systMask_[idx % options.systMask_.size()]))) {
       perms.push_back(idx);
       ++idx;
     }
   }
-  for (size_t i = 0; i < innerParitySize() - systSize(); ++i) {
+  for (size_t i = 0; i < innerParitySize() - innerSystSize(); ++i) {
     if ((options.systMask_.size() == 0 && (options.mask_.size() == 0 || options.mask_[i % options.mask_.size()])) ||
         (options.systMask_.size() != 0 && (options.mask_.size() == 0 || options.mask_[idx % options.mask_.size()]))) {
       perms.push_back(idx);

@@ -54,20 +54,20 @@ int main( int argc, char* argv[] )
   /*
    The trellis and interleaver indices are used to create a code structure.
    */
-  auto encoder = fec::Turbo::EncoderOptions({trellis, trellis}, {{}, permIdx}).termination(fec::Convolutional::Truncate);
-  auto puncture = fec::Turbo::PunctureOptions({{1, 0}, {1, 0}, {0, 1}});
-  auto decoder = fec::Turbo::DecoderOptions().algorithm(fec::Codec::Exact).iterations(10).scheduling(fec::Turbo::Serial);
-  fec::PuncturedTurbo::Structure structure(encoder, puncture, decoder);
+  fec::PuncturedTurbo::Options options({trellis, trellis}, {{}, permIdx});
+  options.termination(fec::Convolutional::Truncate);
+  options.mask({{1, 1}, {1, 0}, {1, 0}});
+  options.algorithm(fec::Codec::Exact).iterations(10).scheduling(fec::Turbo::Serial);
   //! [Creating a Turbo code structure]
   
   
   /*
    A codec is created and ready to operate
    */
-  std::unique_ptr<fec::Codec> code(new fec::PuncturedTurbo(structure));
+  std::unique_ptr<fec::Codec> codec(new fec::PuncturedTurbo(options));
   //! [Creating a Turbo code]
   
-  std::cout << per(code, -1) << std::endl;
+  std::cout << per(codec, -1) << std::endl;
   
   return 0;
 }

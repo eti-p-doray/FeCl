@@ -64,7 +64,7 @@ void BpDecoderImpl<LlrMetrics, BoxSumAlg>::decodeBlock(std::vector<LlrType>::con
   for (size_t i = 0; i < structure().checks().size(); ++i) {
     bitMetrics_[structure().checks().at(i)] += checkMetrics_[i];
   }
-  for (size_t i = 0; i < structure().msgSize(); ++i) {
+  for (size_t i = 0; i < structure().innerMsgSize(); ++i) {
     msg[i] = bitMetrics_[i] >= 0;
   }
 }
@@ -74,12 +74,12 @@ void BpDecoderImpl<LlrMetrics, BoxSumAlg>::soDecodeBlock(Codec::InputIterator in
 {
   std::copy(input.parity(), input.parity()+structure().checks().cols(), parity_.begin());
   if (input.hasSyst()) {
-    for (size_t i = 0; i < structure().systSize(); ++i) {
+    for (size_t i = 0; i < structure().innerSystSize(); ++i) {
       parity_[i] += input.syst()[i];
     }
   }
   if (input.hasState()) {
-    std::copy(input.state(), input.state()+structure().stateSize(), checkMetrics_.begin());
+    std::copy(input.state(), input.state()+structure().innerStateSize(), checkMetrics_.begin());
   }
   
   if (structure().iterations() > 0) {
@@ -114,7 +114,7 @@ void BpDecoderImpl<LlrMetrics, BoxSumAlg>::soDecodeBlock(Codec::InputIterator in
   }
   
   if (output.hasSyst()) {
-    std::copy(bitMetrics_.begin(), bitMetrics_.begin()+structure().systSize(), output.syst());
+    std::copy(bitMetrics_.begin(), bitMetrics_.begin()+structure().innerSystSize(), output.syst());
   }
   if (output.hasParity()) {
     std::copy(bitMetrics_.begin(), bitMetrics_.begin()+structure().checks().cols(), output.parity());
@@ -123,7 +123,7 @@ void BpDecoderImpl<LlrMetrics, BoxSumAlg>::soDecodeBlock(Codec::InputIterator in
     std::copy(checkMetrics_.begin(), checkMetrics_.end(), output.state());
   }
   if (output.hasMsg()) {
-    for (size_t i = 0; i < structure().msgSize(); ++i) {
+    for (size_t i = 0; i < structure().innerMsgSize(); ++i) {
       output.msg()[i] = parity_[i] + bitMetrics_[i];
     }
   }

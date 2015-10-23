@@ -35,6 +35,10 @@ const char * Turbo::Structure::get_key() const {
   return boost::serialization::type_info_implementation<Turbo::Structure>::type::get_const_instance().get_key();
 }
 
+Turbo::Turbo(const Options& options,  int workGroupSize) :
+Codec(std::unique_ptr<Structure>(new Structure(options)), workGroupSize)
+{
+}
 /*******************************************************************************
  *  Turbo constructor.
  *  \param  codeStructure Codec structure used for encoding and decoding
@@ -65,6 +69,11 @@ void Turbo::soDecodeBlocks(InputIterator input, OutputIterator output, size_t n)
   worker->soDecodeBlocks(input, output, n);
 }
 
+Turbo::Structure::Structure(const Options& options)
+{
+  setEncoderOptions(options);
+  setDecoderOptions(options);
+}
 
 Turbo::Structure::Structure(const EncoderOptions& encoder, const DecoderOptions& decoder)
 {
@@ -89,7 +98,7 @@ void Turbo::Structure::setEncoderOptions(const fec::Turbo::EncoderOptions &encod
   
   msgSize_ = 0;
   for (size_t i = 0; i < interleaver_.size(); ++i) {
-    if (interleaver_[i].inputSize() > msgSize()) {
+    if (interleaver_[i].inputSize() > innerMsgSize()) {
       msgSize_ = interleaver_[i].inputSize();
     }
   }
@@ -97,7 +106,7 @@ void Turbo::Structure::setEncoderOptions(const fec::Turbo::EncoderOptions &encod
   constituents_.clear();
   for (size_t i = 0; i < interleaver_.size(); ++i) {
     if (interleaver_[i].outputSize() == 0) {
-      std::vector<size_t> tmp(msgSize());
+      std::vector<size_t> tmp(innerMsgSize());
       for (size_t j = 0; j < tmp.size(); ++j) {
         tmp[j] = j;
       }
@@ -129,10 +138,10 @@ void Turbo::Structure::setEncoderOptions(const fec::Turbo::EncoderOptions &encod
   for (auto & i : constituents()) {
     tailSize_ += i.systTailSize();
     paritySize_ += i.innerParitySize();
-    stateSize_ += i.systSize();
+    stateSize_ += i.innerSystSize();
   }
   systSize_ = msgSize_ + systTailSize();
-  paritySize_ += systSize();
+  paritySize_ += innerSystSize();
 }
 
 void Turbo::Structure::setDecoderOptions(const fec::Turbo::DecoderOptions &decoder)
@@ -157,11 +166,11 @@ void Turbo::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg,
   std::vector<BitField<size_t>> messageInterl;
   std::vector<BitField<size_t>>::iterator parityOutIt;
   parityOutIt = parity;
-  std::copy(msg, msg + msgSize(), parityOutIt);
-  auto systTail = parityOutIt + msgSize();
-  parityOutIt += systSize();
+  std::copy(msg, msg + innerMsgSize(), parityOutIt);
+  auto systTail = parityOutIt + innerMsgSize();
+  parityOutIt += innerSystSize();
   for (size_t i = 0; i < constituentCount(); ++i) {
-    messageInterl.resize(constituent(i).msgSize());
+    messageInterl.resize(constituent(i).innerMsgSize());
     interleaver(i).permuteBlock<BitField<size_t>>(msg, messageInterl.begin());
     constituent(i).encode(messageInterl.begin(), parityOutIt, systTail);
     systTail += constituent(i).systTailSize();
@@ -176,11 +185,11 @@ bool Turbo::Structure::check(std::vector<BitField<size_t>>::const_iterator parit
   std::vector<BitField<size_t>> tailTest;
   std::vector<BitField<size_t>>::const_iterator parityInIt;
   parityInIt = parity;
-  auto tailIt = parityInIt + msgSize();
+  auto tailIt = parityInIt + innerMsgSize();
   auto systIt = parityInIt;
-  parityInIt += systSize();
+  parityInIt += innerSystSize();
   for (size_t i = 0; i < constituentCount(); ++i) {
-    messageInterl.resize(constituent(i).msgSize());
+    messageInterl.resize(constituent(i).innerMsgSize());
     parityTest.resize(constituent(i).innerParitySize());
     tailTest.resize(constituent(i).systTailSize());
     interleaver(i).permuteBlock<BitField<size_t>,BitField<size_t>>(systIt, messageInterl.begin());
@@ -225,12 +234,12 @@ Permutation Turbo::Structure::puncturing(const PunctureOptions& options) const
   switch (options.bitOrdering_) {
     case Alternate: {
       size_t systIdx = 0;
-      for (size_t i = 0; i < msgSize(); ++i) {
+      for (size_t i = 0; i < innerMsgSize(); ++i) {
         if (mask_[0][systIdx % mask_[0].size()]) {
           perms.push_back(systIdx);
         }
         ++systIdx;
-        size_t parityBaseIdx = systSize();
+        size_t parityBaseIdx = innerSystSize();
         for (size_t j = 0; j < constituentCount(); ++j) {
           if (i < constituent(j).length()) {
             for (size_t k = 0; k < constituent(j).trellis().outputSize(); ++k) {
@@ -243,7 +252,7 @@ Permutation Turbo::Structure::puncturing(const PunctureOptions& options) const
           parityBaseIdx += constituent(j).innerParitySize();
         }
       }
-      size_t parityIdx = systSize();
+      size_t parityIdx = innerSystSize();
       for (size_t i = 0; i < constituentCount(); ++i) {
         parityIdx += constituent(i).innerParitySize() - constituent(i).tailSize() * constituent(i).trellis().outputSize();
         size_t tailIdx = 0;
@@ -272,7 +281,7 @@ Permutation Turbo::Structure::puncturing(const PunctureOptions& options) const
       
     case Group: {
       size_t idx = 0;
-      for (size_t i = 0; i < msgSize(); ++i) {
+      for (size_t i = 0; i < innerMsgSize(); ++i) {
         if (mask_[0][idx % mask_[0].size()]) {
           perms.push_back(idx);
         }

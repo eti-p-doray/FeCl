@@ -48,20 +48,20 @@ classdef Ldpc < fec.Codec
             self.structure.decoderOptions = fec.Ldpc.DecoderOptions(val);
             fec.bin.wrap(uint32(fec.detail.WrapFcnId.Ldpc_set_decoderOptions), self, decoderOptions.get());
         end
-        function set.encoderOptions(self,val)
-            self.structure.encoderOptions = fec.Ldpc.EncoderOptions(val);
-            fec.bin.wrap(uint32(fec.detail.WrapFcnId.Ldpc_set_encoderOptions), self, encoderOptions.get());
-        end
+        %function set.encoderOptions(self,val)
+        %    self.structure.encoderOptions = fec.Ldpc.EncoderOptions(val);
+        %    fec.bin.wrap(uint32(fec.detail.WrapFcnId.Ldpc_set_encoderOptions), self, encoderOptions.get());
+        %end
         function setDecoderOptions(self,varargin)
             decoderOptions = self.decoderOptions;
             decoderOptions.set(varargin{:});
             self.decoderOptions = decoderOptions;
         end
-        function setEncoderOptions(self,varargin)
-            encoderOptions = self.encoderOptions;
-            encoderOptions.set(varargin{:});
-            self.encoderOptions = encoderOptions;
-        end
+        %function setEncoderOptions(self,varargin)
+        %    encoderOptions = self.encoderOptions;
+        %    encoderOptions.set(varargin{:});
+        %    self.encoderOptions = encoderOptions;
+        %end
     end
 
 end

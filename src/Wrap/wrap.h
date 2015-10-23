@@ -199,10 +199,10 @@ const std::vector<std::function<typename WrapFcn<Wrap>::Signature>> WrapFcn<Wrap
     wrapTo<Handle<Turbo>>::f(in[0])->setDecoderOptions(wrapTo<Turbo::DecoderOptions>::f(in[1]));
   },
   
-  [](const InArgList in, OutArgList out) //Turbo_setEncoderOptions
+  /*[](const InArgList in, OutArgList out) //Turbo_setEncoderOptions
   {
     wrapTo<Handle<Turbo>>::f(in[0])->setEncoderOptions(wrapTo<Turbo::EncoderOptions>::f(in[1]));
-  },
+  },*/
   
   [](const InArgList in, OutArgList out) //Turbo_puncturing
   {
@@ -244,10 +244,10 @@ const std::vector<std::function<typename WrapFcn<Wrap>::Signature>> WrapFcn<Wrap
     wrapTo<Handle<Ldpc>>::f(in[0])->setDecoderOptions(wrapTo<Ldpc::DecoderOptions>::f(in[1]));
   },
   
-  [](const InArgList in, OutArgList out) //Ldpc_setEncoderOptions
+  /*[](const InArgList in, OutArgList out) //Ldpc_setEncoderOptions
   {
     wrapTo<Handle<Ldpc>>::f(in[0])->setEncoderOptions(wrapTo<Ldpc::EncoderOptions>::f(in[1]));
-  },
+  },*/
   
   [](const InArgList in, OutArgList out) //Ldpc_puncturing
   {
@@ -290,10 +290,10 @@ const std::vector<std::function<typename WrapFcn<Wrap>::Signature>> WrapFcn<Wrap
     wrapTo<Handle<Convolutional>>::f(in[0])->setDecoderOptions(wrapTo<Convolutional::DecoderOptions>::f(in[1]));
   },
   
-  [](const InArgList in, OutArgList out) //Convolutional_setEncoderOptions
+  /*[](const InArgList in, OutArgList out) //Convolutional_setEncoderOptions
   {
     wrapTo<Handle<Convolutional>>::f(in[0])->setEncoderOptions(wrapTo<Convolutional::EncoderOptions>::f(in[1]));
-  },
+  },*/
   
   [](const InArgList in, OutArgList out) //Convolutional_puncturing
   {

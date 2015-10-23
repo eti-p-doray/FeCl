@@ -34,8 +34,8 @@ TurboDecoder::TurboDecoder(const Turbo::Structure& structure) : structure_(struc
   for (size_t i = 0; i < this->structure().constituentCount(); ++i) {
     code_.push_back(MapDecoder::create(this->structure().constituent(i)));
   }
-  extrinsic_.resize(this->structure().stateSize());
-  extrinsicBuffer_.resize(this->structure().stateSize());;
+  extrinsic_.resize(this->structure().innerStateSize());
+  extrinsicBuffer_.resize(this->structure().innerStateSize());;
   parityIn_.resize(this->structure().innerParitySize());
   parityOut_.resize(this->structure().innerParitySize());
 }
