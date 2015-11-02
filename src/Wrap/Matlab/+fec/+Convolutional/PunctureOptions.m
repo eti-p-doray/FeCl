@@ -1,6 +1,10 @@
+%>  This class gathers options affecting puncturing in Convolutional Codec.
 classdef PunctureOptions < hgsetget
     properties
+        %>  Mask for parity bits.
+        %>  This array is a mask for parity bits. A mask is a vector in the form of a sequence of 0 and 1, where only ones are kept. The mask sequence is repeated until the end of the parity sequence.
         mask = [];
+        %>  Mask for parity tail bits.
         tailMask = [];
     end
 

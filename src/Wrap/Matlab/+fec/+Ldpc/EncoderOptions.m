@@ -1,5 +1,7 @@
+%>  This class gathers options affecting the encoder in Ldpc Codec.
 classdef EncoderOptions < hgsetget
     properties
+        %>  Ldpc matrix.
         checkMatrix;
     end
 

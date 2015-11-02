@@ -1,6 +1,9 @@
+%>  This class gathers options affecting the decoder in Convolutional Codec.
 classdef DecoderOptions < hgsetget
     properties
+        %>  DecoderAlgorithm type used in decoder.
         algorithm = uint32(fec.DecoderAlgorithm.('Linear'));
+        %>  Multiplicative gain in Approximate decoder.
         gain = 1.0;
     end
 
@@ -24,9 +27,9 @@ classdef DecoderOptions < hgsetget
 
         function self = set.algorithm(self,val)
             if (ischar(val))
-                self.algorithm = uint32(fec.Codec.DecoderAlgorithm.(val));
+                self.algorithm = uint32(fec.DecoderAlgorithm.(val));
             else
-                self.algorithm = uint32(fec.Codec.DecoderAlgorithm(val));
+                self.algorithm = uint32(fec.DecoderAlgorithm(val));
             end
         end
     end

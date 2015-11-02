@@ -3,10 +3,11 @@ classdef DecoderOptions < hgsetget
     properties
         %>  Number of iterations in decoder.
         iterations = 5;
-        %>  Codec::DecoderAlgorithm type used in decoder.
+        %>  DecoderAlgorithm type used in decoder.
         algorithm = uint32(fec.DecoderAlgorithm.('Linear'));
         %>  Turbo::Scheduling type used in decoder.
         scheduling = uint32(fec.Turbo.Scheduling.('Serial'));
+        %>  Multiplicative gain in Approximate decoder.
         gain = 1.0;
     end
 
@@ -30,9 +31,9 @@ classdef DecoderOptions < hgsetget
 
         function self = set.algorithm(self,val)
             if (ischar(val))
-                self.algorithm = uint32(fec.Codec.DecoderAlgorithm.(val));
+                self.algorithm = uint32(fec.DecoderAlgorithm.(val));
             else
-                self.algorithm = uint32(fec.Codec.DecoderAlgorithm(val));
+                self.algorithm = uint32(fec.DecoderAlgorithm(val));
             end
         end
         function self = set.scheduling(self,val)

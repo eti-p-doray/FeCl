@@ -1,7 +1,11 @@
+%>  This class gathers options affecting the encoder in Convolutional Codec.
 classdef EncoderOptions < hgsetget
     properties
+        %>  Trellis structure used.
         trellis;
+        %>  Lenght of one bloc.
         length;
+        %>  Termination type.
         termination = uint32(fec.Convolutional.Termination.('Tail'));
     end
 
