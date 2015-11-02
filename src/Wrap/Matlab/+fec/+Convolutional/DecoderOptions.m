@@ -1,6 +1,6 @@
 classdef DecoderOptions < hgsetget
     properties
-        algorithm = uint32(fec.Codec.DecoderAlgorithm.('Linear'));
+        algorithm = uint32(fec.DecoderAlgorithm.('Linear'));
         gain = 1.0;
     end
 

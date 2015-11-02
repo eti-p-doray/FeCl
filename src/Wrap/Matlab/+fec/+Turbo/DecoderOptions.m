@@ -4,7 +4,7 @@ classdef DecoderOptions < hgsetget
         %>  Number of iterations in decoder.
         iterations = 5;
         %>  Codec::DecoderAlgorithm type used in decoder.
-        algorithm = uint32(fec.Codec.DecoderAlgorithm.('Linear'));
+        algorithm = uint32(fec.DecoderAlgorithm.('Linear'));
         %>  Turbo::Scheduling type used in decoder.
         scheduling = uint32(fec.Turbo.Scheduling.('Serial'));
         gain = 1.0;
