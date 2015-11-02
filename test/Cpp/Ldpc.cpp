@@ -52,11 +52,11 @@ test_suite* test_ldpc(const fec::Ldpc::EncoderOptions& encoder, const fec::Ldpc:
 {
   test_suite* ts = BOOST_TEST_SUITE(name);
   
-  auto structure = fec::Ldpc::Structure(encoder, decoder);
+  auto structure = fec::Ldpc::detail::Structure(encoder, decoder);
   
   //std::cout << structure.checks() << std::endl;
   
-  auto puncturedStructure = fec::PuncturedLdpc::Structure(encoder, puncture, decoder);
+  auto puncturedStructure = fec::PuncturedLdpc::detail::Structure(encoder, puncture, decoder);
   
   //std::cout << puncturedStructure.checks() << std::endl;
   
@@ -108,15 +108,15 @@ init_unit_test_suite( int argc, char* argv[] )
   uint64_t seed = 0;
   auto checkMatrix = fec::Ldpc::Gallager::matrix(2048, 3, 5, seed);
   auto encoder = fec::Ldpc::EncoderOptions(checkMatrix);
-  auto decoder = fec::Ldpc::DecoderOptions().algorithm(fec::Codec::Exact).iterations(30);
+  auto decoder = fec::Ldpc::DecoderOptions().algorithm(fec::Exact).iterations(30);
   auto puncture = fec::Ldpc::PunctureOptions().mask({1,0}).systMask({1});
   
   framework::master_test_suite().add(test_ldpc(encoder,decoder,puncture, 2.0, "exact"));
   
-  decoder.algorithm(fec::Codec::Linear);
+  decoder.algorithm(fec::Linear);
   framework::master_test_suite().add(test_ldpc(encoder,decoder,puncture, 2.0, "linear"));
   
-  decoder.algorithm(fec::Codec::Approximate);
+  decoder.algorithm(fec::Approximate);
   framework::master_test_suite().add(test_ldpc(encoder,decoder,puncture, 2.0, "approximate"));
   
   return 0;

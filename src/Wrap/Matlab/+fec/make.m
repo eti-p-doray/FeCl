@@ -9,9 +9,9 @@ function make
     iPath = {['-I' fullfile('../src/')], ['-I' fullfile('../libs/include/')]};
     lPath = {['-L' fullfile('../libs/')]};
 
-    srcPath = '../../src/';
-    libsPath = '../libs/';
-    trgPath = '../src/';
+    srcPath = '../../';
+    libsPath = '../../../libs/';
+    trgPath = '../';
     
     objDst = 'build';
     trgDst = '+bin';

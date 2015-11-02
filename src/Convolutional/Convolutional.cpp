@@ -19,25 +19,25 @@
  along with FeCl.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#include "Convolutional.h"
+#include "../Convolutional.h"
 #include "MapDecoder/MapDecoder.h"
 #include "ViterbiDecoder/ViterbiDecoder.h"
 
 using namespace fec;
 
 BOOST_CLASS_EXPORT_IMPLEMENT(Convolutional);
-BOOST_CLASS_EXPORT_IMPLEMENT(Convolutional::Structure);
+BOOST_CLASS_EXPORT_IMPLEMENT(Convolutional::detail::Structure);
 
 const char * Convolutional::get_key() const {
   return boost::serialization::type_info_implementation<Convolutional>::type::get_const_instance().get_key();
 }
 
-const char * Convolutional::Structure::get_key() const {
-  return boost::serialization::type_info_implementation<Convolutional::Structure>::type::get_const_instance().get_key();
+const char * Convolutional::detail::Structure::get_key() const {
+  return boost::serialization::type_info_implementation<Convolutional::detail::Structure>::type::get_const_instance().get_key();
 }
 
 Convolutional::Convolutional(const Options& options,  int workGroupSize) :
-Codec(std::unique_ptr<Structure>(new Structure(options)), workGroupSize)
+Codec(std::unique_ptr<detail::Structure>(new detail::Structure(options)), workGroupSize)
 {
 }
 /**
@@ -46,20 +46,20 @@ Codec(std::unique_ptr<Structure>(new Structure(options)), workGroupSize)
  *  \param  structure Codec structure used for encoding and decoding
  *  \param  workGroupSize Number of thread used for decoding
  */
-Convolutional::Convolutional(const Structure& structure,  int workGroupSize) :
-Codec(std::unique_ptr<Structure>(new Structure(structure)), workGroupSize)
+Convolutional::Convolutional(const detail::Structure& structure,  int workGroupSize) :
+Codec(std::unique_ptr<detail::Structure>(new detail::Structure(structure)), workGroupSize)
 {
 }
 Convolutional::Convolutional(const EncoderOptions& encoder, const DecoderOptions& decoder, int workGroupSize) :
-Codec(std::unique_ptr<Structure>(new Structure(encoder, decoder)), workGroupSize)
+Codec(std::unique_ptr<detail::Structure>(new detail::Structure(encoder, decoder)), workGroupSize)
 {
 }
 Convolutional::Convolutional(const EncoderOptions& encoder, int workGroupSize) :
-Codec(std::unique_ptr<Structure>(new Structure(encoder)), workGroupSize)
+Codec(std::unique_ptr<detail::Structure>(new detail::Structure(encoder)), workGroupSize)
 {
 }
 
-void Convolutional::soDecodeBlocks(InputIterator input, OutputIterator output, size_t n) const
+void Convolutional::soDecodeBlocks(Codec::detail::InputIterator input, Codec::detail::OutputIterator output, size_t n) const
 {
   auto worker = MapDecoder::create(structure());
   worker->soDecodeBlocks(input, output, n);
@@ -71,7 +71,7 @@ void Convolutional::decodeBlocks(std::vector<LlrType>::const_iterator parity, st
   worker->decodeBlocks(parity, msg, n);
 }
 
-Convolutional::Structure::Structure(const Options& options)
+Convolutional::detail::Structure::Structure(const Options& options)
 {
   setEncoderOptions(options);
   setDecoderOptions(options);
@@ -86,18 +86,18 @@ Convolutional::Structure::Structure(const Options& options)
  *  \param  endType Trellis termination type
  *  \param  type  Algorithm use in app decoding
  */
-Convolutional::Structure::Structure(const EncoderOptions& encoder, const DecoderOptions& decoder)
+Convolutional::detail::Structure::Structure(const EncoderOptions& encoder, const DecoderOptions& decoder)
 {
   setEncoderOptions(encoder);
   setDecoderOptions(decoder);
 }
-Convolutional::Structure::Structure(const EncoderOptions& encoder)
+Convolutional::detail::Structure::Structure(const EncoderOptions& encoder)
 {
   setEncoderOptions(encoder);
   setDecoderOptions(DecoderOptions());
 }
 
-void Convolutional::Structure::setEncoderOptions(const EncoderOptions& encoder)
+void Convolutional::detail::Structure::setEncoderOptions(const EncoderOptions& encoder)
 {
   trellis_ = encoder.trellis_;
   length_ = encoder.length_;
@@ -121,18 +121,18 @@ void Convolutional::Structure::setEncoderOptions(const EncoderOptions& encoder)
   }
 }
 
-void Convolutional::Structure::setDecoderOptions(const DecoderOptions& decoder)
+void Convolutional::detail::Structure::setDecoderOptions(const DecoderOptions& decoder)
 {
   decoderAlgorithm_ = decoder.algorithm_;
   algorithmOptions_.gain_ = decoder.gain_;
 }
 
-Convolutional::DecoderOptions Convolutional::Structure::getDecoderOptions() const
+Convolutional::DecoderOptions Convolutional::detail::Structure::getDecoderOptions() const
 {
   return DecoderOptions().algorithm(decoderAlgorithm_).gain(algorithmOptions_.gain_);;
 }
 
-void Convolutional::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const
+void Convolutional::detail::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const
 {
   size_t state = 0;
   
@@ -153,7 +153,7 @@ void Convolutional::Structure::encode(std::vector<BitField<size_t>>::const_itera
   }
   
   switch (termination()) {
-    case Convolutional::Tail:
+    case Tail:
       for (int j = 0; j < tailSize(); ++j) {
         int maxCount = -1;
         BitField<size_t> bestInput = 0;
@@ -176,7 +176,7 @@ void Convolutional::Structure::encode(std::vector<BitField<size_t>>::const_itera
       break;
       
     default:
-    case Convolutional::Truncate:
+    case Truncate:
       state = 0;
       break;
   }
@@ -184,7 +184,7 @@ void Convolutional::Structure::encode(std::vector<BitField<size_t>>::const_itera
   assert(state == 0);
 }
 
-bool Convolutional::Structure::check(std::vector<BitField<size_t>>::const_iterator parity) const
+bool Convolutional::detail::Structure::check(std::vector<BitField<size_t>>::const_iterator parity) const
 {
   size_t state = 0;
   for (int j = 0; j < length()+tailSize(); ++j) {
@@ -210,16 +210,16 @@ bool Convolutional::Structure::check(std::vector<BitField<size_t>>::const_iterat
     parity += trellis().outputSize();
   }
   switch (termination()) {
-    case Convolutional::Tail:
+    case Tail:
       return (state == 0);
       
     default:
-    case Convolutional::Truncate:
+    case Truncate:
       return true;
   }
 }
 
-void Convolutional::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity, std::vector<BitField<size_t>>::iterator tail) const
+void Convolutional::detail::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity, std::vector<BitField<size_t>>::iterator tail) const
 {
   size_t state = 0;
   
@@ -240,7 +240,7 @@ void Convolutional::Structure::encode(std::vector<BitField<size_t>>::const_itera
   }
   
   switch (termination()) {
-    case Convolutional::Tail:
+    case Tail:
       for (int j = 0; j < tailSize(); ++j) {
         int maxCount = -1;
         BitField<size_t> bestInput = 0;
@@ -267,7 +267,7 @@ void Convolutional::Structure::encode(std::vector<BitField<size_t>>::const_itera
       break;
       
     default:
-    case Convolutional::Truncate:
+    case Truncate:
       state = 0;
       break;
   }
@@ -275,7 +275,7 @@ void Convolutional::Structure::encode(std::vector<BitField<size_t>>::const_itera
   assert(state == 0);
 }
 
-Permutation Convolutional::Structure::puncturing(const PunctureOptions& options) const
+Permutation Convolutional::detail::Structure::puncturing(const PunctureOptions& options) const
 {
   std::vector<size_t> perms;
   size_t systIdx = 0;

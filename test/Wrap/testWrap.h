@@ -25,12 +25,12 @@
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 
-#include "Convolutional/Convolutional.h"
-#include "Convolutional/PuncturedConvolutional.h"
-#include "Turbo/Turbo.h"
-#include "Turbo/PuncturedTurbo.h"
-#include "Ldpc/Ldpc.h"
-#include "Ldpc/PuncturedLdpc.h"
+#include "Convolutional.h"
+#include "PuncturedConvolutional.h"
+#include "Turbo.h"
+#include "PuncturedTurbo.h"
+#include "Ldpc.h"
+#include "PuncturedLdpc.h"
 #include "Serialization.h"
 
 using namespace fec;

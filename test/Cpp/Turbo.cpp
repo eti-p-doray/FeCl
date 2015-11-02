@@ -52,8 +52,8 @@ test_suite* test_turbo(const fec::Turbo::EncoderOptions& encoder, const fec::Tur
 {
   test_suite* ts = BOOST_TEST_SUITE(name);
   
-  auto structure = fec::Turbo::Structure(encoder, decoder);
-  auto puncturedStructure = fec::PuncturedTurbo::Structure(encoder, puncture, decoder);
+  auto structure = fec::Turbo::detail::Structure(encoder, decoder);
+  auto puncturedStructure = fec::PuncturedTurbo::detail::Structure(encoder, puncture, decoder);
   
   auto codec = fec::Turbo(structure);
   auto puncturedCodec = fec::PuncturedTurbo(puncturedStructure);
@@ -111,7 +111,7 @@ init_unit_test_suite( int argc, char* argv[] )
   fec::Trellis trellis({4}, {{017}}, {015});
   auto encoder = fec::Turbo::EncoderOptions(trellis, {{}, permIndex}).
   termination(fec::Convolutional::Truncate);
-  auto decoder = fec::Turbo::DecoderOptions().algorithm(fec::Codec::Exact).iterations(4).scheduling(fec::Turbo::Parallel);
+  auto decoder = fec::Turbo::DecoderOptions().algorithm(fec::Exact).iterations(4).scheduling(fec::Turbo::Parallel);
   auto puncture = fec::Turbo::PunctureOptions().mask({{1}, {1, 0}, {1, 0}});
   
   framework::master_test_suite().add(test_turbo(encoder, decoder, puncture, -2.0, "default"));
@@ -119,10 +119,10 @@ init_unit_test_suite( int argc, char* argv[] )
   encoder.termination(fec::Convolutional::Tail);
   framework::master_test_suite().add(test_turbo(encoder, decoder, puncture, -2.0, "tail"));
   
-  decoder.algorithm(fec::Codec::Linear);
+  decoder.algorithm(fec::Linear);
   framework::master_test_suite().add(test_turbo(encoder, decoder, puncture, -2.0, "table"));
   
-  decoder.algorithm(fec::Codec::Approximate);
+  decoder.algorithm(fec::Approximate);
   framework::master_test_suite().add(test_turbo(encoder, decoder, puncture, -2.0, "approximate"));
   
   decoder.scheduling(fec::Turbo::Serial);
@@ -145,7 +145,7 @@ init_unit_test_suite( int argc, char* argv[] )
   framework::master_test_suite().add(test_turbo(encoder, decoder, {}, -2.0, "3 constituents"));
   
   encoder.termination(fec::Convolutional::Tail);
-  decoder.algorithm(fec::Codec::Exact);
+  decoder.algorithm(fec::Exact);
   framework::master_test_suite().add(test_turbo(encoder, decoder, {}, -2.0, "3 constituents + tail"));
   
   permIndex2.resize(n/2);

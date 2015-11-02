@@ -27,7 +27,7 @@
 
 #include <mex.h>
 
-#include "Convolutional/Convolutional.h"
+#include "Convolutional.h"
 #include "../util/Permutation.h"
 #include "../util/Conversion.h"
 

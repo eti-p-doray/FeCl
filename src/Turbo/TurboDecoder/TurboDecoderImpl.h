@@ -34,14 +34,14 @@ namespace fec {
   class TurboDecoderImpl : public TurboDecoder
   {
   public:
-    TurboDecoderImpl(const Turbo::Structure& structure);
+    TurboDecoderImpl(const Turbo::detail::Structure& structure);
     virtual ~TurboDecoderImpl() = default;
     
   protected:
     TurboDecoderImpl() = default;
     
     virtual void decodeBlock(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg);
-    virtual void soDecodeBlock(Codec::InputIterator input, Codec::OutputIterator output);
+    virtual void soDecodeBlock(Codec::detail::InputIterator input, Codec::detail::OutputIterator output);
     
   private:
     void aPosterioriUpdate();

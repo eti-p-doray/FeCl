@@ -39,13 +39,12 @@ namespace fec {
   template <class LlrMetrics, template <class> class BoxSumAlg>
   class BpDecoderImpl : public BpDecoder {
   public:
-    BpDecoderImpl(const Ldpc::Structure& structure);
+    BpDecoderImpl(const Ldpc::detail::Structure& structure);
     ~BpDecoderImpl() = default;
     
   protected:
     virtual void decodeBlock(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg);
-    virtual void soDecodeBlock(Codec::InputIterator input, Codec::
-                               OutputIterator output);
+    virtual void soDecodeBlock(Codec::detail::InputIterator input, Codec::detail::OutputIterator output);
     
   private:
     void checkUpdate();

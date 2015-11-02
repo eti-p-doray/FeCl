@@ -1,12 +1,12 @@
 function results = matlabDecode(decoder, msg, llr, N, z)
-    decodedMsg = int8(decoder.step(llr(:,1)));
+    decodedMsg = decoder.step(llr(:,1));
     elapsedTime = zeros(N,1);
     errorCount = zeros(N,1);
     for i = 1:N
         tic;
         for j = 1:size(msg,2)
-            decodedMsg = int8(decoder.step(llr(:,j)));
-            errorCount(i) = errorCount(i) + sum(sum(decodedMsg~=msg(:,j)));
+            decodedMsg = decoder.step(llr(:,j));
+            errorCount(i) = errorCount(i) + sum(decodedMsg~=msg(:,j));
         end
         elapsedTime(i) = toc;
     end

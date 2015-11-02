@@ -1,11 +1,11 @@
 function results = TurboScheduling(T, N, M)
-    turboTrellis = poly2trellis(4, 17, 15);
+    turboTrellis = poly2trellis(4, 15, 13);
     pi{1} = [];
     pi{2} = randperm(T);
     pi{3} = randperm(T);
     
-    codec{1} = fec.Turbo(turboTrellis, pi, 'termination', 'Tail', 'iterations', 6, 'scheduling', 'Serial', 'algorithm', 'Linear');
-    codec{2} = fec.Turbo(turboTrellis, pi, 'termination', 'Tail', 'iterations', 6, 'scheduling', 'Parallel', 'algorithm', 'Linear');
+    codec{1} = fec.Turbo(turboTrellis, pi, 'termination', 'Truncate', 'iterations', 10, 'scheduling', 'Serial', 'algorithm', 'Exact');
+    codec{2} = fec.Turbo(turboTrellis, pi, 'termination', 'Truncate', 'iterations', 10, 'scheduling', 'Parallel', 'algorithm', 'Exact');
     
     config = {'Serial', 'Parallel'}; 
     for i = 1:2

@@ -25,7 +25,7 @@
 #include <vector>
 #include <memory>
 
-#include "../Convolutional.h"
+#include "../../Convolutional.h"
 
 namespace fec {
 
@@ -36,19 +36,19 @@ namespace fec {
   class ViterbiDecoder
   {
   public:
-    static std::unique_ptr<ViterbiDecoder> create(const Convolutional::Structure&); /**< Creating function */
+    static std::unique_ptr<ViterbiDecoder> create(const Convolutional::detail::Structure&); /**< Creating function */
     ~ViterbiDecoder() = default;
     
     void decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n);
     virtual void decodeBlock(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg) = 0;
     
   protected:
-    ViterbiDecoder(const Convolutional::Structure&);
+    ViterbiDecoder(const Convolutional::detail::Structure&);
     
-    inline const Convolutional::Structure& structure() const {return structure_;}
+    inline const Convolutional::detail::Structure& structure() const {return structure_;}
 
   private:
-    const Convolutional::Structure structure_;
+    const Convolutional::detail::Structure structure_;
   };
   
 }

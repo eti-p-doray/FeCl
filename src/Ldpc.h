@@ -29,9 +29,9 @@
 
 #include <boost/serialization/export.hpp>
 
-#include "../Codec.h"
-#include "../BitMatrix.h"
-#include "../Permutation.h"
+#include "Codec.h"
+#include "BitMatrix.h"
+#include "Permutation.h"
 
 namespace fec {
   
@@ -84,11 +84,11 @@ namespace fec {
     public:
       DecoderOptions() = default;
       
-      DecoderOptions& algorithm(Codec::DecoderAlgorithm algorithm) {algorithm_ = algorithm; return *this;}
+      DecoderOptions& algorithm(DecoderAlgorithm algorithm) {algorithm_ = algorithm; return *this;}
       DecoderOptions& iterations(size_t n) {iterations_ = n; return *this;}
       DecoderOptions& gain(double gain) {gain_ = gain; return *this;}
       
-      Codec::DecoderAlgorithm algorithm_ = Approximate;
+      DecoderAlgorithm algorithm_ = Approximate;
       size_t iterations_;
       double gain_ = 1.0;
     };
@@ -107,67 +107,70 @@ namespace fec {
     public:
       Options(const SparseBitMatrix& checkMatrix) : EncoderOptions(checkMatrix) {}
     };
-    /**
-     *  This class represents a ldpc code structure.
-     *  It provides a usefull interface to store and acces the structure information.
-     */
-    class Structure : public Codec::Structure {
-      friend class ::boost::serialization::access;
-    public:
-      Structure() = default;
-      Structure(const Options& options);
-      Structure(const EncoderOptions&, const DecoderOptions&);
-      Structure(const EncoderOptions&);
-      virtual ~Structure() = default;
-      
-      virtual const char * get_key() const;
-      
-      void setDecoderOptions(const DecoderOptions& decoder);
-      DecoderOptions getDecoderOptions() const;
-      Permutation puncturing(const PunctureOptions& options) const;
-      
-      inline const SparseBitMatrix& checks() const {return H_;}
-      inline size_t iterations() const {return iterations_;}
-      
-      void syndrome(std::vector<uint8_t>::const_iterator parity, std::vector<uint8_t>::iterator syndrome) const;
-      virtual bool check(std::vector<BitField<size_t>>::const_iterator parity) const;
-      virtual void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const;
-      
-    protected:
-      void setEncoderOptions(const EncoderOptions& encoder);
-      
-    private:
-      template <typename Archive>
-      void serialize(Archive & ar, const unsigned int version) {
-        using namespace boost::serialization;
-        ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(Codec::Structure);
-        ar & ::BOOST_SERIALIZATION_NVP(H_);
-        ar & ::BOOST_SERIALIZATION_NVP(DC_);
-        ar & ::BOOST_SERIALIZATION_NVP(T_);
-        ar & ::BOOST_SERIALIZATION_NVP(A_);
-        ar & ::BOOST_SERIALIZATION_NVP(B_);
-        ar & ::BOOST_SERIALIZATION_NVP(iterations_);
-      }
-      
-      void computeGeneratorMatrix(SparseBitMatrix H);
-      
-      SparseBitMatrix H_;
-      SparseBitMatrix DC_;
-      SparseBitMatrix T_;
-      SparseBitMatrix A_;
-      SparseBitMatrix B_;
-      
-      size_t iterations_;
+    
+    struct detail {
+      /**
+       *  This class represents a ldpc code structure.
+       *  It provides a usefull interface to store and acces the structure information.
+       */
+      class Structure : public Codec::detail::Structure {
+        friend class ::boost::serialization::access;
+      public:
+        Structure() = default;
+        Structure(const Options& options);
+        Structure(const EncoderOptions&, const DecoderOptions&);
+        Structure(const EncoderOptions&);
+        virtual ~Structure() = default;
+        
+        virtual const char * get_key() const;
+        
+        void setDecoderOptions(const DecoderOptions& decoder);
+        DecoderOptions getDecoderOptions() const;
+        Permutation puncturing(const PunctureOptions& options) const;
+        
+        inline const SparseBitMatrix& checks() const {return H_;}
+        inline size_t iterations() const {return iterations_;}
+        
+        void syndrome(std::vector<uint8_t>::const_iterator parity, std::vector<uint8_t>::iterator syndrome) const;
+        virtual bool check(std::vector<BitField<size_t>>::const_iterator parity) const;
+        virtual void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const;
+        
+      protected:
+        void setEncoderOptions(const EncoderOptions& encoder);
+        
+      private:
+        template <typename Archive>
+        void serialize(Archive & ar, const unsigned int version) {
+          using namespace boost::serialization;
+          ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(Codec::detail::Structure);
+          ar & ::BOOST_SERIALIZATION_NVP(H_);
+          ar & ::BOOST_SERIALIZATION_NVP(DC_);
+          ar & ::BOOST_SERIALIZATION_NVP(T_);
+          ar & ::BOOST_SERIALIZATION_NVP(A_);
+          ar & ::BOOST_SERIALIZATION_NVP(B_);
+          ar & ::BOOST_SERIALIZATION_NVP(iterations_);
+        }
+        
+        void computeGeneratorMatrix(SparseBitMatrix H);
+        
+        SparseBitMatrix H_;
+        SparseBitMatrix DC_;
+        SparseBitMatrix T_;
+        SparseBitMatrix A_;
+        SparseBitMatrix B_;
+        
+        size_t iterations_;
+      };
     };
     
     Ldpc() = default;
     Ldpc(const Options& options, int workGroupSize = 8);
-    Ldpc(const Structure& structure, int workGroupSize = 8);
+    Ldpc(const detail::Structure& structure, int workGroupSize = 8);
     Ldpc(const EncoderOptions& encoder, const DecoderOptions& decoder, int workGroupSize = 8);
     Ldpc(const EncoderOptions& encoder, int workGroupSize = 8);
     Ldpc(const Ldpc& other) {*this = other;}
     virtual ~Ldpc() = default;
-    Ldpc& operator=(const Ldpc& other) {Codec::operator=(other); structure_ = std::unique_ptr<Structure>(new Structure(other.structure())); return *this;}
+    Ldpc& operator=(const Ldpc& other) {Codec::operator=(other); structure_ = std::unique_ptr<detail::Structure>(new detail::Structure(other.structure())); return *this;}
     
     virtual const char * get_key() const;
     
@@ -177,19 +180,19 @@ namespace fec {
     Permutation puncturing(const PunctureOptions& options) {return structure().puncturing(options);}
     
   protected:
-    Ldpc(std::unique_ptr<Structure>&& structure, int workGroupSize = 4) : Codec(std::move(structure), workGroupSize) {}
+    Ldpc(std::unique_ptr<detail::Structure>&& structure, int workGroupSize = 4) : Codec(std::move(structure), workGroupSize) {}
     
-    inline const Structure& structure() const {return dynamic_cast<const Structure&>(Codec::structure());}
-    inline Structure& structure() {return dynamic_cast<Structure&>(Codec::structure());}
+    inline const detail::Structure& structure() const {return dynamic_cast<const detail::Structure&>(Codec::structure());}
+    inline detail::Structure& structure() {return dynamic_cast<detail::Structure&>(Codec::structure());}
     
     virtual void decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const;
-    virtual void soDecodeBlocks(InputIterator input, OutputIterator output, size_t n) const;
+    virtual void soDecodeBlocks(Codec::detail::InputIterator input, Codec::detail::OutputIterator output, size_t n) const;
     
   private:
     template <typename Archive>
     void serialize(Archive & ar, const unsigned int version) {
       using namespace boost::serialization;
-      ar.template register_type<Structure>();
+      ar.template register_type<detail::Structure>();
       ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(Codec);
     }
   };
@@ -198,7 +201,7 @@ namespace fec {
 
 BOOST_CLASS_EXPORT_KEY(fec::Ldpc);
 BOOST_CLASS_TYPE_INFO(fec::Ldpc,extended_type_info_no_rtti<fec::Ldpc>);
-BOOST_CLASS_EXPORT_KEY(fec::Ldpc::Structure);
-BOOST_CLASS_TYPE_INFO(fec::Ldpc::Structure,extended_type_info_no_rtti<fec::Ldpc::Structure>);
+BOOST_CLASS_EXPORT_KEY(fec::Ldpc::detail::Structure);
+BOOST_CLASS_TYPE_INFO(fec::Ldpc::detail::Structure,extended_type_info_no_rtti<fec::Ldpc::detail::Structure>);
 
 #endif

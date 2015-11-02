@@ -31,17 +31,17 @@ using namespace fec;
  *  \param  codeStructure Convolutional code structure describing the code
  *  \return MacDecoder specialization suitable for the algorithm in use
  */
-std::unique_ptr<MapDecoder> MapDecoder::create(const Convolutional::Structure& structure)
+std::unique_ptr<MapDecoder> MapDecoder::create(const Convolutional::detail::Structure& structure)
 {
   switch (structure.decoderAlgorithm()) {
     default:
-    case Codec::Exact:
+    case Exact:
       return std::unique_ptr<MapDecoder>(new MapDecoderImpl<FloatLlrMetrics, LogSum>(structure));
 
-    case Codec::Linear:
+    case Linear:
       return std::unique_ptr<MapDecoder>(new MapDecoderImpl<FloatLlrMetrics, LinearLogSum>(structure));
 
-    case Codec::Approximate:
+    case Approximate:
       return std::unique_ptr<MapDecoder>(new MapDecoderImpl<FloatLlrMetrics, MaxLogSum>(structure));
   }
 }
@@ -49,7 +49,7 @@ std::unique_ptr<MapDecoder> MapDecoder::create(const Convolutional::Structure& s
 /**
  *  Implementation of Codec#softOutDecodeNBloc.
  */
-void MapDecoder::soDecodeBlocks(Codec::InputIterator input, Codec::OutputIterator output, size_t n)
+void MapDecoder::soDecodeBlocks(Codec::detail::InputIterator input, Codec::detail::OutputIterator output, size_t n)
 {
   for (size_t i = 0; i < n; ++i) {
     soDecodeBlock(input,output);
@@ -63,7 +63,7 @@ void MapDecoder::soDecodeBlocks(Codec::InputIterator input, Codec::OutputIterato
  *  Allocates metric buffers based on the given code structure.
  *  \param  codeStructure Convolutional code structure describing the code
  */
-MapDecoder::MapDecoder(const Convolutional::Structure& structure) :
+MapDecoder::MapDecoder(const Convolutional::detail::Structure& structure) :
 structure_(structure)
 {
 }

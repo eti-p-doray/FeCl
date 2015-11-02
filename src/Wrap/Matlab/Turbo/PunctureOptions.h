@@ -27,7 +27,7 @@
 
 #include <mex.h>
 
-#include "Turbo/Turbo.h"
+#include "Turbo.h"
 #include "../util/Permutation.h"
 #include "../util/Conversion.h"
 

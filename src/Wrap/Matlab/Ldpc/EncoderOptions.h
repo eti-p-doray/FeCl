@@ -27,7 +27,7 @@
 
 #include <mex.h>
 
-#include "Ldpc/Ldpc.h"
+#include "Ldpc.h"
 #include "../util/BitMatrix.h"
 #include "../util/Conversion.h"
 

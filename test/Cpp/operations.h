@@ -26,12 +26,12 @@
 
 #include "Serialization.h"
 #include "Codec.h"
-#include "Convolutional/Convolutional.h"
-#include "Convolutional/PuncturedConvolutional.h"
-#include "Turbo/Turbo.h"
-#include "Turbo/PuncturedTurbo.h"
-#include "Ldpc/Ldpc.h"
-#include "Ldpc/PuncturedLdpc.h"
+#include "Convolutional.h"
+#include "PuncturedConvolutional.h"
+#include "Turbo.h"
+#include "PuncturedTurbo.h"
+#include "Ldpc.h"
+#include "PuncturedLdpc.h"
 
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const std::vector<T>& a)
@@ -61,7 +61,7 @@ std::vector<fec::LlrType> distort(const std::vector<fec::BitField<T>>& input, do
   return llr;
 }
 
-void test_encodeBlock(const fec::Codec::Structure& structure)
+void test_encodeBlock(const fec::Codec::detail::Structure& structure)
 {
   std::vector<fec::BitField<size_t>> msg0(structure.msgSize(), 0);
   std::vector<fec::BitField<size_t>> parity(structure.paritySize());

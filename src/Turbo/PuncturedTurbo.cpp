@@ -19,24 +19,24 @@
  along with FeCl.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#include "PuncturedTurbo.h"
+#include "../PuncturedTurbo.h"
 #include "TurboDecoder/TurboDecoder.h"
 
 using namespace fec;
 
 BOOST_CLASS_EXPORT_IMPLEMENT(PuncturedTurbo);
-BOOST_CLASS_EXPORT_IMPLEMENT(PuncturedTurbo::Structure);
+BOOST_CLASS_EXPORT_IMPLEMENT(PuncturedTurbo::detail::Structure);
 
 const char * PuncturedTurbo::get_key() const {
   return boost::serialization::type_info_implementation<PuncturedTurbo>::type::get_const_instance().get_key();
 }
 
-const char * PuncturedTurbo::Structure::get_key() const {
-  return boost::serialization::type_info_implementation<PuncturedTurbo::Structure>::type::get_const_instance().get_key();
+const char * PuncturedTurbo::detail::Structure::get_key() const {
+  return boost::serialization::type_info_implementation<PuncturedTurbo::detail::Structure>::type::get_const_instance().get_key();
 }
 
 PuncturedTurbo::PuncturedTurbo(const Options& options,  int workGroupSize) :
-Turbo(std::unique_ptr<Structure>(new Structure(options)), workGroupSize)
+Turbo(std::unique_ptr<detail::Structure>(new detail::Structure(options)), workGroupSize)
 {
 }
 /**
@@ -44,16 +44,16 @@ Turbo(std::unique_ptr<Structure>(new Structure(options)), workGroupSize)
  *  \param  codeStructure Codec structure used for encoding and decoding
  *  \param  workGroupSize Number of thread used for decoding
  */
-PuncturedTurbo::PuncturedTurbo(const Structure& structure,  int workGroupSize) :
-Turbo(std::unique_ptr<Structure>(new Structure(structure)), workGroupSize)
+PuncturedTurbo::PuncturedTurbo(const detail::Structure& structure,  int workGroupSize) :
+Turbo(std::unique_ptr<detail::Structure>(new detail::Structure(structure)), workGroupSize)
 {
 }
 PuncturedTurbo::PuncturedTurbo(const EncoderOptions& encoder, const PunctureOptions& puncture, const DecoderOptions& decoder, int workGroupSize) :
-Turbo(std::unique_ptr<Structure>(new Structure(encoder, puncture, decoder)), workGroupSize)
+Turbo(std::unique_ptr<detail::Structure>(new detail::Structure(encoder, puncture, decoder)), workGroupSize)
 {
 }
 PuncturedTurbo::PuncturedTurbo(const EncoderOptions& encoder, const PunctureOptions& puncture, int workGroupSize) :
-Turbo(std::unique_ptr<Structure>(new Structure(encoder, puncture)), workGroupSize)
+Turbo(std::unique_ptr<detail::Structure>(new detail::Structure(encoder, puncture)), workGroupSize)
 {
 }
 
@@ -65,7 +65,7 @@ void PuncturedTurbo::decodeBlocks(std::vector<LlrType>::const_iterator parity, s
   worker->decodeBlocks(parityTmp.begin(), msg, n);
 }
 
-void PuncturedTurbo::soDecodeBlocks(InputIterator input, OutputIterator output, size_t n) const
+void PuncturedTurbo::soDecodeBlocks(Codec::detail::InputIterator input, Codec::detail::OutputIterator output, size_t n) const
 {
   std::vector<LlrType> parityTmp(structure().innerParitySize()*n, 0.0);
   structure().permutation().dePermuteBlocks<LlrType>(input.parity(), parityTmp.begin(), n);
@@ -74,7 +74,7 @@ void PuncturedTurbo::soDecodeBlocks(InputIterator input, OutputIterator output, 
   if (outputTmp.hasParity()) {
     outputTmp.parity(parityTmp.begin());
   }
-  Turbo::Structure struc = structure();
+  Turbo::detail::Structure struc = structure();
   input.setStructureRef(&struc);
   outputTmp.setStructureRef(&struc);
   auto worker = TurboDecoder::create(structure());
@@ -84,41 +84,41 @@ void PuncturedTurbo::soDecodeBlocks(InputIterator input, OutputIterator output, 
   }
 }
 
-PuncturedTurbo::Structure::Structure(const Options& options)
+PuncturedTurbo::detail::Structure::Structure(const Options& options)
 {
   setEncoderOptions(options);
   setPunctureOptions(options);
   setDecoderOptions(options);
 }
 
-PuncturedTurbo::Structure::Structure(const EncoderOptions& encoder, const PunctureOptions& puncture, const DecoderOptions& decoder)
+PuncturedTurbo::detail::Structure::Structure(const EncoderOptions& encoder, const PunctureOptions& puncture, const DecoderOptions& decoder)
 {
-  Turbo::Structure::setEncoderOptions(encoder);
+  Turbo::detail::Structure::setEncoderOptions(encoder);
   setPunctureOptions(puncture);
   setDecoderOptions(decoder);
 }
-PuncturedTurbo::Structure::Structure(const EncoderOptions& encoder, const PunctureOptions& puncture)
+PuncturedTurbo::detail::Structure::Structure(const EncoderOptions& encoder, const PunctureOptions& puncture)
 {
   setEncoderOptions(encoder);
   setPunctureOptions(puncture);
   setDecoderOptions(DecoderOptions());
 }
 
-void PuncturedTurbo::Structure::setPunctureOptions(const fec::Turbo::PunctureOptions& puncture)
+void PuncturedTurbo::detail::Structure::setPunctureOptions(const fec::Turbo::PunctureOptions& puncture)
 {
   permutation_ = puncturing(puncture);
 }
 
-void PuncturedTurbo::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const
+void PuncturedTurbo::detail::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const
 {
   std::vector<BitField<size_t>> parityTmp(innerParitySize(), 0);
-  Turbo::Structure::encode(msg, parityTmp.begin());
+  Turbo::detail::Structure::encode(msg, parityTmp.begin());
   permutation().permuteBlock<BitField<size_t>>(parityTmp.begin(), parity);
 }
 
-bool PuncturedTurbo::Structure::check(std::vector<BitField<size_t>>::const_iterator parity) const
+bool PuncturedTurbo::detail::Structure::check(std::vector<BitField<size_t>>::const_iterator parity) const
 {
   std::vector<BitField<size_t>> parityTmp(innerParitySize(), 0);
   permutation().dePermuteBlock<BitField<size_t>>(parity, parityTmp.begin());
-  return Turbo::Structure::check(parityTmp.begin());
+  return Turbo::detail::Structure::check(parityTmp.begin());
 }

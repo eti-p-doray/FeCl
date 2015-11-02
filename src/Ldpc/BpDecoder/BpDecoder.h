@@ -25,7 +25,7 @@
 #include <vector>
 #include <memory>
 
-#include "../Ldpc.h"
+#include "../../Ldpc.h"
 
 namespace fec {
 
@@ -39,23 +39,23 @@ namespace fec {
 class BpDecoder
 {
 public:
-  static std::unique_ptr<BpDecoder> create(const Ldpc::Structure&);
+  static std::unique_ptr<BpDecoder> create(const Ldpc::detail::Structure&);
   virtual ~BpDecoder() = default;
   
   void decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n);
-  void soDecodeBlocks(Codec::InputIterator input, Codec::OutputIterator output, size_t n);
+  void soDecodeBlocks(Codec::detail::InputIterator input, Codec::detail::OutputIterator output, size_t n);
   
 protected:
-  BpDecoder(const Ldpc::Structure& codeStructure);
+  BpDecoder(const Ldpc::detail::Structure& codeStructure);
   
   virtual void decodeBlock(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg) = 0;
-  virtual void soDecodeBlock(Codec::InputIterator input, Codec::OutputIterator output) = 0;
+  virtual void soDecodeBlock(Codec::detail::InputIterator input, Codec::detail::OutputIterator output) = 0;
   
-  inline const Ldpc::Structure& structure() const {return structure_;}
+  inline const Ldpc::detail::Structure& structure() const {return structure_;}
 
 private:
   
-  const Ldpc::Structure structure_;
+  const Ldpc::detail::Structure structure_;
 };
   
 }

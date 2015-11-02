@@ -27,7 +27,7 @@
 
 #include <mex.h>
 
-#include "Turbo/Turbo.h"
+#include "Turbo.h"
 #include "../util/Conversion.h"
 
 template <>
@@ -36,8 +36,8 @@ public:
   static fec::Ldpc::DecoderOptions f(const mxArray* in) {
     fec::Ldpc::DecoderOptions decoderOptions;
     decoderOptions.iterations(  mxArrayTo<size_t>::f(mxGetField(in, 0, "iterations")) );
-    decoderOptions.algorithm(  mxArrayTo<fec::Codec::DecoderAlgorithm>::f(mxGetField(in, 0, "algorithm")) );
-    decoderOptions.gain(  mxArrayTo<fec::Codec::DecoderAlgorithm>::f(mxGetField(in, 0, "gain")) );
+    decoderOptions.algorithm(  mxArrayTo<fec::DecoderAlgorithm>::f(mxGetField(in, 0, "algorithm")) );
+    decoderOptions.gain(  mxArrayTo<double>::f(mxGetField(in, 0, "gain")) );
 
     return decoderOptions;
   }

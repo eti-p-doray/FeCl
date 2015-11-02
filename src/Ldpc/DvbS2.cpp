@@ -19,7 +19,7 @@
  along with FeCl.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#include "Ldpc.h"
+#include "../Ldpc.h"
 
 using namespace fec;
 

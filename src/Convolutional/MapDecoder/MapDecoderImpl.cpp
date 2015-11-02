@@ -29,7 +29,7 @@ using namespace fec;
  *  \param  codeStructure Convolutional code structure describing the code
  */
 template <class LlrMetrics, template <class> class LogSumAlg>
-MapDecoderImpl<LlrMetrics, LogSumAlg>::MapDecoderImpl(const Convolutional::Structure& structure) :
+MapDecoderImpl<LlrMetrics, LogSumAlg>::MapDecoderImpl(const Convolutional::detail::Structure& structure) :
 MapDecoder(structure),
 logSum_(this->structure().algorithmOptions())
 {
@@ -53,7 +53,7 @@ logSum_(this->structure().algorithmOptions())
  *    Output needs to be pre-allocated.
  */
 template <class LlrMetrics, template <class> class LogSumAlg>
-void MapDecoderImpl<LlrMetrics, LogSumAlg>::soDecodeBlock(Codec::InputIterator input, Codec::OutputIterator output)
+void MapDecoderImpl<LlrMetrics, LogSumAlg>::soDecodeBlock(Codec::detail::InputIterator input, Codec::detail::OutputIterator output)
 {
   soDecodeBlockImpl<LlrType>(input, output);
 }
@@ -69,7 +69,7 @@ void MapDecoderImpl<LlrMetrics, LogSumAlg>::soDecodeBlock(Codec::InputIterator i
  */
 template <class LlrMetrics, template <class> class LogSumAlg>
 template <class T>
-void MapDecoderImpl<LlrMetrics, LogSumAlg>::soDecodeBlockImpl(Codec::InfoIterator<typename std::vector<T>::const_iterator> input, Codec::InfoIterator<typename std::vector<T>::iterator> output)
+void MapDecoderImpl<LlrMetrics, LogSumAlg>::soDecodeBlockImpl(Codec::detail::InfoIterator<typename std::vector<T>::const_iterator> input, Codec::detail::InfoIterator<typename std::vector<T>::iterator> output)
 {
   branchUpdate<T>(input);
   forwardUpdate();
@@ -79,7 +79,7 @@ void MapDecoderImpl<LlrMetrics, LogSumAlg>::soDecodeBlockImpl(Codec::InfoIterato
 
 template <class LlrMetrics, template <class> class LogSumAlg>
 template <class T>
-void MapDecoderImpl<LlrMetrics, LogSumAlg>::branchUpdate(Codec::InfoIterator<typename std::vector<T>::const_iterator> input)
+void MapDecoderImpl<LlrMetrics, LogSumAlg>::branchUpdate(Codec::detail::InfoIterator<typename std::vector<T>::const_iterator> input)
 {
   auto parity = input.parity();
   auto syst = input.syst();
@@ -173,7 +173,7 @@ void MapDecoderImpl<LlrMetrics, LogSumAlg>::backwardUpdate()
 
 template <class LlrMetrics, template <class> class LogSumAlg>
 template <typename T>
-void MapDecoderImpl<LlrMetrics, LogSumAlg>::aPosterioriUpdate(Codec::InfoIterator<typename std::vector<T>::const_iterator> input, Codec::InfoIterator<typename std::vector<T>::iterator> output)
+void MapDecoderImpl<LlrMetrics, LogSumAlg>::aPosterioriUpdate(Codec::detail::InfoIterator<typename std::vector<T>::const_iterator> input, Codec::detail::InfoIterator<typename std::vector<T>::iterator> output)
 {
   auto systOut = output.syst();
   auto systIn = input.syst();

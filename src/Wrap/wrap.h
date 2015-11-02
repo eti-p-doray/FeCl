@@ -25,12 +25,12 @@
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 
-#include "Convolutional/Convolutional.h"
-#include "Convolutional/PuncturedConvolutional.h"
-#include "Turbo/Turbo.h"
-#include "Turbo/PuncturedTurbo.h"
-#include "Ldpc/Ldpc.h"
-#include "Ldpc/PuncturedLdpc.h"
+#include "Convolutional.h"
+#include "PuncturedConvolutional.h"
+#include "Turbo.h"
+#include "PuncturedTurbo.h"
+#include "Ldpc.h"
+#include "PuncturedLdpc.h"
 #include "Serialization.h"
 
 using namespace fec;
@@ -130,12 +130,12 @@ const std::vector<std::function<typename WrapFcn<Wrap>::Signature>> WrapFcn<Wrap
     std::vector<LlrType,Allocator<LlrType>> systIn;
     if (in.size() > 3) systIn = wrapTo<std::vector<LlrType,Allocator<LlrType>>>::f(in[3]);
     
-    auto input = Codec::Info<const std::vector<LlrType,Allocator<LlrType>>>();
+    auto input = Codec::Input<Allocator>();
     if (parityIn.size()) input.parity(parityIn);
     if (stateIn.size()) input.state(stateIn);
     if (systIn.size()) input.syst(systIn);
     
-    auto output = Codec::Info<std::vector<LlrType,Allocator<LlrType>>>();
+    auto output = Codec::Output<Allocator>();
     std::vector<LlrType,Allocator<LlrType>> msg;
     std::vector<LlrType,Allocator<LlrType>> systOut;
     std::vector<LlrType,Allocator<LlrType>> stateOut;
@@ -184,8 +184,7 @@ const std::vector<std::function<typename WrapFcn<Wrap>::Signature>> WrapFcn<Wrap
   
   [](const InArgList in, OutArgList out) //Turbo_constructor
   {
-    Turbo::Structure structure(wrapTo<Turbo::EncoderOptions>::f(in[0]), wrapTo<Turbo::DecoderOptions>::f(in[1]));
-    Handle<Codec> codec(new Turbo(structure));
+    Handle<Codec> codec(new Turbo(wrapTo<Turbo::EncoderOptions>::f(in[0]), wrapTo<Turbo::DecoderOptions>::f(in[1])));
     out[0] = toWrap(std::move(codec));
   },
   
@@ -216,8 +215,7 @@ const std::vector<std::function<typename WrapFcn<Wrap>::Signature>> WrapFcn<Wrap
   
   [](const InArgList in, OutArgList out) //PuncturedTurbo_constructor
   {
-    PuncturedTurbo::Structure structure(wrapTo<Turbo::EncoderOptions>::f(in[0]), wrapTo<Turbo::PunctureOptions>::f(in[1]), wrapTo<Turbo::DecoderOptions>::f(in[2]));
-    Handle<Codec> codec(new PuncturedTurbo(structure));
+    Handle<Codec> codec(new PuncturedTurbo(wrapTo<Turbo::EncoderOptions>::f(in[0]), wrapTo<Turbo::PunctureOptions>::f(in[1]), wrapTo<Turbo::DecoderOptions>::f(in[2])));
     out[0] = toWrap(std::move(codec));
   },
   
@@ -228,9 +226,7 @@ const std::vector<std::function<typename WrapFcn<Wrap>::Signature>> WrapFcn<Wrap
   
   [](const InArgList in, OutArgList out) //Ldpc_constructor
   {
-    
-    Ldpc::Structure structure(wrapTo<Ldpc::EncoderOptions>::f(in[0]), wrapTo<Ldpc::DecoderOptions>::f(in[1]));
-    Handle<Codec> codec(new Ldpc(structure));
+    Handle<Codec> codec(new Ldpc(wrapTo<Ldpc::EncoderOptions>::f(in[0]), wrapTo<Ldpc::DecoderOptions>::f(in[1])));
     out[0] = toWrap(std::move(codec));
   },
   
@@ -261,9 +257,7 @@ const std::vector<std::function<typename WrapFcn<Wrap>::Signature>> WrapFcn<Wrap
   
   [](const InArgList in, OutArgList out) //PuncturedLdpc_constructor
   {
-    
-    PuncturedLdpc::Structure structure(wrapTo<Ldpc::EncoderOptions>::f(in[0]), wrapTo<Ldpc::PunctureOptions>::f(in[1]), wrapTo<Ldpc::DecoderOptions>::f(in[2]));
-    Handle<Codec> codec(new PuncturedLdpc(structure));
+    Handle<Codec> codec(new PuncturedLdpc(wrapTo<Ldpc::EncoderOptions>::f(in[0]), wrapTo<Ldpc::PunctureOptions>::f(in[1]), wrapTo<Ldpc::DecoderOptions>::f(in[2])));
     out[0] = toWrap(std::move(codec));
   },
   
@@ -274,9 +268,7 @@ const std::vector<std::function<typename WrapFcn<Wrap>::Signature>> WrapFcn<Wrap
   
   [](const InArgList in, OutArgList out) //Convolutional_constructor
   {
-    
-    Convolutional::Structure structure(wrapTo<Convolutional::EncoderOptions>::f(in[0]), wrapTo<Convolutional::DecoderOptions>::f(in[1]));
-    Handle<Codec> codec(new Convolutional(structure));
+    Handle<Codec> codec(new Convolutional(wrapTo<Convolutional::EncoderOptions>::f(in[0]), wrapTo<Convolutional::DecoderOptions>::f(in[1])));
     out[0] = toWrap(std::move(codec));
   },
   
@@ -302,8 +294,7 @@ const std::vector<std::function<typename WrapFcn<Wrap>::Signature>> WrapFcn<Wrap
   
   [](const InArgList in, OutArgList out) //PuncturedLdpc_constructor
   {
-    PuncturedConvolutional::Structure structure(wrapTo<Convolutional::EncoderOptions>::f(in[0]), wrapTo<Convolutional::PunctureOptions>::f(in[1]), wrapTo<Convolutional::DecoderOptions>::f(in[2]));
-    Handle<Codec> codec(new PuncturedConvolutional(structure));
+    Handle<Codec> codec(new PuncturedConvolutional(wrapTo<Convolutional::EncoderOptions>::f(in[0]), wrapTo<Convolutional::PunctureOptions>::f(in[1]), wrapTo<Convolutional::DecoderOptions>::f(in[2])));
     out[0] = toWrap(std::move(codec));
   },
   

@@ -24,19 +24,19 @@
 
 using namespace fec;
 
-std::unique_ptr<BpDecoder> BpDecoder::create(const Ldpc::Structure& structure)
+std::unique_ptr<BpDecoder> BpDecoder::create(const Ldpc::detail::Structure& structure)
 {
   switch (structure.decoderAlgorithm()) {
     default:
-    case Codec::Exact:
+    case Exact:
       return std::unique_ptr<BpDecoder>(new BpDecoderImpl<FloatLlrMetrics,BoxSum>(structure));
       break;
       
-    case Codec::Linear:
+    case Linear:
       return std::unique_ptr<BpDecoder>(new BpDecoderImpl<FloatLlrMetrics,LinearBoxSum>(structure));
       break;
       
-    case Codec::Approximate:
+    case Approximate:
       return std::unique_ptr<BpDecoder>(new BpDecoderImpl<FloatLlrMetrics,MinBoxSum>(structure));
       break;
   }
@@ -51,7 +51,7 @@ void BpDecoder::decodeBlocks(std::vector<LlrType>::const_iterator parity, std::v
   }
 }
 
-void BpDecoder::soDecodeBlocks(Codec::InputIterator input, Codec::OutputIterator output, size_t n)
+void BpDecoder::soDecodeBlocks(Codec::detail::InputIterator input, Codec::detail::OutputIterator output, size_t n)
 {
   for (size_t i = 0; i < n; ++i) {
     soDecodeBlock(input, output);
@@ -60,6 +60,6 @@ void BpDecoder::soDecodeBlocks(Codec::InputIterator input, Codec::OutputIterator
   }
 }
 
-BpDecoder::BpDecoder(const Ldpc::Structure& structure) : structure_(structure)
+BpDecoder::BpDecoder(const Ldpc::detail::Structure& structure) : structure_(structure)
 {
 }

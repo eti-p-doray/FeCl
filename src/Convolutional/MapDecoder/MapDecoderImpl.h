@@ -41,17 +41,17 @@ namespace fec {
   class MapDecoderImpl : public MapDecoder
   {
   public:
-    MapDecoderImpl(const Convolutional::Structure&); /**< Constructor */
+    MapDecoderImpl(const Convolutional::detail::Structure&); /**< Constructor */
     virtual ~MapDecoderImpl() = default; /**< Default destructor */
     
-    virtual void soDecodeBlock(Codec::InputIterator input, Codec::OutputIterator output);
-    template <class T> void soDecodeBlockImpl(Codec::InfoIterator<typename std::vector<T>::const_iterator> input, Codec::InfoIterator<typename std::vector<T>::iterator> output);
+    virtual void soDecodeBlock(Codec::detail::InputIterator input, Codec::detail::OutputIterator output);
+    template <class T> void soDecodeBlockImpl(Codec::detail::InfoIterator<typename std::vector<T>::const_iterator> input, Codec::detail::InfoIterator<typename std::vector<T>::iterator> output);
     
   protected:
-    template <class T> void branchUpdate(Codec::InfoIterator<typename std::vector<T>::const_iterator> input);/**< Branch metric calculation. */
+    template <class T> void branchUpdate(Codec::detail::InfoIterator<typename std::vector<T>::const_iterator> input);/**< Branch metric calculation. */
     void forwardUpdate();/**< Forward metric calculation. */
     void backwardUpdate();/**< Backard metric calculation. */
-    template <class T> void aPosterioriUpdate(Codec::InfoIterator<typename std::vector<T>::const_iterator> input, Codec::InfoIterator<typename std::vector<T>::iterator> output);/**< Final (msg) L-values calculation. */
+    template <class T> void aPosterioriUpdate(Codec::detail::InfoIterator<typename std::vector<T>::const_iterator> input, Codec::detail::InfoIterator<typename std::vector<T>::iterator> output);/**< Final (msg) L-values calculation. */
     
   private:
     template <class U = typename LogSumAlg<LlrMetrics>::isRecursive, typename std::enable_if<U::value>::type* = nullptr>

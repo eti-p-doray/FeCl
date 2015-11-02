@@ -19,25 +19,25 @@
  along with FeCl.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#include "PuncturedConvolutional.h"
+#include "../PuncturedConvolutional.h"
 #include "MapDecoder/MapDecoder.h"
 #include "ViterbiDecoder/ViterbiDecoder.h"
 
 using namespace fec;
 
 BOOST_CLASS_EXPORT_IMPLEMENT(PuncturedConvolutional);
-BOOST_CLASS_EXPORT_IMPLEMENT(PuncturedConvolutional::Structure);
+BOOST_CLASS_EXPORT_IMPLEMENT(PuncturedConvolutional::detail::Structure);
 
 const char * PuncturedConvolutional::get_key() const {
   return boost::serialization::type_info_implementation<PuncturedConvolutional>::type::get_const_instance().get_key();
 }
 
-const char * PuncturedConvolutional::Structure::get_key() const {
-  return boost::serialization::type_info_implementation<PuncturedConvolutional::Structure>::type::get_const_instance().get_key();
+const char * PuncturedConvolutional::detail::Structure::get_key() const {
+  return boost::serialization::type_info_implementation<PuncturedConvolutional::detail::Structure>::type::get_const_instance().get_key();
 }
 
 PuncturedConvolutional::PuncturedConvolutional(const Options& options,  int workGroupSize) :
-Convolutional(std::unique_ptr<Structure>(new Structure(options)), workGroupSize)
+Convolutional(std::unique_ptr<detail::Structure>(new detail::Structure(options)), workGroupSize)
 {
 }
 /**
@@ -45,16 +45,16 @@ Convolutional(std::unique_ptr<Structure>(new Structure(options)), workGroupSize)
  *  \param  codeStructure Codec structure used for encoding and decoding
  *  \param  workGroupSize Number of thread used for decoding
  */
-PuncturedConvolutional::PuncturedConvolutional(const Structure& structure,  int workGroupSize) :
-Convolutional(std::unique_ptr<Structure>(new Structure(structure)), workGroupSize)
+PuncturedConvolutional::PuncturedConvolutional(const detail::Structure& structure,  int workGroupSize) :
+Convolutional(std::unique_ptr<detail::Structure>(new detail::Structure(structure)), workGroupSize)
 {
 }
 PuncturedConvolutional::PuncturedConvolutional(const EncoderOptions& encoder, const PunctureOptions& puncture, const DecoderOptions& decoder, int workGroupSize) :
-Convolutional(std::unique_ptr<Structure>(new Structure(encoder, puncture, decoder)), workGroupSize)
+Convolutional(std::unique_ptr<detail::Structure>(new detail::Structure(encoder, puncture, decoder)), workGroupSize)
 {
 }
 PuncturedConvolutional::PuncturedConvolutional(const EncoderOptions& encoder, const PunctureOptions& puncture, int workGroupSize) :
-Convolutional(std::unique_ptr<Structure>(new Structure(encoder, puncture)), workGroupSize)
+Convolutional(std::unique_ptr<detail::Structure>(new detail::Structure(encoder, puncture)), workGroupSize)
 {
 }
 
@@ -66,7 +66,7 @@ void PuncturedConvolutional::decodeBlocks(std::vector<LlrType>::const_iterator p
   worker->decodeBlocks(parityTmp.begin(), msg, n);
 }
 
-void PuncturedConvolutional::soDecodeBlocks(InputIterator input, OutputIterator output, size_t n) const
+void PuncturedConvolutional::soDecodeBlocks(Codec::detail::InputIterator input, Codec::detail::OutputIterator output, size_t n) const
 {
   std::vector<LlrType> parityTmp(structure().innerParitySize()*n, 0.0);
   structure().permutation().dePermuteBlocks<LlrType>(input.parity(), parityTmp.begin(), n);
@@ -76,7 +76,7 @@ void PuncturedConvolutional::soDecodeBlocks(InputIterator input, OutputIterator 
     outputTmp.parity(parityTmp.begin());
   }
   auto worker = MapDecoder::create(structure());
-  Convolutional::Structure struc = structure();
+  Convolutional::detail::Structure struc = structure();
   input.setStructureRef(&struc);
   outputTmp.setStructureRef(&struc);
   worker->soDecodeBlocks(input, outputTmp, n);
@@ -85,41 +85,41 @@ void PuncturedConvolutional::soDecodeBlocks(InputIterator input, OutputIterator 
   }
 }
 
-PuncturedConvolutional::Structure::Structure(const Options& options)
+PuncturedConvolutional::detail::Structure::Structure(const Options& options)
 {
   setEncoderOptions(options);
   setPunctureOptions(options);
   setDecoderOptions(options);
 }
 
-PuncturedConvolutional::Structure::Structure(const EncoderOptions& encoder, const PunctureOptions& puncture, const DecoderOptions& decoder)
+PuncturedConvolutional::detail::Structure::Structure(const EncoderOptions& encoder, const PunctureOptions& puncture, const DecoderOptions& decoder)
 {
   setEncoderOptions(encoder);
   setPunctureOptions(puncture);
   setDecoderOptions(decoder);
 }
-PuncturedConvolutional::Structure::Structure(const EncoderOptions& encoder, const PunctureOptions& puncture)
+PuncturedConvolutional::detail::Structure::Structure(const EncoderOptions& encoder, const PunctureOptions& puncture)
 {
   setEncoderOptions(encoder);
   setPunctureOptions(puncture);
   setDecoderOptions(DecoderOptions());
 }
 
-void PuncturedConvolutional::Structure::setPunctureOptions(const fec::Convolutional::PunctureOptions& puncture)
+void PuncturedConvolutional::detail::Structure::setPunctureOptions(const fec::Convolutional::PunctureOptions& puncture)
 {
   permutation_ = puncturing(puncture);
 }
 
-void PuncturedConvolutional::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const
+void PuncturedConvolutional::detail::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const
 {
   std::vector<BitField<size_t>> parityTmp(innerParitySize(), 0);
-  Convolutional::Structure::encode(msg, parityTmp.begin());
+  Convolutional::detail::Structure::encode(msg, parityTmp.begin());
   permutation().permuteBlock<BitField<size_t>>(parityTmp.begin(), parity);
 }
 
-bool PuncturedConvolutional::Structure::check(std::vector<BitField<size_t>>::const_iterator parity) const
+bool PuncturedConvolutional::detail::Structure::check(std::vector<BitField<size_t>>::const_iterator parity) const
 {
   std::vector<BitField<size_t>> parityTmp(innerParitySize(), 0);
   permutation().dePermuteBlock<BitField<size_t>>(parity, parityTmp.begin());
-  return Convolutional::Structure::check(parityTmp.begin());
+  return Convolutional::detail::Structure::check(parityTmp.begin());
 }

@@ -52,8 +52,8 @@ test_suite* test_convolutional(const fec::Convolutional::EncoderOptions& encoder
 {
   test_suite* ts = BOOST_TEST_SUITE(name);
   
-  auto structure = fec::Convolutional::Structure(encoder, decoder);
-  auto puncturedStructure = fec::PuncturedConvolutional::Structure(encoder, puncture, decoder);
+  auto structure = fec::Convolutional::detail::Structure(encoder, decoder);
+  auto puncturedStructure = fec::PuncturedConvolutional::detail::Structure(encoder, puncture, decoder);
   
   auto codec = fec::Convolutional(structure);
   auto puncturedCodec = fec::PuncturedConvolutional(puncturedStructure);
@@ -97,7 +97,7 @@ test_suite* init_unit_test_suite( int argc, char* argv[] )
   fec::Trellis trellis({4}, {{015, 017}}, {015});
   size_t length = 1024;
   auto encoder = fec::Convolutional::EncoderOptions(trellis, length).termination(fec::Convolutional::Truncate);
-  auto decoder = fec::Convolutional::DecoderOptions().algorithm(fec::Codec::Exact);
+  auto decoder = fec::Convolutional::DecoderOptions().algorithm(fec::Exact);
   auto puncture = fec::Convolutional::PunctureOptions().mask({1, 0, 0, 1});
   
   framework::master_test_suite().add(test_convolutional(encoder, decoder, puncture, 3.0, "default"));
@@ -105,10 +105,10 @@ test_suite* init_unit_test_suite( int argc, char* argv[] )
   encoder.termination(fec::Convolutional::Tail);
   framework::master_test_suite().add(test_convolutional(encoder, decoder, puncture, 3.0, "tail"));
   
-  decoder.algorithm(fec::Codec::Linear);
+  decoder.algorithm(fec::Linear);
   framework::master_test_suite().add(test_convolutional(encoder, decoder, puncture, 3.0, "table"));
 
-  decoder.algorithm(fec::Codec::Approximate);
+  decoder.algorithm(fec::Approximate);
   framework::master_test_suite().add(test_convolutional(encoder, decoder, puncture, 3.0, "approximate"));
   
   encoder = fec::Convolutional::EncoderOptions(fec::Trellis({3, 3}, {{05, 03, 0}, {0, 03, 07}}, {07, 05}), length).termination(fec::Convolutional::Truncate);

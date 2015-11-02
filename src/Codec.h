@@ -36,6 +36,7 @@
 
 #include "BitField.h"
 #include "LlrMetrics/LlrMetrics.h"
+#include "DecoderAlgorithm.h"
 
 namespace fec {
   
@@ -50,216 +51,213 @@ namespace fec {
   public:
     
     /**
-     *  This enum lists the types of decoder algorithm.
+     *  detail namespace.
      */
-    enum DecoderAlgorithm {
-      Exact, /**< No approximation is used and the L-values are computed in logarithmic domain. */
-      Linear, /**< A lookup table with linear interpolation is used to compute the correction term.  */
-      Approximate, /**< The correction term is ignored. */
-    };
-    
-    /**
-     *  This class represents a general codec structure
-     *  It provides a usefull interface to store and access the codec information.
-     */
-    class Structure {
-      friend class boost::serialization::access;
-    public:
-      Structure() = default; /**< Default constructor. */
-      virtual ~Structure() = default; /**< Default destructor. */
-      
-      virtual const char * get_key() const = 0; /**< Access the type info key. */
-      
-      virtual size_t msgSize() const {return msgSize_;} /**< Access the size of msg in each code bloc. */
-      virtual size_t systSize() const {return systSize_;} /**< Access the size of systematics in each code bloc. */
-      virtual size_t paritySize() const {return paritySize_;} /**< Access the size of parities in each code bloc. */
-      virtual size_t stateSize() const {return stateSize_;} /**< Access the size of state information in each code bloc. */
-      
-      inline size_t innerMsgSize() const {return msgSize_;}
-      inline size_t innerSystSize() const {return systSize_;}
-      inline size_t innerParitySize() const {return paritySize_;}
-      inline size_t innerStateSize() const {return stateSize_;}
-      
-      DecoderAlgorithm decoderAlgorithm() const {return decoderAlgorithm_;} /**< Access the algorithm used in decoder. */
-      AlgorithmOptions<FloatLlrMetrics> algorithmOptions() const {return algorithmOptions_;} /**< Access the algorithm options used in decoder. */
-      double gain() const {return algorithmOptions_.gain_;} /**< Access the gain value used in decoder. */
+    struct detail {
+      /**
+       *  This class represents a general codec structure
+       *  It provides a usefull interface to store and access the codec information.
+       */
+      class Structure {
+        friend class boost::serialization::access;
+      public:
+        Structure() = default; /**< Default constructor. */
+        virtual ~Structure() = default; /**< Default destructor. */
+        
+        virtual const char * get_key() const = 0; /**< Access the type info key. */
+        
+        virtual size_t msgSize() const {return msgSize_;} /**< Access the size of msg in each code bloc. */
+        virtual size_t systSize() const {return systSize_;} /**< Access the size of systematics in each code bloc. */
+        virtual size_t paritySize() const {return paritySize_;} /**< Access the size of parities in each code bloc. */
+        virtual size_t stateSize() const {return stateSize_;} /**< Access the size of state information in each code bloc. */
+        
+        inline size_t innerMsgSize() const {return msgSize_;}
+        inline size_t innerSystSize() const {return systSize_;}
+        inline size_t innerParitySize() const {return paritySize_;}
+        inline size_t innerStateSize() const {return stateSize_;}
+        
+        DecoderAlgorithm decoderAlgorithm() const {return decoderAlgorithm_;} /**< Access the algorithm used in decoder. */
+        AlgorithmOptions<FloatLlrMetrics> algorithmOptions() const {return algorithmOptions_;} /**< Access the algorithm options used in decoder. */
+        double gain() const {return algorithmOptions_.gain_;} /**< Access the gain value used in decoder. */
+        
+        /**
+         *  Encodes one block of msg bits.
+         *  \param  msg  Input iterator pointing to the first element in the msg bit sequence.
+         *  \param  parity[out] Output iterator pointing to the first element in the parity bit sequence.
+         *    The output neeeds to be pre-allocated.
+         */
+        virtual void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const = 0;
+        
+        /**
+         *  Checks the consistency of a parity sequence.
+         *  \param  parity  Input iterator pointing to the first element in the parity bit sequence.
+         *  \return  True if the sequence is consistent, false otherwise.
+         */
+        virtual bool check(std::vector<BitField<size_t>>::const_iterator parity) const = 0;
+        
+      protected:
+        size_t msgSize_ = 0;/**< Size of msg in each code bloc. */
+        size_t systSize_ = 0;/**< Size of systematics in each code bloc. */
+        size_t paritySize_ = 0;/**< Size of parities in each code bloc. */
+        size_t stateSize_ = 0;/**< Size of state information in each code bloc. */
+        DecoderAlgorithm decoderAlgorithm_; /**< Algorithm type used in decoder. */
+        AlgorithmOptions<FloatLlrMetrics> algorithmOptions_; /**< Algorithm options used in decoder. */
+        
+      private:
+        template <typename Archive>
+        void serialize(Archive & ar, const unsigned int version) {
+          using namespace boost::serialization;
+          ar & BOOST_SERIALIZATION_NVP(msgSize_);
+          ar & BOOST_SERIALIZATION_NVP(systSize_);
+          ar & BOOST_SERIALIZATION_NVP(paritySize_);
+          ar & BOOST_SERIALIZATION_NVP(stateSize_);
+          ar & BOOST_SERIALIZATION_NVP(decoderAlgorithm_);
+          ar & BOOST_SERIALIZATION_NVP(algorithmOptions_.gain_);
+        }
+      };
       
       /**
-       *  Encodes one block of msg bits.
-       *  \param  msg  Input iterator pointing to the first element in the msg bit sequence.
-       *  \param  parity[out] Output iterator pointing to the first element in the parity bit sequence.
-       *    The output neeeds to be pre-allocated.
+       *  This class is an iterator on the codec data flow.
        */
-      virtual void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const = 0;
-      
-      /**
-       *  Checks the consistency of a parity sequence.
-       *  \param  parity  Input iterator pointing to the first element in the parity bit sequence.
-       *  \return  True if the sequence is consistent, false otherwise.
-       */
-      virtual bool check(std::vector<BitField<size_t>>::const_iterator parity) const = 0;
-      
-    protected:
-      size_t msgSize_ = 0;/**< Size of msg in each code bloc. */
-      size_t systSize_ = 0;/**< Size of systematics in each code bloc. */
-      size_t paritySize_ = 0;/**< Size of parities in each code bloc. */
-      size_t stateSize_ = 0;/**< Size of state information in each code bloc. */
-      DecoderAlgorithm decoderAlgorithm_; /**< Algorithm type used in decoder. */
-      AlgorithmOptions<FloatLlrMetrics> algorithmOptions_; /**< Algorithm options used in decoder. */
-      
-    private:
-      template <typename Archive>
-      void serialize(Archive & ar, const unsigned int version) {
-        using namespace boost::serialization;
-        ar & BOOST_SERIALIZATION_NVP(msgSize_);
-        ar & BOOST_SERIALIZATION_NVP(systSize_);
-        ar & BOOST_SERIALIZATION_NVP(paritySize_);
-        ar & BOOST_SERIALIZATION_NVP(stateSize_);
-        ar & BOOST_SERIALIZATION_NVP(decoderAlgorithm_);
-        ar & BOOST_SERIALIZATION_NVP(algorithmOptions_.gain_);
-      }
-    };
-    
-    /**
-     *  This class is an iterator on the codec data flow.
-     */
-    template <class Iterator>
-    class InfoIterator {
-    public:
-      /**
-       *  Constructor.
-       *  \param  structureRef Pointer to the codec structure associated with the info.
-       */
-      InfoIterator(const Structure* structureRef) : structureRef_(structureRef) {}
-      InfoIterator() = default;
-      void setStructureRef(const Structure* structureRef) {structureRef_ = structureRef;}
-      
-      InfoIterator& syst(Iterator syst) {syst_ = syst; hasSyst_ = true; return *this;} /**< Link systematic extrinsics. */
-      InfoIterator& parity(Iterator parity) {parity_ = parity; hasParity_ = true; return *this;} /**< Link parity extrinsics. */
-      InfoIterator& state(Iterator state) {state_ = state; hasState_ = true; return *this;} /**< Link state extrinsics. */
-      InfoIterator& msg(Iterator msg) {msg_ = msg; hasMsg_ = true; return *this;} /**< Link msg data. */
-      
-      inline void operator++() {
-        syst_ += structureRef_->systSize();
-        parity_ += structureRef_->paritySize();
-        state_ += structureRef_->stateSize();
-        msg_ += structureRef_->msgSize();
-      }
-      inline void operator+=(size_t x) {
-        syst_ += structureRef_->systSize() * x;
-        parity_ += structureRef_->paritySize() * x;
-        state_ += structureRef_->stateSize() * x;
-        msg_ += structureRef_->msgSize() * x;
-      }
-      inline bool operator != (const InfoIterator& b) {
-        if (structureRef_ != b.structureRef_) {
-          return true;
+      template <class Iterator>
+      class InfoIterator {
+      public:
+        /**
+         *  Constructor.
+         *  \param  structureRef Pointer to the codec structure associated with the info.
+         */
+        InfoIterator(const Structure* structureRef) : structureRef_(structureRef) {}
+        InfoIterator() = default;
+        void setStructureRef(const Structure* structureRef) {structureRef_ = structureRef;}
+        
+        InfoIterator& syst(Iterator syst) {syst_ = syst; hasSyst_ = true; return *this;} /**< Link systematic extrinsics. */
+        InfoIterator& parity(Iterator parity) {parity_ = parity; hasParity_ = true; return *this;} /**< Link parity extrinsics. */
+        InfoIterator& state(Iterator state) {state_ = state; hasState_ = true; return *this;} /**< Link state extrinsics. */
+        InfoIterator& msg(Iterator msg) {msg_ = msg; hasMsg_ = true; return *this;} /**< Link msg data. */
+        
+        inline void operator++() {
+          syst_ += structureRef_->systSize();
+          parity_ += structureRef_->paritySize();
+          state_ += structureRef_->stateSize();
+          msg_ += structureRef_->msgSize();
         }
-        if (hasSyst() && (syst_ != b.syst_)) {
-          return true;
+        inline void operator+=(size_t x) {
+          syst_ += structureRef_->systSize() * x;
+          parity_ += structureRef_->paritySize() * x;
+          state_ += structureRef_->stateSize() * x;
+          msg_ += structureRef_->msgSize() * x;
         }
-        else if (hasParity() && (parity_ != b.parity_)) {
-          return true;
+        inline bool operator != (const InfoIterator& b) {
+          if (structureRef_ != b.structureRef_) {
+            return true;
+          }
+          if (hasSyst() && (syst_ != b.syst_)) {
+            return true;
+          }
+          else if (hasParity() && (parity_ != b.parity_)) {
+            return true;
+          }
+          else if (hasState() && (state_ != b.state_)) {
+            return true;
+          }
+          else if (hasMsg() && (msg_ != b.msg_)) {
+            return true;
+          }
+          return false;
         }
-        else if (hasState() && (state_ != b.state_)) {
-          return true;
-        }
-        else if (hasMsg() && (msg_ != b.msg_)) {
-          return true;
-        }
-        return false;
-      }
+        
+        Iterator syst() const {return syst_;}
+        Iterator parity() const {return parity_;}
+        Iterator state() const {return state_;}
+        Iterator msg() const {return msg_;}
+        
+        bool hasSyst() const {return hasSyst_;}
+        bool hasParity() const {return hasParity_;}
+        bool hasState() const {return hasState_;}
+        bool hasMsg() const {return hasMsg_;}
+        
+      private:
+        Iterator syst_;
+        Iterator parity_;
+        Iterator state_;
+        Iterator msg_;
+        bool hasSyst_ = false;
+        bool hasParity_ = false;
+        bool hasState_ = false;
+        bool hasMsg_ = false;
+        const Structure* structureRef_;
+      };
+      using InputIterator = InfoIterator<std::vector<LlrType>::const_iterator>;
+      using OutputIterator = InfoIterator<std::vector<LlrType>::iterator>;
       
-      Iterator syst() const {return syst_;}
-      Iterator parity() const {return parity_;}
-      Iterator state() const {return state_;}
-      Iterator msg() const {return msg_;}
-      
-      bool hasSyst() const {return hasSyst_;}
-      bool hasParity() const {return hasParity_;}
-      bool hasState() const {return hasState_;}
-      bool hasMsg() const {return hasMsg_;}
-      
-    private:
-      Iterator syst_;
-      Iterator parity_;
-      Iterator state_;
-      Iterator msg_;
-      bool hasSyst_ = false;
-      bool hasParity_ = false;
-      bool hasState_ = false;
-      bool hasMsg_ = false;
-      const Structure* structureRef_;
-    };
-    using InputIterator = InfoIterator<std::vector<LlrType>::const_iterator>;
-    using OutputIterator = InfoIterator<std::vector<LlrType>::iterator>;
-    
-    template <class Vector>
-    class Info {
-    public:
-      using Iterator = InfoIterator<decltype(std::declval<Vector>().begin())>;
-      
-      Info() = default;
-      
-      Info& syst(Vector& syst) {syst_ = &syst; return *this;}
-      Info& parity(Vector& parity) {parity_ = &parity; return *this;}
-      Info& state(Vector& state) {state_ = &state; return *this;}
-      Info& msg(Vector& msg) {msg_ = &msg; return *this;}
-      
-      Vector& syst() const {return *syst_;}
-      Vector& parity() const {return *parity_;}
-      Vector& state() const {return *state_;}
-      Vector& msg() const {return *msg_;}
-      
-      bool hasSyst() const {return syst_ != nullptr;}
-      bool hasParity() const {return parity_ != nullptr;}
-      bool hasState() const {return state_ != nullptr;}
-      bool hasMsg() const {return msg_ != nullptr;}
-      
-      Iterator begin(const Structure& structure) const {
-        auto it = Iterator(&structure);
-        if (hasSyst()) {
-          it.syst(syst().begin());
+      template <class Vector>
+      class Info {
+        friend class Codec;
+        using Iterator = detail::InfoIterator<decltype(std::declval<Vector>().begin())>;
+      public:
+        
+        Info() = default;
+        
+        Info& syst(Vector& syst) {syst_ = &syst; return *this;}
+        Info& parity(Vector& parity) {parity_ = &parity; return *this;}
+        Info& state(Vector& state) {state_ = &state; return *this;}
+        Info& msg(Vector& msg) {msg_ = &msg; return *this;}
+        
+        Vector& syst() const {return *syst_;}
+        Vector& parity() const {return *parity_;}
+        Vector& state() const {return *state_;}
+        Vector& msg() const {return *msg_;}
+        
+        bool hasSyst() const {return syst_ != nullptr;}
+        bool hasParity() const {return parity_ != nullptr;}
+        bool hasState() const {return state_ != nullptr;}
+        bool hasMsg() const {return msg_ != nullptr;}
+        
+      private:
+        Vector* syst_ = nullptr;
+        Vector* parity_ = nullptr;
+        Vector* state_ = nullptr;
+        Vector* msg_ = nullptr;
+        
+        Iterator begin(const detail::Structure& structure) const {
+          auto it = Iterator(&structure);
+          if (hasSyst()) {
+            it.syst(syst().begin());
+          }
+          if (hasParity()) {
+            it.parity(parity().begin());
+          }
+          if (hasState()) {
+            it.state(state().begin());
+          }
+          if (hasMsg()) {
+            it.msg(msg().begin());
+          }
+          return it;
         }
-        if (hasParity()) {
-          it.parity(parity().begin());
+        Iterator end(const detail::Structure& structure) const {
+          auto it = Iterator(&structure);
+          if (hasSyst()) {
+            it.syst(syst().end());
+          }
+          if (hasParity()) {
+            it.parity(parity().end());
+          }
+          if (hasState()) {
+            it.state(state().end());
+          }
+          if (hasMsg()) {
+            it.msg(msg().end());
+          }
+          return it;
         }
-        if (hasState()) {
-          it.state(state().begin());
-        }
-        if (hasMsg()) {
-          it.msg(msg().begin());
-        }
-        return it;
-      }
-      Iterator end(const Structure& structure) const {
-        auto it = Iterator(&structure);
-        if (hasSyst()) {
-          it.syst(syst().end());
-        }
-        if (hasParity()) {
-          it.parity(parity().end());
-        }
-        if (hasState()) {
-          it.state(state().end());
-        }
-        if (hasMsg()) {
-          it.msg(msg().end());
-        }
-        return it;
-      }
-      
-    private:
-      Vector* syst_ = nullptr;
-      Vector* parity_ = nullptr;
-      Vector* state_ = nullptr;
-      Vector* msg_ = nullptr;
+      };
     };
     
     template <template <typename> class A = std::allocator>
-    using Input = Info<const std::vector<LlrType,A<LlrType>>>;
+    using Input = detail::Info<const std::vector<LlrType,A<LlrType>>>;
     template <template <typename> class A = std::allocator>
-    using Output = Info<std::vector<LlrType,A<LlrType>>>;
+    using Output = detail::Info<std::vector<LlrType,A<LlrType>>>;
     
     virtual ~Codec() = default;
     
@@ -291,20 +289,15 @@ namespace fec {
     
   protected:
     Codec() = default;
-    Codec(std::unique_ptr<Structure>&&, int workGroupSize = 8);
+    Codec(std::unique_ptr<detail::Structure>&&, int workGroupSize = 8);
+    
     Codec(const Codec& other) {*this = other;}
     Codec& operator=(const Codec& other) {workGroupSize_ = other.getWorkGroupSize(); return *this;}
     
-    inline const Structure& structure() const {return *structure_;}
-    inline Structure& structure() {return *structure_;}
+    inline const detail::Structure& structure() const {return *structure_;}
+    inline detail::Structure& structure() {return *structure_;}
     
     virtual bool checkBlocks(std::vector<BitField<size_t>>::const_iterator parity, size_t n) const;
-    /**
-     *  Encodes several blocs of msg bits.
-     *  \param  messageIt  Input iterator pointing to the first element in the msg bit sequence.
-     *  \param  parityIt[out] Output iterator pointing to the first element in the parity bit sequence.
-     *    The output neeeds to be pre-allocated.
-     */
     virtual void encodeBlocks(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity, size_t n) const;
     
     /**
@@ -325,38 +318,28 @@ namespace fec {
      *    in the a posteriori information L-value sequence.
      *    Output needs to be pre-allocated.
      */
-    virtual void soDecodeBlocks(InputIterator input, OutputIterator output, size_t n) const = 0;
+    virtual void soDecodeBlocks(detail::InputIterator input, detail::OutputIterator output, size_t n) const = 0;
     
-    std::unique_ptr<Structure> structure_;
+    std::unique_ptr<detail::Structure> structure_;
     
   private:
     template <typename Archive>
-    void serialize(Archive & ar, const unsigned int version) {
-      using namespace boost::serialization;
-      ar & ::BOOST_SERIALIZATION_NVP(workGroupSize_);
-      ar & ::BOOST_SERIALIZATION_NVP(structure_);
-    }
+    void serialize(Archive & ar, const unsigned int version);
     
-    std::vector<std::thread> createWorkGroup() const {
-      std::vector<std::thread> threadGroup;
-      threadGroup.reserve(getWorkGroupSize());
-      return threadGroup;
-    }
-    size_t taskSize(size_t blockCount) const {
-      int n = std::thread::hardware_concurrency();
-      if (n > getWorkGroupSize() || n == 0) {
-        n = getWorkGroupSize();
-      }
-      return (blockCount+n-1)/n;
-    }
+    std::vector<std::thread> createWorkGroup() const;
+    size_t taskSize(size_t blockCount) const;
     
     int workGroupSize_;
   };
   
 }
 
-BOOST_CLASS_TYPE_INFO(fec::Codec::Structure,extended_type_info_no_rtti<fec::Codec::Structure>);
-BOOST_CLASS_EXPORT_KEY(fec::Codec::Structure);
+
+
+
+
+BOOST_CLASS_TYPE_INFO(fec::Codec::detail::Structure,extended_type_info_no_rtti<fec::Codec::detail::Structure>);
+BOOST_CLASS_EXPORT_KEY(fec::Codec::detail::Structure);
 BOOST_SERIALIZATION_ASSUME_ABSTRACT(fec::Codec);
 BOOST_CLASS_TYPE_INFO(fec::Codec,extended_type_info_no_rtti<fec::Codec>);
 BOOST_CLASS_EXPORT_KEY(fec::Codec);
@@ -531,6 +514,13 @@ void fec::Codec::soDecode(Input<A> input, Output<A> output) const
   for (auto & thread : threadGroup) {
     thread.join();
   }
+}
+
+template <typename Archive>
+void fec::Codec::serialize(Archive & ar, const unsigned int version) {
+  using namespace boost::serialization;
+  ar & ::BOOST_SERIALIZATION_NVP(workGroupSize_);
+  ar & ::BOOST_SERIALIZATION_NVP(structure_);
 }
 
 #endif

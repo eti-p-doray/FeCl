@@ -117,7 +117,7 @@ void ViterbiDecoderImpl<LlrMetrics>::decodeBlock(std::vector<LlrType>::const_ite
  *  \param  codeStructure Convolutional code structure describing the code
  */
 template <class LlrMetrics>
-ViterbiDecoderImpl<LlrMetrics>::ViterbiDecoderImpl(const Convolutional::Structure& structure) :
+ViterbiDecoderImpl<LlrMetrics>::ViterbiDecoderImpl(const Convolutional::detail::Structure& structure) :
 ViterbiDecoder(structure)
 {
   nextPathMetrics_.resize(structure.trellis().stateCount());

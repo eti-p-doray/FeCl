@@ -25,7 +25,7 @@
 #include <vector>
 #include <memory>
 
-#include "../Convolutional.h"
+#include "../../Convolutional.h"
 
 namespace fec {
 
@@ -40,19 +40,19 @@ namespace fec {
 class MapDecoder
 {
 public:  
-  static std::unique_ptr<MapDecoder> create(const Convolutional::Structure&); /**< Creating function */
+  static std::unique_ptr<MapDecoder> create(const Convolutional::detail::Structure&); /**< Creating function */
   virtual ~MapDecoder() = default; /**< Default destructor */
   
-  void soDecodeBlocks(Codec::InputIterator input, Codec::OutputIterator output, size_t n);
-  virtual void soDecodeBlock(Codec::InputIterator input, Codec::OutputIterator output) = 0;
+  void soDecodeBlocks(Codec::detail::InputIterator input, Codec::detail::OutputIterator output, size_t n);
+  virtual void soDecodeBlock(Codec::detail::InputIterator input, Codec::detail::OutputIterator output) = 0;
   
 protected:
-  MapDecoder(const Convolutional::Structure&); /**< Constructor */
+  MapDecoder(const Convolutional::detail::Structure&); /**< Constructor */
   
-  inline const Convolutional::Structure& structure() const {return structure_;} /**< Access the code structure */
+  inline const Convolutional::detail::Structure& structure() const {return structure_;} /**< Access the code structure */
 
 private:
-  const Convolutional::Structure structure_;
+  const Convolutional::detail::Structure structure_;
 };
   
 }

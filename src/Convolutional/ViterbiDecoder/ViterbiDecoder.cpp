@@ -31,7 +31,7 @@ using namespace fec;
  *  \param  codeStructure Convolutional code structure describing the code
  *  \return MacDecoder specialization suitable for the algorithm in use
  */
-std::unique_ptr<ViterbiDecoder> ViterbiDecoder::create(const Convolutional::Structure& structure)
+std::unique_ptr<ViterbiDecoder> ViterbiDecoder::create(const Convolutional::detail::Structure& structure)
 {
   return std::unique_ptr<ViterbiDecoder>(new ViterbiDecoderImpl<FloatLlrMetrics>(structure));
 }
@@ -53,7 +53,7 @@ void ViterbiDecoder::decodeBlocks(std::vector<LlrType>::const_iterator parity, s
  *  Allocates metric buffers based on the given code structure.
  *  \param  codeStructure Convolutional code structure describing the code
  */
-ViterbiDecoder::ViterbiDecoder(const Convolutional::Structure& structure) :
+ViterbiDecoder::ViterbiDecoder(const Convolutional::detail::Structure& structure) :
 structure_(structure)
 {
 }

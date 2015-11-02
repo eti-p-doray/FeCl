@@ -24,9 +24,9 @@
 
 #include <boost/serialization/export.hpp>
 
-#include "../Codec.h"
-#include "../Convolutional/Convolutional.h"
-#include "../Permutation.h"
+#include "Codec.h"
+#include "Convolutional.h"
+#include "Permutation.h"
 
 namespace fec {
   
@@ -121,12 +121,12 @@ namespace fec {
       
       DecoderOptions& iterations(size_t count) {iterations_ = count; return *this;}
       DecoderOptions& scheduling(Scheduling type) {scheduling_ = type; return *this;}
-      DecoderOptions& algorithm(Codec::DecoderAlgorithm algorithm) {algorithm_ = algorithm; return *this;}
+      DecoderOptions& algorithm(DecoderAlgorithm algorithm) {algorithm_ = algorithm; return *this;}
       DecoderOptions& gain(double gain) {gain_ = gain; return *this;}
       
       size_t iterations_ = 6;
       Scheduling scheduling_ = Serial;
-      Codec::DecoderAlgorithm algorithm_ = Approximate;
+      DecoderAlgorithm algorithm_ = Approximate;
       double gain_ = 1.0;
     };
     struct PunctureOptions {
@@ -151,74 +151,77 @@ namespace fec {
       Options(const std::vector<Trellis>& trellis, const std::vector<Permutation>& interleaver) : EncoderOptions(trellis, interleaver) {}
       Options(const Trellis& trellis, const std::vector<Permutation>& interleaver) : EncoderOptions(trellis, interleaver) {}
     };
-    /**
-     *  This class represents a convolutional code structure.
-     *  It provides a usefull interface to store and acces the structure information.
-     */
-    class Structure : public Codec::Structure {
-      friend class ::boost::serialization::access;
-    public:
-      Structure() = default;
-      Structure(const Options& options);
-      Structure(const EncoderOptions&, const DecoderOptions&);
-      Structure(const EncoderOptions&);
-      virtual ~Structure() = default;
-      
-      virtual const char * get_key() const;
-      
-      void setDecoderOptions(const DecoderOptions& decoder);
-      DecoderOptions getDecoderOptions() const;
-      
+    
+    struct detail {
       /**
-       *  Access the size of added msg bit for the trellis termination.
-       *  This is zero in the cas of trunction.
-       *  \return Tail size
+       *  This class represents a convolutional code structure.
+       *  It provides a usefull interface to store and acces the structure information.
        */
-      inline size_t systTailSize() const {return tailSize_;}
-      inline size_t constituentCount() const {return constituents_.size();}
-      inline const std::vector<Convolutional::Structure>& constituents() const {return constituents_;}
-      inline const std::vector<Permutation>& interleavers() const {return interleaver_;}
-      inline const Convolutional::Structure& constituent(size_t i) const {return constituents_[i];}
-      inline const Permutation& interleaver(size_t i) const {return interleaver_[i];}
-      
-      inline size_t iterations() const {return iterations_;}
-      inline Scheduling scheduling() const {return scheduling_;}
-      
-      virtual bool check(std::vector<BitField<size_t>>::const_iterator parity) const;
-      virtual void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const;
-      
-      Permutation puncturing(const PunctureOptions& options) const;
-      
-    protected:
-      void setEncoderOptions(const EncoderOptions& encoder);
-      
-    private:
-      template <typename Archive>
-      void serialize(Archive & ar, const unsigned int version) {
-        using namespace boost::serialization;
-        ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(Codec::Structure);
-        ar & ::BOOST_SERIALIZATION_NVP(constituents_);
-        ar & ::BOOST_SERIALIZATION_NVP(interleaver_);
-        ar & ::BOOST_SERIALIZATION_NVP(tailSize_);
-        ar & ::BOOST_SERIALIZATION_NVP(iterations_);
-        ar & ::BOOST_SERIALIZATION_NVP(scheduling_);
-      }
-      
-      std::vector<Convolutional::Structure> constituents_;
-      std::vector<Permutation> interleaver_;
-      size_t tailSize_;
-      size_t iterations_;
-      Scheduling scheduling_;
+      class Structure : public Codec::detail::Structure {
+        friend class ::boost::serialization::access;
+      public:
+        Structure() = default;
+        Structure(const Options& options);
+        Structure(const EncoderOptions&, const DecoderOptions&);
+        Structure(const EncoderOptions&);
+        virtual ~Structure() = default;
+        
+        virtual const char * get_key() const;
+        
+        void setDecoderOptions(const DecoderOptions& decoder);
+        DecoderOptions getDecoderOptions() const;
+        
+        /**
+         *  Access the size of added msg bit for the trellis termination.
+         *  This is zero in the cas of trunction.
+         *  \return Tail size
+         */
+        inline size_t systTailSize() const {return tailSize_;}
+        inline size_t constituentCount() const {return constituents_.size();}
+        inline const std::vector<Convolutional::detail::Structure>& constituents() const {return constituents_;}
+        inline const std::vector<Permutation>& interleavers() const {return interleaver_;}
+        inline const Convolutional::detail::Structure& constituent(size_t i) const {return constituents_[i];}
+        inline const Permutation& interleaver(size_t i) const {return interleaver_[i];}
+        
+        inline size_t iterations() const {return iterations_;}
+        inline Scheduling scheduling() const {return scheduling_;}
+        
+        virtual bool check(std::vector<BitField<size_t>>::const_iterator parity) const;
+        virtual void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const;
+        
+        Permutation puncturing(const PunctureOptions& options) const;
+        
+      protected:
+        void setEncoderOptions(const EncoderOptions& encoder);
+        
+      private:
+        template <typename Archive>
+        void serialize(Archive & ar, const unsigned int version) {
+          using namespace boost::serialization;
+          ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(Codec::detail::Structure);
+          ar & ::BOOST_SERIALIZATION_NVP(constituents_);
+          ar & ::BOOST_SERIALIZATION_NVP(interleaver_);
+          ar & ::BOOST_SERIALIZATION_NVP(tailSize_);
+          ar & ::BOOST_SERIALIZATION_NVP(iterations_);
+          ar & ::BOOST_SERIALIZATION_NVP(scheduling_);
+        }
+        
+        std::vector<Convolutional::detail::Structure> constituents_;
+        std::vector<Permutation> interleaver_;
+        size_t tailSize_;
+        size_t iterations_;
+        Scheduling scheduling_;
+      };
     };
     
     Turbo() = default;
     Turbo(const Options& options, int workGroupSize = 8);
-    Turbo(const Structure& structure, int workGroupSize = 8);
+    Turbo(const detail::Structure& structure, int workGroupSize = 8);
     Turbo(const EncoderOptions& encoder, const DecoderOptions& decoder, int workGroupSize = 8);
     Turbo(const EncoderOptions& encoder, int workGroupSize = 8);
     Turbo(const Turbo& other) {*this = other;}
     virtual ~Turbo() = default;
-    Turbo& operator=(const Turbo& other) {Codec::operator=(other); structure_ = std::unique_ptr<Structure>(new Structure(other.structure())); return *this;}
+    Turbo& operator=(const Turbo& other) {Codec::operator=(other); structure_ = std::unique_ptr<detail::Structure>(new detail::Structure(other.structure())); return *this;}
     
     virtual const char * get_key() const;
     
@@ -228,19 +231,19 @@ namespace fec {
     Permutation puncturing(const PunctureOptions& options) {return structure().puncturing(options);}
     
   protected:
-    Turbo(std::unique_ptr<Structure>&& structure, int workGroupSize = 4) : Codec(std::move(structure), workGroupSize) {}
+    Turbo(std::unique_ptr<detail::Structure>&& structure, int workGroupSize = 4) : Codec(std::move(structure), workGroupSize) {}
     
-    inline const Structure& structure() const {return dynamic_cast<const Structure&>(Codec::structure());}
-    inline Structure& structure() {return dynamic_cast<Structure&>(Codec::structure());}
+    inline const detail::Structure& structure() const {return dynamic_cast<const detail::Structure&>(Codec::structure());}
+    inline detail::Structure& structure() {return dynamic_cast<detail::Structure&>(Codec::structure());}
     
     virtual void decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const;
-    virtual void soDecodeBlocks(InputIterator input, OutputIterator output, size_t n) const;
+    virtual void soDecodeBlocks(Codec::detail::InputIterator input, Codec::detail::OutputIterator output, size_t n) const;
     
   private:
     template <typename Archive>
     void serialize(Archive & ar, const unsigned int version) {
       using namespace boost::serialization;
-      ar.template register_type<Structure>();
+      ar.template register_type<detail::Structure>();
       ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(Codec);
     }
   };
@@ -249,8 +252,8 @@ namespace fec {
 
 BOOST_CLASS_EXPORT_KEY(fec::Turbo);
 BOOST_CLASS_TYPE_INFO(fec::Turbo,extended_type_info_no_rtti<fec::Turbo>);
-BOOST_CLASS_EXPORT_KEY(fec::Turbo::Structure);
-BOOST_CLASS_TYPE_INFO(fec::Turbo::Structure,extended_type_info_no_rtti<fec::Turbo::Structure>);
+BOOST_CLASS_EXPORT_KEY(fec::Turbo::detail::Structure);
+BOOST_CLASS_TYPE_INFO(fec::Turbo::detail::Structure,extended_type_info_no_rtti<fec::Turbo::detail::Structure>);
 
 
 #endif

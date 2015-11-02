@@ -33,7 +33,7 @@
 #include <itpp/comm/channel.h>
 #include <itpp/comm/interleave.h>
 
-#include "Turbo/Turbo.h"
+#include "Turbo.h"
 
 const double z = 1.96;
 

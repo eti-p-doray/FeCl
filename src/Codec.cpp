@@ -24,13 +24,17 @@
 using namespace fec;
 
 BOOST_CLASS_EXPORT_IMPLEMENT(Codec);
-BOOST_CLASS_EXPORT_IMPLEMENT(Codec::Structure);
+BOOST_CLASS_EXPORT_IMPLEMENT(Codec::detail::Structure);
 
-Codec::Codec(std::unique_ptr<Codec::Structure>&& structure, int workGroupSize) : structure_(std::move(structure))
+Codec::Codec(std::unique_ptr<Codec::detail::Structure>&& structure, int workGroupSize) : structure_(std::move(structure))
 {
   workGroupSize_ = workGroupSize;
 }
 
+/**
+ *  Checks several blocs of msg bits.
+ *  \param  parityIt Input iterator pointing to the first element in the parity bit sequence.
+ */
 bool Codec::checkBlocks(std::vector<BitField<size_t>>::const_iterator parity, size_t n) const
 {
   for (size_t i = 0; i < n; ++i) {
@@ -43,6 +47,12 @@ bool Codec::checkBlocks(std::vector<BitField<size_t>>::const_iterator parity, si
   return true;
 }
 
+/**
+ *  Encodes several blocs of msg bits.
+ *  \param  messageIt  Input iterator pointing to the first element in the msg bit sequence.
+ *  \param  parityIt[out] Output iterator pointing to the first element in the parity bit sequence.
+ *    The output neeeds to be pre-allocated.
+ */
 void Codec::encodeBlocks(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity, size_t n) const
 {
   for (size_t i = 0; i < n; ++i) {
@@ -50,4 +60,20 @@ void Codec::encodeBlocks(std::vector<BitField<size_t>>::const_iterator msg, std:
     msg += msgSize();
     parity += paritySize();
   }
+}
+
+std::vector<std::thread> Codec::createWorkGroup() const
+{
+  std::vector<std::thread> threadGroup;
+  threadGroup.reserve(getWorkGroupSize());
+  return threadGroup;
+}
+
+size_t Codec::taskSize(size_t blockCount) const
+{
+  int n = std::thread::hardware_concurrency();
+  if (n > getWorkGroupSize() || n == 0) {
+    n = getWorkGroupSize();
+  }
+  return (blockCount+n-1)/n;
 }

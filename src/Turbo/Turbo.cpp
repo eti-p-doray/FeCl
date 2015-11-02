@@ -19,24 +19,24 @@
  along with FeCl.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#include "Turbo.h"
+#include "../Turbo.h"
 #include "TurboDecoder/TurboDecoder.h"
 
 using namespace fec;
 
 BOOST_CLASS_EXPORT_IMPLEMENT(Turbo);
-BOOST_CLASS_EXPORT_IMPLEMENT(Turbo::Structure);
+BOOST_CLASS_EXPORT_IMPLEMENT(Turbo::detail::Structure);
 
 const char * Turbo::get_key() const {
   return boost::serialization::type_info_implementation<Turbo>::type::get_const_instance().get_key();
 }
 
-const char * Turbo::Structure::get_key() const {
-  return boost::serialization::type_info_implementation<Turbo::Structure>::type::get_const_instance().get_key();
+const char * Turbo::detail::Structure::get_key() const {
+  return boost::serialization::type_info_implementation<Turbo::detail::Structure>::type::get_const_instance().get_key();
 }
 
 Turbo::Turbo(const Options& options,  int workGroupSize) :
-Codec(std::unique_ptr<Structure>(new Structure(options)), workGroupSize)
+Codec(std::unique_ptr<detail::Structure>(new detail::Structure(options)), workGroupSize)
 {
 }
 /*******************************************************************************
@@ -44,16 +44,16 @@ Codec(std::unique_ptr<Structure>(new Structure(options)), workGroupSize)
  *  \param  codeStructure Codec structure used for encoding and decoding
  *  \param  workGroupSize Number of thread used for decoding
  ******************************************************************************/
-Turbo::Turbo(const Structure& structure,  int workGroupSize) :
-Codec(std::unique_ptr<Structure>(new Structure(structure)), workGroupSize)
+Turbo::Turbo(const detail::Structure& structure,  int workGroupSize) :
+Codec(std::unique_ptr<detail::Structure>(new detail::Structure(structure)), workGroupSize)
 {
 }
 Turbo::Turbo(const EncoderOptions& encoder, const DecoderOptions& decoder, int workGroupSize) :
-Codec(std::unique_ptr<Structure>(new Structure(encoder, decoder)), workGroupSize)
+Codec(std::unique_ptr<detail::Structure>(new detail::Structure(encoder, decoder)), workGroupSize)
 {
 }
 Turbo::Turbo(const EncoderOptions& encoder, int workGroupSize) :
-Codec(std::unique_ptr<Structure>(new Structure(encoder)), workGroupSize)
+Codec(std::unique_ptr<detail::Structure>(new detail::Structure(encoder)), workGroupSize)
 {
 }
 
@@ -63,30 +63,30 @@ void Turbo::decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vecto
   worker->decodeBlocks(parity, msg, n);
 }
 
-void Turbo::soDecodeBlocks(InputIterator input, OutputIterator output, size_t n) const
+void Turbo::soDecodeBlocks(Codec::detail::InputIterator input, Codec::detail::OutputIterator output, size_t n) const
 {
   auto worker = TurboDecoder::create(structure());
   worker->soDecodeBlocks(input, output, n);
 }
 
-Turbo::Structure::Structure(const Options& options)
+Turbo::detail::Structure::Structure(const Options& options)
 {
   setEncoderOptions(options);
   setDecoderOptions(options);
 }
 
-Turbo::Structure::Structure(const EncoderOptions& encoder, const DecoderOptions& decoder)
+Turbo::detail::Structure::Structure(const EncoderOptions& encoder, const DecoderOptions& decoder)
 {
   setEncoderOptions(encoder);
   setDecoderOptions(decoder);
 }
-Turbo::Structure::Structure(const EncoderOptions& encoder)
+Turbo::detail::Structure::Structure(const EncoderOptions& encoder)
 {
   setEncoderOptions(encoder);
   setDecoderOptions(DecoderOptions());
 }
 
-void Turbo::Structure::setEncoderOptions(const fec::Turbo::EncoderOptions &encoder)
+void Turbo::detail::Structure::setEncoderOptions(const fec::Turbo::EncoderOptions &encoder)
 {
   interleaver_ = encoder.interleaver_;
   if (encoder.trellis_.size() != 1 && encoder.trellis_.size() != interleaver_.size()) {
@@ -128,7 +128,7 @@ void Turbo::Structure::setEncoderOptions(const fec::Turbo::EncoderOptions &encod
       encoderConstituentOptions.termination(encoder.termination_[i]);
     }
     auto decoderConstituentOptions = Convolutional::DecoderOptions().algorithm(decoderAlgorithm_);
-    constituents_.push_back(Convolutional::Structure(encoderConstituentOptions, decoderConstituentOptions));
+    constituents_.push_back(Convolutional::detail::Structure(encoderConstituentOptions, decoderConstituentOptions));
   }
   
   systSize_ = 0;
@@ -144,7 +144,7 @@ void Turbo::Structure::setEncoderOptions(const fec::Turbo::EncoderOptions &encod
   paritySize_ += innerSystSize();
 }
 
-void Turbo::Structure::setDecoderOptions(const fec::Turbo::DecoderOptions &decoder)
+void Turbo::detail::Structure::setDecoderOptions(const fec::Turbo::DecoderOptions &decoder)
 {
   iterations_ = decoder.iterations_;
   scheduling_ = decoder.scheduling_;
@@ -156,12 +156,12 @@ void Turbo::Structure::setDecoderOptions(const fec::Turbo::DecoderOptions &decod
   }
 }
 
-Turbo::DecoderOptions Turbo::Structure::getDecoderOptions() const
+Turbo::DecoderOptions Turbo::detail::Structure::getDecoderOptions() const
 {
   return DecoderOptions().iterations(iterations()).scheduling(scheduling()).algorithm(decoderAlgorithm()).gain(algorithmOptions_.gain_);
 }
 
-void Turbo::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const
+void Turbo::detail::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const
 {
   std::vector<BitField<size_t>> messageInterl;
   std::vector<BitField<size_t>>::iterator parityOutIt;
@@ -178,7 +178,7 @@ void Turbo::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg,
   }
 }
 
-bool Turbo::Structure::check(std::vector<BitField<size_t>>::const_iterator parity) const
+bool Turbo::detail::Structure::check(std::vector<BitField<size_t>>::const_iterator parity) const
 {
   std::vector<BitField<size_t>> messageInterl;
   std::vector<BitField<size_t>> parityTest;
@@ -206,7 +206,7 @@ bool Turbo::Structure::check(std::vector<BitField<size_t>>::const_iterator parit
   return true;
 }
 
-Permutation Turbo::Structure::puncturing(const PunctureOptions& options) const
+Permutation Turbo::detail::Structure::puncturing(const PunctureOptions& options) const
 {
   std::vector<std::vector<bool>> mask_ = options.mask_;
   if (mask_.size() == 0) {

@@ -37,7 +37,7 @@ namespace fec {
   class ViterbiDecoderImpl : public ViterbiDecoder
   {
   public:
-    ViterbiDecoderImpl(const Convolutional::Structure&);
+    ViterbiDecoderImpl(const Convolutional::detail::Structure&);
     ~ViterbiDecoderImpl() = default;
     
     virtual void decodeBlock(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg);

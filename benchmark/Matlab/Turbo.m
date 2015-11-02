@@ -1,6 +1,6 @@
 function results = Turbo(snrdb, T, N, M, z)
-    trellis = poly2trellis(4, [15, 17], 15);
-    turboTrellis = poly2trellis(4, 17, 15);
+    trellis = poly2trellis(4, [15, 13], 15);
+    turboTrellis = poly2trellis(4, 13, 15);
     pi = randperm(T);
     
     codec{1} = fec.Turbo(turboTrellis, {[], pi}, 'termination', 'Tail', 'iterations', 4, 'scheduling', 'Serial', 'algorithm', 'Exact');
@@ -8,12 +8,12 @@ function results = Turbo(snrdb, T, N, M, z)
     codec{3} = fec.Turbo(turboTrellis, {[], pi}, 'termination', 'Tail', 'iterations', 4, 'scheduling', 'Serial', 'algorithm', 'Approximate');
 
      matlabEncoder = comm.TurboEncoder('TrellisStructure', trellis, 'InterleaverIndices', pi);
-     matlabDecoder{1} = comm.TurboDecoder('TrellisStructure', trellis, 'InterleaverIndices', pi, 'Algorithm', 'True APP', 'NumIterations', 6);
-     matlabDecoder{2} = comm.TurboDecoder('TrellisStructure', trellis, 'InterleaverIndices', pi, 'Algorithm', 'Max*', 'NumIterations', 6);
-     matlabDecoder{3} = comm.TurboDecoder('TrellisStructure', trellis, 'InterleaverIndices', pi, 'Algorithm', 'Max', 'NumIterations', 6);
+     matlabDecoder{1} = comm.TurboDecoder('TrellisStructure', trellis, 'InterleaverIndices', pi, 'Algorithm', 'True APP', 'NumIterations', 4);
+     matlabDecoder{2} = comm.TurboDecoder('TrellisStructure', trellis, 'InterleaverIndices', pi, 'Algorithm', 'Max*', 'NumIterations', 4);
+     matlabDecoder{3} = comm.TurboDecoder('TrellisStructure', trellis, 'InterleaverIndices', pi, 'Algorithm', 'Max', 'NumIterations', 4);
      
      cmlSim{1}.rate = 1/3;
-     cmlSim{1}.max_iterations = 6;
+     cmlSim{1}.max_iterations = 4;
      cmlSim{1}.comment = 'Turbo';
      cmlSim{1}.sim_type = 'coded';
      cmlSim{1}.code_configuration = 1;
@@ -28,11 +28,11 @@ function results = Turbo(snrdb, T, N, M, z)
      cmlSim{1}.demod_type = 0;
      cmlSim{1}.linetype = 'k:';
      cmlSim{1}.legend = cmlSim{1}.comment;
-     cmlSim{1}.g1 = [1 1 0 1; 1 1 1 1];
+     cmlSim{1}.g1 = [1 0 1 1; 1 1 0 1];
      cmlSim{1}.nsc_flag1 = 0;
      cmlSim{1}.pun_pattern1 = [];
      cmlSim{1}.tail_pattern1 = [];
-     cmlSim{1}.g2 = [1 1 0 1; 1 1 1 1];
+     cmlSim{1}.g2 = [1 0 1 1; 1 1 0 1];
      cmlSim{1}.nsc_flag2 = 0;
      cmlSim{1}.pun_pattern2 = [];
      cmlSim{1}.tail_pattern2 = [];

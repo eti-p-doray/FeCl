@@ -1,5 +1,5 @@
 function results = Convolutional(snrdb, T, N, M, z)
-    trellis = poly2trellis(4, [15, 17], 15);
+    trellis = poly2trellis(4, [15, 13], 15);
     
     codec = fec.Convolutional(trellis, T, 'termination', 'Truncate');
     matlabEncoder = comm.ConvolutionalEncoder('TrellisStructure', trellis, 'TerminationMethod', 'Truncated');
@@ -21,7 +21,7 @@ function results = Convolutional(snrdb, T, N, M, z)
     cmlSim.demod_type = 0;
     cmlSim.linetype = 'k:';
     cmlSim.legend = cmlSim.comment;
-    cmlSim.g1 = [1 1 0 1; 1 1 1 1];
+    cmlSim.g1 = [1 0 1 1; 1 1 0 1];
     cmlSim.nsc_flag1 = 0;
     cmlSim.pun_pattern1 = [1; 1];
     cmlSim.tail_pattern1 = [0 0 0; 0 0 0];
@@ -35,8 +35,8 @@ function results = Convolutional(snrdb, T, N, M, z)
 
     [cmlSim, cmlCodec] = InitializeCodeParam( cmlSim, pwd );
 
-    msg = int8(randi([0 1],codec.msgSize,N));
-    parity = int8(codec.encode(msg));
+    msg = logical(randi([0 1],codec.msgSize,N));
+    parity = codec.encode(msg);
          
     snr = 10.0.^(snrdb/10.0);
     symbol = double( -2*double(parity)+1 );
@@ -60,6 +60,6 @@ function results = Convolutional(snrdb, T, N, M, z)
 
     results.decoding.cml = cmlDecode(cmlSim, cmlCodec, msg, llr, M, z);
         
-    results.decoding.matlab = matlabDecode(matlabDecoder, msg, llr, M, z);
+    results.decoding.matlab = matlabDecode(matlabDecoder, msg, -llr, M, z);
 
 end

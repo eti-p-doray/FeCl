@@ -24,7 +24,7 @@
 #include <memory>
 #include <iostream>
 
-#include "Turbo/PuncturedTurbo.h"
+#include "PuncturedTurbo.h"
 
 #include "operations.h"
 
@@ -57,7 +57,7 @@ int main( int argc, char* argv[] )
   fec::PuncturedTurbo::Options options({trellis, trellis}, {{}, permIdx});
   options.termination(fec::Convolutional::Truncate);
   options.mask({{1, 1}, {1, 0}, {1, 0}});
-  options.algorithm(fec::Codec::Exact).iterations(10).scheduling(fec::Turbo::Serial);
+  options.algorithm(fec::Exact).iterations(10).scheduling(fec::Turbo::Serial);
   //! [Creating a Turbo code structure]
   
   

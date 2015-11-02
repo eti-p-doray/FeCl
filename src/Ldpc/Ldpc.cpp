@@ -19,24 +19,24 @@
  along with FeCl.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#include "Ldpc.h"
+#include "../Ldpc.h"
 #include "BpDecoder/BpDecoder.h"
 
 using namespace fec;
 
 BOOST_CLASS_EXPORT_IMPLEMENT(Ldpc);
-BOOST_CLASS_EXPORT_IMPLEMENT(Ldpc::Structure);
+BOOST_CLASS_EXPORT_IMPLEMENT(Ldpc::detail::Structure);
 
 const char * Ldpc::get_key() const {
   return boost::serialization::type_info_implementation<Ldpc>::type::get_const_instance().get_key();
 }
 
-const char * Ldpc::Structure::get_key() const {
-  return boost::serialization::type_info_implementation<Ldpc::Structure>::type::get_const_instance().get_key();
+const char * Ldpc::detail::Structure::get_key() const {
+  return boost::serialization::type_info_implementation<Ldpc::detail::Structure>::type::get_const_instance().get_key();
 }
 
 Ldpc::Ldpc(const Options& options,  int workGroupSize) :
-Codec(std::unique_ptr<Structure>(new Structure(options)), workGroupSize)
+Codec(std::unique_ptr<detail::Structure>(new detail::Structure(options)), workGroupSize)
 {
 }
 /**
@@ -44,20 +44,20 @@ Codec(std::unique_ptr<Structure>(new Structure(options)), workGroupSize)
  *  \param  codeStructure Codec structure used for encoding and decoding
  *  \param  workGroupSize Number of thread used for decoding
  */
-Ldpc::Ldpc(const Structure& structure,  int workGroupSize) :
-Codec(std::unique_ptr<Structure>(new Structure(structure)), workGroupSize)
+Ldpc::Ldpc(const detail::Structure& structure,  int workGroupSize) :
+Codec(std::unique_ptr<detail::Structure>(new detail::Structure(structure)), workGroupSize)
 {
 }
 Ldpc::Ldpc(const EncoderOptions& encoder, const DecoderOptions& decoder, int workGroupSize) :
-Codec(std::unique_ptr<Structure>(new Structure(encoder, decoder)), workGroupSize)
+Codec(std::unique_ptr<detail::Structure>(new detail::Structure(encoder, decoder)), workGroupSize)
 {
 }
 Ldpc::Ldpc(const EncoderOptions& encoder, int workGroupSize) :
-Codec(std::unique_ptr<Structure>(new Structure(encoder)), workGroupSize)
+Codec(std::unique_ptr<detail::Structure>(new detail::Structure(encoder)), workGroupSize)
 {
 }
 
-void Ldpc::soDecodeBlocks(InputIterator input, OutputIterator output, size_t n) const
+void Ldpc::soDecodeBlocks(Codec::detail::InputIterator input, Codec::detail::OutputIterator output, size_t n) const
 {
   auto worker = BpDecoder::create(structure());
   worker->soDecodeBlocks(input, output, n);
@@ -112,7 +112,7 @@ SparseBitMatrix Ldpc::Gallager::matrix(size_t n, size_t wc, size_t wr, uint64_t 
   return H;
 }
 
-Ldpc::Structure::Structure(const Options& options)
+Ldpc::detail::Structure::Structure(const Options& options)
 {
   setEncoderOptions(options);
   setDecoderOptions(options);
@@ -130,18 +130,18 @@ Ldpc::Structure::Structure(const Options& options)
  *    The decoder can stop before the maximum number of iteration if the msg is consistent.
  *  \param  type  Decoder algorithm used
  */
-Ldpc::Structure::Structure(const EncoderOptions& encoder, const DecoderOptions& decoder)
+Ldpc::detail::Structure::Structure(const EncoderOptions& encoder, const DecoderOptions& decoder)
 {
   setEncoderOptions(encoder);
   setDecoderOptions(decoder);
 }
-Ldpc::Structure::Structure(const EncoderOptions& encoder)
+Ldpc::detail::Structure::Structure(const EncoderOptions& encoder)
 {
   setEncoderOptions(encoder);
   setDecoderOptions(DecoderOptions());
 }
 
-void Ldpc::Structure::setEncoderOptions(const EncoderOptions& encoder)
+void Ldpc::detail::Structure::setEncoderOptions(const EncoderOptions& encoder)
 {
   msgSize_ = encoder.checkMatrix_.cols()-encoder.checkMatrix_.rows();
   paritySize_ = encoder.checkMatrix_.cols();
@@ -152,14 +152,14 @@ void Ldpc::Structure::setEncoderOptions(const EncoderOptions& encoder)
   systSize_ = msgSize_;
 }
 
-void Ldpc::Structure::setDecoderOptions(const DecoderOptions& decoder)
+void Ldpc::detail::Structure::setDecoderOptions(const DecoderOptions& decoder)
 {
   decoderAlgorithm_ = decoder.algorithm_;
   iterations_ = decoder.iterations_;
   algorithmOptions_.gain_ = decoder.gain_;
 }
 
-fec::Ldpc::DecoderOptions Ldpc::Structure::getDecoderOptions() const
+fec::Ldpc::DecoderOptions Ldpc::detail::Structure::getDecoderOptions() const
 {
   return DecoderOptions().iterations(iterations()).algorithm(decoderAlgorithm()).gain(algorithmOptions_.gain_);;
 }
@@ -170,7 +170,7 @@ fec::Ldpc::DecoderOptions Ldpc::Structure::getDecoderOptions() const
  *  \param  syndrome[out] Output iterator pointing to the first
  *    element of the computed syndrome. The output needs to be allocated.
  */
-void Ldpc::Structure::syndrome(std::vector<uint8_t>::const_iterator parity, std::vector<uint8_t>::iterator syndrome) const
+void Ldpc::detail::Structure::syndrome(std::vector<uint8_t>::const_iterator parity, std::vector<uint8_t>::iterator syndrome) const
 {
   for (auto parityEq = checks().begin(); parityEq < checks().end(); ++parityEq, ++syndrome) {
     for (auto parityBit = parityEq->begin(); parityBit < parityEq->end(); ++parityBit) {
@@ -184,7 +184,7 @@ void Ldpc::Structure::syndrome(std::vector<uint8_t>::const_iterator parity, std:
  *  \param  parity  Input iterator pointing to the first element of the parity sequence.
  *  \return True if the parity sequence is consistent. False otherwise.
  */
-bool Ldpc::Structure::check(std::vector<BitField<size_t>>::const_iterator parity) const
+bool Ldpc::detail::Structure::check(std::vector<BitField<size_t>>::const_iterator parity) const
 {
   for (auto parityEq = checks().begin(); parityEq < checks().end(); ++parityEq) {
     bool syndrome = false;
@@ -204,7 +204,7 @@ bool Ldpc::Structure::check(std::vector<BitField<size_t>>::const_iterator parity
  *  \param  parity[out] Output iterator pointing to the first
  *    element of the computed parity sequence. The output needs to be allocated.
  */
-void Ldpc::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const
+void Ldpc::detail::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const
 {
   std::copy(msg, msg + innerMsgSize(), parity);
   std::fill(parity+innerMsgSize(), parity+checks().cols(), 0);
@@ -240,7 +240,7 @@ void Ldpc::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg, 
  *  The matrix is transformed in a partial triangular shape.
  *  \param  H The original ldpc matrix
  */
-void Ldpc::Structure::computeGeneratorMatrix(SparseBitMatrix H)
+void Ldpc::detail::Structure::computeGeneratorMatrix(SparseBitMatrix H)
 {
   std::vector<size_t> colSizes;
   size_t maxRow = H.rows();
@@ -357,7 +357,7 @@ void Ldpc::Structure::computeGeneratorMatrix(SparseBitMatrix H)
   T_ = H_({0, tSize}, {H.cols()-tSize, H.cols()}).transpose();
 }
 
-Permutation Ldpc::Structure::puncturing(const PunctureOptions& options) const
+Permutation Ldpc::detail::Structure::puncturing(const PunctureOptions& options) const
 {
   std::vector<size_t> perms;
   size_t idx = 0;

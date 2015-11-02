@@ -27,7 +27,7 @@
 
 #include <mex.h>
 
-#include "Convolutional/Convolutional.h"
+#include "Convolutional.h"
 #include "../util/Conversion.h"
 
 template <>
@@ -36,8 +36,8 @@ public:
   static fec::Convolutional::DecoderOptions f(const mxArray* in) {
     try {
       fec::Convolutional::DecoderOptions decoderOptions;
-      decoderOptions.algorithm(  mxArrayTo<fec::Codec::DecoderAlgorithm>::f(mxGetField(in, 0, "algorithm")) );
-      decoderOptions.gain(  mxArrayTo<fec::Codec::DecoderAlgorithm>::f(mxGetField(in, 0, "gain")) );
+      decoderOptions.algorithm(  mxArrayTo<fec::DecoderAlgorithm>::f(mxGetField(in, 0, "algorithm")) );
+      decoderOptions.gain(  mxArrayTo<double>::f(mxGetField(in, 0, "gain")) );
       return decoderOptions;
     } catch (std::exception& e) {
       throw std::invalid_argument("In decoder options: " + std::string(e.what()));

@@ -71,48 +71,51 @@ namespace fec {
       Options(const std::vector<Trellis>& trellis, const std::vector<Permutation>& interleaver) : EncoderOptions(trellis, interleaver) {}
       Options(const Trellis& trellis, const std::vector<Permutation>& interleaver) : EncoderOptions(trellis, interleaver) {}
     };
-    /**
-     *  This class represents a convolutional code structure.
-     *  It provides a usefull interface to store and acces the structure information.
-     */
-    class Structure : public Turbo::Structure {
-      friend class ::boost::serialization::access;
-    public:
-      Structure() = default;
-      Structure(const Options& options);
-      Structure(const EncoderOptions&, const PunctureOptions&, const DecoderOptions&);
-      Structure(const EncoderOptions&, const PunctureOptions&);
-      virtual ~Structure() = default;
-      
-      virtual const char * get_key() const;
-      
-      virtual size_t paritySize() const {return permutation_.outputSize();}
-      
-      void setPunctureOptions(const PunctureOptions& puncture);
-      
-      inline Permutation permutation() const {return permutation_;}
-      
-      virtual bool check(std::vector<BitField<size_t>>::const_iterator parity) const;
-      virtual void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const;
-      
-    private:
-      template <typename Archive>
-      void serialize(Archive & ar, const unsigned int version) {
-        using namespace boost::serialization;
-        ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(Turbo::Structure);
-        ar & ::BOOST_SERIALIZATION_NVP(permutation_);
-      }
-      
-      Permutation permutation_;
+    
+    struct detail {
+      /**
+       *  This class represents a convolutional code structure.
+       *  It provides a usefull interface to store and acces the structure information.
+       */
+      class Structure : public Turbo::detail::Structure {
+        friend class ::boost::serialization::access;
+      public:
+        Structure() = default;
+        Structure(const Options& options);
+        Structure(const EncoderOptions&, const PunctureOptions&, const DecoderOptions&);
+        Structure(const EncoderOptions&, const PunctureOptions&);
+        virtual ~Structure() = default;
+        
+        virtual const char * get_key() const;
+        
+        virtual size_t paritySize() const {return permutation_.outputSize();}
+        
+        void setPunctureOptions(const PunctureOptions& puncture);
+        
+        inline Permutation permutation() const {return permutation_;}
+        
+        virtual bool check(std::vector<BitField<size_t>>::const_iterator parity) const;
+        virtual void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const;
+        
+      private:
+        template <typename Archive>
+        void serialize(Archive & ar, const unsigned int version) {
+          using namespace boost::serialization;
+          ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(Turbo::detail::Structure);
+          ar & ::BOOST_SERIALIZATION_NVP(permutation_);
+        }
+        
+        Permutation permutation_;
+      };
     };
     
     PuncturedTurbo(const Options& options, int workGroupSize = 8);
-    PuncturedTurbo(const Structure& structure, int workGroupSize = 8);
+    PuncturedTurbo(const detail::Structure& structure, int workGroupSize = 8);
     PuncturedTurbo(const EncoderOptions& encoder, const PunctureOptions& puncture, const DecoderOptions& decoder, int workGroupSize = 8);
     PuncturedTurbo(const EncoderOptions& encoder, const PunctureOptions& puncture, int workGroupSize = 8);
     PuncturedTurbo(const PuncturedTurbo& other) {*this = other;}
     virtual ~PuncturedTurbo() = default;
-    PuncturedTurbo& operator=(const PuncturedTurbo& other) {Codec::operator=(other); structure_ = std::unique_ptr<Structure>(new Structure(other.structure())); return *this;}
+    PuncturedTurbo& operator=(const PuncturedTurbo& other) {Codec::operator=(other); structure_ = std::unique_ptr<detail::Structure>(new detail::Structure(other.structure())); return *this;}
     
     virtual const char * get_key() const;
     
@@ -121,17 +124,17 @@ namespace fec {
   protected:
     PuncturedTurbo() = default;
     
-    inline const Structure& structure() const {return dynamic_cast<const Structure&>(Codec::structure());}
-    inline Structure& structure() {return dynamic_cast<Structure&>(Codec::structure());}
+    inline const detail::Structure& structure() const {return dynamic_cast<const detail::Structure&>(Codec::structure());}
+    inline detail::Structure& structure() {return dynamic_cast<detail::Structure&>(Codec::structure());}
     
     virtual void decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const;
-    virtual void soDecodeBlocks(InputIterator input, OutputIterator output, size_t n) const;
+    virtual void soDecodeBlocks(Codec::detail::InputIterator input, Codec::detail::OutputIterator output, size_t n) const;
     
   private:
     template <typename Archive>
     void serialize(Archive & ar, const unsigned int version) {
       using namespace boost::serialization;
-      ar.template register_type<Structure>();
+      ar.template register_type<detail::Structure>();
       ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(Turbo);
     }
   };
@@ -140,8 +143,8 @@ namespace fec {
 
 BOOST_CLASS_EXPORT_KEY(fec::PuncturedTurbo);
 BOOST_CLASS_TYPE_INFO(fec::PuncturedTurbo,extended_type_info_no_rtti<fec::PuncturedTurbo>);
-BOOST_CLASS_EXPORT_KEY(fec::PuncturedTurbo::Structure);
-BOOST_CLASS_TYPE_INFO(fec::PuncturedTurbo::Structure,extended_type_info_no_rtti<fec::PuncturedTurbo::Structure>);
+BOOST_CLASS_EXPORT_KEY(fec::PuncturedTurbo::detail::Structure);
+BOOST_CLASS_TYPE_INFO(fec::PuncturedTurbo::detail::Structure,extended_type_info_no_rtti<fec::PuncturedTurbo::detail::Structure>);
 
 
 #endif

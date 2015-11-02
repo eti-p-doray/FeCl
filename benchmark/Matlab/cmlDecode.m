@@ -5,11 +5,12 @@ function results = cmlDecode(sim, codec, msg, llr, N, z)
     for i = 1:N
         tic;
         for j = 1:size(msg,2)
-            [decodedMsg, ~] = CmlDecode(double(llr(:,j).'), double(msg(:,j).'), sim, codec);
-            %errorCount(i) = errorCount(i) + sum(sum((decodedMsg-double(msg(:,j).'))~=0));
+            [decodedMsg, error] = CmlDecode(double(llr(:,j).'), double(msg(:,j).'), sim, codec);
+            errorCount(i) = errorCount(i) + error(end);
         end
         elapsedTime(i) = toc;
     end
     results.avg = mean(elapsedTime);
     results.intvl = std(elapsedTime) * z / sqrt(N);
+    results.per = errorCount;
 end

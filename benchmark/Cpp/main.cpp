@@ -33,9 +33,9 @@
 #include <itpp/comm/interleave.h>
 #include <itpp/comm/ldpc.h>
 
-#include "Turbo/Turbo.h"
-#include "Convolutional/Convolutional.h"
-#include "Ldpc/Ldpc.h"
+#include "Turbo.h"
+#include "Convolutional.h"
+#include "Ldpc.h"
 #include "operations.h"
 
 using namespace fec;
@@ -114,11 +114,11 @@ ptree speed_Turbo()
   for (size_t i = 0; i < permIdx.size(); ++i) {itppPermIdx[i] = permIdx[i];}
   
   auto encOpt = fec::Turbo::EncoderOptions(trellis, {{}, permIdx}).termination(fec::Convolutional::Tail);
-  auto decOpt = fec::Turbo::DecoderOptions().algorithm(fec::Codec::Exact).iterations(4).scheduling(fec::Turbo::Serial);
+  auto decOpt = fec::Turbo::DecoderOptions().algorithm(fec::Exact).iterations(4).scheduling(fec::Turbo::Serial);
   codecs.push_back(fec::Turbo(encOpt, decOpt,1));
-  decOpt.algorithm(fec::Codec::Linear);
+  decOpt.algorithm(fec::Linear);
   codecs.push_back(fec::Turbo(encOpt, decOpt,1));
-  decOpt.algorithm(fec::Codec::Approximate);
+  decOpt.algorithm(fec::Approximate);
   codecs.push_back(fec::Turbo(encOpt, decOpt,1));
   
   itppCodecs.push_back(itpp::Turbo_Codec());
@@ -178,15 +178,12 @@ ptree speed_Ldpc()
   auto checkMatrix = fec::Ldpc::DvbS2::matrix(64800, 0.5);
   
   auto encOpt = fec::Ldpc::EncoderOptions(checkMatrix);
-  auto decOpt = fec::Ldpc::DecoderOptions().algorithm(fec::Codec::Exact).iterations(20);
-  fec::Ldpc::Structure structure(encOpt, decOpt);
-  codecs.push_back(fec::Ldpc(structure,1));
-  decOpt.algorithm(fec::Codec::Linear);
-  structure.setDecoderOptions(decOpt);
-  codecs.push_back(fec::Ldpc(structure,1));
-  decOpt.algorithm(fec::Codec::Approximate);
-  structure.setDecoderOptions(decOpt);
-  codecs.push_back(fec::Ldpc(structure,1));
+  auto decOpt = fec::Ldpc::DecoderOptions().algorithm(fec::Exact).iterations(20);
+  codecs.push_back(fec::Ldpc(encOpt, decOpt,1));
+  decOpt.algorithm(fec::Linear);
+  codecs.push_back(fec::Ldpc(encOpt, decOpt,1));
+  decOpt.algorithm(fec::Approximate);
+  codecs.push_back(fec::Ldpc(encOpt, decOpt,1));
   
   itpp::LDPC_Parity_Irregular itppCheckMatrix;
   itppCheckMatrix.initialize(64800-T, 64800);

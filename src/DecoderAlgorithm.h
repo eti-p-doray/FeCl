@@ -19,40 +19,20 @@
  along with FeCl.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#include <vector>
-#include <random>
-#include <memory>
-#include <iostream>
+#ifndef FEC_DECODER_ALGORITHM_H
+#define FEC_DECODER_ALGORITHM_H
 
-#include "Ldpc/Ldpc.h"
+namespace fec {
 
-#include "operations.h"
-
-int main( int argc, char* argv[] )
-{
-  //! [Creating an ldpc code]
-  //! [Creating an ldpc code structure]
-  //! [Creating an ldpcMatrix]
-  /*
-   We are creating an ldpc matrix
+  /**
+   *  This enum lists the types of decoder algorithm.
    */
-  auto checkMatrix = fec::Ldpc::DvbS2::matrix(64800, 1.0/2.0);
-  //! [Creating an ldpcMatrix]
+  enum DecoderAlgorithm {
+    Exact, /**< No approximation is used and the L-values are computed in logarithmic domain. */
+    Linear, /**< A lookup table with linear interpolation is used to compute the correction term.  */
+    Approximate, /**< The correction term is ignored. */
+  };
   
-  /*
-   The matrix is used to create a code structure.
-   */
-  auto options = fec::Ldpc::Options(checkMatrix);
-  options.iterations(20).algorithm(fec::Codec::Exact);
-  //! [Creating a Turbo code structure]
-  
-  /*
-   A code is created and ready to operate
-   */
-  std::unique_ptr<fec::Codec> codec = codec(new fec::Ldpc(options));
-  //! [Creating an ldpc code]
-  
-  std::cout << per(codec, 1.0) << std::endl;
-  
-  return 0;
 }
+
+#endif

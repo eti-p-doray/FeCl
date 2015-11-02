@@ -24,7 +24,7 @@
 using namespace fec;
 
 template <class LlrMetrics, template <class> class BoxSumAlg>
-BpDecoderImpl<LlrMetrics, BoxSumAlg>::BpDecoderImpl(const Ldpc::Structure& structure) :
+BpDecoderImpl<LlrMetrics, BoxSumAlg>::BpDecoderImpl(const Ldpc::detail::Structure& structure) :
 BpDecoder(structure)
 {
   hardParity_.resize(this->structure().checks().cols());
@@ -70,7 +70,7 @@ void BpDecoderImpl<LlrMetrics, BoxSumAlg>::decodeBlock(std::vector<LlrType>::con
 }
 
 template <class LlrMetrics, template <class> class BoxSumAlg>
-void BpDecoderImpl<LlrMetrics, BoxSumAlg>::soDecodeBlock(Codec::InputIterator input, Codec::OutputIterator output)
+void BpDecoderImpl<LlrMetrics, BoxSumAlg>::soDecodeBlock(Codec::detail::InputIterator input, Codec::detail::OutputIterator output)
 {
   std::copy(input.parity(), input.parity()+structure().checks().cols(), parity_.begin());
   if (input.hasSyst()) {

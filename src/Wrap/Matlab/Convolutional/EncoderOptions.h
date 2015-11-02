@@ -27,7 +27,7 @@
 
 #include <mex.h>
 
-#include "Convolutional/Convolutional.h"
+#include "Convolutional.h"
 #include "../util/Trellis.h"
 #include "../util/Conversion.h"
 

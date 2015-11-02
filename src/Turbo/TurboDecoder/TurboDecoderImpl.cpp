@@ -23,7 +23,7 @@
 
 using namespace fec;
 
-TurboDecoderImpl::TurboDecoderImpl(const Turbo::Structure& structure) : TurboDecoder(structure)
+TurboDecoderImpl::TurboDecoderImpl(const Turbo::detail::Structure& structure) : TurboDecoder(structure)
 {
 }
 
@@ -43,8 +43,8 @@ void TurboDecoderImpl::decodeBlock(std::vector<LlrType>::const_iterator parity, 
         serialSharingUpdate(j);
       }
       
-      auto inputInfo = Codec::InputIterator().parity(parityIt).syst(extrinsic);
-      auto outputInfo = Codec::OutputIterator().syst(extrinsic);
+      auto inputInfo = Codec::detail::InputIterator().parity(parityIt).syst(extrinsic);
+      auto outputInfo = Codec::detail::OutputIterator().syst(extrinsic);
       code_[j]->soDecodeBlock(inputInfo, outputInfo);
       
       extrinsic += structure().constituent(j).innerSystSize();
@@ -60,7 +60,7 @@ void TurboDecoderImpl::decodeBlock(std::vector<LlrType>::const_iterator parity, 
 }
 
 
-void TurboDecoderImpl::soDecodeBlock(Codec::InputIterator input, Codec::OutputIterator output)
+void TurboDecoderImpl::soDecodeBlock(Codec::detail::InputIterator input, Codec::detail::OutputIterator output)
 {
   std::copy(input.parity(), input.parity() + structure().innerParitySize(), parityIn_.begin());
   if (input.hasSyst()) {
@@ -95,8 +95,8 @@ void TurboDecoderImpl::soDecodeBlock(Codec::InputIterator input, Codec::OutputIt
         serialSharingUpdate(j);
       }
       
-      auto inputInfo = Codec::InputIterator({}).parity(parityIn).syst(extrinsic);
-      auto outputInfo = Codec::OutputIterator({}).syst(extrinsic);
+      auto inputInfo = Codec::detail::InputIterator({}).parity(parityIn).syst(extrinsic);
+      auto outputInfo = Codec::detail::OutputIterator({}).syst(extrinsic);
       if (i == structure().iterations()-1 && output.hasParity()) {
         outputInfo.parity(parityOut);
       }

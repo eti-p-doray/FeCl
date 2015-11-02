@@ -71,5 +71,5 @@ function results = Ldpc(snrdb, T, N, M, z)
         results.decoding.(cmlConfig{i}).cml = cmlDecode(cmlSim{i}, cmlCodec{i}, msg, llr, M, z);
     end
 
-    results.decoding.(config{1}).matlab = matlabDecode(matlabDecoder, msg, llr, M, z);
+    results.decoding.(config{1}).matlab = matlabDecode(matlabDecoder, msg, -llr, M, z);
 end

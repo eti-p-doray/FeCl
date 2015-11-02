@@ -38,48 +38,50 @@ namespace fec {
       Options(const Trellis& trellis, size_t length) : EncoderOptions(trellis, length) {}
     };
     
-    /**
-     *  This class represents a convolutional code structure.
-     *  It provides a usefull interface to store and acces the structure information.
-     */
-    class Structure : public Convolutional::Structure {
-      friend class ::boost::serialization::access;
-    public:
-      Structure() = default;
-      Structure(const Options& options);
-      Structure(const EncoderOptions&, const PunctureOptions&, const DecoderOptions&);
-      Structure(const EncoderOptions&, const PunctureOptions&);
-      virtual ~Structure() = default;
-      
-      virtual const char * get_key() const;
-      
-      virtual size_t paritySize() const {return permutation_.outputSize();}
-      
-      void setPunctureOptions(const PunctureOptions& puncture);
-      
-      inline Permutation permutation() const {return permutation_;}
-      
-      virtual bool check(std::vector<BitField<size_t>>::const_iterator parity) const;
-      virtual void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const;
-      
-    private:
-      template <typename Archive>
-      void serialize(Archive & ar, const unsigned int version) {
-        using namespace boost::serialization;
-        ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(Convolutional::Structure);
-        ar & ::BOOST_SERIALIZATION_NVP(permutation_);
-      }
-      
-      Permutation permutation_;
+    struct detail {
+      /**
+       *  This class represents a convolutional code structure.
+       *  It provides a usefull interface to store and acces the structure information.
+       */
+      class Structure : public Convolutional::detail::Structure {
+        friend class ::boost::serialization::access;
+      public:
+        Structure() = default;
+        Structure(const Options& options);
+        Structure(const EncoderOptions&, const PunctureOptions&, const DecoderOptions&);
+        Structure(const EncoderOptions&, const PunctureOptions&);
+        virtual ~Structure() = default;
+        
+        virtual const char * get_key() const;
+        
+        virtual size_t paritySize() const {return permutation_.outputSize();}
+        
+        void setPunctureOptions(const PunctureOptions& puncture);
+        
+        inline Permutation permutation() const {return permutation_;}
+        
+        virtual bool check(std::vector<BitField<size_t>>::const_iterator parity) const;
+        virtual void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const;
+        
+      private:
+        template <typename Archive>
+        void serialize(Archive & ar, const unsigned int version) {
+          using namespace boost::serialization;
+          ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(Convolutional::detail::Structure);
+          ar & ::BOOST_SERIALIZATION_NVP(permutation_);
+        }
+        
+        Permutation permutation_;
+      };
     };
     
     PuncturedConvolutional(const Options& options, int workGroupSize = 8);
-    PuncturedConvolutional(const Structure& structure, int workGroupSize = 8);
+    PuncturedConvolutional(const detail::Structure& structure, int workGroupSize = 8);
     PuncturedConvolutional(const EncoderOptions& encoder, const PunctureOptions& puncture, const DecoderOptions& decoder, int workGroupSize = 8);
     PuncturedConvolutional(const EncoderOptions& encoder, const PunctureOptions& puncture, int workGroupSize = 8);
     PuncturedConvolutional(const PuncturedConvolutional& other) {*this = other;}
     virtual ~PuncturedConvolutional() = default;
-    PuncturedConvolutional& operator=(const PuncturedConvolutional& other) {Codec::operator=(other); structure_ = std::unique_ptr<Structure>(new Structure(other.structure())); return *this;}
+    PuncturedConvolutional& operator=(const PuncturedConvolutional& other) {Codec::operator=(other); structure_ = std::unique_ptr<detail::Structure>(new detail::Structure(other.structure())); return *this;}
     
     virtual const char * get_key() const;
     
@@ -88,17 +90,17 @@ namespace fec {
   protected:
     PuncturedConvolutional() = default;
     
-    inline const Structure& structure() const {return dynamic_cast<const Structure&>(Codec::structure());}
-    inline Structure& structure() {return dynamic_cast<Structure&>(Codec::structure());}
+    inline const detail::Structure& structure() const {return dynamic_cast<const detail::Structure&>(Codec::structure());}
+    inline detail::Structure& structure() {return dynamic_cast<detail::Structure&>(Codec::structure());}
     
     virtual void decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const;
-    virtual void soDecodeBlocks(InputIterator input, OutputIterator output, size_t n) const;
+    virtual void soDecodeBlocks(Codec::detail::InputIterator input, Codec::detail::OutputIterator output, size_t n) const;
     
   private:
     template <typename Archive>
     void serialize(Archive & ar, const unsigned int version) {
       using namespace boost::serialization;
-      ar.template register_type<Structure>();
+      ar.template register_type<detail::Structure>();
       ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(Convolutional);
     }
   };
@@ -107,8 +109,8 @@ namespace fec {
 
 BOOST_CLASS_EXPORT_KEY(fec::PuncturedConvolutional);
 BOOST_CLASS_TYPE_INFO(fec::PuncturedConvolutional,extended_type_info_no_rtti<fec::PuncturedConvolutional>);
-BOOST_CLASS_EXPORT_KEY(fec::PuncturedConvolutional::Structure);
-BOOST_CLASS_TYPE_INFO(fec::PuncturedConvolutional::Structure,extended_type_info_no_rtti<fec::PuncturedConvolutional::Structure>);
+BOOST_CLASS_EXPORT_KEY(fec::PuncturedConvolutional::detail::Structure);
+BOOST_CLASS_TYPE_INFO(fec::PuncturedConvolutional::detail::Structure,extended_type_info_no_rtti<fec::PuncturedConvolutional::detail::Structure>);
 
 
 #endif

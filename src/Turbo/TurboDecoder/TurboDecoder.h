@@ -22,7 +22,7 @@
 #ifndef FEC_TURBO_DECODER_H
 #define FEC_TURBO_DECODER_H
 
-#include "../Turbo.h"
+#include "../../Turbo.h"
 #include "../../Convolutional/MapDecoder/MapDecoder.h"
 
 namespace fec {
@@ -34,20 +34,20 @@ namespace fec {
   class TurboDecoder
   {
   public:
-    static std::unique_ptr<TurboDecoder> create(const Turbo::Structure&);
+    static std::unique_ptr<TurboDecoder> create(const Turbo::detail::Structure&);
     virtual ~TurboDecoder() = default;
     
-    inline const Turbo::Structure& structure() const {return structure_;}
+    inline const Turbo::detail::Structure& structure() const {return structure_;}
     
     void decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n);
-    void soDecodeBlocks(Codec::InputIterator input, Codec::OutputIterator output, size_t n);
+    void soDecodeBlocks(Codec::detail::InputIterator input, Codec::detail::OutputIterator output, size_t n);
     
   protected:
-    TurboDecoder(const Turbo::Structure& codeStructure);
+    TurboDecoder(const Turbo::detail::Structure& codeStructure);
     TurboDecoder() = default;
     
     virtual void decodeBlock(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg) = 0;
-    virtual void soDecodeBlock(Codec::InputIterator input, Codec::OutputIterator output) = 0;
+    virtual void soDecodeBlock(Codec::detail::InputIterator input, Codec::detail::OutputIterator output) = 0;
     
     std::vector<std::unique_ptr<MapDecoder>> code_;
     
@@ -57,7 +57,7 @@ namespace fec {
     std::vector<LlrType> parityOut_;
     
   private:
-    Turbo::Structure structure_;
+    Turbo::detail::Structure structure_;
   };
   
 }

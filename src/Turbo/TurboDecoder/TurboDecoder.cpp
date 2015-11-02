@@ -24,12 +24,12 @@
 
 using namespace fec;
 
-std::unique_ptr<TurboDecoder> TurboDecoder::create(const Turbo::Structure& structure)
+std::unique_ptr<TurboDecoder> TurboDecoder::create(const Turbo::detail::Structure& structure)
 {
   return std::unique_ptr<TurboDecoder>(new TurboDecoderImpl(structure));
 }
 
-TurboDecoder::TurboDecoder(const Turbo::Structure& structure) : structure_(structure)
+TurboDecoder::TurboDecoder(const Turbo::detail::Structure& structure) : structure_(structure)
 {
   for (size_t i = 0; i < this->structure().constituentCount(); ++i) {
     code_.push_back(MapDecoder::create(this->structure().constituent(i)));
@@ -49,7 +49,7 @@ void TurboDecoder::decodeBlocks(std::vector<LlrType>::const_iterator parity, std
   }
 }
 
-void TurboDecoder::soDecodeBlocks(Codec::InputIterator input, Codec::OutputIterator output, size_t n)
+void TurboDecoder::soDecodeBlocks(Codec::detail::InputIterator input, Codec::detail::OutputIterator output, size_t n)
 {
   for (size_t i = 0; i < n; ++i) {
     soDecodeBlock(input, output);

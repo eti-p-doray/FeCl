@@ -18,4 +18,4 @@ savejson('', results, '../benchmarkMatlabResult.json');
 
 disp('done')
 
-%exit;
+exit;
