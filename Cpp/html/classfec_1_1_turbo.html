@@ -63,7 +63,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="annotated.html"><span>Class&#160;List</span></a></li>
       <li><a href="classes.html"><span>Class&#160;Index</span></a></li>
-      <li><a href="hierarchy.html"><span>Class&#160;Hierarchy</span></a></li>
+      <li><a href="inherits.html"><span>Class&#160;Hierarchy</span></a></li>
       <li><a href="functions.html"><span>Class&#160;Members</span></a></li>
     </ul>
   </div>
@@ -105,27 +105,26 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="dynheader">
 Inheritance diagram for fec::Turbo:</div>
 <div class="dyncontent">
- <div class="center">
-  <img src="classfec_1_1_turbo.png" usemap="#fec::Turbo_map" alt=""/>
-  <map id="fec::Turbo_map" name="fec::Turbo_map">
-<area href="classfec_1_1_codec.html" title="This class represents a general encoder / decoder. " alt="fec::Codec" shape="rect" coords="0,0,127,24"/>
-<area href="classfec_1_1_punctured_turbo.html" title="This class represents a turbo encode / decoder. " alt="fec::PuncturedTurbo" shape="rect" coords="0,112,127,136"/>
-</map>
- </div></div>
+<div class="center"><img src="classfec_1_1_turbo__inherit__graph.png" border="0" usemap="#fec_1_1_turbo_inherit__map" alt="Inheritance graph"/></div>
+<map name="fec_1_1_turbo_inherit__map" id="fec_1_1_turbo_inherit__map">
+<area shape="rect" id="node3" href="classfec_1_1_punctured_turbo.html" title="This class represents a turbo encode / decoder. " alt="" coords="5,155,147,181"/><area shape="rect" id="node2" href="classfec_1_1_codec.html" title="This class represents a general encoder / decoder. " alt="" coords="33,5,119,32"/></map>
+<center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structfec_1_1_turbo_1_1_decoder_options.html">DecoderOptions</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">This class gathers options affecting decoder in <a class="el" href="classfec_1_1_turbo.html" title="This class represents a turbo encode / decoder. ">Turbo</a> <a class="el" href="classfec_1_1_codec.html" title="This class represents a general encoder / decoder. ">Codec</a>.  <a href="structfec_1_1_turbo_1_1_decoder_options.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:structfec_1_1_turbo_1_1detail"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><b>detail</b></td></tr>
+<tr class="separator:structfec_1_1_turbo_1_1detail"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structfec_1_1_turbo_1_1_encoder_options.html">EncoderOptions</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structfec_1_1_turbo_1_1_lte3_gpp.html">Lte3Gpp</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">This class contains functions associated with the 3GPP LTE standard.  <a href="structfec_1_1_turbo_1_1_lte3_gpp.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structfec_1_1_turbo_1_1_options.html">Options</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structfec_1_1_turbo_1_1_puncture_options.html">PunctureOptions</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><b>Structure</b></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">This class represents a convolutional code structure. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
@@ -133,37 +132,29 @@ Public Types</h2></td></tr>
 <tr class="memitem:a1cc8395a6fad54fc1a32d1ab2bb4c1eb"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_turbo.html#a1cc8395a6fad54fc1a32d1ab2bb4c1eb">Scheduling</a> { <a class="el" href="classfec_1_1_turbo.html#a1cc8395a6fad54fc1a32d1ab2bb4c1eba4e803b16d96aaec6a2498c4f0ec52b1d">Serial</a>, 
 <a class="el" href="classfec_1_1_turbo.html#a1cc8395a6fad54fc1a32d1ab2bb4c1eba59019bf8af5675fe30bfd037c97ccf24">Parallel</a>
  }</td></tr>
-<tr class="memdesc:a1cc8395a6fad54fc1a32d1ab2bb4c1eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Algorithm used in decoding.  <a href="classfec_1_1_turbo.html#a1cc8395a6fad54fc1a32d1ab2bb4c1eb">More...</a><br /></td></tr>
+<tr class="memdesc:a1cc8395a6fad54fc1a32d1ab2bb4c1eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scheduling used in decoding.  <a href="classfec_1_1_turbo.html#a1cc8395a6fad54fc1a32d1ab2bb4c1eb">More...</a><br /></td></tr>
 <tr class="separator:a1cc8395a6fad54fc1a32d1ab2bb4c1eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a17758d89a9553b3a1cee151409f41220"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_turbo.html#a17758d89a9553b3a1cee151409f41220">BitOrdering</a> { <a class="el" href="classfec_1_1_turbo.html#a17758d89a9553b3a1cee151409f41220a0b1d40aea1458b183f9b11390600f9bc">Alternate</a>, 
 <a class="el" href="classfec_1_1_turbo.html#a17758d89a9553b3a1cee151409f41220a3838eafd14394feed96626790856fd28">Group</a>
  }</td></tr>
-<tr class="memdesc:a17758d89a9553b3a1cee151409f41220"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ordering of parity bit in <a class="el" href="classfec_1_1_turbo.html" title="This class represents a turbo encode / decoder. ">Turbo</a> This defines the ordering of parity bits that are output from a <a class="el" href="classfec_1_1_turbo.html" title="This class represents a turbo encode / decoder. ">Turbo</a> permutation of a <a class="el" href="classfec_1_1_punctured_turbo.html" title="This class represents a turbo encode / decoder. ">PuncturedTurbo</a> <a class="el" href="classfec_1_1_codec.html" title="This class represents a general encoder / decoder. ">Codec</a>.  <a href="classfec_1_1_turbo.html#a17758d89a9553b3a1cee151409f41220">More...</a><br /></td></tr>
+<tr class="memdesc:a17758d89a9553b3a1cee151409f41220"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ordering of parity bit in <a class="el" href="classfec_1_1_turbo.html" title="This class represents a turbo encode / decoder. ">Turbo</a>.  <a href="classfec_1_1_turbo.html#a17758d89a9553b3a1cee151409f41220">More...</a><br /></td></tr>
 <tr class="separator:a17758d89a9553b3a1cee151409f41220"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_types_classfec_1_1_codec"><td colspan="2" onclick="javascript:toggleInherit('pub_types_classfec_1_1_codec')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="classfec_1_1_codec.html">fec::Codec</a></td></tr>
-<tr class="memitem:ad0e0eafe039bbf3b288c66eaf72121c8 inherit pub_types_classfec_1_1_codec"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_codec.html#ad0e0eafe039bbf3b288c66eaf72121c8">DecoderAlgorithm</a> { <a class="el" href="classfec_1_1_codec.html#ad0e0eafe039bbf3b288c66eaf72121c8aa1e92c7230dfa9510e40226547940c31">Exact</a>, 
-<a class="el" href="classfec_1_1_codec.html#ad0e0eafe039bbf3b288c66eaf72121c8a1e7e3bea9cb6d1b742a0c5a1e00d1c47">Linear</a>, 
-<a class="el" href="classfec_1_1_codec.html#ad0e0eafe039bbf3b288c66eaf72121c8a0ba60dcd7656491114ecbb0b463e852a">Approximate</a>
- }</td></tr>
-<tr class="memdesc:ad0e0eafe039bbf3b288c66eaf72121c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">This enum lists the types of decoder algorithm.  <a href="classfec_1_1_codec.html#ad0e0eafe039bbf3b288c66eaf72121c8">More...</a><br /></td></tr>
-<tr class="separator:ad0e0eafe039bbf3b288c66eaf72121c8 inherit pub_types_classfec_1_1_codec"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3017e60d9719bc1161a722ba4bfe7b76 inherit pub_types_classfec_1_1_codec"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_codec.html#a3017e60d9719bc1161a722ba4bfe7b76">InputIterator</a> = <a class="el" href="classfec_1_1_codec_1_1_info_iterator.html">InfoIterator</a>&lt; std::vector&lt; LlrType &gt;::const_iterator &gt;</td></tr>
-<tr class="separator:a3017e60d9719bc1161a722ba4bfe7b76 inherit pub_types_classfec_1_1_codec"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a910cf7b72129428695b67cf59b403593 inherit pub_types_classfec_1_1_codec"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_codec.html#a910cf7b72129428695b67cf59b403593">OutputIterator</a> = <a class="el" href="classfec_1_1_codec_1_1_info_iterator.html">InfoIterator</a>&lt; std::vector&lt; LlrType &gt;::iterator &gt;</td></tr>
-<tr class="separator:a910cf7b72129428695b67cf59b403593 inherit pub_types_classfec_1_1_codec"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeae56d7afbe98f1f3378478c6a3de88b inherit pub_types_classfec_1_1_codec"><td class="memTemplParams" colspan="2">template&lt;template&lt; typename &gt; class A = std::allocator&gt; </td></tr>
-<tr class="memitem:aeae56d7afbe98f1f3378478c6a3de88b inherit pub_types_classfec_1_1_codec"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classfec_1_1_codec.html#aeae56d7afbe98f1f3378478c6a3de88b">Input</a> = <a class="el" href="classfec_1_1_codec_1_1_info.html">Info</a>&lt; const std::vector&lt; LlrType, A&lt; LlrType &gt;&gt;&gt;</td></tr>
-<tr class="separator:aeae56d7afbe98f1f3378478c6a3de88b inherit pub_types_classfec_1_1_codec"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a674e6b115b28f222444df5bf99fb7b2c inherit pub_types_classfec_1_1_codec"><td class="memTemplParams" colspan="2">template&lt;template&lt; typename &gt; class A = std::allocator&gt; </td></tr>
-<tr class="memitem:a674e6b115b28f222444df5bf99fb7b2c inherit pub_types_classfec_1_1_codec"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classfec_1_1_codec.html#a674e6b115b28f222444df5bf99fb7b2c">Output</a> = <a class="el" href="classfec_1_1_codec_1_1_info.html">Info</a>&lt; std::vector&lt; LlrType, A&lt; LlrType &gt;&gt;&gt;</td></tr>
-<tr class="separator:a674e6b115b28f222444df5bf99fb7b2c inherit pub_types_classfec_1_1_codec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae1d91d087166c40c5842d9b54a47ce27 inherit pub_types_classfec_1_1_codec"><td class="memTemplParams" colspan="2">template&lt;template&lt; typename &gt; class A = std::allocator&gt; </td></tr>
+<tr class="memitem:ae1d91d087166c40c5842d9b54a47ce27 inherit pub_types_classfec_1_1_codec"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classfec_1_1_codec.html#ae1d91d087166c40c5842d9b54a47ce27">Input</a> = detail::Info&lt; const std::vector&lt; LlrType, A&lt; LlrType &gt;&gt;&gt;</td></tr>
+<tr class="separator:ae1d91d087166c40c5842d9b54a47ce27 inherit pub_types_classfec_1_1_codec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0d55220191ed1a504d38419e37423e84 inherit pub_types_classfec_1_1_codec"><td class="memTemplParams" colspan="2">template&lt;template&lt; typename &gt; class A = std::allocator&gt; </td></tr>
+<tr class="memitem:a0d55220191ed1a504d38419e37423e84 inherit pub_types_classfec_1_1_codec"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classfec_1_1_codec.html#a0d55220191ed1a504d38419e37423e84">Output</a> = detail::Info&lt; std::vector&lt; LlrType, A&lt; LlrType &gt;&gt;&gt;</td></tr>
+<tr class="separator:a0d55220191ed1a504d38419e37423e84 inherit pub_types_classfec_1_1_codec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ab28cd2ef364f3c740ec39be886f1197a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_turbo.html#ab28cd2ef364f3c740ec39be886f1197a">Turbo</a> ()=default</td></tr>
 <tr class="separator:ab28cd2ef364f3c740ec39be886f1197a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a913e7ea1a5cc35b51e7eb2fde29da242"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_turbo.html#a913e7ea1a5cc35b51e7eb2fde29da242">Turbo</a> (const Structure &amp;structure, int workGroupSize=8)</td></tr>
-<tr class="separator:a913e7ea1a5cc35b51e7eb2fde29da242"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a54b31501c2fda151bd23f07c35fa0f60"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_turbo.html#a54b31501c2fda151bd23f07c35fa0f60">Turbo</a> (const <a class="el" href="structfec_1_1_turbo_1_1_options.html">Options</a> &amp;options, int workGroupSize=8)</td></tr>
+<tr class="separator:a54b31501c2fda151bd23f07c35fa0f60"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9744af5c56407a93d40279cd07f44af4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_turbo.html#a9744af5c56407a93d40279cd07f44af4">Turbo</a> (const detail::Structure &amp;structure, int workGroupSize=8)</td></tr>
+<tr class="separator:a9744af5c56407a93d40279cd07f44af4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0d9e83b3eebf9b802fe164eae6ba8f49"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_turbo.html#a0d9e83b3eebf9b802fe164eae6ba8f49">Turbo</a> (const <a class="el" href="structfec_1_1_turbo_1_1_encoder_options.html">EncoderOptions</a> &amp;encoder, const <a class="el" href="structfec_1_1_turbo_1_1_decoder_options.html">DecoderOptions</a> &amp;decoder, int workGroupSize=8)</td></tr>
 <tr class="separator:a0d9e83b3eebf9b802fe164eae6ba8f49"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3725250dd8c8d35630939d5dd3dc612d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_turbo.html#a3725250dd8c8d35630939d5dd3dc612d">Turbo</a> (const <a class="el" href="structfec_1_1_turbo_1_1_encoder_options.html">EncoderOptions</a> &amp;encoder, int workGroupSize=8)</td></tr>
@@ -179,8 +170,6 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:adc2912d8b09739b365b1d87a7488720d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a76568ef51210114e9ec1db7863f59409"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_turbo.html#a76568ef51210114e9ec1db7863f59409">setDecoderOptions</a> (const <a class="el" href="structfec_1_1_turbo_1_1_decoder_options.html">DecoderOptions</a> &amp;decoder)</td></tr>
 <tr class="separator:a76568ef51210114e9ec1db7863f59409"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa102357a5fb8e7dc7af10e49cbb22c79"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_turbo.html#aa102357a5fb8e7dc7af10e49cbb22c79">setEncoderOptions</a> (const <a class="el" href="structfec_1_1_turbo_1_1_encoder_options.html">EncoderOptions</a> &amp;encoder)</td></tr>
-<tr class="separator:aa102357a5fb8e7dc7af10e49cbb22c79"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a344f65c893959486b2bda40774a197e4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structfec_1_1_turbo_1_1_decoder_options.html">DecoderOptions</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_turbo.html#a344f65c893959486b2bda40774a197e4">getDecoderOptions</a> () const </td></tr>
 <tr class="separator:a344f65c893959486b2bda40774a197e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abb18cf7b121a083c2050ee7a2ed099b1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classfec_1_1_permutation.html">Permutation</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_turbo.html#abb18cf7b121a083c2050ee7a2ed099b1">puncturing</a> (const <a class="el" href="structfec_1_1_turbo_1_1_puncture_options.html">PunctureOptions</a> &amp;options)</td></tr>
@@ -188,18 +177,18 @@ Public Member Functions</h2></td></tr>
 <tr class="inherit_header pub_methods_classfec_1_1_codec"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classfec_1_1_codec')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classfec_1_1_codec.html">fec::Codec</a></td></tr>
 <tr class="memitem:a82fda5b9ea546edb0e8f45345a1a6741 inherit pub_methods_classfec_1_1_codec"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_codec.html#a82fda5b9ea546edb0e8f45345a1a6741">~Codec</a> ()=default</td></tr>
 <tr class="separator:a82fda5b9ea546edb0e8f45345a1a6741 inherit pub_methods_classfec_1_1_codec"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6c3c446d817597c78a418e6d94a08bad inherit pub_methods_classfec_1_1_codec"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_codec.html#a6c3c446d817597c78a418e6d94a08bad">msgSize</a> () const </td></tr>
-<tr class="memdesc:a6c3c446d817597c78a418e6d94a08bad inherit pub_methods_classfec_1_1_codec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access the size of the msg in each code bloc.  <a href="#a6c3c446d817597c78a418e6d94a08bad">More...</a><br /></td></tr>
-<tr class="separator:a6c3c446d817597c78a418e6d94a08bad inherit pub_methods_classfec_1_1_codec"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a01b44dcc827b928353683ce06db1bc71 inherit pub_methods_classfec_1_1_codec"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_codec.html#a01b44dcc827b928353683ce06db1bc71">systSize</a> () const </td></tr>
-<tr class="memdesc:a01b44dcc827b928353683ce06db1bc71 inherit pub_methods_classfec_1_1_codec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access the size of the msg in each code bloc.  <a href="#a01b44dcc827b928353683ce06db1bc71">More...</a><br /></td></tr>
-<tr class="separator:a01b44dcc827b928353683ce06db1bc71 inherit pub_methods_classfec_1_1_codec"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abeaa7c0e41b704e6701100395cc660da inherit pub_methods_classfec_1_1_codec"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_codec.html#abeaa7c0e41b704e6701100395cc660da">paritySize</a> () const </td></tr>
-<tr class="memdesc:abeaa7c0e41b704e6701100395cc660da inherit pub_methods_classfec_1_1_codec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access the size of the parity in each code bloc.  <a href="#abeaa7c0e41b704e6701100395cc660da">More...</a><br /></td></tr>
-<tr class="separator:abeaa7c0e41b704e6701100395cc660da inherit pub_methods_classfec_1_1_codec"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a693006d62b789ee8f7e14900280b17d0 inherit pub_methods_classfec_1_1_codec"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_codec.html#a693006d62b789ee8f7e14900280b17d0">stateSize</a> () const </td></tr>
-<tr class="memdesc:a693006d62b789ee8f7e14900280b17d0 inherit pub_methods_classfec_1_1_codec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access the size of the extrinsic in each code bloc.  <a href="#a693006d62b789ee8f7e14900280b17d0">More...</a><br /></td></tr>
-<tr class="separator:a693006d62b789ee8f7e14900280b17d0 inherit pub_methods_classfec_1_1_codec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab2781c93b6cde9afc1476ee3c7595305 inherit pub_methods_classfec_1_1_codec"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_codec.html#ab2781c93b6cde9afc1476ee3c7595305">msgSize</a> () const </td></tr>
+<tr class="memdesc:ab2781c93b6cde9afc1476ee3c7595305 inherit pub_methods_classfec_1_1_codec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access the size of the msg in each code bloc.  <a href="#ab2781c93b6cde9afc1476ee3c7595305">More...</a><br /></td></tr>
+<tr class="separator:ab2781c93b6cde9afc1476ee3c7595305 inherit pub_methods_classfec_1_1_codec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6a5c3e7fcc9914f874fd5eb78034ba44 inherit pub_methods_classfec_1_1_codec"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_codec.html#a6a5c3e7fcc9914f874fd5eb78034ba44">systSize</a> () const </td></tr>
+<tr class="memdesc:a6a5c3e7fcc9914f874fd5eb78034ba44 inherit pub_methods_classfec_1_1_codec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access the size of the msg in each code bloc.  <a href="#a6a5c3e7fcc9914f874fd5eb78034ba44">More...</a><br /></td></tr>
+<tr class="separator:a6a5c3e7fcc9914f874fd5eb78034ba44 inherit pub_methods_classfec_1_1_codec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af9867309ec909df5dfaf85a923966ec6 inherit pub_methods_classfec_1_1_codec"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_codec.html#af9867309ec909df5dfaf85a923966ec6">paritySize</a> () const </td></tr>
+<tr class="memdesc:af9867309ec909df5dfaf85a923966ec6 inherit pub_methods_classfec_1_1_codec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access the size of the parity in each code bloc.  <a href="#af9867309ec909df5dfaf85a923966ec6">More...</a><br /></td></tr>
+<tr class="separator:af9867309ec909df5dfaf85a923966ec6 inherit pub_methods_classfec_1_1_codec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4d01af4b2a10b4091c0d1f9abeb86a4f inherit pub_methods_classfec_1_1_codec"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_codec.html#a4d01af4b2a10b4091c0d1f9abeb86a4f">stateSize</a> () const </td></tr>
+<tr class="memdesc:a4d01af4b2a10b4091c0d1f9abeb86a4f inherit pub_methods_classfec_1_1_codec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access the size of the extrinsic in each code bloc.  <a href="#a4d01af4b2a10b4091c0d1f9abeb86a4f">More...</a><br /></td></tr>
+<tr class="separator:a4d01af4b2a10b4091c0d1f9abeb86a4f inherit pub_methods_classfec_1_1_codec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a926e24a784cf1a909645022c1989646e inherit pub_methods_classfec_1_1_codec"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_codec.html#a926e24a784cf1a909645022c1989646e">getWorkGroupSize</a> () const </td></tr>
 <tr class="separator:a926e24a784cf1a909645022c1989646e inherit pub_methods_classfec_1_1_codec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aec4dbca01ff6111517e67a6a92e06d5e inherit pub_methods_classfec_1_1_codec"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_codec.html#aec4dbca01ff6111517e67a6a92e06d5e">setWorkGroupSize</a> (int size)</td></tr>
@@ -222,7 +211,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a84c3fbd4b4d23ecaea9d0dd8be366dd9 inherit pub_methods_classfec_1_1_codec"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="classfec_1_1_bit_field.html">BitField</a>&lt; size_t &gt;, A&lt; <a class="el" href="classfec_1_1_bit_field.html">BitField</a>&lt; size_t &gt; &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classfec_1_1_codec.html#a84c3fbd4b4d23ecaea9d0dd8be366dd9">decode</a> (const std::vector&lt; LlrType, A&lt; LlrType &gt;&gt; &amp;<a class="el" href="_bit_field_8h.html#ac90c6de6818676ac2981a07e34a60f66">parity</a>) const </td></tr>
 <tr class="separator:a84c3fbd4b4d23ecaea9d0dd8be366dd9 inherit pub_methods_classfec_1_1_codec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af2692cd94b313d2713e7e794a2f96dd0 inherit pub_methods_classfec_1_1_codec"><td class="memTemplParams" colspan="2">template&lt;template&lt; typename &gt; class A&gt; </td></tr>
-<tr class="memitem:af2692cd94b313d2713e7e794a2f96dd0 inherit pub_methods_classfec_1_1_codec"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classfec_1_1_codec.html#af2692cd94b313d2713e7e794a2f96dd0">soDecode</a> (<a class="el" href="classfec_1_1_codec.html#aeae56d7afbe98f1f3378478c6a3de88b">Input</a>&lt; A &gt; input, <a class="el" href="classfec_1_1_codec.html#a674e6b115b28f222444df5bf99fb7b2c">Output</a>&lt; A &gt; output) const </td></tr>
+<tr class="memitem:af2692cd94b313d2713e7e794a2f96dd0 inherit pub_methods_classfec_1_1_codec"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classfec_1_1_codec.html#af2692cd94b313d2713e7e794a2f96dd0">soDecode</a> (<a class="el" href="classfec_1_1_codec.html#ae1d91d087166c40c5842d9b54a47ce27">Input</a>&lt; A &gt; input, <a class="el" href="classfec_1_1_codec.html#a0d55220191ed1a504d38419e37423e84">Output</a>&lt; A &gt; output) const </td></tr>
 <tr class="memdesc:af2692cd94b313d2713e7e794a2f96dd0 inherit pub_methods_classfec_1_1_codec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decodes several blocks of information bits.  <a href="#af2692cd94b313d2713e7e794a2f96dd0">More...</a><br /></td></tr>
 <tr class="separator:af2692cd94b313d2713e7e794a2f96dd0 inherit pub_methods_classfec_1_1_codec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a189e49671514bed4ee3ec190941a6709 inherit pub_methods_classfec_1_1_codec"><td class="memTemplParams" colspan="2">template&lt;template&lt; typename &gt; class A&gt; </td></tr>
@@ -257,7 +246,7 @@ Friends</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Algorithm used in decoding. </p>
+<p>Scheduling used in decoding. </p>
 <p>This defines the scheduling of extrinsic communication between code constituents. </p>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a class="anchor" id="a1cc8395a6fad54fc1a32d1ab2bb4c1eba4e803b16d96aaec6a2498c4f0ec52b1d"></a>Serial&#160;</td><td class="fielddoc">
@@ -281,7 +270,8 @@ Friends</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Ordering of parity bit in <a class="el" href="classfec_1_1_turbo.html" title="This class represents a turbo encode / decoder. ">Turbo</a> This defines the ordering of parity bits that are output from a <a class="el" href="classfec_1_1_turbo.html" title="This class represents a turbo encode / decoder. ">Turbo</a> permutation of a <a class="el" href="classfec_1_1_punctured_turbo.html" title="This class represents a turbo encode / decoder. ">PuncturedTurbo</a> <a class="el" href="classfec_1_1_codec.html" title="This class represents a general encoder / decoder. ">Codec</a>. </p>
+<p>Ordering of parity bit in <a class="el" href="classfec_1_1_turbo.html" title="This class represents a turbo encode / decoder. ">Turbo</a>. </p>
+<p>This defines the ordering of parity bits that are output from a <a class="el" href="classfec_1_1_turbo.html" title="This class represents a turbo encode / decoder. ">Turbo</a> permutation of a <a class="el" href="classfec_1_1_punctured_turbo.html" title="This class represents a turbo encode / decoder. ">PuncturedTurbo</a> <a class="el" href="classfec_1_1_codec.html" title="This class represents a general encoder / decoder. ">Codec</a>. </p>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a class="anchor" id="a17758d89a9553b3a1cee151409f41220a0b1d40aea1458b183f9b11390600f9bc"></a>Alternate&#160;</td><td class="fielddoc">
 <p>Systematic and parity bits are alternated. </p>
@@ -317,14 +307,40 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a913e7ea1a5cc35b51e7eb2fde29da242"></a>
+<a class="anchor" id="a54b31501c2fda151bd23f07c35fa0f60"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">Turbo::Turbo </td>
           <td>(</td>
-          <td class="paramtype">const Structure &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="structfec_1_1_turbo_1_1_options.html">Options</a> &amp;&#160;</td>
+          <td class="paramname"><em>options</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>workGroupSize</em> = <code>8</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a9744af5c56407a93d40279cd07f44af4"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Turbo::Turbo </td>
+          <td>(</td>
+          <td class="paramtype">const detail::Structure &amp;&#160;</td>
           <td class="paramname"><em>structure</em>, </td>
         </tr>
         <tr>
@@ -526,30 +542,6 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="aa102357a5fb8e7dc7af10e49cbb22c79"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void fec::Turbo::setEncoderOptions </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="structfec_1_1_turbo_1_1_encoder_options.html">EncoderOptions</a> &amp;&#160;</td>
-          <td class="paramname"><em>encoder</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a class="anchor" id="a344f65c893959486b2bda40774a197e4"></a>
 <div class="memitem">
 <div class="memproto">
@@ -619,7 +611,7 @@ Friends</h2></td></tr>
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>Turbo/<a class="el" href="_turbo_8h_source.html">Turbo.h</a></li>
+<li><a class="el" href="_turbo_8h_source.html">Turbo.h</a></li>
 <li>Turbo/<a class="el" href="_turbo_8cpp.html">Turbo.cpp</a></li>
 </ul>
 </div><!-- contents -->

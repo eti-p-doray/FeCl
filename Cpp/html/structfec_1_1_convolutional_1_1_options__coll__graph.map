@@ -1,0 +1,5 @@
+<map id="fec::Convolutional::Options" name="fec::Convolutional::Options">
+<area shape="rect" id="node2" href="$structfec_1_1_convolutional_1_1_encoder_options.html" title="fec::Convolutional\l::EncoderOptions" alt="" coords="5,97,133,138"/>
+<area shape="rect" id="node3" href="$classfec_1_1_trellis.html" title="This class represents a trellis structure. " alt="" coords="28,5,111,32"/>
+<area shape="rect" id="node4" href="$structfec_1_1_convolutional_1_1_decoder_options.html" title="fec::Convolutional\l::DecoderOptions" alt="" coords="157,97,285,138"/>
+</map>

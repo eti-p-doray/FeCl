@@ -91,40 +91,41 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="contents">
 <a href="_09_convolutional_2_decoder_options_8m.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno"><a class="line" href="classfec_1_1_convolutional_1_1_decoder_options.html">    1</a></span>&#160;classdef <a class="code" href="classfec_1_1_convolutional_1_1_decoder_options.html">DecoderOptions</a> &lt; hgsetget</div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;    properties</div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;        algorithm = uint32(<a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_codec.html">Codec</a>.<a class="code" href="classfec_1_1_codec_1_1_decoder_algorithm.html">DecoderAlgorithm</a>.(<span class="stringliteral">&#39;Linear&#39;</span>));</div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;    end</div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;</div>
-<div class="line"><a name="l00006"></a><span class="lineno"><a class="line" href="classfec_1_1_convolutional_1_1_decoder_options.html#ac0b8e3b2445ee3d1cfd4e116bfe0608a">    6</a></span>&#160;    methods</div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;        <span class="keyword">function</span> <span class="keyword">self</span> = <a class="code" href="classfec_1_1_convolutional_1_1_decoder_options.html">DecoderOptions</a>(varargin)</div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;            if (nargin == 1 &amp;&amp; isa(varargin{1}, <span class="stringliteral">&#39;fec.Turbo.DecoderOptions&#39;</span>))</div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;                self.set(varargin{1}.get());</div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;            elseif (nargin == 1 &amp;&amp; isstruct(varargin{1}))</div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;                self.set(varargin{1});</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;            elseif (nargin == 1 &amp;&amp; iscell(varargin{1}))</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;                varargin = varargin{1};</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;                <span class="keywordflow">if</span> (~isempty(varargin))</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;                    <span class="keyword">self</span>.set(varargin{:});</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;                end</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;            <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;                <span class="keywordflow">if</span> (~isempty(varargin))</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;                    <span class="keyword">self</span>.set(varargin{:});</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;                end</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;            end</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        end</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        <span class="keyword">function</span> <span class="keyword">self</span> = set.<a class="code" href="classfec_1_1_convolutional_1_1_decoder_options.html#ac0b8e3b2445ee3d1cfd4e116bfe0608a">algorithm</a>(<span class="keyword">self</span>,val)</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;            <span class="keywordflow">if</span> (ischar(val))</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;                <span class="keyword">self</span>.algorithm = uint32(<a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_codec.html">Codec</a>.<a class="code" href="classfec_1_1_codec_1_1_decoder_algorithm.html">DecoderAlgorithm</a>.(val));</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;            <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;                <span class="keyword">self</span>.algorithm = uint32(<a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_codec.html">Codec</a>.<a class="code" href="classfec_1_1_codec_1_1_decoder_algorithm.html">DecoderAlgorithm</a>(val));</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;            end</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        end</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    end</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;end</div>
-<div class="ttc" id="classfec_1_1_codec_1_1_decoder_algorithm_html"><div class="ttname"><a href="classfec_1_1_codec_1_1_decoder_algorithm.html">fec::Codec::DecoderAlgorithm</a></div><div class="ttdoc">This class holds the DecoderAlgorithm enumeration. </div><div class="ttdef"><b>Definition:</b> <a href="_decoder_algorithm_8m_source.html#l00002">DecoderAlgorithm.m:2</a></div></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;        algorithm = uint32(<a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_decoder_algorithm.html">DecoderAlgorithm</a>.(<span class="stringliteral">&#39;Linear&#39;</span>));</div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;        gain = 1.0;</div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;    end</div>
+<div class="line"><a name="l00006"></a><span class="lineno"><a class="line" href="classfec_1_1_convolutional_1_1_decoder_options.html#ac0b8e3b2445ee3d1cfd4e116bfe0608a">    6</a></span>&#160;</div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;    methods</div>
+<div class="line"><a name="l00008"></a><span class="lineno"><a class="line" href="classfec_1_1_convolutional_1_1_decoder_options.html#acb8d0e7803ab8268c1ff2c7fa71a2b13">    8</a></span>&#160;        <span class="keyword">function</span> <span class="keyword">self</span> = <a class="code" href="classfec_1_1_convolutional_1_1_decoder_options.html">DecoderOptions</a>(varargin)</div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;            if (nargin == 1 &amp;&amp; isa(varargin{1}, <span class="stringliteral">&#39;fec.Turbo.DecoderOptions&#39;</span>))</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;                self.set(varargin{1}.get());</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;            elseif (nargin == 1 &amp;&amp; isstruct(varargin{1}))</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;                self.set(varargin{1});</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;            elseif (nargin == 1 &amp;&amp; iscell(varargin{1}))</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;                varargin = varargin{1};</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;                <span class="keywordflow">if</span> (~isempty(varargin))</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;                    <span class="keyword">self</span>.set(varargin{:});</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;                end</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;            <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;                <span class="keywordflow">if</span> (~isempty(varargin))</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;                    <span class="keyword">self</span>.set(varargin{:});</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;                end</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;            end</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        end</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        <span class="keyword">function</span> <span class="keyword">self</span> = set.<a class="code" href="classfec_1_1_convolutional_1_1_decoder_options.html#ac0b8e3b2445ee3d1cfd4e116bfe0608a">algorithm</a>(<span class="keyword">self</span>,val)</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;            <span class="keywordflow">if</span> (ischar(val))</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;                <span class="keyword">self</span>.algorithm = uint32(<a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_codec.html">Codec</a>.DecoderAlgorithm.(val));</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;            <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;                <span class="keyword">self</span>.algorithm = uint32(<a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_codec.html">Codec</a>.DecoderAlgorithm(val));</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;            end</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        end</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    end</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;end</div>
 <div class="ttc" id="classfec_1_1_convolutional_1_1_decoder_options_html"><div class="ttname"><a href="classfec_1_1_convolutional_1_1_decoder_options.html">fec::Convolutional::DecoderOptions</a></div><div class="ttdef"><b>Definition:</b> <a href="_09_convolutional_2_decoder_options_8m_source.html#l00001">DecoderOptions.m:1</a></div></div>
 <div class="ttc" id="classfec_1_1_codec_html"><div class="ttname"><a href="classfec_1_1_codec.html">fec::Codec</a></div><div class="ttdoc">This class represents a general encoder / decoder. </div><div class="ttdef"><b>Definition:</b> <a href="_codec_8m_source.html#l00012">Codec.m:12</a></div></div>
 <div class="ttc" id="namespacefec_html"><div class="ttname"><a href="namespacefec.html">fec</a></div><div class="ttdoc">Foward Error Correction namespace. </div></div>
+<div class="ttc" id="classfec_1_1_decoder_algorithm_html"><div class="ttname"><a href="classfec_1_1_decoder_algorithm.html">fec::DecoderAlgorithm</a></div><div class="ttdoc">This class holds the DecoderAlgorithm enumeration. </div><div class="ttdef"><b>Definition:</b> <a href="_decoder_algorithm_8m_source.html#l00002">DecoderAlgorithm.m:2</a></div></div>
 <div class="ttc" id="classfec_1_1_convolutional_1_1_decoder_options_html_ac0b8e3b2445ee3d1cfd4e116bfe0608a"><div class="ttname"><a href="classfec_1_1_convolutional_1_1_decoder_options.html#ac0b8e3b2445ee3d1cfd4e116bfe0608a">fec::Convolutional::DecoderOptions::algorithm</a></div><div class="ttdeci">Property algorithm</div><div class="ttdef"><b>Definition:</b> <a href="_09_convolutional_2_decoder_options_8m_source.html#l00006">DecoderOptions.m:6</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

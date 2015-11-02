@@ -1,6 +1,9 @@
 var searchData=
 [
-  ['tailmask',['tailMask',['../classfec_1_1_convolutional_1_1_puncture_options.html#a4213627d5dfea07b7090ff18e03ee360',1,'fec::Convolutional::PunctureOptions::tailMask()'],['../classfec_1_1_turbo_1_1_puncture_options.html#a8449f2ae7a1682d0d1ea110a3397f854',1,'fec::Turbo::PunctureOptions::tailMask()']]],
-  ['termination',['termination',['../classfec_1_1_convolutional_1_1_encoder_options.html#a4ae8bf2d8e1462061e4a207143fc3b51',1,'fec::Convolutional::EncoderOptions::termination()'],['../classfec_1_1_turbo_1_1_encoder_options.html#a4e684d64997c0c095d11a8ec8daa2128',1,'fec::Turbo::EncoderOptions::termination()']]],
-  ['trellis',['trellis',['../classfec_1_1_convolutional_1_1_encoder_options.html#a414b22f3bf8c3f134bb3c89a02bd725d',1,'fec::Convolutional::EncoderOptions::trellis()'],['../classfec_1_1_turbo_1_1_encoder_options.html#afbc7158696dbcb08f84441ae71178e1b',1,'fec::Turbo::EncoderOptions::trellis()']]]
+  ['scheduling',['scheduling',['../classfec_1_1_turbo_1_1_decoder_options.html#a464b64b3ea7ad27bd9cac744a0bec82e',1,'fec::Turbo::DecoderOptions::scheduling()'],['../classfec_1_1_turbo.html#a116cb234d52e312e0bde14c151b1b57a',1,'fec::Turbo::scheduling()']]],
+  ['sequence',['sequence',['../classfec_1_1_permutation.html#a4212b596b0219f97ff1304b81222292c',1,'fec::Permutation']]],
+  ['statesize',['stateSize',['../classfec_1_1_codec.html#ae02cac57bfffbde516dc1bd42521b915',1,'fec::Codec']]],
+  ['structure',['structure',['../classfec_1_1_codec.html#afea5eaf50f15625574441cef665d0be8',1,'fec::Codec']]],
+  ['systmask',['systMask',['../classfec_1_1_ldpc_1_1_puncture_options.html#a621596871afda129676ade3a9e4e2452',1,'fec::Ldpc::PunctureOptions']]],
+  ['systsize',['systSize',['../classfec_1_1_codec.html#a30a1f1afa5a8f2feb27f4266db96e74b',1,'fec::Codec']]]
 ];

@@ -1,7 +1,12 @@
 var searchData=
 [
-  ['hasmsg',['hasMsg',['../classfec_1_1_codec_1_1_info_iterator.html#a88dbb65fff22e0fe67ffc1719606daed',1,'fec::Codec::InfoIterator::hasMsg()'],['../classfec_1_1_codec_1_1_info.html#a72d8fbc82e0323830d034a15fa54d3c8',1,'fec::Codec::Info::hasMsg()']]],
-  ['hasparity',['hasParity',['../classfec_1_1_codec_1_1_info_iterator.html#abca361535100a717e36e1b76791ce2ad',1,'fec::Codec::InfoIterator::hasParity()'],['../classfec_1_1_codec_1_1_info.html#a95166898138adecf891fa7cba60b5c31',1,'fec::Codec::Info::hasParity()']]],
-  ['hasstate',['hasState',['../classfec_1_1_codec_1_1_info_iterator.html#a8b1476631afb6d3c6a774d1a11850e3a',1,'fec::Codec::InfoIterator::hasState()'],['../classfec_1_1_codec_1_1_info.html#a323c1a8122e344ef5147f88740dafeae',1,'fec::Codec::Info::hasState()']]],
-  ['hassyst',['hasSyst',['../classfec_1_1_codec_1_1_info_iterator.html#ad9feafa7a53ac05274bb14e01971e937',1,'fec::Codec::InfoIterator::hasSyst()'],['../classfec_1_1_codec_1_1_info.html#a72d7784195bf16ada436ebc793156211',1,'fec::Codec::Info::hasSyst()']]]
+  ['input',['Input',['../classfec_1_1_codec.html#ae1d91d087166c40c5842d9b54a47ce27',1,'fec::Codec']]],
+  ['inputcount',['inputCount',['../classfec_1_1_trellis.html#ada3b5b2197d046b90ca6e857397822c5',1,'fec::Trellis']]],
+  ['inputsize',['inputSize',['../classfec_1_1_permutation.html#a578ede93fc79c037a3a0c3d0eedb24b6',1,'fec::Permutation::inputSize()'],['../classfec_1_1_trellis.html#a1cce4dd820eb49e50e863c72b7297614',1,'fec::Trellis::inputSize()']]],
+  ['interleaver',['interleaver',['../structfec_1_1_turbo_1_1_lte3_gpp.html#a3ad5b010db71901d9186787727ef01f6',1,'fec::Turbo::Lte3Gpp']]],
+  ['interleaver_5f',['interleaver_',['../structfec_1_1_turbo_1_1_encoder_options.html#abf228c178a6fecd2c06e9f2cc0d0477b',1,'fec::Turbo::EncoderOptions']]],
+  ['iterations',['iterations',['../structfec_1_1_ldpc_1_1_decoder_options.html#a59bcd758db057bf67e2397b91d597e24',1,'fec::Ldpc::DecoderOptions::iterations()'],['../structfec_1_1_turbo_1_1_decoder_options.html#ac55a7bd9b055e0e95cd66dd9092fdf42',1,'fec::Turbo::DecoderOptions::iterations()']]],
+  ['iterations_5f',['iterations_',['../structfec_1_1_ldpc_1_1_decoder_options.html#a1182a4402307d35f195b099cd348fbb0',1,'fec::Ldpc::DecoderOptions::iterations_()'],['../structfec_1_1_turbo_1_1_decoder_options.html#a62973bd2c09ff18e7bacc0a557555e73',1,'fec::Turbo::DecoderOptions::iterations_()']]],
+  ['iterator',['Iterator',['../classfec_1_1_sparse_bit_matrix_1_1_row_ptr.html#a9830fc407400559db7e7783cc10a9394',1,'fec::SparseBitMatrix::RowPtr']]],
+  ['iterator',['Iterator',['../classfec_1_1_sparse_bit_matrix_1_1_iterator.html',1,'fec::SparseBitMatrix']]]
 ];

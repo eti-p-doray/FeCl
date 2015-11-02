@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['decoderalgorithm',['DecoderAlgorithm',['../classfec_1_1_codec.html#ad0e0eafe039bbf3b288c66eaf72121c8',1,'fec::Codec']]]
+  ['decoderalgorithm',['DecoderAlgorithm',['../namespacefec.html#aa5c8aa4f623f0ca80ad4c776dcf64e71',1,'fec']]]
 ];

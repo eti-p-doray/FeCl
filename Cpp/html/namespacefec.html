@@ -62,6 +62,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow2" class="tabs2">
     <ul class="tablist">
       <li><a href="namespaces.html"><span>Namespace&#160;List</span></a></li>
+      <li><a href="namespacemembers.html"><span>Namespace&#160;Members</span></a></li>
     </ul>
   </div>
 <!-- window showing the filter options -->
@@ -81,7 +82,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a>  </div>
+<a href="#nested-classes">Classes</a> &#124;
+<a href="#enum-members">Enumerations</a>  </div>
   <div class="headertitle">
 <div class="title">fec Namespace Reference</div>  </div>
 </div><!--header-->
@@ -126,7 +128,42 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_turbo.html">Turbo</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">This class represents a turbo encode / decoder.  <a href="classfec_1_1_turbo.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:aa5c8aa4f623f0ca80ad4c776dcf64e71"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacefec.html#aa5c8aa4f623f0ca80ad4c776dcf64e71">DecoderAlgorithm</a> { <a class="el" href="namespacefec.html#aa5c8aa4f623f0ca80ad4c776dcf64e71acb61f17966663f11b95972989e7753bf">Exact</a>, 
+<a class="el" href="namespacefec.html#aa5c8aa4f623f0ca80ad4c776dcf64e71a93e664f3d241f4738c6a0cac9b13332e">Linear</a>, 
+<a class="el" href="namespacefec.html#aa5c8aa4f623f0ca80ad4c776dcf64e71a9e55d002d2f26c95877df37fde7fee3e">Approximate</a>
+ }</td></tr>
+<tr class="memdesc:aa5c8aa4f623f0ca80ad4c776dcf64e71"><td class="mdescLeft">&#160;</td><td class="mdescRight">This enum lists the types of decoder algorithm.  <a href="namespacefec.html#aa5c8aa4f623f0ca80ad4c776dcf64e71">More...</a><br /></td></tr>
+<tr class="separator:aa5c8aa4f623f0ca80ad4c776dcf64e71"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Enumeration Type Documentation</h2>
+<a class="anchor" id="aa5c8aa4f623f0ca80ad4c776dcf64e71"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="namespacefec.html#aa5c8aa4f623f0ca80ad4c776dcf64e71">fec::DecoderAlgorithm</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>This enum lists the types of decoder algorithm. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a class="anchor" id="aa5c8aa4f623f0ca80ad4c776dcf64e71acb61f17966663f11b95972989e7753bf"></a>Exact&#160;</td><td class="fielddoc">
+<p>No approximation is used and the L-values are computed in logarithmic domain. </p>
+</td></tr>
+<tr><td class="fieldname"><a class="anchor" id="aa5c8aa4f623f0ca80ad4c776dcf64e71a93e664f3d241f4738c6a0cac9b13332e"></a>Linear&#160;</td><td class="fielddoc">
+<p>A lookup table with linear interpolation is used to compute the correction term. </p>
+</td></tr>
+<tr><td class="fieldname"><a class="anchor" id="aa5c8aa4f623f0ca80ad4c776dcf64e71a9e55d002d2f26c95877df37fde7fee3e"></a>Approximate&#160;</td><td class="fielddoc">
+<p>The correction term is ignored. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -1,6 +1,10 @@
 var searchData=
 [
-  ['row',['Row',['../classfec_1_1_bit_matrix_1_1_row.html',1,'fec::BitMatrix']]],
-  ['rowptr',['RowPtr',['../classfec_1_1_sparse_bit_matrix_1_1_row_ptr.html',1,'fec::SparseBitMatrix']]],
-  ['rowref',['RowRef',['../classfec_1_1_sparse_bit_matrix_1_1_row_ref.html',1,'fec::SparseBitMatrix']]]
+  ['permutation',['Permutation',['../classfec_1_1_permutation.html',1,'fec']]],
+  ['puncturedconvolutional',['PuncturedConvolutional',['../classfec_1_1_punctured_convolutional.html',1,'fec']]],
+  ['puncturedldpc',['PuncturedLdpc',['../classfec_1_1_punctured_ldpc.html',1,'fec']]],
+  ['puncturedturbo',['PuncturedTurbo',['../classfec_1_1_punctured_turbo.html',1,'fec']]],
+  ['punctureoptions',['PunctureOptions',['../structfec_1_1_ldpc_1_1_puncture_options.html',1,'fec::Ldpc']]],
+  ['punctureoptions',['PunctureOptions',['../structfec_1_1_convolutional_1_1_puncture_options.html',1,'fec::Convolutional']]],
+  ['punctureoptions',['PunctureOptions',['../structfec_1_1_turbo_1_1_puncture_options.html',1,'fec::Turbo']]]
 ];

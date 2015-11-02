@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['paritysize',['paritySize',['../classfec_1_1_codec.html#a511800e38028f060a3060d202e976db3',1,'fec::Codec']]],
-  ['punctureoptions',['punctureOptions',['../classfec_1_1_punctured_convolutional.html#a99e9ba8853023ed0671cec3c8ed53d71',1,'fec::PuncturedConvolutional::punctureOptions()'],['../classfec_1_1_punctured_ldpc.html#a9e9ef3abaf5a90620f22efe8d494bbbd',1,'fec::PuncturedLdpc::punctureOptions()'],['../classfec_1_1_punctured_turbo.html#a454cbc1212d8977e6ddeca32bcd57bf4',1,'fec::PuncturedTurbo::punctureOptions()']]]
+  ['mask',['mask',['../classfec_1_1_convolutional_1_1_puncture_options.html#a91af8fba87db63fbd8025a69c39ce90b',1,'fec::Convolutional::PunctureOptions::mask()'],['../classfec_1_1_ldpc_1_1_puncture_options.html#a16318ac2ef4ec649ac38fa84c254dcf3',1,'fec::Ldpc::PunctureOptions::mask()'],['../classfec_1_1_turbo_1_1_puncture_options.html#aef65fc817c25574f373441c0dc17db24',1,'fec::Turbo::PunctureOptions::mask()']]],
+  ['msgsize',['msgSize',['../classfec_1_1_codec.html#a24d4f355c74da24a245da68faebf49c3',1,'fec::Codec']]]
 ];

@@ -1,0 +1,5 @@
+<map id="fec::Ldpc::Options" name="fec::Ldpc::Options">
+<area shape="rect" id="node2" href="$structfec_1_1_ldpc_1_1_encoder_options.html" title="fec::Ldpc::EncoderOptions" alt="" coords="5,96,184,123"/>
+<area shape="rect" id="node3" href="$classfec_1_1_sparse_bit_matrix.html" title="This class represents a sparse bit matrix. " alt="" coords="24,5,165,32"/>
+<area shape="rect" id="node4" href="$structfec_1_1_ldpc_1_1_decoder_options.html" title="fec::Ldpc::DecoderOptions" alt="" coords="209,96,388,123"/>
+</map>

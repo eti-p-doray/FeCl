@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['inputsize',['inputSize',['../classfec_1_1_permutation.html#ad2cfbb57744ad991097eeaf41d6007e6',1,'fec::Permutation']]],
-  ['interleaver',['interleaver',['../classfec_1_1_turbo_1_1_encoder_options.html#a95f027c8b7570db430d92e7ceda5769e',1,'fec::Turbo::EncoderOptions']]],
-  ['iterations',['iterations',['../classfec_1_1_ldpc_1_1_decoder_options.html#a42d7f71fa481fd7c93fe9b6a5a346d30',1,'fec::Ldpc::DecoderOptions::iterations()'],['../classfec_1_1_turbo_1_1_decoder_options.html#afcf0d12ad928bbc0b258a324d4362b68',1,'fec::Turbo::DecoderOptions::iterations()'],['../classfec_1_1_ldpc.html#a128439c3dc8f7a9a10248489096b64c2',1,'fec::Ldpc::iterations()'],['../classfec_1_1_turbo.html#a7f808e72bdbd868ec739a84740643db8',1,'fec::Turbo::iterations()']]]
+  ['gain',['gain',['../classfec_1_1_convolutional_1_1_decoder_options.html#acb8d0e7803ab8268c1ff2c7fa71a2b13',1,'fec::Convolutional::DecoderOptions::gain()'],['../classfec_1_1_ldpc_1_1_decoder_options.html#ad2fb307cfc6aabc4b82edfb02b92fbb2',1,'fec::Ldpc::DecoderOptions::gain()'],['../classfec_1_1_turbo_1_1_decoder_options.html#ac13ff3b23df87272de86718af5508390',1,'fec::Turbo::DecoderOptions::gain()']]]
 ];

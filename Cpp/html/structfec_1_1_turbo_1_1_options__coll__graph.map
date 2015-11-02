@@ -1,0 +1,6 @@
+<map id="fec::Turbo::Options" name="fec::Turbo::Options">
+<area shape="rect" id="node2" href="$structfec_1_1_turbo_1_1_encoder_options.html" title="fec::Turbo::EncoderOptions" alt="" coords="563,65,749,92"/>
+<area shape="rect" id="node4" href="$classfec_1_1_permutation.html" title="This class represents a permutation vector. " alt="" coords="6,7,125,33"/>
+<area shape="rect" id="node7" href="$classfec_1_1_trellis.html" title="This class represents a trellis structure. " alt="" coords="24,124,107,151"/>
+<area shape="rect" id="node8" href="$structfec_1_1_turbo_1_1_decoder_options.html" title="This class gathers options affecting decoder in Turbo Codec. " alt="" coords="563,116,749,143"/>
+</map>

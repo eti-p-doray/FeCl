@@ -119,7 +119,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    properties (Dependent = <span class="keyword">true</span>)</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        %&gt;  Number of iterations in decoder.</div>
 <div class="line"><a name="l00030"></a><span class="lineno"><a class="line" href="classfec_1_1_turbo.html#a992ee6688c7f289d81b2e57264126e2e">   30</a></span>&#160;        iterations;</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        %&gt;  <a class="code" href="classfec_1_1_codec_1_1_decoder_algorithm.html">Codec::DecoderAlgorithm</a> type used in decoder.</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        %&gt;  Codec::DecoderAlgorithm type used in decoder.</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        algorithm;</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        %&gt;  <a class="code" href="classfec_1_1_turbo_1_1_scheduling.html">Turbo::Scheduling</a> type used in decoder.</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        scheduling;</div>
@@ -161,7 +161,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        end</div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        %&gt;  Access the Turbo::algorithm <span class="keyword">property</span>.</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        <span class="keyword">function</span> val = <span class="keyword">get</span>.algorithm(<span class="keyword">self</span>)</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;            val = <a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_codec.html">Codec</a>.<a class="code" href="classfec_1_1_codec_1_1_decoder_algorithm.html">DecoderAlgorithm</a>(<span class="keyword">self</span>.decoderOptions.algorithm).char;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;            val = <a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_codec.html">Codec</a>.DecoderAlgorithm(<span class="keyword">self</span>.decoderOptions.algorithm).char;</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        end</div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        %&gt;  Access the Turbo::scheduling <span class="keyword">property</span>.</div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        <span class="keyword">function</span> val = <span class="keyword">get</span>.scheduling(<span class="keyword">self</span>)</div>
@@ -192,34 +192,21 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;            <span class="keyword">self</span>.structure.decoderOptions = <a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_turbo.html">Turbo</a>.<a class="code" href="classfec_1_1_turbo_1_1_decoder_options.html">DecoderOptions</a>(val)</div>
 <div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;            <a class="code" href="namespacefec.html">fec</a>.bin.wrap(uint32(<a class="code" href="namespacefec.html">fec</a>.<a class="code" href="namespacefec_1_1detail.html">detail</a>.<a class="code" href="classfec_1_1detail_1_1_wrap_fcn_id.html">WrapFcnId</a>.Turbo_set_decoderOptions), <span class="keyword">self</span>, <span class="keyword">self</span>.structure.decoderOptions.get());</div>
 <div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        end</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;        %&gt;  Modify the Turbo::encoderOptions <span class="keyword">property</span>.</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        <span class="keyword">function</span> set.encoderOptions(<span class="keyword">self</span>,val)</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;            <span class="keyword">self</span>.structure.encoderOptions = <a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_turbo.html">Turbo</a>.<a class="code" href="classfec_1_1_turbo_1_1_encoder_options.html">EncoderOptions</a>(val);</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;            <a class="code" href="namespacefec.html">fec</a>.bin.wrap(uint32(<a class="code" href="namespacefec.html">fec</a>.<a class="code" href="namespacefec_1_1detail.html">detail</a>.<a class="code" href="classfec_1_1detail_1_1_wrap_fcn_id.html">WrapFcnId</a>.Turbo_set_encoderOptions), <span class="keyword">self</span>, <span class="keyword">self</span>.structure.encoderOptions.get());</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;        end</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;        %&gt;  Modify the Turbo::decoderOptions <span class="keyword">property</span>.</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;        %&gt;  @param  Structure, cell, <span class="keywordtype">object</span> or Name, Value list</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;        <span class="keyword">function</span> setDecoderOptions(<span class="keyword">self</span>,varargin)</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;            decoderOptions = self.decoderOptions;</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;            decoderOptions.set(varargin{:});</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;            <span class="keyword">self</span>.decoderOptions = decoderOptions;</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;        end</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;        %&gt;  Modify the Turbo::encoderOptions <span class="keyword">property</span>.</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;        %&gt;  @param  Structure, cell, <span class="keywordtype">object</span> or Name, Value list</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;        <span class="keyword">function</span> setEncoderOptions(<span class="keyword">self</span>,varargin)</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;            encoderOptions = self.encoderOptions;</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;            encoderOptions.set(varargin{:});</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;            <span class="keyword">self</span>.encoderOptions = encoderOptions;</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;        end</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    end</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;end</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;        %&gt;  Modify the Turbo::decoderOptions <span class="keyword">property</span>.</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        %&gt;  @param  Structure, cell, <span class="keywordtype">object</span> or Name, Value list</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;        <span class="keyword">function</span> setDecoderOptions(<span class="keyword">self</span>,varargin)</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;            decoderOptions = self.decoderOptions;</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;            decoderOptions.set(varargin{:});</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;            <span class="keyword">self</span>.decoderOptions = decoderOptions;</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;        end</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    end</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;end</div>
 <div class="ttc" id="classfec_1_1_permutation_html"><div class="ttname"><a href="classfec_1_1_permutation.html">fec::Permutation</a></div><div class="ttdef"><b>Definition:</b> <a href="_permutation_8m_source.html#l00001">Permutation.m:1</a></div></div>
 <div class="ttc" id="make_8m_html_a2d2e1cc42b2e99d1b16dfd051ab5ff96"><div class="ttname"><a href="make_8m.html#a2d2e1cc42b2e99d1b16dfd051ab5ff96">make</a></div><div class="ttdeci">function make()</div></div>
 <div class="ttc" id="classfec_1_1_punctured_turbo_html"><div class="ttname"><a href="classfec_1_1_punctured_turbo.html">fec::PuncturedTurbo</a></div><div class="ttdef"><b>Definition:</b> <a href="_punctured_turbo_8m_source.html#l00001">PuncturedTurbo.m:1</a></div></div>
 <div class="ttc" id="classfec_1_1_turbo_1_1_scheduling_html"><div class="ttname"><a href="classfec_1_1_turbo_1_1_scheduling.html">fec::Turbo::Scheduling</a></div><div class="ttdoc">This class holds the Scheduling enumeration. </div><div class="ttdef"><b>Definition:</b> <a href="_scheduling_8m_source.html#l00002">Scheduling.m:2</a></div></div>
 <div class="ttc" id="namespacefec_1_1detail_html"><div class="ttname"><a href="namespacefec_1_1detail.html">fec::detail</a></div></div>
-<div class="ttc" id="classfec_1_1_codec_1_1_decoder_algorithm_html"><div class="ttname"><a href="classfec_1_1_codec_1_1_decoder_algorithm.html">fec::Codec::DecoderAlgorithm</a></div><div class="ttdoc">This class holds the DecoderAlgorithm enumeration. </div><div class="ttdef"><b>Definition:</b> <a href="_decoder_algorithm_8m_source.html#l00002">DecoderAlgorithm.m:2</a></div></div>
 <div class="ttc" id="classfec_1_1_codec_html"><div class="ttname"><a href="classfec_1_1_codec.html">fec::Codec</a></div><div class="ttdoc">This class represents a general encoder / decoder. </div><div class="ttdef"><b>Definition:</b> <a href="_codec_8m_source.html#l00012">Codec.m:12</a></div></div>
 <div class="ttc" id="namespacefec_html"><div class="ttname"><a href="namespacefec.html">fec</a></div><div class="ttdoc">Foward Error Correction namespace. </div></div>
 <div class="ttc" id="classfec_1_1_turbo_1_1_puncture_options_html"><div class="ttname"><a href="classfec_1_1_turbo_1_1_puncture_options.html">fec::Turbo::PunctureOptions</a></div><div class="ttdoc">This class gathers options affecting puncturing in Turbo Codec. </div><div class="ttdef"><b>Definition:</b> <a href="_09_turbo_2_puncture_options_8m_source.html#l00002">PunctureOptions.m:2</a></div></div>

@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.9.1"/>
-<title>FeCl: Convolutional/Convolutional.h File Reference</title>
+<title>FeCl: Convolutional.h File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -79,10 +79,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="dir_4c4b6786069f6c058fad3cc6e264cc3d.html">Convolutional</a></li>  </ul>
-</div>
 </div><!-- top -->
 <div class="header">
   <div class="summary">
@@ -93,9 +89,23 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">Convolutional.h File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &quot;<a class="el" href="_codec_8h_source.html">../Codec.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="_trellis_8h_source.html">../Trellis.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="_permutation_8h_source.html">../Permutation.h</a>&quot;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="_codec_8h_source.html">Codec.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_trellis_8h_source.html">Trellis.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_permutation_8h_source.html">Permutation.h</a>&quot;</code><br />
+</div><div class="textblock"><div class="dynheader">
+Include dependency graph for Convolutional.h:</div>
+<div class="dyncontent">
+<div class="center"><img src="_convolutional_8h__incl.png" border="0" usemap="#_convolutional_8h" alt=""/></div>
+<map name="_convolutional_8h" id="_convolutional_8h">
+<area shape="rect" id="node2" href="_codec_8h.html" title="Codec.h" alt="" coords="1100,80,1172,107"/><area shape="rect" id="node18" href="_trellis_8h.html" title="Trellis.h" alt="" coords="391,80,460,107"/><area shape="rect" id="node21" href="_permutation_8h.html" title="Permutation.h" alt="" coords="282,169,387,196"/><area shape="rect" id="node13" href="_bit_field_8h.html" title="BitField.h" alt="" coords="463,169,540,196"/><area shape="rect" id="node17" href="_decoder_algorithm_8h.html" title="DecoderAlgorithm.h" alt="" coords="893,169,1032,196"/></map>
+</div>
+</div><div class="textblock"><div class="dynheader">
+This graph shows which files directly or indirectly include this file:</div>
+<div class="dyncontent">
+<div class="center"><img src="_convolutional_8h__dep__incl.png" border="0" usemap="#_convolutional_8hdep" alt=""/></div>
+<map name="_convolutional_8hdep" id="_convolutional_8hdep">
+<area shape="rect" id="node2" href="_punctured_convolutional_8h.html" title="PuncturedConvolutional.h" alt="" coords="173,80,347,107"/><area shape="rect" id="node4" href="_turbo_8h.html" title="Turbo.h" alt="" coords="411,80,479,107"/><area shape="rect" id="node9" href="_convolutional_8cpp.html" title="Convolutional/Convolutional.cpp" alt="" coords="503,80,715,107"/><area shape="rect" id="node3" href="_punctured_convolutional_8cpp.html" title="Convolutional/PuncturedConvolutional.cpp" alt="" coords="5,155,277,181"/><area shape="rect" id="node5" href="_punctured_turbo_8h.html" title="PuncturedTurbo.h" alt="" coords="302,155,431,181"/><area shape="rect" id="node7" href="_lte3_gpp_8cpp.html" title="Turbo/Lte3Gpp.cpp" alt="" coords="455,155,592,181"/><area shape="rect" id="node8" href="_turbo_8cpp.html" title="Turbo/Turbo.cpp" alt="" coords="617,155,737,181"/><area shape="rect" id="node6" href="_punctured_turbo_8cpp.html" title="Turbo/PuncturedTurbo.cpp" alt="" coords="276,229,457,256"/></map>
+</div>
 </div>
 <p><a href="_convolutional_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -110,6 +120,8 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structfec_1_1_convolutional_1_1_puncture_options.html">fec::Convolutional::PunctureOptions</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structfec_1_1_convolutional_1_1_options.html">fec::Convolutional::Options</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
 Namespaces</h2></td></tr>
@@ -122,10 +134,10 @@ Functions</h2></td></tr>
 <tr class="separator:a0a2cb150b043d83b96692b20880c62f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3e6b64811380941b6d35ce4bf7e1d5d1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_convolutional_8h.html#a3e6b64811380941b6d35ce4bf7e1d5d1">BOOST_CLASS_EXPORT_KEY</a> (<a class="el" href="classfec_1_1_convolutional.html">fec::Convolutional</a>)</td></tr>
 <tr class="separator:a3e6b64811380941b6d35ce4bf7e1d5d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a72e92a8805ccdebfbf864929de1e1c0e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_convolutional_8h.html#a72e92a8805ccdebfbf864929de1e1c0e">BOOST_CLASS_TYPE_INFO</a> (fec::Convolutional::Structure, extended_type_info_no_rtti&lt; fec::Convolutional::Structure &gt;)</td></tr>
-<tr class="separator:a72e92a8805ccdebfbf864929de1e1c0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8e6522916e4e659b9c7c43563be716da"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_convolutional_8h.html#a8e6522916e4e659b9c7c43563be716da">BOOST_CLASS_EXPORT_KEY</a> (fec::Convolutional::Structure)</td></tr>
-<tr class="separator:a8e6522916e4e659b9c7c43563be716da"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a73057ec873f93825d8d7fce3ed21648c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_convolutional_8h.html#a73057ec873f93825d8d7fce3ed21648c">BOOST_CLASS_TYPE_INFO</a> (fec::Convolutional::detail::Structure, extended_type_info_no_rtti&lt; fec::Convolutional::detail::Structure &gt;)</td></tr>
+<tr class="separator:a73057ec873f93825d8d7fce3ed21648c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae9b6c08b54150187cadce33426d889b6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_convolutional_8h.html#ae9b6c08b54150187cadce33426d889b6">BOOST_CLASS_EXPORT_KEY</a> (fec::Convolutional::detail::Structure)</td></tr>
+<tr class="separator:ae9b6c08b54150187cadce33426d889b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a class="anchor" id="a0a2cb150b043d83b96692b20880c62f1"></a>
@@ -170,20 +182,20 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a72e92a8805ccdebfbf864929de1e1c0e"></a>
+<a class="anchor" id="a73057ec873f93825d8d7fce3ed21648c"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">BOOST_CLASS_TYPE_INFO </td>
           <td>(</td>
-          <td class="paramtype">fec::Convolutional::Structure&#160;</td>
+          <td class="paramtype">fec::Convolutional::detail::Structure&#160;</td>
           <td class="paramname">, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">extended_type_info_no_rtti&lt; fec::Convolutional::Structure &gt;&#160;</td>
+          <td class="paramtype">extended_type_info_no_rtti&lt; fec::Convolutional::detail::Structure &gt;&#160;</td>
           <td class="paramname">&#160;</td>
         </tr>
         <tr>
@@ -196,14 +208,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a8e6522916e4e659b9c7c43563be716da"></a>
+<a class="anchor" id="ae9b6c08b54150187cadce33426d889b6"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">BOOST_CLASS_EXPORT_KEY </td>
           <td>(</td>
-          <td class="paramtype">fec::Convolutional::Structure&#160;</td>
+          <td class="paramtype">fec::Convolutional::detail::Structure&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>

@@ -4,8 +4,8 @@ var indexSectionsWithContent =
   1: "bcdelpst",
   2: "f",
   3: "bcdelmpstw",
-  4: "abcdeilmprstw",
-  5: "abcdeilmpstw",
+  4: "abcdegilmprstw",
+  5: "abcdegilmpstw",
   6: "bdst",
   7: "aeglpst"
 };

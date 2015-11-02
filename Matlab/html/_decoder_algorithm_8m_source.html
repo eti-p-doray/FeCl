@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.9.1"/>
-<title>FeCl: +fec/+Codec/DecoderAlgorithm.m Source File</title>
+<title>FeCl: +fec/DecoderAlgorithm.m Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -81,7 +81,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_eb31af575b517eee67321fc3fc5b729b.html">+fec</a></li><li class="navelem"><a class="el" href="dir_5a00cde41b47207dc2614cf79a9d81dc.html">+Codec</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_eb31af575b517eee67321fc3fc5b729b.html">+fec</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -90,19 +90,19 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 <a href="_decoder_algorithm_8m.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;%&gt; This <span class="keyword">class </span>holds the DecoderAlgorithm enumeration.</div>
-<div class="line"><a name="l00002"></a><span class="lineno"><a class="line" href="classfec_1_1_codec_1_1_decoder_algorithm.html">    2</a></span>&#160;classdef <a class="code" href="classfec_1_1_codec_1_1_decoder_algorithm.html#a800309c40d93682fd3c376a42875dc4d">DecoderAlgorithm</a> &lt; uint32</div>
+<div class="line"><a name="l00002"></a><span class="lineno"><a class="line" href="classfec_1_1_decoder_algorithm.html">    2</a></span>&#160;classdef <a class="code" href="classfec_1_1_decoder_algorithm.html#a462cbbd843579f29da818f2d619c0834">DecoderAlgorithm</a> &lt; uint32</div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;    %&gt;  Type of decoder algorithm.</div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;    %&gt;  This defines the type of algorithm used in decoding to compute the check update.</div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;    enumeration</div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;        %&gt; No approximation is used and the L-values are computed in logarithmic domain.</div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;        Exact(0)</div>
-<div class="line"><a name="l00008"></a><span class="lineno"><a class="line" href="classfec_1_1_codec_1_1_decoder_algorithm.html#a800309c40d93682fd3c376a42875dc4d">    8</a></span>&#160;        %&gt; A lookup table with linear interpolation is used to compute the correction term.</div>
+<div class="line"><a name="l00008"></a><span class="lineno"><a class="line" href="classfec_1_1_decoder_algorithm.html#a462cbbd843579f29da818f2d619c0834">    8</a></span>&#160;        %&gt; A lookup table with linear interpolation is used to compute the correction term.</div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;        Linear(1)</div>
-<div class="line"><a name="l00010"></a><span class="lineno"><a class="line" href="classfec_1_1_codec_1_1_decoder_algorithm.html#a800309c40d93682fd3c376a42875dc4da1852b8c95ed42dfafe27db99c6bb8573">   10</a></span>&#160;        %&gt; The correction term is ignored.</div>
+<div class="line"><a name="l00010"></a><span class="lineno"><a class="line" href="classfec_1_1_decoder_algorithm.html#a462cbbd843579f29da818f2d619c0834a170dbb114268c2f101c05018bb6d8b0f">   10</a></span>&#160;        %&gt; The correction term is ignored.</div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;        Approximate(2)</div>
-<div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="classfec_1_1_codec_1_1_decoder_algorithm.html#a800309c40d93682fd3c376a42875dc4da0d9aeba93ea1b36a0f278a782e500b9b">   12</a></span>&#160;    end</div>
+<div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="classfec_1_1_decoder_algorithm.html#a462cbbd843579f29da818f2d619c0834a2d59991a9514eaff6aa22f62d0f4cc03">   12</a></span>&#160;    end</div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;end</div>
-<div class="ttc" id="classfec_1_1_codec_1_1_decoder_algorithm_html_a800309c40d93682fd3c376a42875dc4d"><div class="ttname"><a href="classfec_1_1_codec_1_1_decoder_algorithm.html#a800309c40d93682fd3c376a42875dc4d">fec::Codec::DecoderAlgorithm::DecoderAlgorithm</a></div><div class="ttdeci">DecoderAlgorithm</div><div class="ttdoc">Type of decoder algorithm. </div><div class="ttdef"><b>Definition:</b> <a href="_decoder_algorithm_8m_source.html#l00008">DecoderAlgorithm.m:8</a></div></div>
+<div class="ttc" id="classfec_1_1_decoder_algorithm_html_a462cbbd843579f29da818f2d619c0834"><div class="ttname"><a href="classfec_1_1_decoder_algorithm.html#a462cbbd843579f29da818f2d619c0834">fec::DecoderAlgorithm::DecoderAlgorithm</a></div><div class="ttdeci">DecoderAlgorithm</div><div class="ttdoc">Type of decoder algorithm. </div><div class="ttdef"><b>Definition:</b> <a href="_decoder_algorithm_8m_source.html#l00008">DecoderAlgorithm.m:8</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

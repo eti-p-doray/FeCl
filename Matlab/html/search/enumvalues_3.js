@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['linear',['Linear',['../classfec_1_1_codec_1_1_decoder_algorithm.html#a800309c40d93682fd3c376a42875dc4da0d9aeba93ea1b36a0f278a782e500b9b',1,'fec::Codec::DecoderAlgorithm']]]
+  ['linear',['Linear',['../classfec_1_1_decoder_algorithm.html#a462cbbd843579f29da818f2d619c0834a2d59991a9514eaff6aa22f62d0f4cc03',1,'fec::DecoderAlgorithm']]]
 ];

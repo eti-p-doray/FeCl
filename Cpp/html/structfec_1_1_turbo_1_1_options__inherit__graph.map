@@ -1,0 +1,4 @@
+<map id="fec::Turbo::Options" name="fec::Turbo::Options">
+<area shape="rect" id="node2" href="$structfec_1_1_turbo_1_1_encoder_options.html" title="fec::Turbo::EncoderOptions" alt="" coords="5,5,189,32"/>
+<area shape="rect" id="node3" href="$structfec_1_1_turbo_1_1_decoder_options.html" title="This class gathers options affecting decoder in Turbo Codec. " alt="" coords="214,5,399,32"/>
+</map>
