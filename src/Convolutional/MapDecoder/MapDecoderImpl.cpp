@@ -202,14 +202,14 @@ void MapDecoderImpl<LlrMetrics, LogSumAlg>::aPosterioriUpdate(Codec::detail::Inf
 
         if (output.hasSyst()) {
           if (input.hasSyst()) {
-            systOut[j] = tmp - systIn[j];
+            systOut[j] = logSum_.scale(tmp - systIn[j]);
           }
           else {
-            systOut[j] = tmp;
+            systOut[j] = logSum_.scale(tmp);
           }
         }
         if (output.hasMsg() && i < structure().length()) {
-          msgOut[j] = tmp;
+          msgOut[j] = logSum_.scale(tmp);
         }
       }
       systIn += structure().trellis().inputSize();
@@ -219,13 +219,13 @@ void MapDecoderImpl<LlrMetrics, LogSumAlg>::aPosterioriUpdate(Codec::detail::Inf
     if (output.hasParity()) {
       for (size_t j = 0; j < structure().trellis().outputSize(); ++j) {
         branchMetric = branchMetrics_.begin() + i * structure().trellis().tableSize();
-        typename LlrMetrics::Type tmp = parityUpdateImpl(branchMetric, j);
+        typename LlrMetrics::Type tmp = logSum_.scale(parityUpdateImpl(branchMetric, j));
         
         if (input.hasParity()) {
-          parityOut[j] = tmp - parityIn[j];
+          parityOut[j] = logSum_.scale(tmp - parityIn[j]);
         }
         else {
-          parityOut[j] = tmp;
+          parityOut[j] = logSum_.scale(tmp);
         }
       }
       parityIn += structure().trellis().outputSize();

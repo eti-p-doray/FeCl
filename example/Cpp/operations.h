@@ -59,17 +59,14 @@ std::vector<fec::LlrType> distort(const std::vector<fec::BitField<size_t>>& inpu
 
 int per(const std::unique_ptr<fec::Codec>& code, double snrdb)
 {
-  std::vector<fec::BitField<size_t>> msg = randomBits(code->msgSize());
-  std::vector<fec::BitField<size_t>> parity;
-
+  auto msg = randomBits(code->msgSize());
+  auto parity = code->encode(msg);
+  
+  auto llr = distort(parity, snrdb);
+  
+  auto msgDec = code->decode(llr);
+  
   std::vector<fec::LlrType> msgPost;
-  
-  code->encode(msg, parity);
-  
-  std::vector<fec::LlrType> llr = distort(parity, snrdb);
-  
-  std::vector<fec::BitField<size_t>> msgDec;
-  code->decode(llr, msgDec);
   code->soDecode(fec::Codec::Input<>().parity(llr), fec::Codec::Output<>().syst(msgPost));
   
   int errorCount = 0;

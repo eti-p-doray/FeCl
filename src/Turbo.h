@@ -122,12 +122,12 @@ namespace fec {
       DecoderOptions& iterations(size_t count) {iterations_ = count; return *this;}
       DecoderOptions& scheduling(Scheduling type) {scheduling_ = type; return *this;}
       DecoderOptions& algorithm(DecoderAlgorithm algorithm) {algorithm_ = algorithm; return *this;}
-      DecoderOptions& gain(double gain) {gain_ = gain; return *this;}
+      DecoderOptions& scalingFactor(double scalingFactor) {scalingFactor_ = scalingFactor; return *this;}
       
       size_t iterations_ = 6;
       Scheduling scheduling_ = Serial;
       DecoderAlgorithm algorithm_ = Approximate;
-      double gain_ = 1.0;
+      double scalingFactor_ = 1.0;
     };
     struct PunctureOptions {
     public:

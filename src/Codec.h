@@ -78,7 +78,7 @@ namespace fec {
         
         DecoderAlgorithm decoderAlgorithm() const {return decoderAlgorithm_;} /**< Access the algorithm used in decoder. */
         AlgorithmOptions<FloatLlrMetrics> algorithmOptions() const {return algorithmOptions_;} /**< Access the algorithm options used in decoder. */
-        double gain() const {return algorithmOptions_.gain_;} /**< Access the gain value used in decoder. */
+        double scalingFactor() const {return algorithmOptions_.scalingFactor_;} /**< Access the scalingFactor value used in decoder. */
         
         /**
          *  Encodes one block of msg bits.
@@ -112,7 +112,7 @@ namespace fec {
           ar & BOOST_SERIALIZATION_NVP(paritySize_);
           ar & BOOST_SERIALIZATION_NVP(stateSize_);
           ar & BOOST_SERIALIZATION_NVP(decoderAlgorithm_);
-          ar & BOOST_SERIALIZATION_NVP(algorithmOptions_.gain_);
+          ar & BOOST_SERIALIZATION_NVP(algorithmOptions_.scalingFactor_);
         }
       };
       

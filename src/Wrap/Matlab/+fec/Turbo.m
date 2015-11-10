@@ -28,7 +28,7 @@ classdef Turbo < fec.Codec
     properties (Dependent = true)
         %>  Number of iterations in decoder.
         iterations;
-        %>  Codec::DecoderAlgorithm type used in decoder.
+        %>  DecoderAlgorithm type used in decoder.
         algorithm;
         %>  Turbo::Scheduling type used in decoder.
         scheduling;
@@ -80,7 +80,7 @@ classdef Turbo < fec.Codec
         function set.iterations(self, val)
             self.setDecoderOptions('iterations', val);
         end
-        %>  Access the Turbo::algorithm property.
+        %>  Modify the Turbo::algorithm property.
         function set.algorithm(self, val)
             self.setDecoderOptions('algorithm', val);
         end

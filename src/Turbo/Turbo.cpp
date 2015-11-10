@@ -149,16 +149,16 @@ void Turbo::detail::Structure::setDecoderOptions(const fec::Turbo::DecoderOption
   iterations_ = decoder.iterations_;
   scheduling_ = decoder.scheduling_;
   decoderAlgorithm_ = decoder.algorithm_;
-  algorithmOptions_.gain_ = decoder.gain_;
+  algorithmOptions_.scalingFactor_ = decoder.scalingFactor_;
   for (size_t i = 0; i < interleaver_.size(); ++i) {
-    auto constituentOptions = Convolutional::DecoderOptions().algorithm(decoder.algorithm_).gain(decoder.gain_);
+    auto constituentOptions = Convolutional::DecoderOptions().algorithm(decoder.algorithm_).scalingFactor(decoder.scalingFactor_);
     constituents_[i].setDecoderOptions(constituentOptions);
   }
 }
 
 Turbo::DecoderOptions Turbo::detail::Structure::getDecoderOptions() const
 {
-  return DecoderOptions().iterations(iterations()).scheduling(scheduling()).algorithm(decoderAlgorithm()).gain(algorithmOptions_.gain_);
+  return DecoderOptions().iterations(iterations()).scheduling(scheduling()).algorithm(decoderAlgorithm()).scalingFactor(algorithmOptions_.scalingFactor_);
 }
 
 void Turbo::detail::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const

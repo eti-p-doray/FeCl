@@ -44,8 +44,8 @@ namespace fec {
   
   template <typename LlrMetrics>
   struct AlgorithmOptions {
-    typename LlrMetrics::Type gain_ = 1.0; /**< Gain coefficient used in decoder. */
-    typename LlrMetrics::Type step_ = 4.0;
+    typename LlrMetrics::Type scalingFactor_ = 1.0; /**< Gain coefficient used in decoder. */
+    typename LlrMetrics::Type step_ = 2.0;
     size_t length_ = 8;
   };
   
@@ -75,6 +75,7 @@ namespace fec {
     static inline typename LlrMetrics::Type sum(typename LlrMetrics::Type a, typename LlrMetrics::Type b) {return a+b;}
     static inline typename LlrMetrics::Type post(typename LlrMetrics::Type x, typename LlrMetrics::Type max) {return std::log(x) + max;}
     static inline typename LlrMetrics::Type post(typename LlrMetrics::Type x) {return x;}
+    static inline typename LlrMetrics::Type scale(typename LlrMetrics::Type x) {return x;}
   };
   
   /**
@@ -85,7 +86,7 @@ namespace fec {
   public:
     using isRecursive = std::true_type;
     
-    MaxLogSum(AlgorithmOptions<LlrMetrics> options = {}) {gain_ = options.gain_;}
+    MaxLogSum(AlgorithmOptions<LlrMetrics> options = {}) {scalingFactor_ = options.scalingFactor_;}
     
     /**
      * Computes log sum operation.
@@ -94,10 +95,11 @@ namespace fec {
      */
     static inline typename LlrMetrics::Type sum(typename LlrMetrics::Type a, typename LlrMetrics::Type b) {return std::max(a,b);}
     static inline typename LlrMetrics::Type prior(typename LlrMetrics::Type x) {return x;}
-    inline typename LlrMetrics::Type post(typename LlrMetrics::Type x) const {return x * gain_;}
+    static inline typename LlrMetrics::Type post(typename LlrMetrics::Type x) {return x;}
+    inline typename LlrMetrics::Type scale(typename LlrMetrics::Type x) const {return x*scalingFactor_;}
     
   private:
-    typename LlrMetrics::Type gain_ = 1.0;
+    typename LlrMetrics::Type scalingFactor_ = 1.0;
   };
   
   /**
@@ -108,14 +110,14 @@ namespace fec {
   public:
     using isRecursive = std::true_type;
     
-    LinearLogSum(AlgorithmOptions<LlrMetrics> options = {}) : log1pexpm(options.step_, options.length_) {}
+    LinearLogSum(AlgorithmOptions<LlrMetrics> options = {}) {}
     
     /**
      * Computes log sum operation.
      *  \param  a Left-hand operand.
      *  \param  b Right-hand operand.
      */
-    inline typename LlrMetrics::Type sum(typename LlrMetrics::Type a, typename LlrMetrics::Type b) const {
+    static inline typename LlrMetrics::Type sum(typename LlrMetrics::Type a, typename LlrMetrics::Type b) {
       if (a == b) {
         return a;
       }
@@ -123,10 +125,13 @@ namespace fec {
     }
     static inline typename LlrMetrics::Type prior(typename LlrMetrics::Type x) {return x;}
     static inline typename LlrMetrics::Type post(typename LlrMetrics::Type x) {return x;}
+    static inline typename LlrMetrics::Type scale(typename LlrMetrics::Type x) {return x;}
   
   private:
-    Linearlog1pexpm<typename LlrMetrics::Type> log1pexpm;
+    static const Linearlog1pexpm<typename LlrMetrics::Type> log1pexpm;
   };
+  
+  template <typename LlrMetrics> const Linearlog1pexpm<typename LlrMetrics::Type> LinearLogSum<LlrMetrics>::log1pexpm = {};
   
   /**
    *  This class contains implementation of the box sum operation.
@@ -146,6 +151,7 @@ namespace fec {
     static inline typename LlrMetrics::Type sum(typename LlrMetrics::Type a, typename LlrMetrics::Type b) {return a*b;}
     static inline typename LlrMetrics::Type prior(typename LlrMetrics::Type x) {return tanh(-x/2.0);}
     static inline typename LlrMetrics::Type post(typename LlrMetrics::Type x) {return -std::log((1.0+x)/(1.0-x));}//{return -2.0*atanh(x);}
+    static inline typename LlrMetrics::Type scale(typename LlrMetrics::Type x) {return x;}
   };
   
   template <typename LlrMetrics>
@@ -153,14 +159,14 @@ namespace fec {
   public:
     using isRecursive = std::true_type;
     
-    LinearBoxSum(AlgorithmOptions<LlrMetrics> options = {}) : log1pexpm(options.step_, options.length_) {}
+    LinearBoxSum(AlgorithmOptions<LlrMetrics> options = {}) {}
     
     /**
      * Computes log sum operation.
      *  \param  a Left-hand operand.
      *  \param  b Right-hand operand.
      */
-    inline typename LlrMetrics::Type sum(typename LlrMetrics::Type a, typename LlrMetrics::Type b) const {
+    static inline typename LlrMetrics::Type sum(typename LlrMetrics::Type a, typename LlrMetrics::Type b) {
       if (std::signbit(a) ^ std::signbit(b)) {
         return std::min(std::abs(a),std::abs(b)) - log1pexpm(std::abs(a+b)) + log1pexpm(std::abs(a-b));
       }
@@ -170,10 +176,13 @@ namespace fec {
     }
     static inline typename LlrMetrics::Type prior(typename LlrMetrics::Type x) {return x;}
     static inline typename LlrMetrics::Type post(typename LlrMetrics::Type x) {return x;}
+    static inline typename LlrMetrics::Type scale(typename LlrMetrics::Type x) {return x;}
     
   private:
-    Linearlog1pexpm<typename LlrMetrics::Type> log1pexpm;
+    static const Linearlog1pexpm<typename LlrMetrics::Type> log1pexpm;
   };
+  
+  template <typename LlrMetrics> const Linearlog1pexpm<typename LlrMetrics::Type> LinearBoxSum<LlrMetrics>::log1pexpm = {};
 
   
   /**
@@ -184,7 +193,7 @@ namespace fec {
   public:
     using isRecursive = std::true_type;
     
-    MinBoxSum(AlgorithmOptions<LlrMetrics> options = {}) {gain_ = options.gain_;}
+    MinBoxSum(AlgorithmOptions<LlrMetrics> options = {}) {scalingFactor_ = options.scalingFactor_;}
     
     /**
      * Computes log sum operation.
@@ -200,10 +209,11 @@ namespace fec {
       }
     }
     static inline typename LlrMetrics::Type prior(typename LlrMetrics::Type x) {return x;}
-    inline typename LlrMetrics::Type post(typename LlrMetrics::Type x) const {return x*gain_;}
+    inline typename LlrMetrics::Type post(typename LlrMetrics::Type x) const {return x;}
+    inline typename LlrMetrics::Type scale(typename LlrMetrics::Type x) const {return x*scalingFactor_;}
     
   private:
-    typename LlrMetrics::Type gain_ = 1.0;
+    typename LlrMetrics::Type scalingFactor_ = 1.0;
   };
   
   /**

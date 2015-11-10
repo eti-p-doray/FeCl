@@ -156,12 +156,12 @@ void Ldpc::detail::Structure::setDecoderOptions(const DecoderOptions& decoder)
 {
   decoderAlgorithm_ = decoder.algorithm_;
   iterations_ = decoder.iterations_;
-  algorithmOptions_.gain_ = decoder.gain_;
+  algorithmOptions_.scalingFactor_ = decoder.scalingFactor_;
 }
 
 fec::Ldpc::DecoderOptions Ldpc::detail::Structure::getDecoderOptions() const
 {
-  return DecoderOptions().iterations(iterations()).algorithm(decoderAlgorithm()).gain(algorithmOptions_.gain_);;
+  return DecoderOptions().iterations(iterations()).algorithm(decoderAlgorithm()).scalingFactor(algorithmOptions_.scalingFactor_);;
 }
 
 /**

@@ -124,12 +124,12 @@ void Convolutional::detail::Structure::setEncoderOptions(const EncoderOptions& e
 void Convolutional::detail::Structure::setDecoderOptions(const DecoderOptions& decoder)
 {
   decoderAlgorithm_ = decoder.algorithm_;
-  algorithmOptions_.gain_ = decoder.gain_;
+  algorithmOptions_.scalingFactor_ = decoder.scalingFactor_;
 }
 
 Convolutional::DecoderOptions Convolutional::detail::Structure::getDecoderOptions() const
 {
-  return DecoderOptions().algorithm(decoderAlgorithm_).gain(algorithmOptions_.gain_);;
+  return DecoderOptions().algorithm(decoderAlgorithm_).scalingFactor(algorithmOptions_.scalingFactor_);;
 }
 
 void Convolutional::detail::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const

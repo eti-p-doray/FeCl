@@ -819,7 +819,7 @@ EXCLUDE_SYMLINKS       = NO
 # EXCLUDE_PATTERNS tag to specify one or more wildcard patterns to exclude
 # certain files from those directories.
 #
-# Note that the wildcards are matched against the file with absolute path, so to
+# Note that the wildcards are matched ascalingFactorst the file with absolute path, so to
 # exclude all test directories for example use the pattern */test/*
 
 EXCLUDE_PATTERNS       = Serialization.h
@@ -830,7 +830,7 @@ EXCLUDE_PATTERNS       = Serialization.h
 # wildcard * is used, a substring. Examples: ANamespace, AClass,
 # AClass::ANamespace, ANamespace::*Test
 #
-# Note that the wildcards are matched against the file with absolute path, so to
+# Note that the wildcards are matched ascalingFactorst the file with absolute path, so to
 # exclude all test directories use the pattern */test/*
 
 EXCLUDE_SYMBOLS        = detail
@@ -1091,7 +1091,7 @@ HTML_STYLESHEET        =
 # cascading style sheets that are included after the standard style sheets
 # created by doxygen. Using this option one can overrule certain style aspects.
 # This is preferred over using HTML_STYLESHEET since it does not replace the
-# standard style sheet and is therefore more robust against future updates.
+# standard style sheet and is therefore more robust ascalingFactorst future updates.
 # Doxygen will copy the style sheet files to the output directory.
 # Note: The order of the extra style sheet files is of importance (e.g. the last
 # style sheet in the list overrules the setting of the previous ones in the
@@ -1115,7 +1115,7 @@ HTML_EXTRA_FILES       =
 # this color. Hue is specified as an angle on a colorwheel, see
 # http://en.wikipedia.org/wiki/Hue for more information. For instance the value
 # 0 represents red, 60 is yellow, 120 is green, 180 is cyan, 240 is blue, 300
-# purple, and 360 is red again.
+# purple, and 360 is red ascalingFactor.
 # Minimum value: 0, maximum value: 359, default value: 220.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 

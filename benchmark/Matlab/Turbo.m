@@ -1,4 +1,4 @@
-function results = Turbo(snrdb, T, N, M, z)
+function results = Turbo(snrdb, T, N, z)
     trellis = poly2trellis(4, [15, 13], 15);
     turboTrellis = poly2trellis(4, 13, 15);
     pi = randperm(T);
@@ -6,7 +6,8 @@ function results = Turbo(snrdb, T, N, M, z)
     codec{1} = fec.Turbo(turboTrellis, {[], pi}, 'termination', 'Tail', 'iterations', 4, 'scheduling', 'Serial', 'algorithm', 'Exact');
     codec{2} = fec.Turbo(turboTrellis, {[], pi}, 'termination', 'Tail', 'iterations', 4, 'scheduling', 'Serial', 'algorithm', 'Linear');
     codec{3} = fec.Turbo(turboTrellis, {[], pi}, 'termination', 'Tail', 'iterations', 4, 'scheduling', 'Serial', 'algorithm', 'Approximate');
-
+    codec{4} = fec.Turbo(turboTrellis, {[], pi}, 'termination', 'Tail', 'iterations', 4, 'scheduling', 'Serial', 'algorithm', 'Approximate', 'scalingFactor', 0.7);
+    
      matlabEncoder = comm.TurboEncoder('TrellisStructure', trellis, 'InterleaverIndices', pi);
      matlabDecoder{1} = comm.TurboDecoder('TrellisStructure', trellis, 'InterleaverIndices', pi, 'Algorithm', 'True APP', 'NumIterations', 4);
      matlabDecoder{2} = comm.TurboDecoder('TrellisStructure', trellis, 'InterleaverIndices', pi, 'Algorithm', 'Max*', 'NumIterations', 4);
@@ -28,11 +29,11 @@ function results = Turbo(snrdb, T, N, M, z)
      cmlSim{1}.demod_type = 0;
      cmlSim{1}.linetype = 'k:';
      cmlSim{1}.legend = cmlSim{1}.comment;
-     cmlSim{1}.g1 = [1 0 1 1; 1 1 0 1];
+     cmlSim{1}.g1 = [1 1 0 1; 1 0 1 1];
      cmlSim{1}.nsc_flag1 = 0;
      cmlSim{1}.pun_pattern1 = [];
      cmlSim{1}.tail_pattern1 = [];
-     cmlSim{1}.g2 = [1 0 1 1; 1 1 0 1];
+     cmlSim{1}.g2 = [1 1 0 1; 1 0 1 1];
      cmlSim{1}.nsc_flag2 = 0;
      cmlSim{1}.pun_pattern2 = [];
      cmlSim{1}.tail_pattern2 = [];
@@ -59,37 +60,49 @@ function results = Turbo(snrdb, T, N, M, z)
      cmlCodec{3}.code_interleaver = pi-1;
      cmlCodec{3}.data_bits_per_frame = T;
     
-     msg = int8(randi([0 1],codec{1}.msgSize,N));
-     parity = int8(codec{1}.encode(msg));
      perm = codec{1}.puncturing();
+     punc = codec{1}.puncturing('mask', [1 1; 1 0; 1 0]);
  
      snr = 10.0.^(snrdb/10.0);
-     symbol = double( -2*double(parity)+1 );
-     signal = symbol + randn(size(parity)) / sqrt(2*snr);
-     llr = -4.0 * signal * snr;
+     for i = 1:length(snr)
+        msg{i} = uint64(randi([0 1],codec{1}.msgSize,N));
+        parity{i} = punc.permute(codec{1}.encode(msg{i}));
+        symbol{i} = double( -2*double(parity{i})+1 );
+        signal{i} = symbol{i} + randn(size(parity{i})) / sqrt(2*snr(i));
+        llr{i} = -4.0 * punc.dePermute(signal{i} * snr(i));
+        llrAlt{i} = perm.permute(llr{i});
+     end
  
      codec{1}.workGroupSize = 1;
-     results.encoding.fecl1 = fecEncode(codec{1}, msg, M, z);
+     results.encoding.fecl1 = fecEncode(codec{1}, msg, z);
      codec{1}.workGroupSize = 4;
-     results.encoding.fecl4 = fecEncode(codec{1}, msg, M, z);
+     results.encoding.fecl4 = fecEncode(codec{1}, msg, z);
      
-     results.encoding.cml = cmlEncode(cmlSim{1}, cmlCodec{1}, msg, M, z);
+     results.encoding.cml = cmlEncode(cmlSim{1}, cmlCodec{1}, msg, z);
      
-     results.encoding.matlab = matlabEncode(matlabEncoder, msg, M, z);
+     results.encoding.matlab = matlabEncode(matlabEncoder, msg, z);
      
-     config = {'Exact', 'Table', 'Approximate'}; 
+     config = {'Exact', 'Table', 'Approximate', 'ApproximateScaling'}; 
     
     for i = 1:3
         codec{i}.workGroupSize = 1;
-        results.decoding.(config{i}).fecl1 = fecDecode(codec{i}, msg, llr, M, z);
+        results.decoding.(config{i}).fecl1 = fecDecode(codec{i}, msg, llr, z);
+        results.decoding.(config{i}).fecl1.snr = snrdb;
         codec{i}.workGroupSize = 4;
-        results.decoding.(config{i}).fecl4 = fecDecode(codec{i}, msg, llr, M, z);
+        results.decoding.(config{i}).fecl4 = fecDecode(codec{i}, msg, llr, z);
+        results.decoding.(config{i}).fecl4.snr = snrdb;
         
-        results.decoding.(config{i}).cml = cmlDecode(cmlSim{i}, cmlCodec{i}, msg, perm.permute(llr), M, z);
+        results.decoding.(config{i}).cml = cmlDecode(cmlSim{i}, cmlCodec{i}, msg, llrAlt, z);
+        results.decoding.(config{i}).cml.snr = snrdb;
 
-        results.decoding.(config{i}).matlab = matlabDecode(matlabDecoder{i}, msg, perm.permute(llr), M, z);
-        
-        results.simul.(config{i}) = simulation(codec{i}, codec{i}.puncturing('mask', [1 1; 1 0; 1 0], 'bitOrdering', 'Group'), N, M, -3:0.1:-1.0);
+        results.decoding.(config{i}).matlab = matlabDecode(matlabDecoder{i}, msg, llrAlt, z);
+        results.decoding.(config{i}).matlab.snr = snrdb;
     end
-
+    codec{4}.workGroupSize = 1;
+    results.decoding.(config{4}).fecl1 = fecDecode(codec{4}, msg, llr, z);
+    results.decoding.(config{4}).fecl1.snr = snrdb;
+    codec{4}.workGroupSize = 4;
+    results.decoding.(config{4}).fecl4 = fecDecode(codec{4}, msg, llr, z);
+    results.decoding.(config{4}).fecl1.snr = snrdb;
+    
 end

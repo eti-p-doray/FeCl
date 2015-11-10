@@ -37,7 +37,7 @@ public:
     fec::Ldpc::DecoderOptions decoderOptions;
     decoderOptions.iterations(  mxArrayTo<size_t>::f(mxGetField(in, 0, "iterations")) );
     decoderOptions.algorithm(  mxArrayTo<fec::DecoderAlgorithm>::f(mxGetField(in, 0, "algorithm")) );
-    decoderOptions.gain(  mxArrayTo<double>::f(mxGetField(in, 0, "gain")) );
+    decoderOptions.scalingFactor(  mxArrayTo<double>::f(mxGetField(in, 0, "scalingFactor")) );
 
     return decoderOptions;
   }
@@ -46,12 +46,12 @@ public:
 
 inline mxArray* toMxArray(fec::Ldpc::DecoderOptions decoder)
 {
-  const char* fieldnames[] = {"iterations", "algorithm", "gain"};
-  mxArray* out = mxCreateStructMatrix(1,1,2, fieldnames);
+  const char* fieldnames[] = {"iterations", "algorithm", "scalingFactor"};
+  mxArray* out = mxCreateStructMatrix(1,1,4, fieldnames);
   
   mxSetField(out, 0, fieldnames[0], toMxArray(decoder.iterations_));
   mxSetField(out, 0, fieldnames[1], toMxArray(decoder.algorithm_));
-  mxSetField(out, 0, fieldnames[2], toMxArray(decoder.gain_));
+  mxSetField(out, 0, fieldnames[2], toMxArray(decoder.scalingFactor_));
     
   return out;
 }

@@ -1,9 +1,10 @@
-function results = Ldpc(snrdb, T, N, M, z)
+function results = Ldpc(snrdb, T, N, z)
     H = dvbs2ldpc(1/2);
     
     codec{1} = fec.Ldpc(H, 'iterations', 20, 'algorithm', 'Exact');
     codec{2} = fec.Ldpc(H, 'iterations', 20, 'algorithm', 'Linear');
     codec{3} = fec.Ldpc(H, 'iterations', 20, 'algorithm', 'Approximate');
+    codec{4} = fec.Ldpc(H, 'iterations', 20, 'algorithm', 'Approximate', 'scalingFactor', 0.9);
 
     matlabEncoder = comm.LDPCEncoder(H);
     matlabDecoder = comm.LDPCDecoder(H, 'IterationTerminationCondition', 'Parity check satisfied', 'MaximumIterationCount', 20);
@@ -40,36 +41,42 @@ function results = Ldpc(snrdb, T, N, M, z)
     cmlSim{2}.decoder_type = 1;
     [cmlSim{2}, cmlCodec{2}] = InitializeCodeParam( cmlSim{2}, pwd );
     
-    msg = int8(randi([0 1],codec{1}.msgSize,N));
-    parity = int8(codec{1}.encode(msg));
-         
     snr = 10.0.^(snrdb/10.0);
-    symbol = double( -2*double(parity)+1 );
-    signal = symbol + randn(size(parity)) / sqrt(2*snr);
-    llr = -4.0 * signal * snr;
+     for i = 1:length(snr)
+        msg{i} = uint64(randi([0 1],codec{1}.msgSize,N));
+        parity{i} = codec{1}.encode(msg{i});
+        symbol{i} = double( -2*double(parity{i})+1 );
+        signal{i} = symbol{i} + randn(size(parity{i})) / sqrt(2*snr(i));
+        llr{i} = -4.0 * signal{i} * snr(i);
+        llrAlt{i} = -llr{i};
+     end
 
     codec{1}.workGroupSize = 1;
-    results.encoding.fecl1 = fecEncode(codec{1}, msg, M, z);
+    results.encoding.fecl1 = fecEncode(codec{1}, msg, z);
     codec{1}.workGroupSize = 4;
-    results.encoding.fecl4 = fecEncode(codec{1}, msg, M, z);
+    results.encoding.fecl4 = fecEncode(codec{1}, msg, z);
 
-    results.encoding.cml = cmlEncode(cmlSim{1}, cmlCodec{1}, msg, M, z);
+    results.encoding.cml = cmlEncode(cmlSim{1}, cmlCodec{1}, msg, z);
 
-    results.encoding.matlab = matlabEncode(matlabEncoder, msg, M, z);
+    results.encoding.matlab = matlabEncode(matlabEncoder, msg, z);
     
-    config = {'Exact', 'Table', 'Approximate'};
-    for i = 1:3
+    config = {'Exact', 'Table', 'Approximate', 'ApproximateScaling'};
+    for i = 1:4
         codec{i}.workGroupSize = 1;
-        results.decoding.(config{i}).fecl1 = fecDecode(codec{i}, msg, llr, M, z);
+        results.decoding.(config{i}).fecl1 = fecDecode(codec{i}, msg, llr, z);
+        results.decoding.(config{i}).fecl1.snr = snrdb;
+        
         codec{i}.workGroupSize = 4;
-        results.decoding.(config{i}).fecl4 = fecDecode(codec{i}, msg, llr, M, z);
-        results.simul.(config{i}) = simulation(codec{i}, codec{i}.puncturing(), N, M, -3:0.1:-1.0);
+        results.decoding.(config{i}).fecl4 = fecDecode(codec{i}, msg, llr, z);
+        results.decoding.(config{i}).fecl4.snr = snrdb;
     end
 
     cmlConfig = {'Exact', 'Approximate'};
     for i = 1:2
-        results.decoding.(cmlConfig{i}).cml = cmlDecode(cmlSim{i}, cmlCodec{i}, msg, llr, M, z);
+        results.decoding.(cmlConfig{i}).cml = cmlDecode(cmlSim{i}, cmlCodec{i}, msg, llr, z);
+        results.decoding.(cmlConfig{i}).cml.snr = snrdb;
     end
 
-    results.decoding.(config{1}).matlab = matlabDecode(matlabDecoder, msg, -llr, M, z);
+    results.decoding.(config{1}).matlab = matlabDecode(matlabDecoder, msg, llrAlt, z);
+    results.decoding.(config{1}).matlab.snr = snrdb;
 end

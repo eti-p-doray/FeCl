@@ -7,8 +7,8 @@ classdef DecoderOptions < hgsetget
         algorithm = uint32(fec.DecoderAlgorithm.('Linear'));
         %>  Turbo::Scheduling type used in decoder.
         scheduling = uint32(fec.Turbo.Scheduling.('Serial'));
-        %>  Multiplicative gain in Approximate decoder.
-        gain = 1.0;
+        %>  Multiplicative scalingFactor in Approximate decoder.
+        scalingFactor = 1.0;
     end
 
     methods

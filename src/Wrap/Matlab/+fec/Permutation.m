@@ -1,3 +1,8 @@
+%> This class represents a permutation vector.
+%> A permutation generates a sequence of output data where each element
+%> is picked at a specific index from the input sequence.
+%> The index is defined by the index sequence given at the construction.
+%> The permutation can permute many independant sequences at once.
 classdef Permutation
     properties
         sequence;
@@ -19,11 +24,9 @@ classdef Permutation
         function output = permute(self, input)
             output = input(self.sequence,:);
         end
-        function output = dePermute(varargin)
-            if (nargin == 2)
-                output = zeros(varargin{1}.inputSize, size(varargin{2},2));
-                output(varargin{1}.sequence,:) = varargin{2};
-            end
+        function output = dePermute(self, input)
+            output = zeros(self.inputSize, size(input,2));
+            output(self.sequence,:) = input;
         end
     end
 end

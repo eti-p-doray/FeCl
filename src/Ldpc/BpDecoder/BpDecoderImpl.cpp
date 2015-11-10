@@ -25,7 +25,8 @@ using namespace fec;
 
 template <class LlrMetrics, template <class> class BoxSumAlg>
 BpDecoderImpl<LlrMetrics, BoxSumAlg>::BpDecoderImpl(const Ldpc::detail::Structure& structure) :
-BpDecoder(structure)
+BpDecoder(structure),
+boxSum_(this->structure().algorithmOptions())
 {
   hardParity_.resize(this->structure().checks().cols());
   parity_.resize(this->structure().checks().cols());
@@ -145,13 +146,13 @@ void BpDecoderImpl<LlrMetrics, BoxSumAlg>::checkUpdate()
       prod = boxSum_.sum(prod, checkMetricTmp[j]);
     }
     checkMetricTmp[size-1] = boxSum_.prior(first[size-1]);
-    first[size-1] = boxSum_.post(prod);
+    first[size-1] = boxSum_.scale(boxSum_.post(prod));
     prod = checkMetricTmp[size-1];
     for (size_t j = size-2; j > 0; --j) {
-      first[j] = boxSum_.post( boxSum_.sum(first[j], prod) );
+      first[j] = boxSum_.scale(boxSum_.post( boxSum_.sum(first[j], prod) ));
       prod = boxSum_.sum(prod, checkMetricTmp[j]);
     }
-    *first = boxSum_.post(prod);
+    *first = boxSum_.scale(boxSum_.post(prod));
     
     checkMetric += size;
   }

@@ -1,4 +1,4 @@
-function results = Convolutional(snrdb, T, N, M, z)
+function results = Convolutional(snrdb, T, N, z)
     trellis = poly2trellis(4, [15, 13], 15);
     
     codec = fec.Convolutional(trellis, T, 'termination', 'Truncate');
@@ -21,7 +21,7 @@ function results = Convolutional(snrdb, T, N, M, z)
     cmlSim.demod_type = 0;
     cmlSim.linetype = 'k:';
     cmlSim.legend = cmlSim.comment;
-    cmlSim.g1 = [1 0 1 1; 1 1 0 1];
+    cmlSim.g1 = [1 1 0 1; 1 0 1 1];
     cmlSim.nsc_flag1 = 0;
     cmlSim.pun_pattern1 = [1; 1];
     cmlSim.tail_pattern1 = [0 0 0; 0 0 0];
@@ -35,31 +35,36 @@ function results = Convolutional(snrdb, T, N, M, z)
 
     [cmlSim, cmlCodec] = InitializeCodeParam( cmlSim, pwd );
 
-    msg = logical(randi([0 1],codec.msgSize,N));
-    parity = codec.encode(msg);
-         
     snr = 10.0.^(snrdb/10.0);
-    symbol = double( -2*double(parity)+1 );
-    signal = symbol + randn(size(parity)) / sqrt(2*snr);
-    llr = -4.0 * signal * snr;
+     for i = 1:length(snr)
+        msg{i} = uint64(randi([0 1],codec.msgSize,N));
+        parity{i} = codec.encode(msg{i});
+        symbol{i} = double( -2*double(parity{i})+1 );
+        signal{i} = symbol{i} + randn(size(parity{i})) / sqrt(2*snr(i));
+        llr{i} = -4.0 * signal{i} * snr(i);
+        llrAlt{i} = -llr{i};
+     end
    
     codec.workGroupSize = 1;
-    results.encoding.fecl1 = fecEncode(codec, msg, M, z);
+    results.encoding.fecl1 = fecEncode(codec, msg, z);
     codec.workGroupSize = 4;
-    results.encoding.fecl4 = fecEncode(codec, msg, M, z);
+    results.encoding.fecl4 = fecEncode(codec, msg, z);
 
-    results.encoding.cml = cmlEncode(cmlSim, cmlCodec, msg, M, z);
+    results.encoding.cml = cmlEncode(cmlSim, cmlCodec, msg, z);
 
-    results.encoding.matlab = matlabEncode(matlabEncoder, msg, M, z);
+    results.encoding.matlab = matlabEncode(matlabEncoder, msg, z);
     
     codec.workGroupSize = 1;
-    results.decoding.fecl1 = fecDecode(codec, msg, llr, M, z);
+    results.decoding.fecl1 = fecDecode(codec, msg, llr, z);
+    results.decoding.fecl1.snr = snrdb;
     codec.workGroupSize = 4;
-    results.decoding.fecl4 = fecDecode(codec, msg, llr, M, z);
-    results.simul = simulation(codec, codec.puncturing(), N, M, -3:0.1:-1.0);
-
-    results.decoding.cml = cmlDecode(cmlSim, cmlCodec, msg, llr, M, z);
-        
-    results.decoding.matlab = matlabDecode(matlabDecoder, msg, -llr, M, z);
+    results.decoding.fecl4 = fecDecode(codec, msg, llr, z);
+    results.decoding.fecl4.snr = snrdb;
+    
+    results.decoding.cml = cmlDecode(cmlSim, cmlCodec, msg, llr, z);
+    results.decoding.cml.snr = snrdb;    
+    
+    results.decoding.matlab = matlabDecode(matlabDecoder, msg, llrAlt, z);
+    results.decoding.matlab.snr = snrdb;
 
 end

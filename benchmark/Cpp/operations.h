@@ -84,13 +84,13 @@ itpp::vec distort(const itpp::bvec& input, double snrdb)
   return llr;
 }
 
-boost::property_tree::ptree fecEncode(const fec::Codec& code, const std::vector<fec::BitField<size_t>>& msg, size_t M)
+boost::property_tree::ptree fecEncode(const fec::Codec& code, const std::vector<std::vector<fec::BitField<size_t>>>& msg)
 {
-  std::vector<double> elapsedTimes(M);
-  for (size_t i = 0; i < M; ++i) {
+  std::vector<double> elapsedTimes(msg.size());
+  for (size_t i = 0; i < msg.size(); ++i) {
     std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
     std::vector<fec::BitField<size_t>> parity;
-    code.encode(msg, parity);
+    code.encode(msg[i], parity);
     std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double> >(t2 - t1);
     elapsedTimes[i] = time_span.count();
@@ -101,73 +101,114 @@ boost::property_tree::ptree fecEncode(const fec::Codec& code, const std::vector<
   et.put("avg", avg);
   
   double sq_sum = std::inner_product(elapsedTimes.begin(), elapsedTimes.end(), elapsedTimes.begin(), 0.0);
-  et.put("intvl", std::sqrt(sq_sum / elapsedTimes.size() - avg * avg) * z / sqrt(M));
+  et.put("intvl", std::sqrt(sq_sum / elapsedTimes.size() - avg * avg) * z / sqrt(msg.size()));
   return et;
 }
 
-boost::property_tree::ptree fecDecode(const fec::Codec& code, const std::vector<fec::LlrType>& llr, size_t M)
+boost::property_tree::ptree fecDecode(const fec::Codec& code, const std::vector<std::vector<fec::BitField<size_t>>>& msg, const std::vector<std::vector<fec::LlrType>>& llr)
 {
-  std::vector<double> elapsedTimes(M);
-  for (size_t i = 0; i < M; ++i) {
+  std::vector<double> elapsedTimes(llr.size());
+  std::vector<double> errorCount(llr.size(), 0);
+  std::vector<double> blocErrorCount(llr.size(), 0);
+  for (size_t i = 0; i < llr.size(); ++i) {
     std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
     std::vector<fec::BitField<size_t>> decodedMsg;
-    code.decode(llr, decodedMsg);
-    std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double> >(t2 - t1);
-    elapsedTimes[i] = time_span.count();
-  }
-  boost::property_tree::ptree et;
-  double sum = std::accumulate(elapsedTimes.begin(), elapsedTimes.end(), 0.0);
-  double avg = sum / elapsedTimes.size();
-  et.put("avg", avg);
-  
-  double sq_sum = std::inner_product(elapsedTimes.begin(), elapsedTimes.end(), elapsedTimes.begin(), 0.0);
-  et.put("intvl", std::sqrt(sq_sum / elapsedTimes.size() - avg * avg) * z / sqrt(M));
-  return et;
-}
-
-template <class ItppCodec>
-boost::property_tree::ptree itppEncode(ItppCodec& code, const itpp::bvec& msg, size_t M)
-{
-  std::vector<double> elapsedTimes(M);
-  for (size_t i = 0; i < M; ++i) {
-    std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
-    itpp::bvec parity;
-    code.encode(msg, parity);
-    std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double> >(t2 - t1);
-    elapsedTimes[i] = time_span.count();
-  }
-  boost::property_tree::ptree et;
-  double sum = std::accumulate(elapsedTimes.begin(), elapsedTimes.end(), 0.0);
-  double avg = sum / elapsedTimes.size();
-  et.put("avg", avg);
-  
-  double sq_sum = std::inner_product(elapsedTimes.begin(), elapsedTimes.end(), elapsedTimes.begin(), 0.0);
-  et.put("intvl", std::sqrt(sq_sum / elapsedTimes.size() - avg * avg) * z / sqrt(M));
-  return et;
-}
-
-template <class ItppCodec>
-boost::property_tree::ptree itppDecode(ItppCodec& code, const itpp::vec& llr, size_t M, size_t N = 1)
-{
-  std::vector<double> elapsedTimes(M);
-  for (size_t i = 0; i < M; ++i) {
-    std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
-    itpp::bvec decodedMsg;
-    for (size_t j = 0; j < N; ++j) {
-      code.decode(llr, decodedMsg);
+    code.decode(llr[i], decodedMsg);
+    for (size_t j = 0; j < msg[i].size()/code.msgSize(); ++j) {
+      bool error = false;
+      for (size_t k = 0; k < code.msgSize(); ++k) {
+        errorCount[i] += msg[i][j*code.msgSize()+k] != decodedMsg[j*code.msgSize()+k];
+        error |= msg[i][j*code.msgSize()+k] != decodedMsg[j*code.msgSize()+k];
+      }
+      blocErrorCount[i] += error;
     }
     std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double> >(t2 - t1);
     elapsedTimes[i] = time_span.count();
   }
-  boost::property_tree::ptree et;
+  boost::property_tree::ptree results;
   double sum = std::accumulate(elapsedTimes.begin(), elapsedTimes.end(), 0.0);
   double avg = sum / elapsedTimes.size();
-  et.put("avg", avg);
+  results.put("avg", avg);
   
   double sq_sum = std::inner_product(elapsedTimes.begin(), elapsedTimes.end(), elapsedTimes.begin(), 0.0);
-  et.put("intvl", std::sqrt(sq_sum / elapsedTimes.size() - avg * avg) * z / sqrt(M));
-  return et;
+  results.put("intvl", std::sqrt(sq_sum / elapsedTimes.size() - avg * avg) * z / sqrt(llr.size()));
+  
+  for (size_t i = 0; i < errorCount.size(); ++i) {
+    errorCount[i] /= msg[0].size();
+    blocErrorCount[i] /= msg[0].size()/code.msgSize();
+  }
+  boost::property_tree::ptree ber; for(auto it = errorCount.begin(); it != errorCount.end(); ++it) {boost::property_tree::ptree el; el.put_value(*it); ber.push_back(std::make_pair("", el));}
+  results.put_child("ber", ber);
+  boost::property_tree::ptree wer; for(auto it = blocErrorCount.begin(); it != blocErrorCount.end(); ++it) {boost::property_tree::ptree el; el.put_value(*it); wer.push_back(std::make_pair("", el));}
+  results.put_child("wer", wer);
+  
+  return results;
+}
+
+template <class ItppCodec>
+boost::property_tree::ptree itppEncode(ItppCodec& code, const std::vector<std::vector<itpp::bvec>>& msg)
+{
+  std::vector<double> elapsedTimes(msg.size());
+  for (size_t i = 0; i < msg.size(); ++i) {
+    std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
+    itpp::bvec parity;
+    for (size_t j = 0; j < msg[i].size(); ++j) {
+      code.encode(msg[i][j], parity);
+    }
+    std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double> >(t2 - t1);
+    elapsedTimes[i] = time_span.count();
+  }
+  boost::property_tree::ptree results;
+  double sum = std::accumulate(elapsedTimes.begin(), elapsedTimes.end(), 0.0);
+  double avg = sum / elapsedTimes.size();
+  results.put("avg", avg);
+  
+  double sq_sum = std::inner_product(elapsedTimes.begin(), elapsedTimes.end(), elapsedTimes.begin(), 0.0);
+  results.put("intvl", std::sqrt(sq_sum / elapsedTimes.size() - avg * avg) * z / sqrt(msg.size()));
+  
+  return results;
+}
+
+template <class ItppCodec>
+boost::property_tree::ptree itppDecode(ItppCodec& code, const std::vector<std::vector<itpp::bvec>>& msg, const std::vector<std::vector<itpp::vec>>& llr)
+{
+  std::vector<double> elapsedTimes(llr.size());
+  std::vector<double> errorCount(llr.size(), 0);
+  std::vector<double> blocErrorCount(llr.size(), 0);
+  for (size_t i = 0; i < llr.size(); ++i) {
+    std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
+    itpp::bvec decodedMsg;
+    for (size_t j = 0; j < llr[i].size(); ++j) {
+      code.decode(llr[i][j], decodedMsg);
+      bool error = false;
+      for (size_t k = 0; k < msg[i][j].size(); ++k) {
+        errorCount[i] += msg[i][j][k] != decodedMsg[k];
+        error |= msg[i][j][k] != decodedMsg[k];
+      }
+      blocErrorCount[i] += error;
+    }
+    std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double> >(t2 - t1);
+    elapsedTimes[i] = time_span.count();
+  }
+  boost::property_tree::ptree results;
+  double sum = std::accumulate(elapsedTimes.begin(), elapsedTimes.end(), 0.0);
+  double avg = sum / elapsedTimes.size();
+  results.put("avg", avg);
+  
+  double sq_sum = std::inner_product(elapsedTimes.begin(), elapsedTimes.end(), elapsedTimes.begin(), 0.0);
+  results.put("intvl", std::sqrt(sq_sum / elapsedTimes.size() - avg * avg) * z / sqrt(llr.size()));
+  
+  for (size_t i = 0; i < errorCount.size(); ++i) {
+    errorCount[i] /= msg[0].size()*msg[0][0].size();
+    blocErrorCount[i] /= msg[0].size();
+  }
+  boost::property_tree::ptree ber; for(auto it = errorCount.begin(); it != errorCount.end(); ++it) {boost::property_tree::ptree el; el.put_value(*it); ber.push_back(std::make_pair("", el));}
+  results.put_child("ber", ber);
+  boost::property_tree::ptree wer; for(auto it = blocErrorCount.begin(); it != blocErrorCount.end(); ++it) {boost::property_tree::ptree el; el.put_value(*it); wer.push_back(std::make_pair("", el));}
+  results.put_child("wer", wer);
+
+  return results;
 }

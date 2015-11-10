@@ -24,7 +24,7 @@
 #include <memory>
 #include <iostream>
 
-#include "Convolutional/Convolutional.h"
+#include "Convolutional.h"
 
 #include "operations.h"
 
@@ -47,7 +47,9 @@ int main( int argc, char* argv[] )
    The trellis is used to create a code structure.
    We specify that one bloc will conatins 1024 branches before being terminated.
    */
-  auto options = fec::Convolutional::Options(trellis, 1024).termination(fec::Convolutional::Tail).algorithm(fec::Codec::Approximate);
+  auto options = fec::Convolutional::Options(trellis, 1024);
+  options.termination(fec::Convolutional::Tail);
+  options.algorithm(fec::Approximate);
   //! [Creating a Convolutional code structure]
   
   /*

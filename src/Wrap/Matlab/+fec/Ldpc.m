@@ -21,7 +21,9 @@ classdef Ldpc < fec.Codec
         decoderOptions
     end
     properties (Dependent = true)
+        %>  Maximum number of iterations in decoder.
         iterations;
+        %>  DecoderAlgorithm type used in decoder.
         algorithm;
     end
     
@@ -33,6 +35,13 @@ classdef Ldpc < fec.Codec
     end
 
     methods
+        %>  Ldpc constructor.
+        %>  `codec = fec.Ldpc(trellis, lenght, Name, Value)` creates an Ldpc object from a Trellis and lenght. Optionally, additional properties can be specified using Name (string inside single quotes) followed by its Value. See Ldpc::EncoderOptions and Ldpc::DecoderOptions for a list of properties.
+        %>
+        %> `codec = fec.Ldpc(encoderOptions, decoderOptions)` creates an Ldpc object from the Ldpc::EncoderOptions and the Ldpc::DecoderOptions structures, cell array or object containing encoder and decoder properties which describes the codec.
+        %>
+        %>  See example.
+        %>  @snippet LdpcSimple.m  Creating a simple Ldpc Codec
         function self = Ldpc(varargin)
             if (nargin > 0)
               self.structure = fec.Ldpc.Structure(varargin{:});

@@ -25,15 +25,14 @@
 #include <cmath>
 #include <vector>
 
-//chanco
 namespace fec {
   
-  template <typename T>
+  template <typename T, size_t length>
   class LinearTable {
   public:
     template <class F>
-    LinearTable(size_t lenght, F f) {
-      y.resize(lenght);
+    LinearTable(F f) {
+      //y.resize(length);
       for (size_t i = 0; i < y.size(); ++i) {
         y[i] = f(i);
       }
@@ -48,35 +47,36 @@ namespace fec {
     }
     
   private:
-    std::vector<T> y;
+    //std::vector<T> y;
+    std::array<T, length> y;
   };
   
   template <typename T>
   struct Linearlog1pexpm {
-    Linearlog1pexpm(int step, size_t length) : table_(length, Impl(step)) {
-      step_ = step;
-    }
     struct Impl {
       Impl(T step) {
         step_ = step;
       }
-      T operator()(T x) {
+      constexpr T operator()(T x) const {
         return std::log(1.0+std::exp(-(double(x)/step_)));
       }
       T step_;
     };
     
     inline T operator()(T x) const {
-      x *= step_;
+      x *= granularity_;
       if(x >= table_.size()-1) {
         return 0;
       }
       return table_(x);
     }
     
-    T step_;
-    LinearTable<T> table_;
+    constexpr static T granularity_ = 2.0;
+    constexpr static size_t length_ = 8;
+    const static LinearTable<T, length_> table_;
   };
+  
+  template <typename T> const LinearTable<T, Linearlog1pexpm<T>::length_> Linearlog1pexpm<T>::table_ = LinearTable<T, length_>(Impl(granularity_));
   
 }
 

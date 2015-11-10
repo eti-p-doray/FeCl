@@ -9,7 +9,7 @@ classdef Structure < hgsetget
         termination;
         
         algorithm;
-        gain;
+        scalingFactor;
     end
 
     methods
@@ -49,8 +49,8 @@ classdef Structure < hgsetget
         function self = set.algorithm(self,val)
             self.decoderOptions.algorithm = val;
         end
-        function self = set.gain(self,val)
-            self.decoderOptions.gain = val;
+        function self = set.scalingFactor(self,val)
+            self.decoderOptions.scalingFactor = val;
         end
     end
 end

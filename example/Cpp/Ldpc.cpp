@@ -24,7 +24,7 @@
 #include <memory>
 #include <iostream>
 
-#include "Ldpc/Ldpc.h"
+#include "Ldpc.h"
 
 #include "operations.h"
 
@@ -43,13 +43,13 @@ int main( int argc, char* argv[] )
    The matrix is used to create a code structure.
    */
   auto options = fec::Ldpc::Options(checkMatrix);
-  options.iterations(20).algorithm(fec::Codec::Exact);
+  options.iterations(20).algorithm(fec::Exact);
   //! [Creating a Turbo code structure]
   
   /*
    A code is created and ready to operate
    */
-  std::unique_ptr<fec::Codec> codec = codec(new fec::Ldpc(options));
+  std::unique_ptr<fec::Codec> codec(new fec::Ldpc(options));
   //! [Creating an ldpc code]
   
   std::cout << per(codec, 1.0) << std::endl;

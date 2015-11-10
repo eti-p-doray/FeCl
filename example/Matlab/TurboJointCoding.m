@@ -24,13 +24,13 @@ msg = randi([0 1], 192, 10);
 parity = codec.encode(msg);
 
 snrdb = [0.0, -1.0];
-snr = 10.0 ^ (snrdb / 10.0);
+snr = 10.0 .^ (snrdb / 10.0);
 
 llr = zeros(size(parity));
 for i = 1:2
-    symbol = parityIdx{i}.permute( (-2*parity+1)*sqrt(2*snr(i)) );
-    signal = symbol + randn(size(symbol));
-    llr = llr + perm{i}.dePermute(-4.0 * sqrt(snr(i)) * signal / sqrt(2.0));
+    symbol = parityIdx{i}.permute( (-2*double(parity)+1)*sqrt(2*snr(i)) );
+    signal = symbol + randn(size(symbol)); % The received signal
+    llr = llr + parityIdx{i}.dePermute(-4.0 * sqrt(snr(i)) * signal / sqrt(2.0));
     msgDec = codec.decode(llr);
     per(i) = sum( sum(msgIdx{i}.permute(msgDec ~= msg)) ~= 0 );
 end

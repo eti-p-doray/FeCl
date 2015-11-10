@@ -1,4 +1,4 @@
-function result = simulation(codec, parityIdx, N, M, snrdb)
+function result = fecSimulation(codec, parityIdx, N, M, snrdb)
     msg = logical( randi([0 1],codec.msgSize,N) );
     
     size(parityIdx.sequence);
