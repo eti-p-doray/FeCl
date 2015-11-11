@@ -151,6 +151,7 @@ namespace fec {
           ar & ::BOOST_SERIALIZATION_NVP(A_);
           ar & ::BOOST_SERIALIZATION_NVP(B_);
           ar & ::BOOST_SERIALIZATION_NVP(iterations_);
+          ar & ::BOOST_SERIALIZATION_NVP(scalingFactor_);
         }
         
         void computeGeneratorMatrix(SparseBitMatrix H);

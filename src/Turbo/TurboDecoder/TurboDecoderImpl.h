@@ -45,8 +45,12 @@ namespace fec {
     
   private:
     void aPosterioriUpdate();
-    void serialSharingUpdate(size_t i);
-    void parallelSharingUpdate();
+    
+    void customActivationUpdate(size_t i, size_t stage);
+    
+    void serialTransferUpdate(size_t i);
+    void parallelTransferUpdate();
+    void customTransferUpdate(size_t stage, size_t i);
   };
   
 }

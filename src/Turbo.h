@@ -61,12 +61,31 @@ namespace fec {
      *  This defines the scheduling of extrinsic communication between code
      *    constituents.
      */
-    enum Scheduling {
+    enum SchedulingType {
       Serial,/**< Each constituent tries to decode and gives its extrinsic
               information to the next constituent in a serial behavior. */
       Parallel,/**< Each constituent tries to decode in parallel.
                 The extrinsic information is then combined and shared to every
                 constituents similar to the Belief Propagation algorithm used in ldpc. */
+      Custom,/**< Lets the user define a scheduling function. Don't use that. */
+    };
+    struct Scheduling {
+      struct Stage {
+        std::vector<size_t> activation;
+        std::vector<std::vector<size_t>> transfer;
+        template <typename Archive>
+        void serialize(Archive & ar, const unsigned int version) {
+          using namespace boost::serialization;
+          ar & ::BOOST_SERIALIZATION_NVP(activation);
+          ar & ::BOOST_SERIALIZATION_NVP(transfer);
+        }
+      };
+      std::vector<Stage> stages;
+      template <typename Archive>
+      void serialize(Archive & ar, const unsigned int version) {
+        using namespace boost::serialization;
+        ar & ::BOOST_SERIALIZATION_NVP(stages);
+      }
     };
     /**
      *  Ordering of parity bit in Turbo.
@@ -120,13 +139,15 @@ namespace fec {
       DecoderOptions() = default;
       
       DecoderOptions& iterations(size_t count) {iterations_ = count; return *this;}
-      DecoderOptions& scheduling(Scheduling type) {scheduling_ = type; return *this;}
+      DecoderOptions& scheduling(SchedulingType type) {schedulingType_ = type; return *this;}
+      DecoderOptions& scheduling(Scheduling sched) {schedulingType_ = Custom; scheduling_ = sched; return *this;}
       DecoderOptions& algorithm(DecoderAlgorithm algorithm) {algorithm_ = algorithm; return *this;}
       DecoderOptions& scalingFactor(fec::LlrType factor) {scalingFactor_ = {{factor}}; return *this;}
       DecoderOptions& scalingFactor(const std::vector<std::vector<fec::LlrType>>& factor) {scalingFactor_ = factor; return *this;}
       
       size_t iterations_ = 6;
-      Scheduling scheduling_ = Serial;
+      SchedulingType schedulingType_ = Serial;
+      Scheduling scheduling_;
       DecoderAlgorithm algorithm_ = Approximate;
       std::vector<std::vector<fec::LlrType>> scalingFactor_ = {{1.0}};
     };
@@ -185,6 +206,7 @@ namespace fec {
         inline const Permutation& interleaver(size_t i) const {return interleaver_[i];}
         
         inline size_t iterations() const {return iterations_;}
+        inline SchedulingType schedulingType() const {return schedulingType_;}
         inline Scheduling scheduling() const {return scheduling_;}
         
         fec::LlrType scalingFactor(size_t i, size_t j) const; /**< Access the scalingFactor value used in decoder. */
@@ -206,13 +228,16 @@ namespace fec {
           ar & ::BOOST_SERIALIZATION_NVP(interleaver_);
           ar & ::BOOST_SERIALIZATION_NVP(tailSize_);
           ar & ::BOOST_SERIALIZATION_NVP(iterations_);
+          ar & ::BOOST_SERIALIZATION_NVP(schedulingType_);
           ar & ::BOOST_SERIALIZATION_NVP(scheduling_);
+          ar & ::BOOST_SERIALIZATION_NVP(scalingFactor_);
         }
         
         std::vector<Convolutional::detail::Structure> constituents_;
         std::vector<Permutation> interleaver_;
         size_t tailSize_;
         size_t iterations_;
+        SchedulingType schedulingType_;
         Scheduling scheduling_;
         std::vector<std::vector<fec::LlrType>> scalingFactor_;
       };

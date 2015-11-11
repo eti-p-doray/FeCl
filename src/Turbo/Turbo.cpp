@@ -147,7 +147,25 @@ void Turbo::detail::Structure::setEncoderOptions(const fec::Turbo::EncoderOption
 void Turbo::detail::Structure::setDecoderOptions(const fec::Turbo::DecoderOptions &decoder)
 {
   iterations_ = decoder.iterations_;
-  scheduling_ = decoder.scheduling_;
+  schedulingType_ = decoder.schedulingType_;
+  if (schedulingType() == Custom) {
+    scheduling_ = decoder.scheduling_;
+    for (size_t i = 0; i < scheduling().stages.size(); ++i) {
+      if (scheduling().stages[i].activation.size() != scheduling().stages[i].transfer.size()) {
+        throw std::invalid_argument("Invalid scheduling : activation and transfer not the same size");
+      }
+      for (size_t j = 0; j < scheduling().stages[i].activation.size(); ++j) {
+        if (scheduling().stages[i].activation[j] > constituentCount()) {
+          throw std::invalid_argument("Invalid scheduling : activation of an invalid constituent");
+        }
+        for (size_t k = 0; j < scheduling().stages[i].transfer[j].size(); ++k) {
+          if (scheduling().stages[i].transfer[j][k] > constituentCount()) {
+            throw std::invalid_argument("Invalid scheduling : transfer fro an invalid constituent");
+          }
+        }
+      }
+    }
+  }
   decoderAlgorithm_ = decoder.algorithm_;
   scalingFactor_ = decoder.scalingFactor_;
   if (scalingFactor_.size() == iterations_) {
@@ -167,7 +185,7 @@ void Turbo::detail::Structure::setDecoderOptions(const fec::Turbo::DecoderOption
 
 Turbo::DecoderOptions Turbo::detail::Structure::getDecoderOptions() const
 {
-  return DecoderOptions().iterations(iterations()).scheduling(scheduling()).algorithm(decoderAlgorithm()).scalingFactor(scalingFactor_);
+  return DecoderOptions().iterations(iterations()).scheduling(scheduling()).scheduling(schedulingType()).algorithm(decoderAlgorithm()).scalingFactor(scalingFactor_);
 }
 
 double Turbo::detail::Structure::scalingFactor(size_t i, size_t j) const
