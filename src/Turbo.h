@@ -122,12 +122,13 @@ namespace fec {
       DecoderOptions& iterations(size_t count) {iterations_ = count; return *this;}
       DecoderOptions& scheduling(Scheduling type) {scheduling_ = type; return *this;}
       DecoderOptions& algorithm(DecoderAlgorithm algorithm) {algorithm_ = algorithm; return *this;}
-      DecoderOptions& scalingFactor(double scalingFactor) {scalingFactor_ = scalingFactor; return *this;}
+      DecoderOptions& scalingFactor(fec::LlrType factor) {scalingFactor_ = {{factor}}; return *this;}
+      DecoderOptions& scalingFactor(const std::vector<std::vector<fec::LlrType>>& factor) {scalingFactor_ = factor; return *this;}
       
       size_t iterations_ = 6;
       Scheduling scheduling_ = Serial;
       DecoderAlgorithm algorithm_ = Approximate;
-      double scalingFactor_ = 1.0;
+      std::vector<std::vector<fec::LlrType>> scalingFactor_ = {{1.0}};
     };
     struct PunctureOptions {
     public:
@@ -186,6 +187,8 @@ namespace fec {
         inline size_t iterations() const {return iterations_;}
         inline Scheduling scheduling() const {return scheduling_;}
         
+        fec::LlrType scalingFactor(size_t i, size_t j) const; /**< Access the scalingFactor value used in decoder. */
+        
         virtual bool check(std::vector<BitField<size_t>>::const_iterator parity) const;
         virtual void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const;
         
@@ -211,6 +214,7 @@ namespace fec {
         size_t tailSize_;
         size_t iterations_;
         Scheduling scheduling_;
+        std::vector<std::vector<fec::LlrType>> scalingFactor_;
       };
     };
     

@@ -30,8 +30,7 @@ using namespace fec;
  */
 template <class LlrMetrics, template <class> class LogSumAlg>
 MapDecoderImpl<LlrMetrics, LogSumAlg>::MapDecoderImpl(const Convolutional::detail::Structure& structure) :
-MapDecoder(structure),
-logSum_(this->structure().algorithmOptions())
+MapDecoder(structure)
 {
   branchMetrics_.resize((this->structure().length()+this->structure().tailSize())*this->structure().trellis().inputCount()*this->structure().trellis().stateCount());
   forwardMetrics_.resize((this->structure().length()+this->structure().tailSize())*this->structure().trellis().stateCount());
@@ -202,14 +201,14 @@ void MapDecoderImpl<LlrMetrics, LogSumAlg>::aPosterioriUpdate(Codec::detail::Inf
 
         if (output.hasSyst()) {
           if (input.hasSyst()) {
-            systOut[j] = logSum_.scale(tmp - systIn[j]);
+            systOut[j] = structure().scalingFactor() * (tmp - systIn[j]);
           }
           else {
-            systOut[j] = logSum_.scale(tmp);
+            systOut[j] = structure().scalingFactor() * (tmp);
           }
         }
         if (output.hasMsg() && i < structure().length()) {
-          msgOut[j] = logSum_.scale(tmp);
+          msgOut[j] = structure().scalingFactor() * (tmp);
         }
       }
       systIn += structure().trellis().inputSize();
@@ -219,13 +218,13 @@ void MapDecoderImpl<LlrMetrics, LogSumAlg>::aPosterioriUpdate(Codec::detail::Inf
     if (output.hasParity()) {
       for (size_t j = 0; j < structure().trellis().outputSize(); ++j) {
         branchMetric = branchMetrics_.begin() + i * structure().trellis().tableSize();
-        typename LlrMetrics::Type tmp = logSum_.scale(parityUpdateImpl(branchMetric, j));
+        typename LlrMetrics::Type tmp = parityUpdateImpl(branchMetric, j);
         
         if (input.hasParity()) {
-          parityOut[j] = logSum_.scale(tmp - parityIn[j]);
+          parityOut[j] = structure().scalingFactor() * (tmp - parityIn[j]);
         }
         else {
-          parityOut[j] = logSum_.scale(tmp);
+          parityOut[j] = structure().scalingFactor() * (tmp);
         }
       }
       parityIn += structure().trellis().outputSize();

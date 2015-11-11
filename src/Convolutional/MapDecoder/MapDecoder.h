@@ -46,13 +46,15 @@ public:
   void soDecodeBlocks(Codec::detail::InputIterator input, Codec::detail::OutputIterator output, size_t n);
   virtual void soDecodeBlock(Codec::detail::InputIterator input, Codec::detail::OutputIterator output) = 0;
   
+  void setScalingFactor(fec::LlrType factor) {structure_.setScalingFactor(factor);}
+  
 protected:
   MapDecoder(const Convolutional::detail::Structure&); /**< Constructor */
   
   inline const Convolutional::detail::Structure& structure() const {return structure_;} /**< Access the code structure */
 
 private:
-  const Convolutional::detail::Structure structure_;
+  Convolutional::detail::Structure structure_;
 };
   
 }

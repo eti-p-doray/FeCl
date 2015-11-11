@@ -86,11 +86,12 @@ namespace fec {
       
       DecoderOptions& algorithm(DecoderAlgorithm algorithm) {algorithm_ = algorithm; return *this;}
       DecoderOptions& iterations(size_t n) {iterations_ = n; return *this;}
-      DecoderOptions& scalingFactor(double scalingFactor) {scalingFactor_ = scalingFactor; return *this;}
+      DecoderOptions& scalingFactor(fec::LlrType factor) {scalingFactor_ = {{factor}}; return *this;}
+      DecoderOptions& scalingFactor(const std::vector<std::vector<fec::LlrType>>& factor) {scalingFactor_ = factor; return *this;}
       
       DecoderAlgorithm algorithm_ = Approximate;
       size_t iterations_;
-      double scalingFactor_ = 1.0;
+      std::vector<std::vector<fec::LlrType>> scalingFactor_ = {{1.0}};
     };
     struct PunctureOptions {
     public:
@@ -130,6 +131,7 @@ namespace fec {
         
         inline const SparseBitMatrix& checks() const {return H_;}
         inline size_t iterations() const {return iterations_;}
+        fec::LlrType scalingFactor(size_t i, size_t j) const; /**< Access the scalingFactor value used in decoder. */
         
         void syndrome(std::vector<uint8_t>::const_iterator parity, std::vector<uint8_t>::iterator syndrome) const;
         virtual bool check(std::vector<BitField<size_t>>::const_iterator parity) const;
@@ -160,6 +162,7 @@ namespace fec {
         SparseBitMatrix B_;
         
         size_t iterations_;
+        std::vector<std::vector<fec::LlrType>> scalingFactor_;
       };
     };
     

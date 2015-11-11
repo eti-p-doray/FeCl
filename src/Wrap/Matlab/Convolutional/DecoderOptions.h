@@ -37,7 +37,7 @@ public:
     try {
       fec::Convolutional::DecoderOptions decoderOptions;
       decoderOptions.algorithm(  mxArrayTo<fec::DecoderAlgorithm>::f(mxGetField(in, 0, "algorithm")) );
-      decoderOptions.scalingFactor(  mxArrayTo<double>::f(mxGetField(in, 0, "scalingFactor")) );
+      decoderOptions.scalingFactor(  mxArrayTo<fec::LlrType>::f(mxGetField(in, 0, "scalingFactor")) );
       return decoderOptions;
     } catch (std::exception& e) {
       throw std::invalid_argument("In decoder options: " + std::string(e.what()));

@@ -549,6 +549,7 @@ public:
    *  \param[out] dst Vector containing the size of each column
    */
   inline void colSizes(::std::vector<size_t>& dst) const {colSizes({0, rows()}, {0, cols()}, dst);}
+  inline ::std::vector<size_t> colSizes() const {std::vector<size_t> x(rows()); colSizes({0, rows()}, {0, cols()}, x); return x;}
   /**
    *  Computes the column sizes in the matrix.
    *  We define the column size as the number of non-zero elements
@@ -568,6 +569,7 @@ public:
    *  \param[out] dst Vector containing the size of each row
    */
   inline void rowSizes(::std::vector<size_t>& x) const {rowSizes({0, rows()}, {0, cols()}, x);}
+  inline ::std::vector<size_t> rowSizes() const {std::vector<size_t> x(rows()); rowSizes({0, rows()}, {0, cols()}, x); return x;}
   /**
    *  Computes the row sizes in the matrix.
    *  We define the row size as the number of non-zero elements

@@ -25,8 +25,7 @@ using namespace fec;
 
 template <class LlrMetrics, template <class> class BoxSumAlg>
 BpDecoderImpl<LlrMetrics, BoxSumAlg>::BpDecoderImpl(const Ldpc::detail::Structure& structure) :
-BpDecoder(structure),
-boxSum_(this->structure().algorithmOptions())
+BpDecoder(structure)
 {
   hardParity_.resize(this->structure().checks().cols());
   parity_.resize(this->structure().checks().cols());
@@ -48,7 +47,7 @@ void BpDecoderImpl<LlrMetrics, BoxSumAlg>::decodeBlock(std::vector<LlrType>::con
   
   bool success = false;
   for (int64_t i = 0; i < structure().iterations() - 1; ++i) {
-    checkUpdate();
+    checkUpdate(i);
     bitUpdate();
     
     for (size_t j = 0; j < structure().checks().cols(); ++j) {
@@ -59,7 +58,7 @@ void BpDecoderImpl<LlrMetrics, BoxSumAlg>::decodeBlock(std::vector<LlrType>::con
       break;
     }
   }
-  checkUpdate();
+  checkUpdate(structure().iterations()-1);
   
   std::copy(parity_.begin(), parity_.end(), bitMetrics_.begin());
   for (size_t i = 0; i < structure().checks().size(); ++i) {
@@ -96,7 +95,7 @@ void BpDecoderImpl<LlrMetrics, BoxSumAlg>::soDecodeBlock(Codec::detail::InputIte
 
   bool success = false;
   for (int64_t i = 0; i < structure().iterations() - 1; ++i) {
-    checkUpdate();
+    checkUpdate(i);
     bitUpdate();
     
     for (size_t j = 0; j < structure().checks().cols(); ++j) {
@@ -107,7 +106,7 @@ void BpDecoderImpl<LlrMetrics, BoxSumAlg>::soDecodeBlock(Codec::detail::InputIte
       break;
     }
   }
-  checkUpdate();
+  checkUpdate(structure().iterations()-1);
   
   std::fill(bitMetrics_.begin(), bitMetrics_.end(), 0);
   for (size_t i = 0; i < structure().checks().size(); ++i) {
@@ -131,13 +130,14 @@ void BpDecoderImpl<LlrMetrics, BoxSumAlg>::soDecodeBlock(Codec::detail::InputIte
 }
 
 template <class LlrMetrics, template <class> class BoxSumAlg>
-void BpDecoderImpl<LlrMetrics, BoxSumAlg>::checkUpdate()
+void BpDecoderImpl<LlrMetrics, BoxSumAlg>::checkUpdate(size_t i)
 {
   auto checkMetric = checkMetrics_.begin();
   auto checkMetricTmp = checkMetricsBuffer_.begin();
   for (auto check = structure().checks().begin(); check < structure().checks().end();  ++check) {
     auto first = checkMetric;
     size_t size = check->size();
+    fec::LlrType sf = structure().scalingFactor(i, size);
     
     LlrType prod = boxSum_.prior(*first);
     for (size_t j = 1; j < size-1; ++j) {
@@ -146,13 +146,13 @@ void BpDecoderImpl<LlrMetrics, BoxSumAlg>::checkUpdate()
       prod = boxSum_.sum(prod, checkMetricTmp[j]);
     }
     checkMetricTmp[size-1] = boxSum_.prior(first[size-1]);
-    first[size-1] = boxSum_.scale(boxSum_.post(prod));
+    first[size-1] = sf *  (boxSum_.post(prod));
     prod = checkMetricTmp[size-1];
     for (size_t j = size-2; j > 0; --j) {
-      first[j] = boxSum_.scale(boxSum_.post( boxSum_.sum(first[j], prod) ));
+      first[j] = sf *  (boxSum_.post( boxSum_.sum(first[j], prod) ));
       prod = boxSum_.sum(prod, checkMetricTmp[j]);
     }
-    *first = boxSum_.scale(boxSum_.post(prod));
+    *first = sf *  (boxSum_.post(prod));
     
     checkMetric += size;
   }

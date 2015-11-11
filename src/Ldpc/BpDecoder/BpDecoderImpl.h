@@ -47,7 +47,7 @@ namespace fec {
     virtual void soDecodeBlock(Codec::detail::InputIterator input, Codec::detail::OutputIterator output);
     
   private:
-    void checkUpdate();
+    void checkUpdate(size_t i);
     void bitUpdate();
     
     std::vector<BitField<size_t>> hardParity_;

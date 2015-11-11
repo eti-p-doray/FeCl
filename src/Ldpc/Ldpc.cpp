@@ -156,12 +156,30 @@ void Ldpc::detail::Structure::setDecoderOptions(const DecoderOptions& decoder)
 {
   decoderAlgorithm_ = decoder.algorithm_;
   iterations_ = decoder.iterations_;
-  algorithmOptions_.scalingFactor_ = decoder.scalingFactor_;
+  scalingFactor_ = decoder.scalingFactor_;
+  if (scalingFactor_.size() == iterations_) {
+    auto degree = checks().rowSizes();
+    size_t maxDegree = *std::max_element(degree.begin(), degree.begin());
+    for (size_t i = 0; i < scalingFactor_.size(); ++i) {
+      if (scalingFactor_[i].size() < maxDegree && scalingFactor_[i].size() != 1) {
+        throw std::invalid_argument("Wrong size for scaling factor");
+      }
+    }
+  } else if (scalingFactor_.size() != 1) {
+    throw std::invalid_argument("Wrong size for scaling factor");
+  }
 }
 
 fec::Ldpc::DecoderOptions Ldpc::detail::Structure::getDecoderOptions() const
 {
-  return DecoderOptions().iterations(iterations()).algorithm(decoderAlgorithm()).scalingFactor(algorithmOptions_.scalingFactor_);;
+  return DecoderOptions().iterations(iterations()).algorithm(decoderAlgorithm()).scalingFactor(scalingFactor_);;
+}
+
+double Ldpc::detail::Structure::scalingFactor(size_t i, size_t j) const
+{
+  i %= scalingFactor_.size();
+  j %= scalingFactor_[i].size();
+  return scalingFactor_[i][j];
 }
 
 /**

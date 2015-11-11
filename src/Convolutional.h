@@ -120,6 +120,9 @@ namespace fec {
         inline Termination termination() const {return termination_;}
         inline const Trellis& trellis() const {return trellis_;}
         
+        fec::LlrType scalingFactor() const {return scalingFactor_;} /**< Access the scalingFactor value used in decoder. */
+        void setScalingFactor(fec::LlrType factor) {scalingFactor_ = factor;} /**< Modify the scalingFactor value used in decoder. */
+        
         virtual bool check(std::vector<BitField<size_t>>::const_iterator parity) const;
         virtual void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const;
         void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity, std::vector<BitField<size_t>>::iterator tail) const;
@@ -138,12 +141,14 @@ namespace fec {
           ar & ::BOOST_SERIALIZATION_NVP(termination_);
           ar & ::BOOST_SERIALIZATION_NVP(tailSize_);
           ar & ::BOOST_SERIALIZATION_NVP(length_);
+          ar & ::BOOST_SERIALIZATION_NVP(scalingFactor_);
         }
         
         Trellis trellis_;
         size_t length_;
         Termination termination_;
         size_t tailSize_;
+        fec::LlrType scalingFactor_;
       };
     };
     

@@ -42,13 +42,6 @@ namespace fec {
     static inline Type max() {return std::numeric_limits<Type>::infinity();}
   };
   
-  template <typename LlrMetrics>
-  struct AlgorithmOptions {
-    typename LlrMetrics::Type scalingFactor_ = 1.0; /**< Gain coefficient used in decoder. */
-    typename LlrMetrics::Type step_ = 2.0;
-    size_t length_ = 8;
-  };
-  
   /**
    *  This class contains implementation of log sum operation.
    */
@@ -56,8 +49,6 @@ namespace fec {
   class LogSum {
   public:
     using isRecursive = std::false_type;
-    
-    LogSum(AlgorithmOptions<LlrMetrics> options = {}) {}
     
     static inline typename LlrMetrics::Type prior(typename LlrMetrics::Type x) {return x;}
     static inline typename LlrMetrics::Type max(typename LlrMetrics::Type a, typename LlrMetrics::Type b) {return std::max(a,b);}
@@ -86,8 +77,6 @@ namespace fec {
   public:
     using isRecursive = std::true_type;
     
-    MaxLogSum(AlgorithmOptions<LlrMetrics> options = {}) {scalingFactor_ = options.scalingFactor_;}
-    
     /**
      * Computes log sum operation.
      *  \param  a Left-hand operand.
@@ -109,8 +98,6 @@ namespace fec {
   class LinearLogSum {
   public:
     using isRecursive = std::true_type;
-    
-    LinearLogSum(AlgorithmOptions<LlrMetrics> options = {}) {}
     
     /**
      * Computes log sum operation.
@@ -141,8 +128,6 @@ namespace fec {
   public:
     using isRecursive = std::true_type;
     
-    BoxSum(AlgorithmOptions<LlrMetrics> options = {}) {}
-    
     /**
      * Computes log sum operation.
      *  \param  a Left-hand operand.
@@ -158,8 +143,6 @@ namespace fec {
   class LinearBoxSum {
   public:
     using isRecursive = std::true_type;
-    
-    LinearBoxSum(AlgorithmOptions<LlrMetrics> options = {}) {}
     
     /**
      * Computes log sum operation.
@@ -193,8 +176,6 @@ namespace fec {
   public:
     using isRecursive = std::true_type;
     
-    MinBoxSum(AlgorithmOptions<LlrMetrics> options = {}) {scalingFactor_ = options.scalingFactor_;}
-    
     /**
      * Computes log sum operation.
      *  \param  a Left-hand operand.
@@ -209,11 +190,9 @@ namespace fec {
       }
     }
     static inline typename LlrMetrics::Type prior(typename LlrMetrics::Type x) {return x;}
-    inline typename LlrMetrics::Type post(typename LlrMetrics::Type x) const {return x;}
-    inline typename LlrMetrics::Type scale(typename LlrMetrics::Type x) const {return x*scalingFactor_;}
+    static inline typename LlrMetrics::Type post(typename LlrMetrics::Type x) {return x;}
     
   private:
-    typename LlrMetrics::Type scalingFactor_ = 1.0;
   };
   
   /**

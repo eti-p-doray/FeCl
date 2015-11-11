@@ -43,6 +43,7 @@ void TurboDecoderImpl::decodeBlock(std::vector<LlrType>::const_iterator parity, 
         serialSharingUpdate(j);
       }
       
+      code_[j]->setScalingFactor(structure().scalingFactor(i, j));
       auto inputInfo = Codec::detail::InputIterator().parity(parityIt).syst(extrinsic);
       auto outputInfo = Codec::detail::OutputIterator().syst(extrinsic);
       code_[j]->soDecodeBlock(inputInfo, outputInfo);

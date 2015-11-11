@@ -77,8 +77,6 @@ namespace fec {
         inline size_t innerStateSize() const {return stateSize_;}
         
         DecoderAlgorithm decoderAlgorithm() const {return decoderAlgorithm_;} /**< Access the algorithm used in decoder. */
-        AlgorithmOptions<FloatLlrMetrics> algorithmOptions() const {return algorithmOptions_;} /**< Access the algorithm options used in decoder. */
-        double scalingFactor() const {return algorithmOptions_.scalingFactor_;} /**< Access the scalingFactor value used in decoder. */
         
         /**
          *  Encodes one block of msg bits.
@@ -101,7 +99,6 @@ namespace fec {
         size_t paritySize_ = 0;/**< Size of parities in each code bloc. */
         size_t stateSize_ = 0;/**< Size of state information in each code bloc. */
         DecoderAlgorithm decoderAlgorithm_; /**< Algorithm type used in decoder. */
-        AlgorithmOptions<FloatLlrMetrics> algorithmOptions_; /**< Algorithm options used in decoder. */
         
       private:
         template <typename Archive>
@@ -112,7 +109,6 @@ namespace fec {
           ar & BOOST_SERIALIZATION_NVP(paritySize_);
           ar & BOOST_SERIALIZATION_NVP(stateSize_);
           ar & BOOST_SERIALIZATION_NVP(decoderAlgorithm_);
-          ar & BOOST_SERIALIZATION_NVP(algorithmOptions_.scalingFactor_);
         }
       };
       

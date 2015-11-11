@@ -149,16 +149,32 @@ void Turbo::detail::Structure::setDecoderOptions(const fec::Turbo::DecoderOption
   iterations_ = decoder.iterations_;
   scheduling_ = decoder.scheduling_;
   decoderAlgorithm_ = decoder.algorithm_;
-  algorithmOptions_.scalingFactor_ = decoder.scalingFactor_;
+  scalingFactor_ = decoder.scalingFactor_;
+  if (scalingFactor_.size() == iterations_) {
+    for (size_t i = 0; i < scalingFactor_.size(); ++i) {
+      if (scalingFactor_[i].size() != constituentCount() && scalingFactor_[i].size() != 1) {
+        throw std::invalid_argument("Wrong size for scaling factor");
+      }
+    }
+  } else if (scalingFactor_.size() != 1) {
+    throw std::invalid_argument("Wrong size for scaling factor");
+  }
   for (size_t i = 0; i < interleaver_.size(); ++i) {
-    auto constituentOptions = Convolutional::DecoderOptions().algorithm(decoder.algorithm_).scalingFactor(decoder.scalingFactor_);
+    auto constituentOptions = Convolutional::DecoderOptions().algorithm(decoder.algorithm_).scalingFactor(1.0);
     constituents_[i].setDecoderOptions(constituentOptions);
   }
 }
 
 Turbo::DecoderOptions Turbo::detail::Structure::getDecoderOptions() const
 {
-  return DecoderOptions().iterations(iterations()).scheduling(scheduling()).algorithm(decoderAlgorithm()).scalingFactor(algorithmOptions_.scalingFactor_);
+  return DecoderOptions().iterations(iterations()).scheduling(scheduling()).algorithm(decoderAlgorithm()).scalingFactor(scalingFactor_);
+}
+
+double Turbo::detail::Structure::scalingFactor(size_t i, size_t j) const
+{
+  i %= scalingFactor_.size();
+  j %= scalingFactor_[i].size();
+  return scalingFactor_[i][j];
 }
 
 void Turbo::detail::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const
