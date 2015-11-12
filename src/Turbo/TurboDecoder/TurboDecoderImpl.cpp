@@ -37,11 +37,13 @@ void TurboDecoderImpl::decodeBlock(std::vector<LlrType>::const_iterator parity, 
     }
     
     if (structure().schedulingType() == Turbo::Custom) {
-      for (size_t j = 0; j < structure().scheduling().stages.size(); ++j) {
-        customActivationUpdate(i, j);
-        for (size_t k = 0; k < structure().scheduling().stages[j].transfer.size(); ++k) {
+      for (size_t j = 0; j < structure().scheduling().size(); ++j) {
+        extrinsicBuffer_ = extrinsic_;
+        for (size_t k = 0; k < structure().scheduling()[j].transfer.size(); ++k) {
           customTransferUpdate(j, k);
         }
+        std::swap(extrinsicBuffer_, extrinsic_);
+        customActivationUpdate(i, j);
       }
     } else {
       auto parityIt = parityIn_.begin() + structure().innerSystSize();
@@ -97,11 +99,13 @@ void TurboDecoderImpl::soDecodeBlock(Codec::detail::InputIterator input, Codec::
     }
     
     if (structure().schedulingType() == Turbo::Custom) {
-      for (size_t j = 0; j < structure().scheduling().stages.size(); ++j) {
-        customActivationUpdate(i, j);
-        for (size_t k = 0; k < structure().scheduling().stages[j].transfer.size(); ++k) {
+      for (size_t j = 0; j < structure().scheduling().size(); ++j) {
+        extrinsicBuffer_ = extrinsic_;
+        for (size_t k = 0; k < structure().scheduling()[j].transfer.size(); ++k) {
           customTransferUpdate(j, k);
         }
+        std::swap(extrinsicBuffer_, extrinsic_);
+        customActivationUpdate(i, j);
       }
     } else {
       auto parityIn = parityIn_.begin() + structure().innerSystSize();
@@ -166,13 +170,16 @@ void TurboDecoderImpl::customActivationUpdate(size_t i, size_t stage)
 {
   auto parityIt = parityIn_.begin() + structure().innerSystSize();
   auto extrinsic = extrinsic_.begin();
-  auto activation = structure().scheduling().stages[stage].activation.begin();
+  auto activation = structure().scheduling()[stage].activation.begin();
   for (size_t j = 0; j < structure().constituentCount(); ++j) {
-    while (*activation < j) {++activation;} if (activation != structure().scheduling().stages[stage].activation.end() && *activation == j) {
+    while (activation != structure().scheduling()[stage].activation.end() && *activation < j) {++activation;}
+    if (activation != structure().scheduling()[stage].activation.end() && *activation == j) {
       code_[j]->setScalingFactor(structure().scalingFactor(i, j));
       auto inputInfo = Codec::detail::InputIterator().parity(parityIt).syst(extrinsic);
       auto outputInfo = Codec::detail::OutputIterator().syst(extrinsic);
       code_[j]->soDecodeBlock(inputInfo, outputInfo);
+    } else if (activation == structure().scheduling()[stage].activation.end()) {
+      break;
     }
     
     extrinsic += structure().constituent(j).innerSystSize();
@@ -241,35 +248,42 @@ void TurboDecoderImpl::serialTransferUpdate(size_t i)
   structure().interleaver(i).template permuteBlock<LlrType>(syst, extrinsicTmp);
 }
 
-void TurboDecoderImpl::customTransferUpdate(size_t stage, size_t i)
+void TurboDecoderImpl::customTransferUpdate(size_t stage, size_t src)
 {
+  size_t i = structure().scheduling()[stage].activation[src];
   auto extrinsic = extrinsic_.begin();
+  auto extrinsicTmp = extrinsicBuffer_.begin();
   auto systTail = parityIn_.begin() + structure().innerMsgSize();
   auto syst = parityOut_.begin();
-  auto transfer = structure().scheduling().stages[stage].transfer[i].begin();
+  auto transfer = structure().scheduling()[stage].transfer[src].begin();
   std::copy(parityIn_.begin(), parityIn_.begin() + structure().innerMsgSize(), parityOut_.begin());
   for (size_t j = 0; j < i; ++j) {
-    while (*transfer < j) {++transfer;} if (transfer != structure().scheduling().stages[stage].transfer[i].end() && *transfer == j) {
+    while (transfer != structure().scheduling()[stage].transfer[src].end() && *transfer < j) {++transfer;}
+    if (transfer != structure().scheduling()[stage].transfer[src].end() && *transfer == j) {
       for (size_t k = 0; k < structure().constituent(j).innerMsgSize(); ++k) {
         syst[structure().interleaver(j)[k]] += extrinsic[k];
       }
     }
     extrinsic += structure().constituent(j).innerSystSize();
+    extrinsicTmp += structure().constituent(j).innerSystSize();
     systTail += structure().constituent(j).systTailSize();
   }
-  auto extrinsicTmp = extrinsic;
+  auto extrinsicConst = extrinsicTmp;
   extrinsic += structure().constituent(i).innerMsgSize();
   std::copy(systTail, systTail + structure().constituent(i).systTailSize(), extrinsic);
   extrinsic += structure().constituent(i).systTailSize();
   for (size_t j = i+1; j < structure().constituentCount(); ++j) {
-    while (*transfer < j) {++transfer;} if (*transfer == j) {
+    while (transfer != structure().scheduling()[stage].transfer[src].end() && *transfer < j) {++transfer;}
+    if (transfer != structure().scheduling()[stage].transfer[src].end() && *transfer == j) {
       for (size_t k = 0; k < structure().constituent(j).innerMsgSize(); ++k) {
         syst[structure().interleaver(j)[k]] += extrinsic[k];
       }
+    } else if (transfer == structure().scheduling()[stage].transfer[src].end()) {
+      break;
     }
     extrinsic += structure().constituent(j).innerSystSize();
   }
   
-  structure().interleaver(i).template permuteBlock<LlrType>(syst, extrinsicTmp);
+  structure().interleaver(i).template permuteBlock<LlrType>(syst, extrinsicConst);
 }
 

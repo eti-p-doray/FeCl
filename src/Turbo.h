@@ -69,24 +69,17 @@ namespace fec {
                 constituents similar to the Belief Propagation algorithm used in ldpc. */
       Custom,/**< Lets the user define a scheduling function. Don't use that. */
     };
-    struct Scheduling {
-      struct Stage {
-        std::vector<size_t> activation;
-        std::vector<std::vector<size_t>> transfer;
-        template <typename Archive>
-        void serialize(Archive & ar, const unsigned int version) {
-          using namespace boost::serialization;
-          ar & ::BOOST_SERIALIZATION_NVP(activation);
-          ar & ::BOOST_SERIALIZATION_NVP(transfer);
-        }
-      };
-      std::vector<Stage> stages;
+    struct Stage {
+      std::vector<size_t> activation;
+      std::vector<std::vector<size_t>> transfer;
       template <typename Archive>
       void serialize(Archive & ar, const unsigned int version) {
         using namespace boost::serialization;
-        ar & ::BOOST_SERIALIZATION_NVP(stages);
+        ar & ::BOOST_SERIALIZATION_NVP(activation);
+        ar & ::BOOST_SERIALIZATION_NVP(transfer);
       }
     };
+    using Scheduling = std::vector<Stage>;
     /**
      *  Ordering of parity bit in Turbo.
      *  This defines the ordering of parity bits that are output from a Turbo permutation of a PuncturedTurbo Codec.
@@ -207,7 +200,7 @@ namespace fec {
         
         inline size_t iterations() const {return iterations_;}
         inline SchedulingType schedulingType() const {return schedulingType_;}
-        inline Scheduling scheduling() const {return scheduling_;}
+        inline const Scheduling& scheduling() const {return scheduling_;}
         
         fec::LlrType scalingFactor(size_t i, size_t j) const; /**< Access the scalingFactor value used in decoder. */
         

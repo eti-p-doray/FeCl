@@ -137,7 +137,7 @@ void BpDecoderImpl<LlrMetrics, BoxSumAlg>::checkUpdate(size_t i)
   for (auto check = structure().checks().begin(); check < structure().checks().end();  ++check) {
     auto first = checkMetric;
     size_t size = check->size();
-    fec::LlrType sf = structure().scalingFactor(i, size);
+    fec::LlrType sf = structure().scalingFactor(i, size-2);
     
     LlrType prod = boxSum_.prior(*first);
     for (size_t j = 1; j < size-1; ++j) {

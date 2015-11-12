@@ -26,6 +26,8 @@
 #include <random>
 #include <chrono>
 #include <algorithm>
+#include <vector>
+#include <unordered_map>
 
 #include <boost/serialization/export.hpp>
 
@@ -86,12 +88,12 @@ namespace fec {
       
       DecoderOptions& algorithm(DecoderAlgorithm algorithm) {algorithm_ = algorithm; return *this;}
       DecoderOptions& iterations(size_t n) {iterations_ = n; return *this;}
-      DecoderOptions& scalingFactor(fec::LlrType factor) {scalingFactor_ = {{factor}}; return *this;}
-      DecoderOptions& scalingFactor(const std::vector<std::vector<fec::LlrType>>& factor) {scalingFactor_ = factor; return *this;}
+      DecoderOptions& scalingFactor(fec::LlrType factor) {scalingFactor_ = {{std::make_pair(0, factor)}}; return *this;}
+      DecoderOptions& scalingFactor(const std::vector<std::unordered_map<size_t,fec::LlrType>>& factor) {scalingFactor_ = factor; return *this;}
       
       DecoderAlgorithm algorithm_ = Approximate;
       size_t iterations_;
-      std::vector<std::vector<fec::LlrType>> scalingFactor_ = {{1.0}};
+      std::vector<std::unordered_map<size_t,fec::LlrType>> scalingFactor_ = {{std::make_pair(0, 1.0)}};
     };
     struct PunctureOptions {
     public:
@@ -155,6 +157,8 @@ namespace fec {
         }
         
         void computeGeneratorMatrix(SparseBitMatrix H);
+        std::vector<fec::LlrType> scalingMapToVector(const std::unordered_map<size_t,fec::LlrType>& map) const;
+        std::unordered_map<size_t,fec::LlrType> scalingVectorToMap(const std::vector<fec::LlrType>& map) const;
         
         SparseBitMatrix H_;
         SparseBitMatrix DC_;

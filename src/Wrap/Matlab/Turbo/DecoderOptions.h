@@ -29,6 +29,7 @@
 
 #include "Turbo.h"
 #include "../util/Conversion.h"
+#include "../util/Scheduling.h"
 
 template <>
 class mxArrayTo<fec::Turbo::DecoderOptions> {
@@ -37,7 +38,8 @@ public:
     try {
       fec::Turbo::DecoderOptions decoderOptions;
       decoderOptions.iterations(  mxArrayTo<size_t>::f(mxGetField(in, 0, "iterations")) );
-      decoderOptions.scheduling(  mxArrayTo<fec::Turbo::SchedulingType>::f(mxGetField(in, 0, "scheduling")) );
+      decoderOptions.scheduling(  mxArrayTo<fec::Turbo::Scheduling>::f(mxGetField(in, 0, "scheduling")) );
+      decoderOptions.scheduling(  mxArrayTo<fec::Turbo::SchedulingType>::f(mxGetField(in, 0, "schedulingType")) );
       decoderOptions.algorithm(  mxArrayTo<fec::DecoderAlgorithm>::f(mxGetField(in, 0, "algorithm")) );
       decoderOptions.scalingFactor(  mxArrayTo<std::vector<std::vector<fec::LlrType>>>::f(mxGetField(in, 0, "scalingFactor")) );
       
@@ -51,11 +53,12 @@ public:
 
 inline mxArray* toMxArray(fec::Turbo::DecoderOptions decoder)
 {
-  const char* fieldnames[] = {"iterations", "scheduling", "algorithm", "scalingFactor"};
-  mxArray* out = mxCreateStructMatrix(1,1, 4, fieldnames);
+  const char* fieldnames[] = {"iterations", "schedulingType", "scheduling", "algorithm", "scalingFactor"};
+  mxArray* out = mxCreateStructMatrix(1,1, 5, fieldnames);
   
   mxSetField(out, 0, fieldnames[0], toMxArray(decoder.iterations_));
   mxSetField(out, 0, fieldnames[1], toMxArray(decoder.schedulingType_));
+  mxSetField(out, 0, fieldnames[1], toMxArray(decoder.scheduling_));
   mxSetField(out, 0, fieldnames[2], toMxArray(decoder.algorithm_));
   mxSetField(out, 0, fieldnames[3], toMxArray(decoder.scalingFactor_));
     

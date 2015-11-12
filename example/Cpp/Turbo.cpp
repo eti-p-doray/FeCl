@@ -57,7 +57,8 @@ int main( int argc, char* argv[] )
   fec::PuncturedTurbo::Options options({trellis, trellis}, {{}, permIdx});
   options.termination(fec::Convolutional::Truncate);
   options.mask({{1, 1}, {1, 0}, {1, 0}});
-  options.algorithm(fec::Exact).iterations(10).scheduling(fec::Turbo::Serial);
+  //fec::Turbo::Scheduling bou = {{ {{0,1}, {{1},{0}}} }};
+  options.algorithm(fec::Exact).iterations(10).scheduling({ {{{1}, {0}}, {0, 1}} });//scheduling(fec::Turbo::Serial);//.
   //! [Creating a Turbo code structure]
   
   

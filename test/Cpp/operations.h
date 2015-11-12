@@ -375,6 +375,9 @@ void test_soDecode_2phases(const fec::Codec& code1, const fec::Codec& code2, siz
   BOOST_REQUIRE(systOut1.size() == systOut2.size());
   BOOST_REQUIRE(parityOut1.size() == parityOut2.size());
   for (size_t i = 0; i < msgOut1.size(); ++i) {
+    if (msgOut1[i] != msgOut2[i]) {
+      auto bou = 0;
+    }
     BOOST_REQUIRE(msgOut1[i] == msgOut2[i]);
   }
   for (size_t i = 0; i < systOut1.size(); ++i) {

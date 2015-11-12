@@ -356,6 +356,22 @@ public:
   }
 };
 
+template <class Key, class T, class Hash, class KeyEqual, class Allocator>
+class mxArrayTo<typename std::unordered_map<Key,T,Hash,KeyEqual,Allocator>, void> {
+public:
+  static std::unordered_map<Key,T,Hash,KeyEqual,Allocator> f(const mxArray* in) {
+    if (in == nullptr) {
+      throw std::invalid_argument("Null input");
+    }
+    std::unordered_map<Key,T,Hash,KeyEqual,Allocator> map;
+    size_t size = mxGetNumberOfElements(in);
+    for (size_t i = 0; i < size; ++i) {
+      map.insert(std::make_pair(mxArrayTo<Key>::f(mxGetField(in, i, "key")), mxArrayTo<T>::f(mxGetField(in, i, "value"))));
+    }
+    return map;
+  }
+};
+
 template <class T>
 class mxArrayTo<MexHandle<T>,void> {
 public:
@@ -398,6 +414,18 @@ template <class T, template <class> class A, typename std::enable_if<std::is_ari
 mxArray* toMxArray(const std::vector<T, A<T>>& vec) {
   mxArray* out = mxCreateNumericMatrix(vec.size(), 1, MexType<T>::ID::value, mxREAL);
   std::copy(vec.begin(), vec.end(), static_cast<T*>(mxGetData(out)));
+  return out;
+}
+
+template <class Key, class T, class Hash, class KeyEqual, class Allocator>
+mxArray* toMxArray(const std::unordered_map<Key,T,Hash,KeyEqual,Allocator>& map) {
+  const char* fieldnames[] = {"key", "value"};
+  mxArray* out = mxCreateStructMatrix(1,map.size(), 2, fieldnames);
+  size_t i = 0;
+  for (auto it = map.begin(); it != map.end(); ++it, ++i) {
+    mxSetField(out, i, fieldnames[0], toMxArray(it->first));
+    mxSetField(out, i, fieldnames[1], toMxArray(it->second));
+  }
   return out;
 }
 

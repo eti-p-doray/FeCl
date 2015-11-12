@@ -37,7 +37,7 @@ public:
     fec::Ldpc::DecoderOptions decoderOptions;
     decoderOptions.iterations(  mxArrayTo<size_t>::f(mxGetField(in, 0, "iterations")) );
     decoderOptions.algorithm(  mxArrayTo<fec::DecoderAlgorithm>::f(mxGetField(in, 0, "algorithm")) );
-    decoderOptions.scalingFactor(  mxArrayTo<std::vector<std::vector<fec::LlrType>>>::f(mxGetField(in, 0, "scalingFactor")) );
+    decoderOptions.scalingFactor(  mxArrayTo<std::vector<std::unordered_map<size_t,fec::LlrType>>>::f(mxGetField(in, 0, "scalingFactor")) );
 
     return decoderOptions;
   }

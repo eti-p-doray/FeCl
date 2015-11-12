@@ -8,5 +8,6 @@ classdef Scheduling < uint32
         %>  Each constituent tries to decode in parallel.
         %>  The extrinsic information is then combined and shared to every constituents similar to the Belief Propagation algorithm used in ldpc.
         Parallel(1)
+        Custom(2)
     end
 end

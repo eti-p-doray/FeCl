@@ -6,10 +6,14 @@ classdef DecoderOptions < hgsetget
         %>  DecoderAlgorithm type used in decoder.
         algorithm = uint32(fec.DecoderAlgorithm.('Linear'));
         %>  Turbo::Scheduling type used in decoder.
-        scheduling = uint32(fec.Turbo.Scheduling.('Serial'));
+scheduling;
         %>  Multiplicative scalingFactor in Approximate decoder.
         scalingFactor = 1.0;
+schedulingType = uint32(fec.Turbo.Scheduling.('Serial'));
     end
+    %properties ()
+        %schedulingType;
+    %end
 
     methods
         function self = DecoderOptions(varargin)
@@ -37,10 +41,18 @@ classdef DecoderOptions < hgsetget
             end
         end
         function self = set.scheduling(self,val)
+            if (ischar(val) || isa(val, 'fec.Turbo.Scheduling'))
+                self.schedulingType = val;
+            elseif (iscell(val))
+                self.scheduling = cell2struct(val, {'activation', 'transfer'}, 2);
+                self.schedulingType = 'Custom';
+            end
+        end
+        function self = set.schedulingType(self,val)
             if (ischar(val))
-                self.scheduling = uint32(fec.Turbo.Scheduling.(val));
+                self.schedulingType = uint32(fec.Turbo.Scheduling.(val));
             else
-                self.scheduling = uint32(fec.Turbo.Scheduling(val));
+                self.schedulingType = uint32(fec.Turbo.Scheduling(val));
             end
         end
     end

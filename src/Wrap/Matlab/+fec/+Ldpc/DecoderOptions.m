@@ -34,5 +34,17 @@ classdef DecoderOptions < hgsetget
                 self.algorithm = uint32(fec.DecoderAlgorithm(val));
             end
         end
+        function self = set.scalingFactor(self,val)
+            if (~iscell(val{1}))
+                self.scalingFactor = {val};
+            else
+                self.scalingFactor = val;
+            end
+            for i = 1:length(self.scalingFactor)
+                if (iscell(self.scalingFactor{i}))
+                    self.scalingFactor{i} = cell2struct(self.scalingFactor{i}, {'key', 'value'}, 1);
+                end
+            end
+        end
     end
 end

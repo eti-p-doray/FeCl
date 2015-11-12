@@ -156,29 +156,62 @@ void Ldpc::detail::Structure::setDecoderOptions(const DecoderOptions& decoder)
 {
   decoderAlgorithm_ = decoder.algorithm_;
   iterations_ = decoder.iterations_;
-  scalingFactor_ = decoder.scalingFactor_;
-  if (scalingFactor_.size() == iterations_) {
-    auto degree = checks().rowSizes();
-    size_t maxDegree = *std::max_element(degree.begin(), degree.begin());
-    for (size_t i = 0; i < scalingFactor_.size(); ++i) {
-      if (scalingFactor_[i].size() < maxDegree && scalingFactor_[i].size() != 1) {
-        throw std::invalid_argument("Wrong size for scaling factor");
-      }
+  if (decoder.scalingFactor_.size() == iterations_ || decoder.scalingFactor_.size() == 1) {
+    scalingFactor_.resize(decoder.scalingFactor_.size());
+    for (size_t i = 0; i < decoder.scalingFactor_.size(); ++i) {
+      scalingFactor_[i] = scalingMapToVector(decoder.scalingFactor_[i]);
     }
-  } else if (scalingFactor_.size() != 1) {
+  } else {
     throw std::invalid_argument("Wrong size for scaling factor");
   }
 }
 
+std::vector<fec::LlrType> Ldpc::detail::Structure::scalingMapToVector(const std::unordered_map<size_t,fec::LlrType>& map) const
+{
+  auto degree = checks().rowSizes();
+  size_t maxDegree = *std::max_element(degree.begin(), degree.begin());
+  std::vector<LlrType> vec(maxDegree);
+  if (map.find(0) != map.end()) {
+    vec.assign(maxDegree-1, map.find(0)->second);
+    for (auto i = map.begin(); i != map.end(); ++i) {
+      if (i->first-2 < maxDegree-1) {
+        vec[i->first-2] = i->second;
+      }
+    }
+  } else {
+    for (auto i = degree.begin(); i < degree.end(); ++i) {
+      auto it = map.find(*i);
+      if (it != map.end()) {
+        vec[it->first-2] = it->second;
+      } else {
+        throw std::invalid_argument("Scaling factor not defined and no default");
+      }
+    }
+  }
+  return vec;
+}
+
+std::unordered_map<size_t,fec::LlrType> Ldpc::detail::Structure::scalingVectorToMap(const std::vector<fec::LlrType>& vec) const
+{
+  std::unordered_map<size_t,fec::LlrType> scaling;
+  for (size_t i = 0; i < vec.size(); ++i) {
+    scaling[i+2] = vec[i];
+  }
+  return scaling;
+}
+
 fec::Ldpc::DecoderOptions Ldpc::detail::Structure::getDecoderOptions() const
 {
-  return DecoderOptions().iterations(iterations()).algorithm(decoderAlgorithm()).scalingFactor(scalingFactor_);;
+  std::vector<std::unordered_map<size_t,fec::LlrType>> scaling(scalingFactor_.size());
+  for (size_t i = 0; i < scalingFactor_.size(); ++i) {
+    scaling[i] = scalingVectorToMap(scalingFactor_[i]);
+  }
+  return DecoderOptions().iterations(iterations()).algorithm(decoderAlgorithm()).scalingFactor(scaling);;
 }
 
 double Ldpc::detail::Structure::scalingFactor(size_t i, size_t j) const
 {
   i %= scalingFactor_.size();
-  j %= scalingFactor_[i].size();
   return scalingFactor_[i][j];
 }
 

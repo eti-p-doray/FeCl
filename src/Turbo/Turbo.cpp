@@ -150,19 +150,21 @@ void Turbo::detail::Structure::setDecoderOptions(const fec::Turbo::DecoderOption
   schedulingType_ = decoder.schedulingType_;
   if (schedulingType() == Custom) {
     scheduling_ = decoder.scheduling_;
-    for (size_t i = 0; i < scheduling().stages.size(); ++i) {
-      if (scheduling().stages[i].activation.size() != scheduling().stages[i].transfer.size()) {
+    for (size_t i = 0; i < scheduling().size(); ++i) {
+      if (scheduling()[i].activation.size() != scheduling()[i].transfer.size()) {
         throw std::invalid_argument("Invalid scheduling : activation and transfer not the same size");
       }
-      for (size_t j = 0; j < scheduling().stages[i].activation.size(); ++j) {
-        if (scheduling().stages[i].activation[j] > constituentCount()) {
+      std::sort(scheduling_[i].activation.begin(), scheduling_[i].activation.end());
+      for (size_t j = 0; j < scheduling()[i].activation.size(); ++j) {
+        if (scheduling()[i].activation[j] > constituentCount()) {
           throw std::invalid_argument("Invalid scheduling : activation of an invalid constituent");
         }
-        for (size_t k = 0; j < scheduling().stages[i].transfer[j].size(); ++k) {
-          if (scheduling().stages[i].transfer[j][k] > constituentCount()) {
-            throw std::invalid_argument("Invalid scheduling : transfer fro an invalid constituent");
+        for (size_t k = 0; k < scheduling()[i].transfer[j].size(); ++k) {
+          if (scheduling()[i].transfer[j][k] > constituentCount()) {
+            throw std::invalid_argument("Invalid scheduling : transfer from an invalid constituent");
           }
         }
+        std::sort(scheduling_[i].transfer[j].begin(), scheduling_[i].transfer[j].end());
       }
     }
   }
