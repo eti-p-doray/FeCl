@@ -37,14 +37,14 @@ namespace fec {
     static std::unique_ptr<TurboDecoder> create(const Turbo::detail::Structure&);
     virtual ~TurboDecoder() = default;
     
-    inline const Turbo::detail::Structure& structure() const {return structure_;}
-    
     void decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n);
     void soDecodeBlocks(Codec::detail::InputIterator input, Codec::detail::OutputIterator output, size_t n);
     
   protected:
     TurboDecoder(const Turbo::detail::Structure& codeStructure);
     TurboDecoder() = default;
+    
+    inline const Turbo::detail::Structure& structure() const {return structure_;}
     
     virtual void decodeBlock(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg) = 0;
     virtual void soDecodeBlock(Codec::detail::InputIterator input, Codec::detail::OutputIterator output) = 0;

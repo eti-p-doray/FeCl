@@ -133,7 +133,7 @@ namespace fec {
       
       DecoderOptions& iterations(size_t count) {iterations_ = count; return *this;}
       DecoderOptions& scheduling(SchedulingType type) {schedulingType_ = type; return *this;}
-      DecoderOptions& scheduling(Scheduling sched) {schedulingType_ = Custom; scheduling_ = sched; return *this;}
+      DecoderOptions& scheduling(const Scheduling& sched) {schedulingType_ = Custom; scheduling_ = sched; return *this;}
       DecoderOptions& algorithm(DecoderAlgorithm algorithm) {algorithm_ = algorithm; return *this;}
       DecoderOptions& scalingFactor(fec::LlrType factor) {scalingFactor_ = {{factor}}; return *this;}
       DecoderOptions& scalingFactor(const std::vector<std::vector<fec::LlrType>>& factor) {scalingFactor_ = factor; return *this;}
@@ -141,7 +141,7 @@ namespace fec {
       size_t iterations_ = 6;
       SchedulingType schedulingType_ = Serial;
       Scheduling scheduling_;
-      DecoderAlgorithm algorithm_ = Approximate;
+      DecoderAlgorithm algorithm_ = Linear;
       std::vector<std::vector<fec::LlrType>> scalingFactor_ = {{1.0}};
     };
     struct PunctureOptions {

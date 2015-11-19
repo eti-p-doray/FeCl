@@ -6,7 +6,7 @@ classdef DecoderOptions < hgsetget
         %>  DecoderAlgorithm type used in decoder.
         algorithm = uint32(fec.DecoderAlgorithm.('Linear'));
         %>  Multiplicative scalingFactor in Approximate decoder.
-        scalingFactor = 1.0;
+        scalingFactor = cell2struct({0, 1.0}, {'key', 'value'}, 2);
     end
 
     methods
@@ -35,16 +35,12 @@ classdef DecoderOptions < hgsetget
             end
         end
         function self = set.scalingFactor(self,val)
-            if (~iscell(val{1}))
-                self.scalingFactor = {val};
-            else
-                self.scalingFactor = val;
-            end
-            for i = 1:length(self.scalingFactor)
-                if (iscell(self.scalingFactor{i}))
-                    self.scalingFactor{i} = cell2struct(self.scalingFactor{i}, {'key', 'value'}, 1);
-                end
-            end
+            if (isscalar(val))
+                val = {0 val};
+            end;
+            if (iscell(val))
+                self.scalingFactor = cell2struct(val, {'key', 'value'}, 2);
+            end;
         end
     end
 end

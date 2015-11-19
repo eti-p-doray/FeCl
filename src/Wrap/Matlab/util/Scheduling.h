@@ -40,9 +40,9 @@ public:
     }
     
     fec::Turbo::Scheduling out;
-    out.stages.resize(mxGetNumberOfElements(in));
-    for (size_t i = 0; i < out.stages.size(); ++i) {
-      out.stages[i] = {mxArrayTo<std::vector<size_t>>::f(mxGetField(in, i, "activation")), mxArrayTo<std::vector<std::vector<size_t>>>::f(mxGetField(in, i, "transfer"))};
+    out.resize(mxGetNumberOfElements(in));
+    for (size_t i = 0; i < out.size(); ++i) {
+      out[i] = {mxArrayTo<std::vector<size_t>>::f(mxGetField(in, i, "activation")), mxArrayTo<std::vector<std::vector<size_t>>>::f(mxGetField(in, i, "transfer"))};
     }
     return out;
   }
@@ -52,7 +52,7 @@ inline mxArray* toMxArray(const fec::Turbo::Scheduling& scheduling)
 {
   const char* fieldnames[] = {"activation", "transfer"};
   mxArray* out = mxCreateStructMatrix(1,scheduling.size(), 2, fieldnames);
-  for (size_t i = 0; i < scheduling.stages.size(); ++i) {
+  for (size_t i = 0; i < scheduling.size(); ++i) {
     mxSetField(out, i, fieldnames[0], toMxArray(scheduling[i].activation));
     mxSetField(out, i, fieldnames[1], toMxArray(scheduling[i].transfer));
   }

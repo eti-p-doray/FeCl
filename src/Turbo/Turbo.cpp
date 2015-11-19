@@ -170,9 +170,9 @@ void Turbo::detail::Structure::setDecoderOptions(const fec::Turbo::DecoderOption
   }
   decoderAlgorithm_ = decoder.algorithm_;
   scalingFactor_ = decoder.scalingFactor_;
-  if (scalingFactor_.size() == iterations_) {
+  if (scalingFactor_.size() == constituentCount()) {
     for (size_t i = 0; i < scalingFactor_.size(); ++i) {
-      if (scalingFactor_[i].size() != constituentCount() && scalingFactor_[i].size() != 1) {
+      if (scalingFactor_[i].size() != iterations() && scalingFactor_[i].size() != 1) {
         throw std::invalid_argument("Wrong size for scaling factor");
       }
     }
@@ -194,7 +194,7 @@ double Turbo::detail::Structure::scalingFactor(size_t i, size_t j) const
 {
   i %= scalingFactor_.size();
   j %= scalingFactor_[i].size();
-  return scalingFactor_[i][j];
+  return scalingFactor_[j][i];
 }
 
 void Turbo::detail::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const
