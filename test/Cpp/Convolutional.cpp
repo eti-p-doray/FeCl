@@ -37,10 +37,10 @@ void test_convo_soDecode_systOut(const fec::Codec& code, size_t n = 1)
   std::vector<fec::BitField<size_t>> parity;
   code.encode(msg, parity);
   
-  std::vector<fec::LlrType> parityIn = distort(parity, snr);
+  std::vector<double> parityIn = distort(parity, snr);
   
-  std::vector<fec::LlrType> msgOut;
-  std::vector<fec::LlrType> systOut;
+  std::vector<double> msgOut;
+  std::vector<double> systOut;
   code.soDecode(fec::Codec::Input<>().parity(parityIn), fec::Codec::Output<>().msg(msgOut).syst(systOut));
   
   for (size_t i = 0; i < msg.size(); ++i) {

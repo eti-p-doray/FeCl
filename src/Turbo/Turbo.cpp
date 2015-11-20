@@ -57,7 +57,7 @@ Codec(std::unique_ptr<detail::Structure>(new detail::Structure(encoder)), workGr
 {
 }
 
-void Turbo::decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const
+void Turbo::decodeBlocks(std::vector<double>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const
 {
   auto worker = TurboDecoder::create(structure());
   worker->decodeBlocks(parity, msg, n);

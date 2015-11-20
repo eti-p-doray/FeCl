@@ -25,6 +25,7 @@
 #include <iostream>
 
 #include "PuncturedTurbo.h"
+#include "Modulation.h"
 
 #include "operations.h"
 

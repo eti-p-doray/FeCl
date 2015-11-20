@@ -57,18 +57,18 @@ Ldpc(std::unique_ptr<detail::Structure>(new detail::Structure(encoder, puncture)
 {
 }
 
-void PuncturedLdpc::decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const
+void PuncturedLdpc::decodeBlocks(std::vector<double>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const
 {
-  std::vector<LlrType> parityTmp(structure().innerParitySize()*n, 0.0);
-  structure().permutation().dePermuteBlocks<LlrType>(parity, parityTmp.begin(), n);
+  std::vector<double> parityTmp(structure().innerParitySize()*n, 0.0);
+  structure().permutation().dePermuteBlocks<double>(parity, parityTmp.begin(), n);
   auto worker = BpDecoder::create(structure());
   worker->decodeBlocks(parityTmp.begin(), msg, n);
 }
 
 void PuncturedLdpc::soDecodeBlocks(Codec::detail::InputIterator input, Codec::detail::OutputIterator output, size_t n) const
 {
-  std::vector<LlrType> parityTmp(structure().innerParitySize()*n, 0.0);
-  structure().permutation().dePermuteBlocks<LlrType>(input.parity(), parityTmp.begin(), n);
+  std::vector<double> parityTmp(structure().innerParitySize()*n, 0.0);
+  structure().permutation().dePermuteBlocks<double>(input.parity(), parityTmp.begin(), n);
   input.parity(parityTmp.begin());
   auto outputTmp = output;
   if (outputTmp.hasParity()) {
@@ -80,7 +80,7 @@ void PuncturedLdpc::soDecodeBlocks(Codec::detail::InputIterator input, Codec::de
   outputTmp.setStructureRef(&struc);
   worker->soDecodeBlocks(input, outputTmp, n);
   if (output.hasParity()) {
-    structure().permutation().permuteBlocks<LlrType>(outputTmp.parity(), output.parity(), n);
+    structure().permutation().permuteBlocks<double>(outputTmp.parity(), output.parity(), n);
   }
 }
 

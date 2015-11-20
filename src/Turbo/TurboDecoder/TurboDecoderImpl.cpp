@@ -27,7 +27,7 @@ TurboDecoderImpl::TurboDecoderImpl(const Turbo::detail::Structure& structure) : 
 {
 }
 
-void TurboDecoderImpl::decodeBlock(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg)
+void TurboDecoderImpl::decodeBlock(std::vector<double>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg)
 {
   std::copy(parity, parity + structure().innerParitySize(), parityIn_.begin());
   std::fill(extrinsic_.begin(), extrinsic_.end(), 0);
@@ -245,7 +245,7 @@ void TurboDecoderImpl::serialTransferUpdate(size_t i)
     extrinsic += structure().constituent(j).innerSystSize();
   }
   
-  structure().interleaver(i).template permuteBlock<LlrType>(syst, extrinsicTmp);
+  structure().interleaver(i).template permuteBlock<double>(syst, extrinsicTmp);
 }
 
 void TurboDecoderImpl::customTransferUpdate(size_t stage, size_t src)
@@ -284,6 +284,6 @@ void TurboDecoderImpl::customTransferUpdate(size_t stage, size_t src)
     extrinsic += structure().constituent(j).innerSystSize();
   }
   
-  structure().interleaver(i).template permuteBlock<LlrType>(syst, extrinsicConst);
+  structure().interleaver(i).template permuteBlock<double>(syst, extrinsicConst);
 }
 

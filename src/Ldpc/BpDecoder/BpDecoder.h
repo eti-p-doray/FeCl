@@ -42,13 +42,13 @@ public:
   static std::unique_ptr<BpDecoder> create(const Ldpc::detail::Structure&);
   virtual ~BpDecoder() = default;
   
-  void decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n);
+  void decodeBlocks(std::vector<double>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n);
   void soDecodeBlocks(Codec::detail::InputIterator input, Codec::detail::OutputIterator output, size_t n);
   
 protected:
   BpDecoder(const Ldpc::detail::Structure& codeStructure);
   
-  virtual void decodeBlock(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg) = 0;
+  virtual void decodeBlock(std::vector<double>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg) = 0;
   virtual void soDecodeBlock(Codec::detail::InputIterator input, Codec::detail::OutputIterator output) = 0;
   
   inline const Ldpc::detail::Structure& structure() const {return structure_;}

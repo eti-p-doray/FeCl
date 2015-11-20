@@ -35,7 +35,7 @@ BpDecoder(structure)
 }
 
 template <class LlrMetrics, template <class> class BoxSumAlg>
-void BpDecoderImpl<LlrMetrics, BoxSumAlg>::decodeBlock(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg)
+void BpDecoderImpl<LlrMetrics, BoxSumAlg>::decodeBlock(std::vector<double>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg)
 {
   std::copy(parity, parity+structure().checks().cols(), parity_.begin());
 
@@ -137,9 +137,9 @@ void BpDecoderImpl<LlrMetrics, BoxSumAlg>::checkUpdate(size_t i)
   for (auto check = structure().checks().begin(); check < structure().checks().end();  ++check) {
     auto first = checkMetric;
     size_t size = check->size();
-    fec::LlrType sf = structure().scalingFactor(i, size);
+    double sf = structure().scalingFactor(i, size);
     
-    LlrType prod = boxSum_.prior(*first);
+    double prod = boxSum_.prior(*first);
     for (size_t j = 1; j < size-1; ++j) {
       checkMetricTmp[j] = boxSum_.prior(first[j]);
       first[j] = prod;

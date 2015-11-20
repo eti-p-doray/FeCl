@@ -127,7 +127,7 @@ namespace fec {
     inline const detail::Structure& structure() const {return dynamic_cast<const detail::Structure&>(Codec::structure());}
     inline detail::Structure& structure() {return dynamic_cast<detail::Structure&>(Codec::structure());}
     
-    virtual void decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const;
+    virtual void decodeBlocks(std::vector<double>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const;
     virtual void soDecodeBlocks(Codec::detail::InputIterator input, Codec::detail::OutputIterator output, size_t n) const;
     
   private:

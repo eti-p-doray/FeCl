@@ -34,8 +34,6 @@
 
 namespace fec {
   
-  using LlrType = double;
-  
   class FloatLlrMetrics {
   public:
     using Type = double;
@@ -204,7 +202,7 @@ namespace fec {
    *  \return Correlation between the two inputs
    */
   template <class LlrMetrics>
-  inline typename LlrMetrics::Type correlation(const fec::BitField<size_t>& a, typename std::vector<LlrType>::const_iterator b, size_t size) {
+  inline typename LlrMetrics::Type correlation(const fec::BitField<size_t>& a, typename std::vector<double>::const_iterator b, size_t size) {
     typename LlrMetrics::Type x = 0;
     for (size_t i = 0; i < size; ++i) {
       if (a.test(i)) {

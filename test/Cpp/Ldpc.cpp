@@ -37,10 +37,10 @@ void test_ldpc_soDecode_systOut(const fec::Ldpc& code, size_t n = 1)
   std::vector<fec::BitField<size_t>> parity;
   code.encode(msg, parity);
   
-  std::vector<fec::LlrType> parityIn = distort(parity, snr);
+  std::vector<double> parityIn = distort(parity, snr);
   
-  std::vector<fec::LlrType> parityOut;
-  std::vector<fec::LlrType> systOut;
+  std::vector<double> parityOut;
+  std::vector<double> systOut;
   code.soDecode(fec::Codec::Input<>().parity(parityIn), fec::Codec::Output<>().parity(parityOut).syst(systOut));
   
   for (size_t i = 0; i < systOut.size(); ++i) {

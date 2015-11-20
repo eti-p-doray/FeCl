@@ -88,12 +88,12 @@ namespace fec {
       
       DecoderOptions& algorithm(DecoderAlgorithm algorithm) {algorithm_ = algorithm; return *this;}
       DecoderOptions& iterations(size_t n) {iterations_ = n; return *this;}
-      DecoderOptions& scalingFactor(fec::LlrType factor) {scalingFactor_ = {std::make_pair(0, std::vector<fec::LlrType>({factor}))}; return *this;}
-      DecoderOptions& scalingFactor(const std::unordered_map<size_t,std::vector<fec::LlrType>>& factor) {scalingFactor_ = factor; return *this;}
+      DecoderOptions& scalingFactor(double factor) {scalingFactor_ = {std::make_pair(0, std::vector<double>({factor}))}; return *this;}
+      DecoderOptions& scalingFactor(const std::unordered_map<size_t,std::vector<double>>& factor) {scalingFactor_ = factor; return *this;}
       
       DecoderAlgorithm algorithm_ = Approximate;
       size_t iterations_;
-      std::unordered_map<size_t,std::vector<fec::LlrType>> scalingFactor_ = {std::make_pair(0, std::vector<fec::LlrType>({1.0}))};
+      std::unordered_map<size_t,std::vector<double>> scalingFactor_ = {std::make_pair(0, std::vector<double>({1.0}))};
     };
     struct PunctureOptions {
     public:
@@ -133,7 +133,7 @@ namespace fec {
         
         inline const SparseBitMatrix& checks() const {return H_;}
         inline size_t iterations() const {return iterations_;}
-        fec::LlrType scalingFactor(size_t i, size_t j) const; /**< Access the scalingFactor value used in decoder. */
+        double scalingFactor(size_t i, size_t j) const; /**< Access the scalingFactor value used in decoder. */
         
         void syndrome(std::vector<uint8_t>::const_iterator parity, std::vector<uint8_t>::iterator syndrome) const;
         virtual bool check(std::vector<BitField<size_t>>::const_iterator parity) const;
@@ -157,8 +157,8 @@ namespace fec {
         }
         
         void computeGeneratorMatrix(SparseBitMatrix H);
-        std::vector<std::vector<fec::LlrType>> scalingMapToVector(const std::unordered_map<size_t,std::vector<fec::LlrType>>& map) const;
-        std::unordered_map<size_t,std::vector<fec::LlrType>> scalingVectorToMap(const std::vector<std::vector<fec::LlrType>>& map) const;
+        std::vector<std::vector<double>> scalingMapToVector(const std::unordered_map<size_t,std::vector<double>>& map) const;
+        std::unordered_map<size_t,std::vector<double>> scalingVectorToMap(const std::vector<std::vector<double>>& map) const;
         
         SparseBitMatrix H_;
         SparseBitMatrix DC_;
@@ -167,7 +167,7 @@ namespace fec {
         SparseBitMatrix B_;
         
         size_t iterations_;
-        std::vector<std::vector<fec::LlrType>> scalingFactor_;
+        std::vector<std::vector<double>> scalingFactor_;
       };
     };
     
@@ -193,7 +193,7 @@ namespace fec {
     inline const detail::Structure& structure() const {return dynamic_cast<const detail::Structure&>(Codec::structure());}
     inline detail::Structure& structure() {return dynamic_cast<detail::Structure&>(Codec::structure());}
     
-    virtual void decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const;
+    virtual void decodeBlocks(std::vector<double>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const;
     virtual void soDecodeBlocks(Codec::detail::InputIterator input, Codec::detail::OutputIterator output, size_t n) const;
     
   private:

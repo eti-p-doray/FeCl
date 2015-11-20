@@ -43,7 +43,7 @@ int main( int argc, char* argv[] )
    The matrix is used to create a code structure.
    */
   auto options = fec::Ldpc::Options(checkMatrix);
-  options.iterations(10).algorithm(fec::Approximate).scalingFactor({std::make_pair(0, std::vector<fec::LlrType>({0.6, 0.7, 0.9, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0}))});
+  options.iterations(10).algorithm(fec::Approximate).scalingFactor({std::make_pair(0, std::vector<double>({0.6, 0.7, 0.9, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0}))});
   //! [Creating a Turbo code structure]
   
   /*

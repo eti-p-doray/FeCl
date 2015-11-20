@@ -63,7 +63,7 @@ void Ldpc::soDecodeBlocks(Codec::detail::InputIterator input, Codec::detail::Out
   worker->soDecodeBlocks(input, output, n);
 }
 
-void Ldpc::decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const
+void Ldpc::decodeBlocks(std::vector<double>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const
 {
   auto worker = BpDecoder::create(structure());
   worker->decodeBlocks(parity, msg, n);
@@ -159,11 +159,11 @@ void Ldpc::detail::Structure::setDecoderOptions(const DecoderOptions& decoder)
   scalingFactor_ = scalingMapToVector(decoder.scalingFactor_);
 }
 
-std::vector<std::vector<fec::LlrType>> Ldpc::detail::Structure::scalingMapToVector(const std::unordered_map<size_t,std::vector<fec::LlrType>>& map) const
+std::vector<std::vector<double>> Ldpc::detail::Structure::scalingMapToVector(const std::unordered_map<size_t,std::vector<double>>& map) const
 {
   auto degree = checks().rowSizes();
   size_t maxDegree = *std::max_element(degree.begin(), degree.begin());
-  std::vector<std::vector<LlrType>> vec;
+  std::vector<std::vector<double>> vec;
   auto def = map.find(0);
   if (def != map.end()) {
     if (def->second.size() != 1 && def->second.size() != iterations()) {
@@ -188,7 +188,7 @@ std::vector<std::vector<fec::LlrType>> Ldpc::detail::Structure::scalingMapToVect
     for (auto i = map.begin(); i != map.end(); ++i) {
       length = std::max(i->second.size(), length);
     }
-    vec.resize(length, std::vector<fec::LlrType>(maxDegree-1));
+    vec.resize(length, std::vector<double>(maxDegree-1));
     if (length != 1 && length != iterations()) {
       throw std::invalid_argument("Wrong size for scaling factor");
     }
@@ -209,14 +209,14 @@ std::vector<std::vector<fec::LlrType>> Ldpc::detail::Structure::scalingMapToVect
   return vec;
 }
 
-std::unordered_map<size_t,std::vector<fec::LlrType>> Ldpc::detail::Structure::scalingVectorToMap(const std::vector<std::vector<fec::LlrType>>& vec) const
+std::unordered_map<size_t,std::vector<double>> Ldpc::detail::Structure::scalingVectorToMap(const std::vector<std::vector<double>>& vec) const
 {
-  std::unordered_map<size_t,std::vector<fec::LlrType>> scaling;
+  std::unordered_map<size_t,std::vector<double>> scaling;
   for (size_t i = 0; i < vec.size(); ++i) {
     for (size_t j = 0; j < vec[i].size(); ++j) {
       auto it = scaling.find(j+2);
       if (it == scaling.end()) {
-        scaling.insert(std::make_pair(j+2, std::vector<fec::LlrType>(vec.size())));
+        scaling.insert(std::make_pair(j+2, std::vector<double>(vec.size())));
       }
       scaling[j+2][i] = vec[i][j];
     }

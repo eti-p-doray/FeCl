@@ -48,7 +48,7 @@ V randomBits(size_t n) {
   return msg;
 }
 
-std::vector<fec::LlrType> distort(const std::vector<fec::BitField<size_t>>& input, double snrdb)
+std::vector<double> distort(const std::vector<fec::BitField<size_t>>& input, double snrdb)
 {
   const int8_t bpsk[2] = {-1, 1};
   
@@ -59,7 +59,7 @@ std::vector<fec::LlrType> distort(const std::vector<fec::BitField<size_t>>& inpu
   randomGenerator.seed(uint32_t(seed));
   std::normal_distribution<double> normalDistribution(snr*4.0, 4.0*sqrt(snr/2.0));
   
-  std::vector<fec::LlrType> llr(input.size());
+  std::vector<double> llr(input.size());
   for (int i = 0; i < input.size(); i++) {
     llr[i] = bpsk[input[i]] * normalDistribution(randomGenerator);
   }
@@ -105,7 +105,7 @@ boost::property_tree::ptree fecEncode(const fec::Codec& code, const std::vector<
   return et;
 }
 
-boost::property_tree::ptree fecDecode(const fec::Codec& code, const std::vector<std::vector<fec::BitField<size_t>>>& msg, const std::vector<std::vector<fec::LlrType>>& llr)
+boost::property_tree::ptree fecDecode(const fec::Codec& code, const std::vector<std::vector<fec::BitField<size_t>>>& msg, const std::vector<std::vector<double>>& llr)
 {
   std::vector<double> elapsedTimes(llr.size());
   std::vector<double> errorCount(llr.size(), 0);

@@ -120,8 +120,8 @@ namespace fec {
         inline Termination termination() const {return termination_;}
         inline const Trellis& trellis() const {return trellis_;}
         
-        fec::LlrType scalingFactor() const {return scalingFactor_;} /**< Access the scalingFactor value used in decoder. */
-        void setScalingFactor(fec::LlrType factor) {scalingFactor_ = factor;} /**< Modify the scalingFactor value used in decoder. */
+        double scalingFactor() const {return scalingFactor_;} /**< Access the scalingFactor value used in decoder. */
+        void setScalingFactor(double factor) {scalingFactor_ = factor;} /**< Modify the scalingFactor value used in decoder. */
         
         virtual bool check(std::vector<BitField<size_t>>::const_iterator parity) const;
         virtual void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const;
@@ -148,7 +148,7 @@ namespace fec {
         size_t length_;
         Termination termination_;
         size_t tailSize_;
-        fec::LlrType scalingFactor_;
+        double scalingFactor_;
       };
     };
     
@@ -174,7 +174,7 @@ namespace fec {
     inline const detail::Structure& structure() const {return dynamic_cast<const detail::Structure&>(Codec::structure());}
     inline detail::Structure& structure() {return dynamic_cast<detail::Structure&>(Codec::structure());}
     
-    virtual void decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const;
+    virtual void decodeBlocks(std::vector<double>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const;
     virtual void soDecodeBlocks(Codec::detail::InputIterator input, Codec::detail::OutputIterator output, size_t n) const;
     
   private:

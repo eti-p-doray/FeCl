@@ -183,8 +183,8 @@ namespace fec {
         bool hasMsg_ = false;
         const Structure* structureRef_;
       };
-      using InputIterator = InfoIterator<std::vector<LlrType>::const_iterator>;
-      using OutputIterator = InfoIterator<std::vector<LlrType>::iterator>;
+      using InputIterator = InfoIterator<std::vector<double>::const_iterator>;
+      using OutputIterator = InfoIterator<std::vector<double>::iterator>;
       
       template <class Vector>
       class Info {
@@ -251,9 +251,9 @@ namespace fec {
     };
     
     template <template <typename> class A = std::allocator>
-    using Input = detail::Info<const std::vector<LlrType,A<LlrType>>>;
+    using Input = detail::Info<const std::vector<double,A<double>>>;
     template <template <typename> class A = std::allocator>
-    using Output = detail::Info<std::vector<LlrType,A<LlrType>>>;
+    using Output = detail::Info<std::vector<double,A<double>>>;
     
     virtual ~Codec() = default;
     
@@ -276,9 +276,9 @@ namespace fec {
     std::vector<BitField<size_t>,A<BitField<size_t>>> encode(const std::vector<BitField<size_t>,A<BitField<size_t>>>& message) const;
     
     template <template <typename> class A>
-    void decode(const std::vector<LlrType,A<LlrType>>& parity, std::vector<BitField<size_t>,A<BitField<size_t>>>& msg) const;
+    void decode(const std::vector<double,A<double>>& parity, std::vector<BitField<size_t>,A<BitField<size_t>>>& msg) const;
     template <template <typename> class A>
-    std::vector<BitField<size_t>,A<BitField<size_t>>> decode(const std::vector<LlrType,A<LlrType>>& parity) const;
+    std::vector<BitField<size_t>,A<BitField<size_t>>> decode(const std::vector<double,A<double>>& parity) const;
     
     template <template <typename> class A>
     void soDecode(Input<A> input, Output<A> output) const;
@@ -304,7 +304,7 @@ namespace fec {
      *    in the decoded msg sequence.
      *    Output needs to be pre-allocated.
      */
-    virtual void decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const = 0;
+    virtual void decodeBlocks(std::vector<double>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const = 0;
     /**
      *  Decodes several blocks of information bits.
      *  A posteriori information about the msg is output instead of the decoded bit sequence.
@@ -359,7 +359,7 @@ std::vector<fec::BitField<size_t>,A<fec::BitField<size_t>>> fec::Codec::encode(c
 }
 
 template <template <typename> class A>
-std::vector<fec::BitField<size_t>,A<fec::BitField<size_t>>> fec::Codec::decode(const std::vector<fec::LlrType,A<fec::LlrType>>& parity) const
+std::vector<fec::BitField<size_t>,A<fec::BitField<size_t>>> fec::Codec::decode(const std::vector<double,A<double>>& parity) const
 {
   std::vector<fec::BitField<size_t>,A<fec::BitField<size_t>>> message;
   decode(parity, message);
@@ -414,7 +414,7 @@ void fec::Codec::encode(const std::vector<BitField<size_t>,A<BitField<size_t>>>&
  *    the matlab API to use a custom mex allocator
  */
 template <template <typename> class A>
-void fec::Codec::decode(const std::vector<LlrType,A<LlrType>>& parity, std::vector<BitField<size_t>,A<BitField<size_t>>>& msg) const
+void fec::Codec::decode(const std::vector<double,A<double>>& parity, std::vector<BitField<size_t>,A<BitField<size_t>>>& msg) const
 {
   size_t blockCount = parity.size() / paritySize();
   if (parity.size() != blockCount * paritySize()) {

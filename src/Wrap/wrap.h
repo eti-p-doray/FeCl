@@ -109,9 +109,9 @@ const std::vector<std::function<typename WrapFcn<Wrap>::Signature>> WrapFcn<Wrap
   {
     auto codec = wrapTo<Handle<Codec>>::f(in[0]);
     
-    std::vector<LlrType,Allocator<LlrType>> parity;
+    std::vector<double,Allocator<double>> parity;
     try {
-      parity = wrapTo<std::vector<LlrType,Allocator<LlrType>>>::f(in[1]);
+      parity = wrapTo<std::vector<double,Allocator<double>>>::f(in[1]);
     } catch (std::exception& e) {
       throw std::invalid_argument("Parity vector is invalid");
     }
@@ -124,11 +124,11 @@ const std::vector<std::function<typename WrapFcn<Wrap>::Signature>> WrapFcn<Wrap
   {
     auto codec = wrapTo<Handle<Codec>>::f(in[0]);
     
-    std::vector<LlrType,Allocator<LlrType>> parityIn = wrapTo<std::vector<LlrType,Allocator<LlrType>>>::f(in[1]);
-    std::vector<LlrType,Allocator<LlrType>> stateIn;
-    if (in.size() > 2) stateIn = wrapTo<std::vector<LlrType,Allocator<LlrType>>>::f(in[2]);
-    std::vector<LlrType,Allocator<LlrType>> systIn;
-    if (in.size() > 3) systIn = wrapTo<std::vector<LlrType,Allocator<LlrType>>>::f(in[3]);
+    std::vector<double,Allocator<double>> parityIn = wrapTo<std::vector<double,Allocator<double>>>::f(in[1]);
+    std::vector<double,Allocator<double>> stateIn;
+    if (in.size() > 2) stateIn = wrapTo<std::vector<double,Allocator<double>>>::f(in[2]);
+    std::vector<double,Allocator<double>> systIn;
+    if (in.size() > 3) systIn = wrapTo<std::vector<double,Allocator<double>>>::f(in[3]);
     
     auto input = Codec::Input<Allocator>();
     if (parityIn.size()) input.parity(parityIn);
@@ -136,10 +136,10 @@ const std::vector<std::function<typename WrapFcn<Wrap>::Signature>> WrapFcn<Wrap
     if (systIn.size()) input.syst(systIn);
     
     auto output = Codec::Output<Allocator>();
-    std::vector<LlrType,Allocator<LlrType>> msg;
-    std::vector<LlrType,Allocator<LlrType>> systOut;
-    std::vector<LlrType,Allocator<LlrType>> stateOut;
-    std::vector<LlrType,Allocator<LlrType>> parityOut;
+    std::vector<double,Allocator<double>> msg;
+    std::vector<double,Allocator<double>> systOut;
+    std::vector<double,Allocator<double>> stateOut;
+    std::vector<double,Allocator<double>> parityOut;
     output.msg(msg);
     if (out.size() > 1) output.syst(systOut);
     if (out.size() > 2) output.state(stateOut);

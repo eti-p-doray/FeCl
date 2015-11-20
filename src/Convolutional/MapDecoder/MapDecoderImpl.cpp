@@ -54,7 +54,7 @@ MapDecoder(structure)
 template <class LlrMetrics, template <class> class LogSumAlg>
 void MapDecoderImpl<LlrMetrics, LogSumAlg>::soDecodeBlock(Codec::detail::InputIterator input, Codec::detail::OutputIterator output)
 {
-  soDecodeBlockImpl<LlrType>(input, output);
+  soDecodeBlockImpl<double>(input, output);
 }
 
 /**

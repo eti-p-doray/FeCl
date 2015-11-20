@@ -41,7 +41,7 @@ public:
       decoderOptions.scheduling(  mxArrayTo<fec::Turbo::Scheduling>::f(mxGetField(in, 0, "scheduling")) );
       decoderOptions.scheduling(  mxArrayTo<fec::Turbo::SchedulingType>::f(mxGetField(in, 0, "schedulingType")) );
       decoderOptions.algorithm(  mxArrayTo<fec::DecoderAlgorithm>::f(mxGetField(in, 0, "algorithm")) );
-      decoderOptions.scalingFactor(  mxArrayTo<std::vector<std::vector<fec::LlrType>>>::f(mxGetField(in, 0, "scalingFactor")) );
+      decoderOptions.scalingFactor(  mxArrayTo<std::vector<std::vector<double>>>::f(mxGetField(in, 0, "scalingFactor")) );
       
       return decoderOptions;
     } catch (std::exception& e) {

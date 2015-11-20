@@ -68,7 +68,7 @@ ptree speed_Convolutional(std::vector<double> snrdb)
   
   std::vector<std::vector<BitField<size_t>>> msg(snrdb.size());
   std::vector<std::vector<bvec>> itppMsg(snrdb.size());
-  std::vector<std::vector<LlrType>> llr(snrdb.size());
+  std::vector<std::vector<double>> llr(snrdb.size());
   std::vector<std::vector<vec>> itppLlr(snrdb.size());
   for (int i = 0; i < snrdb.size(); ++i) {
     msg[i] = randomBits<std::vector<BitField<size_t>>>(N * T);
@@ -153,7 +153,7 @@ ptree speed_Turbo(std::vector<double> snrdb)
   
   std::vector<std::vector<BitField<size_t>>> msg(snrdb.size());
   std::vector<std::vector<bvec>> itppMsg(snrdb.size());
-  std::vector<std::vector<LlrType>> llr(snrdb.size());
+  std::vector<std::vector<double>> llr(snrdb.size());
   std::vector<std::vector<vec>> itppLlr(snrdb.size());
   for (int i = 0; i < snrdb.size(); ++i) {
     msg[i] = randomBits<std::vector<BitField<size_t>>>(N * T);
@@ -239,7 +239,7 @@ ptree speed_Ldpc(std::vector<double> snrdb)
   
   std::vector<std::vector<BitField<size_t>>> msg(snrdb.size());
   std::vector<std::vector<bvec>> itppMsg(snrdb.size());
-  std::vector<std::vector<LlrType>> llr(snrdb.size());
+  std::vector<std::vector<double>> llr(snrdb.size());
   std::vector<std::vector<vec>> itppLlr(snrdb.size());
   for (int i = 0; i < snrdb.size(); ++i) {
     msg[i] = randomBits<std::vector<BitField<size_t>>>(N * T);

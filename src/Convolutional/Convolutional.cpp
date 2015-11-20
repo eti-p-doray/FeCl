@@ -65,7 +65,7 @@ void Convolutional::soDecodeBlocks(Codec::detail::InputIterator input, Codec::de
   worker->soDecodeBlocks(input, output, n);
 }
 
-void Convolutional::decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const
+void Convolutional::decodeBlocks(std::vector<double>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const
 {
   auto worker = ViterbiDecoder::create(structure());
   worker->decodeBlocks(parity, msg, n);

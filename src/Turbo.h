@@ -135,14 +135,14 @@ namespace fec {
       DecoderOptions& scheduling(SchedulingType type) {schedulingType_ = type; return *this;}
       DecoderOptions& scheduling(const Scheduling& sched) {schedulingType_ = Custom; scheduling_ = sched; return *this;}
       DecoderOptions& algorithm(DecoderAlgorithm algorithm) {algorithm_ = algorithm; return *this;}
-      DecoderOptions& scalingFactor(fec::LlrType factor) {scalingFactor_ = {{factor}}; return *this;}
-      DecoderOptions& scalingFactor(const std::vector<std::vector<fec::LlrType>>& factor) {scalingFactor_ = factor; return *this;}
+      DecoderOptions& scalingFactor(double factor) {scalingFactor_ = {{factor}}; return *this;}
+      DecoderOptions& scalingFactor(const std::vector<std::vector<double>>& factor) {scalingFactor_ = factor; return *this;}
       
       size_t iterations_ = 6;
       SchedulingType schedulingType_ = Serial;
       Scheduling scheduling_;
       DecoderAlgorithm algorithm_ = Linear;
-      std::vector<std::vector<fec::LlrType>> scalingFactor_ = {{1.0}};
+      std::vector<std::vector<double>> scalingFactor_ = {{1.0}};
     };
     struct PunctureOptions {
     public:
@@ -202,7 +202,7 @@ namespace fec {
         inline SchedulingType schedulingType() const {return schedulingType_;}
         inline const Scheduling& scheduling() const {return scheduling_;}
         
-        fec::LlrType scalingFactor(size_t i, size_t j) const; /**< Access the scalingFactor value used in decoder. */
+        double scalingFactor(size_t i, size_t j) const; /**< Access the scalingFactor value used in decoder. */
         
         virtual bool check(std::vector<BitField<size_t>>::const_iterator parity) const;
         virtual void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const;
@@ -232,7 +232,7 @@ namespace fec {
         size_t iterations_;
         SchedulingType schedulingType_;
         Scheduling scheduling_;
-        std::vector<std::vector<fec::LlrType>> scalingFactor_;
+        std::vector<std::vector<double>> scalingFactor_;
       };
     };
     
@@ -258,7 +258,7 @@ namespace fec {
     inline const detail::Structure& structure() const {return dynamic_cast<const detail::Structure&>(Codec::structure());}
     inline detail::Structure& structure() {return dynamic_cast<detail::Structure&>(Codec::structure());}
     
-    virtual void decodeBlocks(std::vector<LlrType>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const;
+    virtual void decodeBlocks(std::vector<double>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const;
     virtual void soDecodeBlocks(Codec::detail::InputIterator input, Codec::detail::OutputIterator output, size_t n) const;
     
   private:
