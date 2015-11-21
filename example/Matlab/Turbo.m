@@ -59,15 +59,6 @@ codec = fec.Turbo(trellis, interl, 'algorithm', 'Approximate')
 puncturingPermutation{1} = codec.puncturing('mask', [1 1; 1 0; 0 1; 0 0]);
 puncturingPermutation{2} = codec.puncturing('mask', [1 1; 0 1; 1 0; 0 0]);
 
-%>  [Puncturing mask]
-% We can define a puncturing pattern with a mask.
-codec = fec.PuncturedTurbo(trellis, interl, 'mask', [1 1; 1 0; 0 1; 0 0])
-
-% In the example above, the mask will also extend to the tail bits.
-% We can define a different mask to be used on the tail.
-codec = fec.PuncturedTurbo(trellis, interl, 'mask', [1 1; 1 0; 0 1; 0 0], 'tailMask', [1; 1; 1; 1; 0; 0]);
-%>  [Puncturing mask]
-
 
 %And as all codecs, with can change the number of thread used for
 %operations. In this case, we are using 2 threads.
