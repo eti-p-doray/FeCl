@@ -24,7 +24,7 @@
 #include <memory>
 #include <iostream>
 
-#include "PuncturedTurbo.h"
+#include "Turbo.h"
 #include "Modulation.h"
 
 #include "operations.h"
@@ -55,18 +55,15 @@ int main( int argc, char* argv[] )
   /*
    The trellis and interleaver indices are used to create a code structure.
    */
-  fec::PuncturedTurbo::Options options({trellis, trellis}, {{}, permIdx});
-  options.termination(fec::Convolutional::Truncate);
-  options.mask({{1, 1}, {1, 0}, {1, 0}});
-  //fec::Turbo::Scheduling bou = {{ {{0,1}, {{1},{0}}} }};
-  options.algorithm(fec::Approximate).iterations(10).scheduling({ {{0, 1}, {{1}, {0}}} });//scheduling(fec::Turbo::Serial);//.
+  auto encOptions = fec::Turbo::EncoderOptions({trellis, trellis}, {{}, permIdx}).termination(fec::Trellis::Truncate);
+  auto decOptions = fec::Turbo::DecoderOptions({}).algorithm(fec::Approximate).iterations(10).scheduling({ {{0, 1}, {{1}, {0}}} });
   //! [Creating a Turbo code structure]
   
   
   /*
    A codec is created and ready to operate
    */
-  std::unique_ptr<fec::Codec> codec(new fec::PuncturedTurbo(options));
+  std::unique_ptr<fec::Codec> codec(new fec::Turbo(encOptions, decOptions));
   //! [Creating a Turbo code]
   
   std::cout << per(codec, -1) << std::endl;

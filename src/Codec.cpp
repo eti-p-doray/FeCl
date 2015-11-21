@@ -24,9 +24,8 @@
 using namespace fec;
 
 BOOST_CLASS_EXPORT_IMPLEMENT(Codec);
-BOOST_CLASS_EXPORT_IMPLEMENT(Codec::detail::Structure);
 
-Codec::Codec(std::unique_ptr<Codec::detail::Structure>&& structure, int workGroupSize) : structure_(std::move(structure))
+Codec::Codec(std::unique_ptr<detail::Codec::Structure>&& structure, int workGroupSize) : structure_(std::move(structure))
 {
   workGroupSize_ = workGroupSize;
 }

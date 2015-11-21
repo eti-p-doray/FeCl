@@ -26,16 +26,13 @@
 #include <boost/archive/binary_oarchive.hpp>
 
 #include "Convolutional.h"
-#include "PuncturedConvolutional.h"
 #include "Turbo.h"
-#include "PuncturedTurbo.h"
 #include "Ldpc.h"
-#include "PuncturedLdpc.h"
 #include "Serialization.h"
 
 using namespace fec;
 
-const DerivedTypeHolder<Convolutional,PuncturedConvolutional,Turbo,PuncturedTurbo,Ldpc,PuncturedLdpc> derivedCodec = {};
+const detail::DerivedTypeHolder<Convolutional,Turbo,Ldpc> derivedCodec = {};
 
 template <class Wrap>
 class WrapFcn {
@@ -46,6 +43,7 @@ public:
   template <typename T> using Handle = typename Wrap::template Handle<T>;
   using InArgList = typename Wrap::InArgList;
   using OutArgList = typename Wrap::OutArgList;
+  template <typename T, typename... Args> static Handle<T> load(Args&&... args) {return Wrap::template load<T>(std::forward<Args>(args)...);}
   
   using Signature = void(const InArgList in, OutArgList out);
   static const std::vector<std::function<Signature>> list;
@@ -198,11 +196,6 @@ const std::vector<std::function<typename WrapFcn<Wrap>::Signature>> WrapFcn<Wrap
     wrapTo<Handle<Turbo>>::f(in[0])->setDecoderOptions(wrapTo<Turbo::DecoderOptions>::f(in[1]));
   },
   
-  /*[](const InArgList in, OutArgList out) //Turbo_setEncoderOptions
-  {
-    wrapTo<Handle<Turbo>>::f(in[0])->setEncoderOptions(wrapTo<Turbo::EncoderOptions>::f(in[1]));
-  },*/
-  
   [](const InArgList in, OutArgList out) //Turbo_puncturing
   {
     out[0] = toWrap(wrapTo<Handle<Turbo>>::f(in[0])->puncturing(wrapTo<Turbo::PunctureOptions>::f(in[1])));
@@ -211,17 +204,6 @@ const std::vector<std::function<typename WrapFcn<Wrap>::Signature>> WrapFcn<Wrap
   [](const InArgList in, OutArgList out) //Turbo_Lte3Gpp_interleaver
   {
     out[0] = toWrap(Turbo::Lte3Gpp::interleaver(wrapTo<size_t>::f(in[0])));
-  },
-  
-  [](const InArgList in, OutArgList out) //PuncturedTurbo_constructor
-  {
-    Handle<Codec> codec(new PuncturedTurbo(wrapTo<Turbo::EncoderOptions>::f(in[0]), wrapTo<Turbo::PunctureOptions>::f(in[1]), wrapTo<Turbo::DecoderOptions>::f(in[2])));
-    out[0] = toWrap(std::move(codec));
-  },
-  
-  [](const InArgList in, OutArgList out) //PuncturedTurbo_set_punctureOptions
-  {
-    wrapTo<Handle<PuncturedTurbo>>::f(in[0])->setPunctureOptions(wrapTo<Turbo::PunctureOptions>::f(in[1]));
   },
   
   [](const InArgList in, OutArgList out) //Ldpc_constructor
@@ -240,11 +222,6 @@ const std::vector<std::function<typename WrapFcn<Wrap>::Signature>> WrapFcn<Wrap
     wrapTo<Handle<Ldpc>>::f(in[0])->setDecoderOptions(wrapTo<Ldpc::DecoderOptions>::f(in[1]));
   },
   
-  /*[](const InArgList in, OutArgList out) //Ldpc_setEncoderOptions
-  {
-    wrapTo<Handle<Ldpc>>::f(in[0])->setEncoderOptions(wrapTo<Ldpc::EncoderOptions>::f(in[1]));
-  },*/
-  
   [](const InArgList in, OutArgList out) //Ldpc_puncturing
   {
     out[0] = toWrap(wrapTo<Handle<Ldpc>>::f(in[0])->puncturing(wrapTo<Ldpc::PunctureOptions>::f(in[1])));
@@ -253,17 +230,6 @@ const std::vector<std::function<typename WrapFcn<Wrap>::Signature>> WrapFcn<Wrap
   [](const InArgList in, OutArgList out) //Ldpc_DvbS2_matrix
   {
     out[0] = toWrap(Ldpc::DvbS2::matrix(wrapTo<size_t>::f(in[0]), wrapTo<double>::f(in[1])));
-  },
-  
-  [](const InArgList in, OutArgList out) //PuncturedLdpc_constructor
-  {
-    Handle<Codec> codec(new PuncturedLdpc(wrapTo<Ldpc::EncoderOptions>::f(in[0]), wrapTo<Ldpc::PunctureOptions>::f(in[1]), wrapTo<Ldpc::DecoderOptions>::f(in[2])));
-    out[0] = toWrap(std::move(codec));
-  },
-  
-  [](const InArgList in, OutArgList out) //PuncturedLdpc_set_punctureOptions
-  {
-    wrapTo<Handle<PuncturedLdpc>>::f(in[0])->setPunctureOptions(wrapTo<Ldpc::PunctureOptions>::f(in[1]));
   },
   
   [](const InArgList in, OutArgList out) //Convolutional_constructor
@@ -292,20 +258,9 @@ const std::vector<std::function<typename WrapFcn<Wrap>::Signature>> WrapFcn<Wrap
     out[0] = toWrap(wrapTo<Handle<Convolutional>>::f(in[0])->puncturing(wrapTo<Convolutional::PunctureOptions>::f(in[1])));
   },
   
-  [](const InArgList in, OutArgList out) //PuncturedLdpc_constructor
-  {
-    Handle<Codec> codec(new PuncturedConvolutional(wrapTo<Convolutional::EncoderOptions>::f(in[0]), wrapTo<Convolutional::PunctureOptions>::f(in[1]), wrapTo<Convolutional::DecoderOptions>::f(in[2])));
-    out[0] = toWrap(std::move(codec));
-  },
-  
-  [](const InArgList in, OutArgList out) //PuncturedLdpc_set_punctureOptions
-  {
-    wrapTo<Handle<PuncturedConvolutional>>::f(in[0])->setPunctureOptions(wrapTo<Convolutional::PunctureOptions>::f(in[1]));
-  },
-  
   [](const InArgList in, OutArgList out) //Trellis_constructor
   {
-    auto constraintLength = wrapTo<std::vector<BitField<size_t>>>::f(in[0]);
+    auto constraintLength = wrapTo<std::vector<size_t>>::f(in[0]);
     auto generator = wrapTo<std::vector<std::vector<BitField<size_t>>>>::f(in[1]);
     auto feedback = wrapTo<std::vector<BitField<size_t>>>::f(in[2]);
     

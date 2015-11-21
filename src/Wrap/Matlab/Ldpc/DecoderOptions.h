@@ -49,9 +49,9 @@ inline mxArray* toMxArray(fec::Ldpc::DecoderOptions decoder)
   const char* fieldnames[] = {"iterations", "algorithm", "scalingFactor"};
   mxArray* out = mxCreateStructMatrix(1,1,4, fieldnames);
   
-  mxSetField(out, 0, fieldnames[0], toMxArray(decoder.iterations_));
-  mxSetField(out, 0, fieldnames[1], toMxArray(decoder.algorithm_));
-  mxSetField(out, 0, fieldnames[2], toMxArray(decoder.scalingFactor_));
+  mxSetField(out, 0, fieldnames[0], toMxArray(decoder.iterations()));
+  mxSetField(out, 0, fieldnames[1], toMxArray(decoder.algorithm()));
+  mxSetField(out, 0, fieldnames[2], toMxArray(decoder.scalingFactor()));
     
   return out;
 }

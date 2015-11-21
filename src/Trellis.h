@@ -44,6 +44,16 @@ namespace fec {
 class Trellis {
   friend class boost::serialization::access;
 public:
+  
+  /**
+   *  Trellis termination types.
+   *  This specifies the type of termination at the end of each bloc.
+   */
+  enum Termination {
+    Tail, /**< The state is brought to zero by implicitly adding new msg bit */
+    Truncate /**< The state is forced to zero by truncating the trellis */
+  };
+  
   /**
    *  This struct represents branch information.
    */
@@ -51,10 +61,25 @@ public:
     BitField<size_t> nextState;/**< Final state of the branch */
     BitField<size_t> output;/**< Output symbol sequence associated with the branch */
   };
+  struct Options {
+    friend class Trellis;
+  public:
+    Options(const std::vector<size_t>& constraintLengths, const std::vector<std::vector<BitField<size_t>>>& generator) {constraintLengths_ = constraintLengths; generator_ = generator;}
+    
+    Options& feedback(const std::vector<BitField<size_t>>& feedback) {feedback_ = feedback; return *this;}
+    Options& order(const std::vector<size_t>& order) {order_ = order; return *this;}
+    
+  private:
+    std::vector<size_t> constraintLengths_;
+    std::vector<std::vector<BitField<size_t>>> generator_;
+    std::vector<BitField<size_t>> feedback_ = {};
+    std::vector<size_t> order_ = {};
+  };
   
   Trellis() = default;
-  Trellis(std::vector<BitField<size_t>> nextState, std::vector<BitField<size_t>> output, size_t inputSize, size_t outputSize, size_t stateSize);
-  Trellis(std::vector<BitField<size_t> > constraintLengths, std::vector<std::vector<BitField<size_t> > > generator, std::vector<BitField<size_t> > feedback = {});/**< Not yet implemented */
+  Trellis(const Options& options);
+  Trellis(const std::vector<BitField<size_t>>& nextState, const std::vector<BitField<size_t>>& output, size_t inputSize, size_t outputSize, size_t stateSize);
+  Trellis(const std::vector<size_t>& constraintLengths, const std::vector<std::vector<BitField<size_t>>>& generator, std::vector<BitField<size_t>> feedback = {});
   
   Trellis(const Trellis&) = default;
   

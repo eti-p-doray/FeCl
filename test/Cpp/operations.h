@@ -27,11 +27,8 @@
 #include "Serialization.h"
 #include "Codec.h"
 #include "Convolutional.h"
-#include "PuncturedConvolutional.h"
 #include "Turbo.h"
-#include "PuncturedTurbo.h"
 #include "Ldpc.h"
-#include "PuncturedLdpc.h"
 
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const std::vector<T>& a)
@@ -61,7 +58,7 @@ std::vector<double> distort(const std::vector<fec::BitField<T>>& input, double s
   return llr;
 }
 
-void test_encodeBlock(const fec::Codec::detail::Structure& structure)
+void test_encodeBlock(const fec::detail::Codec::Structure& structure)
 {
   std::vector<fec::BitField<size_t>> msg0(structure.msgSize(), 0);
   std::vector<fec::BitField<size_t>> parity(structure.paritySize());
@@ -107,10 +104,10 @@ void test_encode_badMsgSize(const fec::Codec& code)
 }
 
 void test_saveLoad(const fec::Codec& code) {
-  DerivedTypeHolder<fec::Convolutional, fec::Turbo, fec::Ldpc> derived;
+  fec::detail::DerivedTypeHolder<fec::Convolutional, fec::Turbo, fec::Ldpc> derived;
   std::vector<char> archive(archiveSize(&code, derived));
   save(&code, &archive[0], archive.size(), derived);
-  auto recover = load<fec::Codec>(&archive[0], archive.size(), derived);
+  auto recover = fec::detail::load<fec::Codec>(&archive[0], archive.size(), derived);
 }
 
 void test_decode(const fec::Codec& code, double snr, size_t n = 1)
@@ -375,9 +372,6 @@ void test_soDecode_2phases(const fec::Codec& code1, const fec::Codec& code2, siz
   BOOST_REQUIRE(systOut1.size() == systOut2.size());
   BOOST_REQUIRE(parityOut1.size() == parityOut2.size());
   for (size_t i = 0; i < msgOut1.size(); ++i) {
-    if (msgOut1[i] != msgOut2[i]) {
-      auto bou = 0;
-    }
     BOOST_REQUIRE(msgOut1[i] == msgOut2[i]);
   }
   for (size_t i = 0; i < systOut1.size(); ++i) {

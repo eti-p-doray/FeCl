@@ -33,7 +33,7 @@ using namespace fec;
  *  \param  outputSize  Number of output symbol for each branch
  *  \param  stateSize Number of bits (registers) in the state
  */
-Trellis::Trellis(std::vector<BitField<size_t>> nextState, std::vector<BitField<size_t>> output, size_t inputSize, size_t outputSize, size_t stateSize)
+Trellis::Trellis(const std::vector<BitField<size_t>>& nextState, const std::vector<BitField<size_t>>& output, size_t inputSize, size_t outputSize, size_t stateSize)
 {
   stateSize_ = stateSize;
   outputSize_ = outputSize;
@@ -73,7 +73,7 @@ Trellis::Trellis(std::vector<BitField<size_t>> nextState, std::vector<BitField<s
  *    (connections from each register to each output)
  *    associated with each input bit stream
  */
-Trellis::Trellis(std::vector<BitField<size_t>> constraintLengths, std::vector<std::vector<BitField<size_t>>> generator, std::vector<BitField<size_t>> feedback)
+Trellis::Trellis(const std::vector<size_t>& constraintLengths, const std::vector<std::vector<BitField<size_t>>>& generator, std::vector<BitField<size_t>> feedback)
 {
   inputSize_ = size_t(generator.size());
   outputSize_ = size_t(generator[0].size());

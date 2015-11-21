@@ -52,37 +52,28 @@ test_suite* test_turbo(const fec::Turbo::EncoderOptions& encoder, const fec::Tur
 {
   test_suite* ts = BOOST_TEST_SUITE(name);
   
-  auto structure = fec::Turbo::detail::Structure(encoder, decoder);
-  auto puncturedStructure = fec::PuncturedTurbo::detail::Structure(encoder, puncture, decoder);
+  auto structure = fec::detail::Turbo::Structure(encoder, decoder);
   
   auto codec = fec::Turbo(structure);
-  auto puncturedCodec = fec::PuncturedTurbo(puncturedStructure);
-  auto perm = puncturedStructure.permutation();
   
   ts->add( BOOST_TEST_CASE(std::bind(&test_encodeBlock, structure )));
   ts->add( BOOST_TEST_CASE(std::bind(&test_encode, codec, 1 )));
-  ts->add( BOOST_TEST_CASE(std::bind(&test_encode_puncture, codec, perm, puncturedCodec, 1 )));
   ts->add( BOOST_TEST_CASE(std::bind(&test_encode, codec, 5 )));
-  ts->add( BOOST_TEST_CASE(std::bind(&test_encode_puncture, codec, perm, puncturedCodec, 5 )));
   ts->add( BOOST_TEST_CASE(std::bind(&test_encode_badMsgSize, codec )));
   
   ts->add( BOOST_TEST_CASE(std::bind( &test_decode, codec, snr, 1) ));
   ts->add( BOOST_TEST_CASE(std::bind( &test_decode, codec, snr, 5) ));
-  ts->add( BOOST_TEST_CASE(std::bind( &test_decode_puncture, codec, perm, puncturedCodec, -5.0, 5) ));
   ts->add( BOOST_TEST_CASE(std::bind( &test_decode_badParitySize, codec )));
   
   ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode, codec, -5.0, 1) ));
-  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_puncture, codec, perm, puncturedCodec, -5.0, 5) ));
   ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_parityOut, codec, snr, 1) ));
   ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_0stateIn, codec, 1) ));
   ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_0systIn, codec, 1) ));
   ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_systIn, codec, -5.0, 1) ));
-  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_systIn, puncturedCodec, -5.0, 1) ));
   
   auto decoder2 = decoder;
-  decoder2.iterations_ = 2*decoder.iterations_;
+  decoder2.iterations(2*decoder.iterations());
   ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_2phases, codec, fec::Turbo(encoder, decoder2), 1)));
-  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_2phases, puncturedCodec, fec::PuncturedTurbo(encoder, puncture, decoder2), 1)));
   ts->add( BOOST_TEST_CASE(std::bind( &test_turbo_soDecode_systOut, codec, 1)));
   
   ts->add( BOOST_TEST_CASE(std::bind(&test_soDecode_badParitySize, codec )));
@@ -110,13 +101,13 @@ init_unit_test_suite( int argc, char* argv[] )
   
   fec::Trellis trellis({4}, {{017}}, {015});
   auto encoder = fec::Turbo::EncoderOptions(trellis, {{}, permIndex}).
-  termination(fec::Convolutional::Truncate);
-  auto decoder = fec::Turbo::DecoderOptions().algorithm(fec::Exact).iterations(4).scheduling(fec::Turbo::Parallel);
+  termination(fec::Trellis::Truncate);
+  auto decoder = fec::Turbo::DecoderOptions().algorithm(fec::Exact).iterations(4).scheduling(fec::Parallel);
   auto puncture = fec::Turbo::PunctureOptions().mask({{1}, {1, 0}, {1, 0}});
   
   framework::master_test_suite().add(test_turbo(encoder, decoder, puncture, -2.0, "default"));
   
-  encoder.termination(fec::Convolutional::Tail);
+  encoder.termination(fec::Trellis::Tail);
   framework::master_test_suite().add(test_turbo(encoder, decoder, puncture, -2.0, "tail"));
   
   decoder.algorithm(fec::Linear);
@@ -125,7 +116,7 @@ init_unit_test_suite( int argc, char* argv[] )
   decoder.algorithm(fec::Approximate);
   framework::master_test_suite().add(test_turbo(encoder, decoder, puncture, -2.0, "approximate"));
   
-  decoder.scheduling(fec::Turbo::Serial);
+  decoder.scheduling(fec::Serial);
   framework::master_test_suite().add(test_turbo(encoder, decoder, puncture, -2.0, "serial"));
   
   std::vector<size_t> permIndex2(n);
@@ -141,10 +132,10 @@ init_unit_test_suite( int argc, char* argv[] )
   encoder = fec::Turbo::EncoderOptions({fec::Trellis({4}, {{017}}, {015}),
     fec::Trellis({3, 3}, {{05, 03, 0}, {0, 03, 07}}, {07, 05}),
     fec::Trellis({4}, {{017, 013}}, {015})}, {permIndex, permIndex2, permIndex3}).
-  termination(fec::Convolutional::Truncate);
+  termination(fec::Trellis::Truncate);
   framework::master_test_suite().add(test_turbo(encoder, decoder, {}, -2.0, "3 constituents"));
   
-  encoder.termination(fec::Convolutional::Tail);
+  encoder.termination(fec::Trellis::Tail);
   decoder.algorithm(fec::Exact);
   framework::master_test_suite().add(test_turbo(encoder, decoder, {}, -2.0, "3 constituents + tail"));
   
@@ -160,11 +151,11 @@ init_unit_test_suite( int argc, char* argv[] )
   }
   std::shuffle (permIndex3.begin(), permIndex3.end(), randomGenerator);
   
-  decoder.scheduling(fec::Turbo::Serial);
-  encoder.interleaver_ = {permIndex, permIndex2, permIndex3};
+  decoder.scheduling(fec::Serial);
+  encoder.interleaver({permIndex, permIndex2, permIndex3});
   framework::master_test_suite().add(test_turbo(encoder, decoder, {}, 0.0, "3 var length constituents + Serial"));
   
-  decoder.scheduling(fec::Turbo::Parallel);
+  decoder.scheduling(fec::Parallel);
   framework::master_test_suite().add(test_turbo(encoder, decoder, {}, 0.0, "3 var length constituents + Parallel"));
   return 0;
 }

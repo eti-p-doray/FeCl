@@ -55,7 +55,7 @@ ptree speed_Convolutional(std::vector<double> snrdb)
   std::vector<itpp::Convolutional_Code> itppCodecs;
   
   fec::Trellis trellis({4}, {{017, 015}}, {017});
-  auto encOpt = fec::Convolutional::EncoderOptions(trellis, T).termination(fec::Convolutional::Truncate);
+  auto encOpt = fec::Convolutional::EncoderOptions(trellis, T).termination(fec::Trellis::Truncate);
   codecs.push_back(fec::Convolutional(encOpt,1));
   
   itppCodecs.push_back(itpp::Convolutional_Code());
@@ -131,8 +131,8 @@ ptree speed_Turbo(std::vector<double> snrdb)
   ivec itppPermIdx(permIdx.size());
   for (size_t i = 0; i < permIdx.size(); ++i) {itppPermIdx[i] = permIdx[i];}
   
-  auto encOpt = fec::Turbo::EncoderOptions(trellis, {{}, permIdx}).termination(fec::Convolutional::Tail);
-  auto decOpt = fec::Turbo::DecoderOptions().algorithm(fec::Exact).iterations(4).scheduling(fec::Turbo::Serial);
+  auto encOpt = fec::Turbo::EncoderOptions(trellis, {{}, permIdx}).termination(fec::Trellis::Tail);
+  auto decOpt = fec::Turbo::DecoderOptions().algorithm(fec::Exact).iterations(4).scheduling(fec::Serial);
   codecs.push_back(fec::Turbo(encOpt, decOpt,1));
   decOpt.algorithm(fec::Linear);
   codecs.push_back(fec::Turbo(encOpt, decOpt,1));

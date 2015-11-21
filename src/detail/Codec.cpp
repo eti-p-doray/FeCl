@@ -19,34 +19,6 @@
  along with FeCl.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#ifndef WRAP_CONVOLUTIONAL_ENCODER_OPTIONS
-#define WRAP_CONVOLUTIONAL_ENCODER_OPTIONS
+#include "Codec.h"
 
-#include <memory>
-#include <type_traits>
-
-#include <mex.h>
-
-#include "Convolutional.h"
-#include "../util/Trellis.h"
-#include "../util/Conversion.h"
-
-template <>
-class mxArrayTo<fec::Convolutional::EncoderOptions> {
-public:
-  static fec::Convolutional::EncoderOptions f(const mxArray* in) {
-    try {
-      auto trellis = mxArrayTo<fec::Trellis>::f(mxGetField(in, 0, "trellis"));
-      size_t length = mxArrayTo<size_t>::f(mxGetField(in, 0, "length"));
-      fec::Convolutional::EncoderOptions encoderOptions(trellis, length);
-    
-      encoderOptions.termination(mxArrayTo<fec::Trellis::Termination>::f(mxGetField(in, 0, "termination")));
-    
-      return encoderOptions;
-    } catch (std::exception& e) {
-      throw std::invalid_argument("In encoder options: " + std::string(e.what()));
-    }
-  }
-};
-
-#endif
+BOOST_CLASS_EXPORT_IMPLEMENT(fec::detail::Codec::Structure);

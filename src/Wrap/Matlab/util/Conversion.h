@@ -26,6 +26,7 @@
 #include <cstring>
 #include <type_traits>
 #include <vector>
+#include <unordered_map>
 
 #include <boost/serialization/type_info_implementation.hpp>
 

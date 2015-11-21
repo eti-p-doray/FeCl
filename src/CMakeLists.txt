@@ -1,22 +1,22 @@
 set(SOURCES
   Codec.cpp
   Trellis.cpp
-  Convolutional/Convolutional.cpp
-  Convolutional/PuncturedConvolutional.cpp
-  Convolutional/MapDecoder/MapDecoder.cpp
-  Convolutional/MapDecoder/MapDecoderImpl.cpp
-  Convolutional/ViterbiDecoder/ViterbiDecoder.cpp
-  Convolutional/ViterbiDecoder/ViterbiDecoderImpl.cpp
-  Turbo/Turbo.cpp
-  Turbo/PuncturedTurbo.cpp
-  Turbo/Lte3Gpp.cpp
-  Turbo/TurboDecoder/TurboDecoder.cpp
-  Turbo/TurboDecoder/TurboDecoderImpl.cpp
-  Ldpc/Ldpc.cpp
-  Ldpc/PuncturedLdpc.cpp
-  Ldpc/DvbS2.cpp
-  Ldpc/BpDecoder/BpDecoder.cpp
-  Ldpc/BpDecoder/BpDecoderImpl.cpp
+  Convolutional.cpp
+  Turbo.cpp
+  Lte3Gpp.cpp
+  Ldpc.cpp
+  DvbS2.cpp
+  detail/Convolutional.cpp
+  detail/MapDecoder/MapDecoder.cpp
+  detail/MapDecoder/MapDecoderImpl.cpp
+  detail/ViterbiDecoder/ViterbiDecoder.cpp
+  detail/ViterbiDecoder/ViterbiDecoderImpl.cpp
+  detail/Turbo.cpp
+  detail/TurboDecoder/TurboDecoder.cpp
+  detail/TurboDecoder/TurboDecoderImpl.cpp
+  detail/Ldpc.cpp
+  detail/BpDecoder/BpDecoder.cpp
+  detail/BpDecoder/BpDecoderImpl.cpp
 )
 
 add_library (core OBJECT ${SOURCES})

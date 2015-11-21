@@ -26,16 +26,13 @@
 #include <boost/archive/binary_oarchive.hpp>
 
 #include "Convolutional.h"
-#include "PuncturedConvolutional.h"
 #include "Turbo.h"
-#include "PuncturedTurbo.h"
 #include "Ldpc.h"
-#include "PuncturedLdpc.h"
 #include "Serialization.h"
 
 using namespace fec;
 
-const DerivedTypeHolder<Convolutional,PuncturedConvolutional,Turbo,PuncturedTurbo,Ldpc,PuncturedLdpc> derivedCodec = {};
+const fec::detail::DerivedTypeHolder<Convolutional,Turbo,Ldpc> derivedCodec = {};
 
 template <class Wrap>
 class TestWrapFcn {

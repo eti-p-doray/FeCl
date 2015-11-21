@@ -42,15 +42,15 @@ mxArray* save(const  MexHandle<T>& u,  DerivedTypeHolder derived)
 {
   const T* base_pointer = u.get();
   
-  size_t size = archiveSize(base_pointer, derived);
+  size_t size = fec::detail::archiveSize(base_pointer, derived);
   mxArray* out = mxCreateNumericMatrix(size, 1, MexType<uint8_t>::ID::value, mxREAL);
-  save(base_pointer, reinterpret_cast<char*>(mxGetData(out)), size, derived);
+  fec::detail::save(base_pointer, reinterpret_cast<char*>(mxGetData(out)), size, derived);
   
   return out;
 }
 
 template <class T, class DerivedTypeHolder>
- MexHandle<T> load(const mxArray* in, DerivedTypeHolder derived)
+MexHandle<T> load(const mxArray* in, DerivedTypeHolder derived)
 {
   if (in == nullptr) {
     std::invalid_argument("null");
@@ -58,7 +58,7 @@ template <class T, class DerivedTypeHolder>
   if (mxGetData(in) == nullptr) {
     std::invalid_argument("invalid");
   }
-  auto ptr = load<T>(reinterpret_cast<const char*>(mxGetData(in)), mxGetNumberOfElements(in), derived);
+  auto ptr = fec::detail::load<T>(reinterpret_cast<const char*>(mxGetData(in)), mxGetNumberOfElements(in), derived);
   return  MexHandle<T>(ptr.release());
 }
 

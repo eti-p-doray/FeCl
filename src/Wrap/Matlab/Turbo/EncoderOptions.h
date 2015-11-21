@@ -41,7 +41,7 @@ public:
       auto interl = mxArrayTo<std::vector<fec::Permutation>>::f(mxGetField(in, 0, "interleaver"));
       fec::Turbo::EncoderOptions encoderOptions(trellis, interl);
       
-      encoderOptions.termination(mxArrayTo<std::vector<fec::Convolutional::Termination>>::f(mxGetField(in, 0, "termination")));
+      encoderOptions.termination(mxArrayTo<std::vector<fec::Trellis::Termination>>::f(mxGetField(in, 0, "termination")));
       
       return encoderOptions;
     } catch (std::exception& e) {

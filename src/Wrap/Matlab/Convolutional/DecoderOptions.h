@@ -51,8 +51,8 @@ inline mxArray* toMxArray(fec::Convolutional::DecoderOptions decoder)
   const char* fieldnames[] = {"algorithm", "scalingFactor"};
   mxArray* out = mxCreateStructMatrix(1,1,2, fieldnames);
   
-  mxSetField(out, 0, fieldnames[0], toMxArray(decoder.algorithm_));
-  mxSetField(out, 0, fieldnames[1], toMxArray(decoder.scalingFactor_));
+  mxSetField(out, 0, fieldnames[0], toMxArray(decoder.algorithm()));
+  mxSetField(out, 0, fieldnames[1], toMxArray(decoder.scalingFactor()));
     
   return out;
 }

@@ -52,44 +52,30 @@ test_suite* test_ldpc(const fec::Ldpc::EncoderOptions& encoder, const fec::Ldpc:
 {
   test_suite* ts = BOOST_TEST_SUITE(name);
   
-  auto structure = fec::Ldpc::detail::Structure(encoder, decoder);
-  
-  //std::cout << structure.checks() << std::endl;
-  
-  auto puncturedStructure = fec::PuncturedLdpc::detail::Structure(encoder, puncture, decoder);
-  
-  //std::cout << puncturedStructure.checks() << std::endl;
+  auto structure = fec::detail::Ldpc::Structure(encoder, decoder);
   
   auto codec = fec::Ldpc(structure);
-  auto puncturedCodec = fec::PuncturedLdpc(puncturedStructure);
-  auto perm = puncturedStructure.permutation();
 
   ts->add( BOOST_TEST_CASE(std::bind(&test_encodeBlock, structure )));
   ts->add( BOOST_TEST_CASE(std::bind(&test_encode, codec, 1 )));
-  ts->add( BOOST_TEST_CASE(std::bind(&test_encode_puncture, codec, perm, puncturedCodec, 1 )));
   ts->add( BOOST_TEST_CASE(std::bind(&test_encode, codec, 5 )));
-  ts->add( BOOST_TEST_CASE(std::bind(&test_encode_puncture, codec, perm, puncturedCodec, 5 )));
   ts->add( BOOST_TEST_CASE(std::bind(&test_encode_badMsgSize, codec )));
   
   ts->add( BOOST_TEST_CASE(std::bind( &test_decode, codec, snr, 1) ));
   ts->add( BOOST_TEST_CASE(std::bind( &test_decode, codec, snr, 5) ));
-  ts->add( BOOST_TEST_CASE(std::bind( &test_decode_puncture, codec, perm, puncturedCodec, -5.0, 5) ));
   ts->add( BOOST_TEST_CASE(std::bind( &test_decode_badParitySize, codec )));
 
   ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode, codec, -5.0, 1) ));
-  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_puncture, codec, perm, puncturedCodec, -5.0, 5) ));
   ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_parityOut, codec, snr, 1) ));
   ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_0stateIn, codec, 1) ));
   ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_0systIn, codec, 1) ));
   ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_systIn, codec, -5.0, 1) ));
-  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_systIn, puncturedCodec, -5.0, 1) ));
   
   auto structure2 = structure;
   auto decoder2 = structure.getDecoderOptions();
-  decoder2.iterations(2*decoder2.iterations_);
+  decoder2.iterations(2*decoder2.iterations());
   structure2.setDecoderOptions(decoder2);
   ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_2phases, codec, fec::Ldpc(structure2), 1)));
-  ts->add( BOOST_TEST_CASE(std::bind( &test_soDecode_2phases, puncturedCodec, fec::PuncturedLdpc(encoder, puncture, decoder2), 1)));
   ts->add( BOOST_TEST_CASE(std::bind( &test_ldpc_soDecode_systOut, codec, 1)));
   
   ts->add( BOOST_TEST_CASE(std::bind(&test_soDecode_badParitySize, codec )));
