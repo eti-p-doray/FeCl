@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['iterator',['Iterator',['../classfec_1_1_sparse_bit_matrix_1_1_iterator.html',1,'fec::SparseBitMatrix']]]
+  ['gallager',['Gallager',['../structfec_1_1_ldpc_1_1_gallager.html',1,'fec::Ldpc']]]
 ];

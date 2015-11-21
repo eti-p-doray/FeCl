@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['bitordering',['BitOrdering',['../classfec_1_1_turbo.html#a17758d89a9553b3a1cee151409f41220',1,'fec::Turbo']]]
+  ['bitordering',['BitOrdering',['../namespacefec_1_1detail_1_1_turbo.html#a7b988863650f0c6033053da52ee343c4',1,'fec::detail::Turbo']]]
 ];

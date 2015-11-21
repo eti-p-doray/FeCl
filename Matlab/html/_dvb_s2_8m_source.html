@@ -89,14 +89,19 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">DvbS2.m</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="_dvb_s2_8m.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno"><a class="line" href="classfec_1_1_ldpc_1_1_dvb_s2.html">    1</a></span>&#160;classdef <a class="code" href="classfec_1_1_ldpc_1_1_dvb_s2.html">DvbS2</a></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;    methods (Static)</div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;        function mat = matrix(length, rate)</div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;            mat = <a class="code" href="namespacefec.html">fec</a>.bin.wrap(uint32(<a class="code" href="namespacefec.html">fec</a>.detail.WrapFcnId.Ldpc_DvbS2_matrix), length, rate);</div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;        end</div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;    end</div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;end</div>
-<div class="ttc" id="classfec_1_1_ldpc_1_1_dvb_s2_html"><div class="ttname"><a href="classfec_1_1_ldpc_1_1_dvb_s2.html">fec::Ldpc::DvbS2</a></div><div class="ttdef"><b>Definition:</b> <a href="_dvb_s2_8m_source.html#l00001">DvbS2.m:1</a></div></div>
+<a href="_dvb_s2_8m.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;%&gt; This <span class="keyword">class </span>contains functions associated with the DvbS2 standard.</div>
+<div class="line"><a name="l00002"></a><span class="lineno"><a class="line" href="classfec_1_1_ldpc_1_1_dvb_s2.html">    2</a></span>&#160;classdef <a class="code" href="classfec_1_1_ldpc_1_1_dvb_s2.html">DvbS2</a></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;    methods (Static)</div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;        %&gt;  Access an ldpc matrix defined in the standard.</div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;        %&gt;  @param  length  Lenght of codeword.</div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;        %&gt;  @param  rate    Rate associated with the matrix.</div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;        %&gt;  @<span class="keywordflow">return</span> A sparse matrix as defined in the standard.</div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;        <span class="keyword">function</span> mat = matrix(length, rate)</div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;            mat = <a class="code" href="namespacefec.html">fec</a>.bin.wrap(uint32(<a class="code" href="namespacefec.html">fec</a>.detail.WrapFcnId.Ldpc_DvbS2_matrix), length, rate);</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;        end</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    end</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;end</div>
+<div class="ttc" id="classfec_1_1_ldpc_1_1_dvb_s2_html"><div class="ttname"><a href="classfec_1_1_ldpc_1_1_dvb_s2.html">fec::Ldpc::DvbS2</a></div><div class="ttdoc">This class contains functions associated with the DvbS2 standard. </div><div class="ttdef"><b>Definition:</b> <a href="_dvb_s2_8m_source.html#l00002">DvbS2.m:2</a></div></div>
 <div class="ttc" id="namespacefec_html"><div class="ttname"><a href="namespacefec.html">fec</a></div><div class="ttdoc">Foward Error Correction namespace. </div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

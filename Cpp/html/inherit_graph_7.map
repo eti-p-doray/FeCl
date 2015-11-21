@@ -1,5 +1,6 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$structfec_1_1_convolutional_1_1_decoder_options.html" title="fec::Convolutional\l::DecoderOptions" alt="" coords="5,5,133,46"/>
-<area shape="rect" id="node2" href="$structfec_1_1_convolutional_1_1_options.html" title="fec::Convolutional\l::Options" alt="" coords="181,38,309,79"/>
-<area shape="rect" id="node3" href="$structfec_1_1_convolutional_1_1_encoder_options.html" title="fec::Convolutional\l::EncoderOptions" alt="" coords="5,70,133,111"/>
+<area shape="rect" id="node1" href="$classfec_1_1_codec.html" title="This class represents a general encoder / decoder. " alt="" coords="5,56,91,83"/>
+<area shape="rect" id="node2" href="$classfec_1_1_convolutional.html" title="This class represents a convolutional encode / decoder. " alt="" coords="139,5,267,32"/>
+<area shape="rect" id="node3" href="$classfec_1_1_ldpc.html" title="This class represents an ldpc encode / decoder. " alt="" coords="165,56,241,83"/>
+<area shape="rect" id="node4" href="$classfec_1_1_turbo.html" title="This class represents a turbo encode / decoder. " alt="" coords="161,107,244,133"/>
 </map>

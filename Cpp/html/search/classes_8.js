@@ -1,10 +1,9 @@
 var searchData=
 [
-  ['permutation',['Permutation',['../classfec_1_1_permutation.html',1,'fec']]],
-  ['puncturedconvolutional',['PuncturedConvolutional',['../classfec_1_1_punctured_convolutional.html',1,'fec']]],
-  ['puncturedldpc',['PuncturedLdpc',['../classfec_1_1_punctured_ldpc.html',1,'fec']]],
-  ['puncturedturbo',['PuncturedTurbo',['../classfec_1_1_punctured_turbo.html',1,'fec']]],
-  ['punctureoptions',['PunctureOptions',['../structfec_1_1_ldpc_1_1_puncture_options.html',1,'fec::Ldpc']]],
-  ['punctureoptions',['PunctureOptions',['../structfec_1_1_convolutional_1_1_puncture_options.html',1,'fec::Convolutional']]],
-  ['punctureoptions',['PunctureOptions',['../structfec_1_1_turbo_1_1_puncture_options.html',1,'fec::Turbo']]]
+  ['mapdecoder',['MapDecoder',['../classfec_1_1detail_1_1_map_decoder.html',1,'fec::detail']]],
+  ['mapdecoderimpl',['MapDecoderImpl',['../classfec_1_1detail_1_1_map_decoder_impl.html',1,'fec::detail']]],
+  ['maxlogsum',['MaxLogSum',['../classfec_1_1detail_1_1_max_log_sum.html',1,'fec::detail']]],
+  ['minboxsum',['MinBoxSum',['../classfec_1_1detail_1_1_min_box_sum.html',1,'fec::detail']]],
+  ['modoptions',['ModOptions',['../structfec_1_1_modulation_1_1_mod_options.html',1,'fec::Modulation']]],
+  ['modulation',['Modulation',['../classfec_1_1_modulation.html',1,'fec']]]
 ];

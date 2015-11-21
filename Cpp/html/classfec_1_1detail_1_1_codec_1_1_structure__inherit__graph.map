@@ -1,0 +1,5 @@
+<map id="fec::detail::Codec::Structure" name="fec::detail::Codec::Structure">
+<area shape="rect" id="node2" href="$classfec_1_1detail_1_1_convolutional_1_1_structure.html" title="This class represents a convolutional codec structure. " alt="" coords="179,5,346,46"/>
+<area shape="rect" id="node3" href="$classfec_1_1detail_1_1_ldpc_1_1_structure.html" title="This class represents a ldpc code structure. " alt="" coords="201,70,324,111"/>
+<area shape="rect" id="node4" href="$classfec_1_1detail_1_1_turbo_1_1_structure.html" title="This class represents a convolutional code structure. " alt="" coords="202,135,323,177"/>
+</map>

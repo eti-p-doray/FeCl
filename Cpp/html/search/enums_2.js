@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['scheduling',['Scheduling',['../classfec_1_1_turbo.html#a1cc8395a6fad54fc1a32d1ab2bb4c1eb',1,'fec::Turbo']]]
+  ['schedulingtype',['SchedulingType',['../namespacefec.html#abb0c461b053d6b57ab2174406f42619f',1,'fec']]]
 ];

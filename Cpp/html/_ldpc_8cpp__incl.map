@@ -1,8 +1,13 @@
-<map id="Ldpc/Ldpc.cpp" name="Ldpc/Ldpc.cpp">
-<area shape="rect" id="node2" href="$_ldpc_8h.html" title="../Ldpc.h" alt="" coords="1171,80,1244,107"/>
-<area shape="rect" id="node8" href="$_codec_8h.html" title="Codec.h" alt="" coords="943,155,1015,181"/>
-<area shape="rect" id="node22" href="$_bit_matrix_8h.html" title="BitMatrix.h" alt="" coords="1773,155,1859,181"/>
-<area shape="rect" id="node24" href="$_permutation_8h.html" title="Permutation.h" alt="" coords="1585,244,1689,271"/>
-<area shape="rect" id="node17" href="$_bit_field_8h.html" title="BitField.h" alt="" coords="1715,244,1792,271"/>
-<area shape="rect" id="node21" href="$_decoder_algorithm_8h.html" title="DecoderAlgorithm.h" alt="" coords="1079,244,1219,271"/>
+<map id="Ldpc.cpp" name="Ldpc.cpp">
+<area shape="rect" id="node2" href="$_ldpc_8h.html" title="Ldpc.h" alt="" coords="588,155,650,181"/>
+<area shape="rect" id="node32" href="$_bp_decoder_8h.html" title="detail/BpDecoder/BpDecoder.h" alt="" coords="1484,80,1690,107"/>
+<area shape="rect" id="node10" href="$detail_2_ldpc_8h.html" title="detail/Ldpc.h" alt="" coords="469,229,566,256"/>
+<area shape="rect" id="node27" href="$_bit_matrix_8h.html" title="../BitMatrix.h" alt="" coords="264,393,360,420"/>
+<area shape="rect" id="node29" href="$_permutation_8h.html" title="../Permutation.h" alt="" coords="434,483,550,509"/>
+<area shape="rect" id="node30" href="$_codec_8h.html" title="Codec.h" alt="" coords="1438,229,1510,256"/>
+<area shape="rect" id="node11" href="$detail_2_codec_8h.html" title="Codec.h" alt="" coords="1147,304,1219,331"/>
+<area shape="rect" id="node18" href="$_llr_metrics_8h.html" title="LlrMetrics.h" alt="" coords="1138,393,1228,420"/>
+<area shape="rect" id="node22" href="$_bit_field_8h.html" title="../BitField.h" alt="" coords="829,483,918,509"/>
+<area shape="rect" id="node26" href="$_decoder_algorithm_8h.html" title="../DecoderAlgorithm.h" alt="" coords="962,393,1112,420"/>
+<area shape="rect" id="node25" href="$_linear_table_8h.html" title="LinearTable.h" alt="" coords="1280,483,1384,509"/>
 </map>

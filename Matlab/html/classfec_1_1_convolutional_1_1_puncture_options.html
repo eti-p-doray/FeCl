@@ -95,6 +95,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">fec::Convolutional::PunctureOptions Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>This class gathers options affecting puncturing in <a class="el" href="classfec_1_1_convolutional.html" title="This class represents a convolutional encode / decoder. ">Convolutional</a> <a class="el" href="classfec_1_1_codec.html" title="This class represents a general encoder / decoder. ">Codec</a>.  
+ <a href="classfec_1_1_convolutional_1_1_puncture_options.html#details">More...</a></p>
 <div class="dynheader">
 Inheritance diagram for fec::Convolutional::PunctureOptions:</div>
 <div class="dyncontent">
@@ -116,13 +119,16 @@ Public Member Functions</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a91af8fba87db63fbd8025a69c39ce90b"><td class="memItemLeft" align="right" valign="top">Property&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_convolutional_1_1_puncture_options.html#a91af8fba87db63fbd8025a69c39ce90b">mask</a></td></tr>
+<tr class="memdesc:a91af8fba87db63fbd8025a69c39ce90b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mask for parity bits.  <a href="#a91af8fba87db63fbd8025a69c39ce90b">More...</a><br /></td></tr>
 <tr class="separator:a91af8fba87db63fbd8025a69c39ce90b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4213627d5dfea07b7090ff18e03ee360"><td class="memItemLeft" align="right" valign="top">Property&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_convolutional_1_1_puncture_options.html#a4213627d5dfea07b7090ff18e03ee360">tailMask</a></td></tr>
+<tr class="memdesc:a4213627d5dfea07b7090ff18e03ee360"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mask for parity tail bits.  <a href="#a4213627d5dfea07b7090ff18e03ee360">More...</a><br /></td></tr>
 <tr class="separator:a4213627d5dfea07b7090ff18e03ee360"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock">
-<p>Definition at line <a class="el" href="_09_convolutional_2_puncture_options_8m_source.html#l00001">1</a> of file <a class="el" href="_09_convolutional_2_puncture_options_8m_source.html">PunctureOptions.m</a>.</p>
+<div class="textblock"><p>This class gathers options affecting puncturing in <a class="el" href="classfec_1_1_convolutional.html" title="This class represents a convolutional encode / decoder. ">Convolutional</a> <a class="el" href="classfec_1_1_codec.html" title="This class represents a general encoder / decoder. ">Codec</a>. </p>
+
+<p>Definition at line <a class="el" href="_09_convolutional_2_puncture_options_8m_source.html#l00002">2</a> of file <a class="el" href="_09_convolutional_2_puncture_options_8m_source.html">PunctureOptions.m</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="aeeec6c58eb634973dd17450e3cf79ad4"></a>
 <div class="memitem">
@@ -184,7 +190,10 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_09_convolutional_2_puncture_options_8m_source.html#l00006">6</a> of file <a class="el" href="_09_convolutional_2_puncture_options_8m_source.html">PunctureOptions.m</a>.</p>
+<p>Mask for parity bits. </p>
+<p>This array is a mask for parity bits. A mask is a vector in the form of a sequence of 0 and 1, where only ones are kept. The mask sequence is repeated until the end of the parity sequence. </p>
+
+<p>Definition at line <a class="el" href="_09_convolutional_2_puncture_options_8m_source.html#l00009">9</a> of file <a class="el" href="_09_convolutional_2_puncture_options_8m_source.html">PunctureOptions.m</a>.</p>
 
 </div>
 </div>
@@ -198,7 +207,9 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_09_convolutional_2_puncture_options_8m_source.html#l00008">8</a> of file <a class="el" href="_09_convolutional_2_puncture_options_8m_source.html">PunctureOptions.m</a>.</p>
+<p>Mask for parity tail bits. </p>
+
+<p>Definition at line <a class="el" href="_09_convolutional_2_puncture_options_8m_source.html#l00012">12</a> of file <a class="el" href="_09_convolutional_2_puncture_options_8m_source.html">PunctureOptions.m</a>.</p>
 
 </div>
 </div>

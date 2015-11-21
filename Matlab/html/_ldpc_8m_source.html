@@ -112,76 +112,87 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        decoderOptions</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    end</div>
 <div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="classfec_1_1_ldpc.html#abfb092fc49fb95db66dc0766101a655d">   23</a></span>&#160;    properties (Dependent = true)</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        iterations;</div>
-<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="classfec_1_1_ldpc.html#a0f089326857ff519a6846a57d4b14a35">   25</a></span>&#160;        algorithm;</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    end</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    </div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    methods (Static)</div>
-<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="classfec_1_1_ldpc.html#a128439c3dc8f7a9a10248489096b64c2">   29</a></span>&#160;        function self = loadobj(s)</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;            self = <a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_ldpc.html">Ldpc</a>();</div>
-<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="classfec_1_1_ldpc.html#a6c0b653388ba01ef249c80e315307686">   31</a></span>&#160;            self.reload(s);</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        end</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    end</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    methods</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        function self = Ldpc(varargin)</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;            if (nargin &gt; 0)</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;              self.structure = <a class="code" href="namespacefec.html">fec</a>.Ldpc.Structure(varargin{:});</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;              <span class="keyword">self</span>.mexHandle_ = <a class="code" href="namespacefec.html">fec</a>.bin.wrap(uint32(<a class="code" href="namespacefec.html">fec</a>.<a class="code" href="namespacefec_1_1detail.html">detail</a>.<a class="code" href="classfec_1_1detail_1_1_wrap_fcn_id.html">WrapFcnId</a>.Ldpc_constructor), <span class="keyword">self</span>.structure.getEncoderOptions, <span class="keyword">self</span>.structure.getDecoderOptions);</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;            end</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        end</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <span class="keyword">function</span> perms = puncturing(<span class="keyword">self</span>, varargin)</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;            options = <a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_ldpc.html">Ldpc</a>.PunctureOptions(varargin{:});</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;            perms = <a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_permutation.html">Permutation</a>(<a class="code" href="namespacefec.html">fec</a>.bin.wrap(uint32(<a class="code" href="namespacefec.html">fec</a>.<a class="code" href="namespacefec_1_1detail.html">detail</a>.<a class="code" href="classfec_1_1detail_1_1_wrap_fcn_id.html">WrapFcnId</a>.Ldpc_puncturing), <span class="keyword">self</span>, options.get()), <span class="keyword">self</span>.paritySize);</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        end</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        <span class="keyword">function</span> val = <span class="keyword">get</span>.iterations(<span class="keyword">self</span>)</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;            val = <span class="keyword">self</span>.decoderOptions.iterations;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        end</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        <span class="keyword">function</span> val = <span class="keyword">get</span>.algorithm(<span class="keyword">self</span>)</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;            val = <a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_codec.html">Codec</a>.DecoderAlgorithm(<span class="keyword">self</span>.decoderOptions.algorithm).char;</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        end</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        <span class="keyword">function</span> set.iterations(<span class="keyword">self</span>, val)</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;            <span class="keyword">self</span>.setDecoderOptions(<span class="stringliteral">&#39;iterations&#39;</span>, val);</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        %&gt;  Maximum number of iterations in decoder.</div>
+<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="classfec_1_1_ldpc.html#a0f089326857ff519a6846a57d4b14a35">   25</a></span>&#160;        iterations;</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        %&gt;  <a class="code" href="classfec_1_1_decoder_algorithm.html">DecoderAlgorithm</a> type used in decoder.</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        algorithm;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    end</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    </div>
+<div class="line"><a name="l00030"></a><span class="lineno"><a class="line" href="classfec_1_1_ldpc.html#a128439c3dc8f7a9a10248489096b64c2">   30</a></span>&#160;    methods (Static)</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        function self = loadobj(s)</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;            self = <a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_ldpc.html">Ldpc</a>();</div>
+<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="classfec_1_1_ldpc.html#a6c0b653388ba01ef249c80e315307686">   33</a></span>&#160;            self.reload(s);</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        end</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    end</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    methods</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        %&gt;  Ldpc constructor.</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        %&gt;  `codec = <a class="code" href="namespacefec.html">fec</a>.Ldpc(trellis, lenght, Name, Value)` creates an Ldpc <span class="keywordtype">object</span> from a <a class="code" href="_trellis_8m.html#a3bca8c135aad03939ccc9dbfef49cd75">Trellis</a> and lenght. Optionally, additional properties can be specified using Name (<span class="keywordtype">string</span> inside single quotes) followed by its Value. See Ldpc::<a class="code" href="classfec_1_1_ldpc_1_1_encoder_options.html">EncoderOptions</a> and Ldpc::<a class="code" href="classfec_1_1_ldpc_1_1_decoder_options.html">DecoderOptions</a> for a list of properties.</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        %&gt;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        %&gt; `codec = <a class="code" href="namespacefec.html">fec</a>.Ldpc(encoderOptions, decoderOptions)` creates an Ldpc <span class="keywordtype">object</span> from the Ldpc::<a class="code" href="classfec_1_1_ldpc_1_1_encoder_options.html">EncoderOptions</a> and the Ldpc::<a class="code" href="classfec_1_1_ldpc_1_1_decoder_options.html">DecoderOptions</a> structures, cell array or <span class="keywordtype">object</span> containing encoder and decoder properties which describes the codec.</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        %&gt;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        %&gt;  See example.</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        %&gt;  @snippet LdpcSimple.m  Creating a simple Ldpc <a class="code" href="classfec_1_1_codec.html">Codec</a></div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        function self = Ldpc(varargin)</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;            if (nargin &gt; 0)</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;              self.structure = <a class="code" href="namespacefec.html">fec</a>.Ldpc.Structure(varargin{:});</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;              <span class="keyword">self</span>.mexHandle_ = <a class="code" href="namespacefec.html">fec</a>.bin.wrap(uint32(<a class="code" href="namespacefec.html">fec</a>.<a class="code" href="namespacefec_1_1detail.html">detail</a>.<a class="code" href="classfec_1_1detail_1_1_wrap_fcn_id.html">WrapFcnId</a>.Ldpc_constructor), <span class="keyword">self</span>.structure.getEncoderOptions, <span class="keyword">self</span>.structure.getDecoderOptions);</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;            end</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        end</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <span class="keyword">function</span> perms = puncturing(<span class="keyword">self</span>, varargin)</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;            options = <a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_ldpc.html">Ldpc</a>.PunctureOptions(varargin{:});</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;            perms = <a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_permutation.html">Permutation</a>(<a class="code" href="namespacefec.html">fec</a>.bin.wrap(uint32(<a class="code" href="namespacefec.html">fec</a>.<a class="code" href="namespacefec_1_1detail.html">detail</a>.<a class="code" href="classfec_1_1detail_1_1_wrap_fcn_id.html">WrapFcnId</a>.Ldpc_puncturing), <span class="keyword">self</span>, options.get()), <span class="keyword">self</span>.paritySize);</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        end</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        <span class="keyword">function</span> set.algorithm(<span class="keyword">self</span>, val)</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;            <span class="keyword">self</span>.setDecoderOptions(<span class="stringliteral">&#39;algorithm&#39;</span>, val);</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        <span class="keyword">function</span> val = <span class="keyword">get</span>.iterations(<span class="keyword">self</span>)</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;            val = <span class="keyword">self</span>.decoderOptions.iterations;</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        end</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        <span class="keyword">function</span> val = <span class="keyword">get</span>.decoderOptions(<span class="keyword">self</span>)</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;            val = <span class="keyword">self</span>.<a class="code" href="classfec_1_1_codec.html#afea5eaf50f15625574441cef665d0be8">structure</a>.decoderOptions;</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        <span class="keyword">function</span> val = <span class="keyword">get</span>.algorithm(<span class="keyword">self</span>)</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;            val = <a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_codec.html">Codec</a>.DecoderAlgorithm(<span class="keyword">self</span>.decoderOptions.algorithm).char;</div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        end</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        <span class="keyword">function</span> val = <span class="keyword">get</span>.encoderOptions(<span class="keyword">self</span>)</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;            val = <span class="keyword">self</span>.structure.encoderOptions;</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        <span class="keyword">function</span> set.iterations(<span class="keyword">self</span>, val)</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;            <span class="keyword">self</span>.setDecoderOptions(<span class="stringliteral">&#39;iterations&#39;</span>, val);</div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        end</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        <span class="keyword">function</span> set.decoderOptions(<span class="keyword">self</span>,val)</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;            <span class="keyword">self</span>.structure.decoderOptions = <a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_ldpc.html">Ldpc</a>.<a class="code" href="classfec_1_1_ldpc_1_1_decoder_options.html">DecoderOptions</a>(val);</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;            <a class="code" href="namespacefec.html">fec</a>.bin.wrap(uint32(<a class="code" href="namespacefec.html">fec</a>.<a class="code" href="namespacefec_1_1detail.html">detail</a>.<a class="code" href="classfec_1_1detail_1_1_wrap_fcn_id.html">WrapFcnId</a>.Ldpc_set_decoderOptions), <span class="keyword">self</span>, decoderOptions.get());</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        end</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        %<span class="keyword">function</span> set.encoderOptions(<span class="keyword">self</span>,val)</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        %    <span class="keyword">self</span>.structure.encoderOptions = <a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_ldpc.html">Ldpc</a>.<a class="code" href="classfec_1_1_ldpc_1_1_encoder_options.html">EncoderOptions</a>(val);</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        %    <a class="code" href="namespacefec.html">fec</a>.bin.wrap(uint32(<a class="code" href="namespacefec.html">fec</a>.<a class="code" href="namespacefec_1_1detail.html">detail</a>.<a class="code" href="classfec_1_1detail_1_1_wrap_fcn_id.html">WrapFcnId</a>.Ldpc_set_encoderOptions), <span class="keyword">self</span>, encoderOptions.get());</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        %end</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        <span class="keyword">function</span> setDecoderOptions(<span class="keyword">self</span>,varargin)</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;            decoderOptions = self.decoderOptions;</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;            decoderOptions.set(varargin{:});</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;            <span class="keyword">self</span>.decoderOptions = decoderOptions;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        <span class="keyword">function</span> set.algorithm(<span class="keyword">self</span>, val)</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;            <span class="keyword">self</span>.setDecoderOptions(<span class="stringliteral">&#39;algorithm&#39;</span>, val);</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        end</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        <span class="keyword">function</span> val = <span class="keyword">get</span>.decoderOptions(<span class="keyword">self</span>)</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;            val = <span class="keyword">self</span>.<a class="code" href="classfec_1_1_codec.html#afea5eaf50f15625574441cef665d0be8">structure</a>.decoderOptions;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        end</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        <span class="keyword">function</span> val = <span class="keyword">get</span>.encoderOptions(<span class="keyword">self</span>)</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;            val = <span class="keyword">self</span>.structure.encoderOptions;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        end</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        <span class="keyword">function</span> set.decoderOptions(<span class="keyword">self</span>,val)</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;            <span class="keyword">self</span>.structure.decoderOptions = <a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_ldpc.html">Ldpc</a>.<a class="code" href="classfec_1_1_ldpc_1_1_decoder_options.html">DecoderOptions</a>(val);</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;            <a class="code" href="namespacefec.html">fec</a>.bin.wrap(uint32(<a class="code" href="namespacefec.html">fec</a>.<a class="code" href="namespacefec_1_1detail.html">detail</a>.<a class="code" href="classfec_1_1detail_1_1_wrap_fcn_id.html">WrapFcnId</a>.Ldpc_set_decoderOptions), <span class="keyword">self</span>, decoderOptions.get());</div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        end</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        %<span class="keyword">function</span> setEncoderOptions(<span class="keyword">self</span>,varargin)</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        %    encoderOptions = <span class="keyword">self</span>.encoderOptions;</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        %    encoderOptions.set(varargin{:});</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        %    <span class="keyword">self</span>.encoderOptions = encoderOptions;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        %end</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    end</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;end</div>
-<div class="ttc" id="classfec_1_1_permutation_html"><div class="ttname"><a href="classfec_1_1_permutation.html">fec::Permutation</a></div><div class="ttdef"><b>Definition:</b> <a href="_permutation_8m_source.html#l00001">Permutation.m:1</a></div></div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        %<span class="keyword">function</span> set.encoderOptions(<span class="keyword">self</span>,val)</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        %    <span class="keyword">self</span>.structure.encoderOptions = <a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_ldpc.html">Ldpc</a>.<a class="code" href="classfec_1_1_ldpc_1_1_encoder_options.html">EncoderOptions</a>(val);</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        %    <a class="code" href="namespacefec.html">fec</a>.bin.wrap(uint32(<a class="code" href="namespacefec.html">fec</a>.<a class="code" href="namespacefec_1_1detail.html">detail</a>.<a class="code" href="classfec_1_1detail_1_1_wrap_fcn_id.html">WrapFcnId</a>.Ldpc_set_encoderOptions), <span class="keyword">self</span>, encoderOptions.get());</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        %end</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        <span class="keyword">function</span> setDecoderOptions(<span class="keyword">self</span>,varargin)</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;            decoderOptions = self.decoderOptions;</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;            decoderOptions.set(varargin{:});</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;            <span class="keyword">self</span>.decoderOptions = decoderOptions;</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        end</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        %<span class="keyword">function</span> setEncoderOptions(<span class="keyword">self</span>,varargin)</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        %    encoderOptions = <span class="keyword">self</span>.encoderOptions;</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        %    encoderOptions.set(varargin{:});</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        %    <span class="keyword">self</span>.encoderOptions = encoderOptions;</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        %end</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    end</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;end</div>
+<div class="ttc" id="classfec_1_1_permutation_html"><div class="ttname"><a href="classfec_1_1_permutation.html">fec::Permutation</a></div><div class="ttdoc">This class represents a permutation vector. </div><div class="ttdef"><b>Definition:</b> <a href="_permutation_8m_source.html#l00006">Permutation.m:6</a></div></div>
 <div class="ttc" id="classfec_1_1_codec_html_afea5eaf50f15625574441cef665d0be8"><div class="ttname"><a href="classfec_1_1_codec.html#afea5eaf50f15625574441cef665d0be8">fec::Codec::structure</a></div><div class="ttdeci">Property structure</div><div class="ttdef"><b>Definition:</b> <a href="_codec_8m_source.html#l00035">Codec.m:35</a></div></div>
 <div class="ttc" id="namespacefec_1_1detail_html"><div class="ttname"><a href="namespacefec_1_1detail.html">fec::detail</a></div></div>
-<div class="ttc" id="classfec_1_1_ldpc_1_1_decoder_options_html"><div class="ttname"><a href="classfec_1_1_ldpc_1_1_decoder_options.html">fec::Ldpc::DecoderOptions</a></div><div class="ttdef"><b>Definition:</b> <a href="_09_ldpc_2_decoder_options_8m_source.html#l00001">DecoderOptions.m:1</a></div></div>
+<div class="ttc" id="classfec_1_1_ldpc_1_1_decoder_options_html"><div class="ttname"><a href="classfec_1_1_ldpc_1_1_decoder_options.html">fec::Ldpc::DecoderOptions</a></div><div class="ttdoc">This class gathers options affecting the decoder in Ldpc Codec. </div><div class="ttdef"><b>Definition:</b> <a href="_09_ldpc_2_decoder_options_8m_source.html#l00002">DecoderOptions.m:2</a></div></div>
 <div class="ttc" id="classfec_1_1_codec_html"><div class="ttname"><a href="classfec_1_1_codec.html">fec::Codec</a></div><div class="ttdoc">This class represents a general encoder / decoder. </div><div class="ttdef"><b>Definition:</b> <a href="_codec_8m_source.html#l00012">Codec.m:12</a></div></div>
 <div class="ttc" id="namespacefec_html"><div class="ttname"><a href="namespacefec.html">fec</a></div><div class="ttdoc">Foward Error Correction namespace. </div></div>
+<div class="ttc" id="classfec_1_1_decoder_algorithm_html"><div class="ttname"><a href="classfec_1_1_decoder_algorithm.html">fec::DecoderAlgorithm</a></div><div class="ttdoc">This class holds the DecoderAlgorithm enumeration. </div><div class="ttdef"><b>Definition:</b> <a href="_decoder_algorithm_8m_source.html#l00002">DecoderAlgorithm.m:2</a></div></div>
+<div class="ttc" id="_trellis_8m_html_a3bca8c135aad03939ccc9dbfef49cd75"><div class="ttname"><a href="_trellis_8m.html#a3bca8c135aad03939ccc9dbfef49cd75">Trellis</a></div><div class="ttdeci">function Trellis(in constraintLength, in generator, in feedback)</div></div>
 <div class="ttc" id="classfec_1_1_ldpc_html"><div class="ttname"><a href="classfec_1_1_ldpc.html">fec::Ldpc</a></div><div class="ttdoc">This class represents an ldpc encode / decoder. </div><div class="ttdef"><b>Definition:</b> <a href="_ldpc_8m_source.html#l00018">Ldpc.m:18</a></div></div>
 <div class="ttc" id="classfec_1_1detail_1_1_wrap_fcn_id_html"><div class="ttname"><a href="classfec_1_1detail_1_1_wrap_fcn_id.html">fec::detail::WrapFcnId</a></div><div class="ttdef"><b>Definition:</b> <a href="_wrap_fcn_id_8m_source.html#l00001">WrapFcnId.m:1</a></div></div>
-<div class="ttc" id="classfec_1_1_ldpc_1_1_encoder_options_html"><div class="ttname"><a href="classfec_1_1_ldpc_1_1_encoder_options.html">fec::Ldpc::EncoderOptions</a></div><div class="ttdef"><b>Definition:</b> <a href="_09_ldpc_2_encoder_options_8m_source.html#l00001">EncoderOptions.m:1</a></div></div>
+<div class="ttc" id="classfec_1_1_ldpc_1_1_encoder_options_html"><div class="ttname"><a href="classfec_1_1_ldpc_1_1_encoder_options.html">fec::Ldpc::EncoderOptions</a></div><div class="ttdoc">This class gathers options affecting the encoder in Ldpc Codec. </div><div class="ttdef"><b>Definition:</b> <a href="_09_ldpc_2_encoder_options_8m_source.html#l00002">EncoderOptions.m:2</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

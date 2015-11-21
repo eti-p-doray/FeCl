@@ -89,34 +89,37 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">EncoderOptions.m</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="_09_ldpc_2_encoder_options_8m.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno"><a class="line" href="classfec_1_1_ldpc_1_1_encoder_options.html">    1</a></span>&#160;classdef <a class="code" href="classfec_1_1_ldpc_1_1_encoder_options.html">EncoderOptions</a> &lt; hgsetget</div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;    properties</div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;        checkMatrix;</div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;    end</div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;</div>
-<div class="line"><a name="l00006"></a><span class="lineno"><a class="line" href="classfec_1_1_ldpc_1_1_encoder_options.html#a161a4c4ed69d977186048b9cf12b9511">    6</a></span>&#160;    methods</div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;        <span class="keyword">function</span> <span class="keyword">self</span> = <a class="code" href="classfec_1_1_ldpc_1_1_encoder_options.html">EncoderOptions</a>(varargin)</div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;            if (nargin == 1 &amp;&amp; isa(varargin{1}, <span class="stringliteral">&#39;fec.Ldpc.EncoderOptions&#39;</span>))</div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;                self.set(varargin{1}.get());</div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;            elseif (nargin == 1 &amp;&amp; isstruct(varargin{1}))</div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;                self.set(varargin{1});</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;            elseif (nargin == 1 &amp;&amp; iscell(varargin{1}))</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;                varargin = varargin{1};</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;                <span class="keyword">self</span>.<a class="code" href="classfec_1_1_ldpc_1_1_encoder_options.html#a161a4c4ed69d977186048b9cf12b9511">checkMatrix</a> = varargin{1};</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;                <span class="keywordflow">if</span> (~isempty(varargin(2:end)))</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;                    <span class="keyword">self</span>.set(varargin{2:end});</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;                end</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;            <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;                <span class="keyword">self</span>.checkMatrix = varargin{1};</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;                <span class="keywordflow">if</span> (~isempty(varargin(2:end)))</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;                    <span class="keyword">self</span>.set(varargin{2:end});</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;                end</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;            end</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        end</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    end</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;end</div>
-<div class="ttc" id="classfec_1_1_ldpc_1_1_encoder_options_html_a161a4c4ed69d977186048b9cf12b9511"><div class="ttname"><a href="classfec_1_1_ldpc_1_1_encoder_options.html#a161a4c4ed69d977186048b9cf12b9511">fec::Ldpc::EncoderOptions::checkMatrix</a></div><div class="ttdeci">Property checkMatrix</div><div class="ttdef"><b>Definition:</b> <a href="_09_ldpc_2_encoder_options_8m_source.html#l00006">EncoderOptions.m:6</a></div></div>
-<div class="ttc" id="classfec_1_1_ldpc_1_1_encoder_options_html"><div class="ttname"><a href="classfec_1_1_ldpc_1_1_encoder_options.html">fec::Ldpc::EncoderOptions</a></div><div class="ttdef"><b>Definition:</b> <a href="_09_ldpc_2_encoder_options_8m_source.html#l00001">EncoderOptions.m:1</a></div></div>
+<a href="_09_ldpc_2_encoder_options_8m.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;%&gt;  This <span class="keyword">class </span>gathers options affecting the encoder in Ldpc Codec.</div>
+<div class="line"><a name="l00002"></a><span class="lineno"><a class="line" href="classfec_1_1_ldpc_1_1_encoder_options.html">    2</a></span>&#160;classdef <a class="code" href="classfec_1_1_ldpc_1_1_encoder_options.html">EncoderOptions</a> &lt; hgsetget</div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;    properties</div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;        %&gt;  <a class="code" href="classfec_1_1_ldpc.html">Ldpc</a> matrix.</div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;        checkMatrix;</div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;    end</div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;</div>
+<div class="line"><a name="l00008"></a><span class="lineno"><a class="line" href="classfec_1_1_ldpc_1_1_encoder_options.html#a161a4c4ed69d977186048b9cf12b9511">    8</a></span>&#160;    methods</div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;        <span class="keyword">function</span> <span class="keyword">self</span> = <a class="code" href="classfec_1_1_ldpc_1_1_encoder_options.html">EncoderOptions</a>(varargin)</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;            if (nargin == 1 &amp;&amp; isa(varargin{1}, <span class="stringliteral">&#39;fec.Ldpc.EncoderOptions&#39;</span>))</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;                self.set(varargin{1}.get());</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;            elseif (nargin == 1 &amp;&amp; isstruct(varargin{1}))</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;                self.set(varargin{1});</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;            elseif (nargin == 1 &amp;&amp; iscell(varargin{1}))</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;                varargin = varargin{1};</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;                <span class="keyword">self</span>.<a class="code" href="classfec_1_1_ldpc_1_1_encoder_options.html#a161a4c4ed69d977186048b9cf12b9511">checkMatrix</a> = varargin{1};</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;                <span class="keywordflow">if</span> (~isempty(varargin(2:end)))</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;                    <span class="keyword">self</span>.set(varargin{2:end});</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;                end</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;            <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;                <span class="keyword">self</span>.checkMatrix = varargin{1};</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;                <span class="keywordflow">if</span> (~isempty(varargin(2:end)))</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;                    <span class="keyword">self</span>.set(varargin{2:end});</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;                end</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;            end</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        end</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    end</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;end</div>
+<div class="ttc" id="classfec_1_1_ldpc_1_1_encoder_options_html_a161a4c4ed69d977186048b9cf12b9511"><div class="ttname"><a href="classfec_1_1_ldpc_1_1_encoder_options.html#a161a4c4ed69d977186048b9cf12b9511">fec::Ldpc::EncoderOptions::checkMatrix</a></div><div class="ttdeci">Property checkMatrix</div><div class="ttdoc">Ldpc matrix. </div><div class="ttdef"><b>Definition:</b> <a href="_09_ldpc_2_encoder_options_8m_source.html#l00008">EncoderOptions.m:8</a></div></div>
+<div class="ttc" id="classfec_1_1_ldpc_html"><div class="ttname"><a href="classfec_1_1_ldpc.html">fec::Ldpc</a></div><div class="ttdoc">This class represents an ldpc encode / decoder. </div><div class="ttdef"><b>Definition:</b> <a href="_ldpc_8m_source.html#l00018">Ldpc.m:18</a></div></div>
+<div class="ttc" id="classfec_1_1_ldpc_1_1_encoder_options_html"><div class="ttname"><a href="classfec_1_1_ldpc_1_1_encoder_options.html">fec::Ldpc::EncoderOptions</a></div><div class="ttdoc">This class gathers options affecting the encoder in Ldpc Codec. </div><div class="ttdef"><b>Definition:</b> <a href="_09_ldpc_2_encoder_options_8m_source.html#l00002">EncoderOptions.m:2</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

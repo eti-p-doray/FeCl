@@ -1,7 +1,11 @@
 <map id="Convolutional.h" name="Convolutional.h">
-<area shape="rect" id="node2" href="$_codec_8h.html" title="Codec.h" alt="" coords="1100,80,1172,107"/>
-<area shape="rect" id="node18" href="$_trellis_8h.html" title="Trellis.h" alt="" coords="391,80,460,107"/>
-<area shape="rect" id="node21" href="$_permutation_8h.html" title="Permutation.h" alt="" coords="282,169,387,196"/>
-<area shape="rect" id="node13" href="$_bit_field_8h.html" title="BitField.h" alt="" coords="463,169,540,196"/>
-<area shape="rect" id="node17" href="$_decoder_algorithm_8h.html" title="DecoderAlgorithm.h" alt="" coords="893,169,1032,196"/>
+<area shape="rect" id="node2" href="$detail_2_convolutional_8h.html" title="detail/Convolutional.h" alt="" coords="192,80,341,107"/>
+<area shape="rect" id="node22" href="$_trellis_8h.html" title="../Trellis.h" alt="" coords="160,244,240,271"/>
+<area shape="rect" id="node25" href="$_permutation_8h.html" title="../Permutation.h" alt="" coords="302,333,417,360"/>
+<area shape="rect" id="node26" href="$_codec_8h.html" title="Codec.h" alt="" coords="1303,80,1375,107"/>
+<area shape="rect" id="node3" href="$detail_2_codec_8h.html" title="Codec.h" alt="" coords="852,155,924,181"/>
+<area shape="rect" id="node12" href="$_llr_metrics_8h.html" title="LlrMetrics.h" alt="" coords="760,244,851,271"/>
+<area shape="rect" id="node17" href="$_bit_field_8h.html" title="../BitField.h" alt="" coords="494,333,583,360"/>
+<area shape="rect" id="node21" href="$_decoder_algorithm_8h.html" title="../DecoderAlgorithm.h" alt="" coords="534,244,684,271"/>
+<area shape="rect" id="node20" href="$_linear_table_8h.html" title="LinearTable.h" alt="" coords="1413,333,1517,360"/>
 </map>

@@ -1,4 +1,7 @@
 <map id="Codec.h" name="Codec.h">
-<area shape="rect" id="node12" href="$_bit_field_8h.html" title="BitField.h" alt="" coords="285,95,363,121"/>
-<area shape="rect" id="node16" href="$_decoder_algorithm_8h.html" title="DecoderAlgorithm.h" alt="" coords="1494,95,1633,121"/>
+<area shape="rect" id="node12" href="$detail_2_codec_8h.html" title="detail/Codec.h" alt="" coords="933,80,1040,107"/>
+<area shape="rect" id="node13" href="$_llr_metrics_8h.html" title="LlrMetrics.h" alt="" coords="1049,169,1140,196"/>
+<area shape="rect" id="node18" href="$_bit_field_8h.html" title="../BitField.h" alt="" coords="866,259,955,285"/>
+<area shape="rect" id="node22" href="$_decoder_algorithm_8h.html" title="../DecoderAlgorithm.h" alt="" coords="1215,169,1365,196"/>
+<area shape="rect" id="node21" href="$_linear_table_8h.html" title="LinearTable.h" alt="" coords="1317,259,1421,285"/>
 </map>

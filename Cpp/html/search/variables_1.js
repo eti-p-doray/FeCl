@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['bitordering_5f',['bitOrdering_',['../structfec_1_1_turbo_1_1_puncture_options.html#ad8a69466262136d187ca39036632f8ca',1,'fec::Turbo::PunctureOptions']]]
+  ['constellation_5f',['constellation_',['../structfec_1_1_modulation_1_1_mod_options.html#afcf3d5ded7a0f86fa7c66a7de2b5c389',1,'fec::Modulation::ModOptions']]]
 ];

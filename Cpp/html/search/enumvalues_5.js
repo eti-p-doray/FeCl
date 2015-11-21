@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['serial',['Serial',['../classfec_1_1_turbo.html#a1cc8395a6fad54fc1a32d1ab2bb4c1eba4e803b16d96aaec6a2498c4f0ec52b1d',1,'fec::Turbo']]]
+  ['parallel',['Parallel',['../namespacefec.html#abb0c461b053d6b57ab2174406f42619fadce738c184dffa3a6cf46adac6472bb7',1,'fec']]]
 ];

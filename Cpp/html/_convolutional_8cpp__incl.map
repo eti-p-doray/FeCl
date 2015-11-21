@@ -1,8 +1,14 @@
-<map id="Convolutional/Convolutional.cpp" name="Convolutional/Convolutional.cpp">
-<area shape="rect" id="node2" href="$_convolutional_8h.html" title="../Convolutional.h" alt="" coords="809,80,935,107"/>
-<area shape="rect" id="node3" href="$_codec_8h.html" title="Codec.h" alt="" coords="836,155,908,181"/>
-<area shape="rect" id="node19" href="$_trellis_8h.html" title="Trellis.h" alt="" coords="1856,155,1925,181"/>
-<area shape="rect" id="node22" href="$_permutation_8h.html" title="Permutation.h" alt="" coords="1659,244,1764,271"/>
-<area shape="rect" id="node14" href="$_bit_field_8h.html" title="BitField.h" alt="" coords="1789,244,1867,271"/>
-<area shape="rect" id="node18" href="$_decoder_algorithm_8h.html" title="DecoderAlgorithm.h" alt="" coords="1342,244,1481,271"/>
+<map id="Convolutional.cpp" name="Convolutional.cpp">
+<area shape="rect" id="node2" href="$_convolutional_8h.html" title="Convolutional.h" alt="" coords="1335,88,1447,115"/>
+<area shape="rect" id="node30" href="$_map_decoder_8h.html" title="detail/MapDecoder/MapDecoder.h" alt="" coords="1641,88,1866,115"/>
+<area shape="rect" id="node31" href="$_viterbi_decoder_8h.html" title="detail/ViterbiDecoder\l/ViterbiDecoder.h" alt="" coords="1472,81,1617,122"/>
+<area shape="rect" id="node3" href="$detail_2_convolutional_8h.html" title="detail/Convolutional.h" alt="" coords="1450,171,1599,197"/>
+<area shape="rect" id="node23" href="$_trellis_8h.html" title="../Trellis.h" alt="" coords="1514,335,1594,361"/>
+<area shape="rect" id="node26" href="$_permutation_8h.html" title="../Permutation.h" alt="" coords="884,424,999,451"/>
+<area shape="rect" id="node27" href="$_codec_8h.html" title="Codec.h" alt="" coords="699,171,771,197"/>
+<area shape="rect" id="node4" href="$detail_2_codec_8h.html" title="Codec.h" alt="" coords="823,245,895,272"/>
+<area shape="rect" id="node13" href="$_llr_metrics_8h.html" title="LlrMetrics.h" alt="" coords="1399,335,1490,361"/>
+<area shape="rect" id="node18" href="$_bit_field_8h.html" title="../BitField.h" alt="" coords="1363,424,1451,451"/>
+<area shape="rect" id="node22" href="$_decoder_algorithm_8h.html" title="../DecoderAlgorithm.h" alt="" coords="945,335,1095,361"/>
+<area shape="rect" id="node21" href="$_linear_table_8h.html" title="LinearTable.h" alt="" coords="1629,424,1733,451"/>
 </map>

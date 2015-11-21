@@ -89,27 +89,31 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">PunctureOptions.m</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="_09_ldpc_2_puncture_options_8m.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno"><a class="line" href="classfec_1_1_ldpc_1_1_puncture_options.html">    1</a></span>&#160;classdef <a class="code" href="classfec_1_1_ldpc_1_1_puncture_options.html">PunctureOptions</a> &lt; hgsetget</div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;    properties</div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;        mask = [];</div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;        systMask = [];</div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;    end</div>
-<div class="line"><a name="l00006"></a><span class="lineno"><a class="line" href="classfec_1_1_ldpc_1_1_puncture_options.html#a16318ac2ef4ec649ac38fa84c254dcf3">    6</a></span>&#160;</div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;    methods</div>
-<div class="line"><a name="l00008"></a><span class="lineno"><a class="line" href="classfec_1_1_ldpc_1_1_puncture_options.html#a621596871afda129676ade3a9e4e2452">    8</a></span>&#160;        <span class="keyword">function</span> <span class="keyword">self</span> = <a class="code" href="classfec_1_1_ldpc_1_1_puncture_options.html">PunctureOptions</a>(varargin)</div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;            if (nargin == 1 &amp;&amp; isa(varargin{1}, <span class="stringliteral">&#39;fec.Ldpc.PunctureOptions&#39;</span>))</div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;                self.set(varargin{1}.get());</div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;            elseif (nargin == 1 &amp;&amp; isstruct(varargin{1}))</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;                self.set(varargin{1});</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;            <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;                <span class="keywordflow">if</span> (~isempty(varargin))</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;                    <span class="keyword">self</span>.set(varargin{:});</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;                end</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;            end</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        end</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    end</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;end</div>
-<div class="ttc" id="classfec_1_1_ldpc_1_1_puncture_options_html"><div class="ttname"><a href="classfec_1_1_ldpc_1_1_puncture_options.html">fec::Ldpc::PunctureOptions</a></div><div class="ttdef"><b>Definition:</b> <a href="_09_ldpc_2_puncture_options_8m_source.html#l00001">PunctureOptions.m:1</a></div></div>
+<a href="_09_ldpc_2_puncture_options_8m.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;%&gt;  This <span class="keyword">class </span>gathers options affecting puncturing in Turbo Codec.</div>
+<div class="line"><a name="l00002"></a><span class="lineno"><a class="line" href="classfec_1_1_ldpc_1_1_puncture_options.html">    2</a></span>&#160;classdef <a class="code" href="classfec_1_1_ldpc_1_1_puncture_options.html">PunctureOptions</a> &lt; hgsetget</div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;    properties</div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;        %&gt;  Mask <span class="keywordflow">for</span> parity bits.</div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;        %&gt;  This array is a mask <span class="keywordflow">for</span> parity bits. A mask is a vector in the form of a sequence of 0 and 1, where only ones are kept. The mask sequence is repeated until the end of the parity sequence.</div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;        mask = [];</div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;        %&gt;  Mask <span class="keywordflow">for</span> systematic bits.</div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;        systMask = [];</div>
+<div class="line"><a name="l00009"></a><span class="lineno"><a class="line" href="classfec_1_1_ldpc_1_1_puncture_options.html#a16318ac2ef4ec649ac38fa84c254dcf3">    9</a></span>&#160;    end</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    methods</div>
+<div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="classfec_1_1_ldpc_1_1_puncture_options.html#a621596871afda129676ade3a9e4e2452">   12</a></span>&#160;        <span class="keyword">function</span> <span class="keyword">self</span> = <a class="code" href="classfec_1_1_ldpc_1_1_puncture_options.html">PunctureOptions</a>(varargin)</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;            if (nargin == 1 &amp;&amp; isa(varargin{1}, <span class="stringliteral">&#39;fec.Ldpc.PunctureOptions&#39;</span>))</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;                self.set(varargin{1}.get());</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;            elseif (nargin == 1 &amp;&amp; isstruct(varargin{1}))</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;                self.set(varargin{1});</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;            <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;                <span class="keywordflow">if</span> (~isempty(varargin))</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;                    <span class="keyword">self</span>.set(varargin{:});</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;                end</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;            end</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        end</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    end</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;end</div>
+<div class="ttc" id="classfec_1_1_ldpc_1_1_puncture_options_html"><div class="ttname"><a href="classfec_1_1_ldpc_1_1_puncture_options.html">fec::Ldpc::PunctureOptions</a></div><div class="ttdoc">This class gathers options affecting puncturing in Turbo Codec. </div><div class="ttdef"><b>Definition:</b> <a href="_09_ldpc_2_puncture_options_8m_source.html#l00002">PunctureOptions.m:2</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

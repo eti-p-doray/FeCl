@@ -1,3 +1,4 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classfec_1_1_sparse_bit_matrix_1_1_const_row_ptr.html" title="This class emulates a const ptr to a row. " alt="" coords="5,5,147,46"/>
+<area shape="rect" id="node1" href="$namespacefec_1_1detail.html" title="fec::detail::DerivedType\lHolder\&lt; Childs...\&gt;" alt="" coords="5,5,168,46"/>
+<area shape="rect" id="node2" href="$structfec_1_1detail_1_1_derived_type_holder_3_01_child_00_01_childs_8_8_8_4.html" title="fec::detail::DerivedType\lHolder\&lt; Child, Childs...\&gt;" alt="" coords="217,5,383,46"/>
 </map>

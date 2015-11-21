@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['group',['Group',['../classfec_1_1_turbo.html#a17758d89a9553b3a1cee151409f41220a3838eafd14394feed96626790856fd28',1,'fec::Turbo']]]
+  ['exact',['Exact',['../namespacefec.html#aa5c8aa4f623f0ca80ad4c776dcf64e71acb61f17966663f11b95972989e7753bf',1,'fec']]]
 ];

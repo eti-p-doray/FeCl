@@ -1,6 +1,9 @@
 var searchData=
 [
-  ['ldpc',['Ldpc',['../classfec_1_1_ldpc.html',1,'fec']]],
-  ['lte3gpp',['Lte3Gpp',['../structfec_1_1_punctured_turbo_1_1_lte3_gpp.html',1,'fec::PuncturedTurbo']]],
-  ['lte3gpp',['Lte3Gpp',['../structfec_1_1_turbo_1_1_lte3_gpp.html',1,'fec::Turbo']]]
+  ['impl',['Impl',['../structfec_1_1detail_1_1_linearlog1pexpm_1_1_impl.html',1,'fec::detail::Linearlog1pexpm']]],
+  ['info',['Info',['../classfec_1_1detail_1_1_codec_1_1_info.html',1,'fec::detail::Codec']]],
+  ['info',['Info',['../classfec_1_1_modulation_1_1detail_1_1_info.html',1,'fec::Modulation::detail']]],
+  ['infoiterator',['InfoIterator',['../classfec_1_1detail_1_1_codec_1_1_info_iterator.html',1,'fec::detail::Codec']]],
+  ['infoiterator',['InfoIterator',['../classfec_1_1_modulation_1_1detail_1_1_info_iterator.html',1,'fec::Modulation::detail']]],
+  ['iterator',['Iterator',['../classfec_1_1_sparse_bit_matrix_1_1_iterator.html',1,'fec::SparseBitMatrix']]]
 ];

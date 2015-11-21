@@ -86,7 +86,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="#index_i"><span>i</span></a></li>
       <li><a href="#index_o"><span>o</span></a></li>
       <li><a href="#index_r"><span>r</span></a></li>
-      <li class="current"><a href="#index_s"><span>s</span></a></li>
+      <li><a href="#index_s"><span>s</span></a></li>
+      <li class="current"><a href="#index_t"><span>t</span></a></li>
     </ul>
   </div>
 </div><!-- top -->
@@ -109,7 +110,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <h3><a class="anchor" id="index_:"></a>- : -</h3><ul>
 <li>::boost::serialization::access
-: <a class="el" href="classfec_1_1_sparse_bit_matrix.html#a32927d0563e5d88b57d5b853110a95c5">fec::SparseBitMatrix</a>
+: <a class="el" href="classfec_1_1detail_1_1_convolutional_1_1_structure.html#a32927d0563e5d88b57d5b853110a95c5">fec::detail::Convolutional::Structure</a>
+, <a class="el" href="classfec_1_1detail_1_1_ldpc_1_1_structure.html#a32927d0563e5d88b57d5b853110a95c5">fec::detail::Ldpc::Structure</a>
+, <a class="el" href="classfec_1_1detail_1_1_turbo_1_1_structure.html#a32927d0563e5d88b57d5b853110a95c5">fec::detail::Turbo::Structure</a>
+, <a class="el" href="classfec_1_1_sparse_bit_matrix.html#a32927d0563e5d88b57d5b853110a95c5">fec::SparseBitMatrix</a>
 </li>
 </ul>
 
@@ -124,11 +128,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 , <a class="el" href="classfec_1_1_bit_matrix_1_1_row.html#ac98d07dd8f7b70e16ccb9a01abf56b9c">fec::BitMatrix::Row</a>
 , <a class="el" href="classfec_1_1_codec.html#ac98d07dd8f7b70e16ccb9a01abf56b9c">fec::Codec</a>
 , <a class="el" href="classfec_1_1_convolutional.html#ac98d07dd8f7b70e16ccb9a01abf56b9c">fec::Convolutional</a>
+, <a class="el" href="classfec_1_1detail_1_1_codec_1_1_structure.html#ac98d07dd8f7b70e16ccb9a01abf56b9c">fec::detail::Codec::Structure</a>
 , <a class="el" href="classfec_1_1_ldpc.html#ac98d07dd8f7b70e16ccb9a01abf56b9c">fec::Ldpc</a>
 , <a class="el" href="classfec_1_1_permutation.html#ac98d07dd8f7b70e16ccb9a01abf56b9c">fec::Permutation</a>
-, <a class="el" href="classfec_1_1_punctured_convolutional.html#ac98d07dd8f7b70e16ccb9a01abf56b9c">fec::PuncturedConvolutional</a>
-, <a class="el" href="classfec_1_1_punctured_ldpc.html#ac98d07dd8f7b70e16ccb9a01abf56b9c">fec::PuncturedLdpc</a>
-, <a class="el" href="classfec_1_1_punctured_turbo.html#ac98d07dd8f7b70e16ccb9a01abf56b9c">fec::PuncturedTurbo</a>
 , <a class="el" href="classfec_1_1_trellis.html#ac98d07dd8f7b70e16ccb9a01abf56b9c">fec::Trellis</a>
 , <a class="el" href="classfec_1_1_turbo.html#ac98d07dd8f7b70e16ccb9a01abf56b9c">fec::Turbo</a>
 </li>
@@ -155,11 +157,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <h3><a class="anchor" id="index_o"></a>- o -</h3><ul>
 <li>operator+
 : <a class="el" href="classfec_1_1_sparse_bit_matrix_1_1_const_iterator.html#aa4fc7d19caa37ec417b4a771864826f1">fec::SparseBitMatrix::ConstIterator</a>
-, <a class="el" href="classfec_1_1_sparse_bit_matrix_1_1_iterator.html#a45416e208eb79054937d757041552c3e">fec::SparseBitMatrix::Iterator</a>
+, <a class="el" href="classfec_1_1_sparse_bit_matrix_1_1_iterator.html#af69306b22d58f5c905ea21a4dd8e4cc3">fec::SparseBitMatrix::Iterator</a>
 </li>
 <li>operator-
 : <a class="el" href="classfec_1_1_sparse_bit_matrix_1_1_const_iterator.html#a7e9205a59645e0cab7b772f93c4ff81a">fec::SparseBitMatrix::ConstIterator</a>
-, <a class="el" href="classfec_1_1_sparse_bit_matrix_1_1_iterator.html#a26a6af5662fe649c411fcb730fc827ab">fec::SparseBitMatrix::Iterator</a>
+, <a class="el" href="classfec_1_1_sparse_bit_matrix_1_1_iterator.html#aa29e47b9b71a5086ea3e8699f74a5f5e">fec::SparseBitMatrix::Iterator</a>
 </li>
 </ul>
 
@@ -180,9 +182,22 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 , <a class="el" href="classfec_1_1_sparse_bit_matrix_1_1_row_ref.html#ab59f289bd23bb114df3f6ae60aa3a238">fec::SparseBitMatrix::RowRef</a>
 </li>
 <li>Structure
-: <a class="el" href="structfec_1_1_ldpc_1_1_encoder_options.html#a6afc7cc424698ab9dbcac28c19a1c9cf">fec::Ldpc::EncoderOptions</a>
-, <a class="el" href="structfec_1_1_turbo_1_1_decoder_options.html#a6afc7cc424698ab9dbcac28c19a1c9cf">fec::Turbo::DecoderOptions</a>
-, <a class="el" href="structfec_1_1_turbo_1_1_encoder_options.html#a6afc7cc424698ab9dbcac28c19a1c9cf">fec::Turbo::EncoderOptions</a>
+: <a class="el" href="structfec_1_1detail_1_1_convolutional_1_1_decoder_options.html#a6afc7cc424698ab9dbcac28c19a1c9cf">fec::detail::Convolutional::DecoderOptions</a>
+, <a class="el" href="structfec_1_1detail_1_1_convolutional_1_1_encoder_options.html#a6afc7cc424698ab9dbcac28c19a1c9cf">fec::detail::Convolutional::EncoderOptions</a>
+, <a class="el" href="structfec_1_1detail_1_1_convolutional_1_1_puncture_options.html#a6afc7cc424698ab9dbcac28c19a1c9cf">fec::detail::Convolutional::PunctureOptions</a>
+, <a class="el" href="structfec_1_1detail_1_1_ldpc_1_1_decoder_options.html#a6afc7cc424698ab9dbcac28c19a1c9cf">fec::detail::Ldpc::DecoderOptions</a>
+, <a class="el" href="structfec_1_1detail_1_1_ldpc_1_1_encoder_options.html#a6afc7cc424698ab9dbcac28c19a1c9cf">fec::detail::Ldpc::EncoderOptions</a>
+, <a class="el" href="structfec_1_1detail_1_1_ldpc_1_1_puncture_options.html#a6afc7cc424698ab9dbcac28c19a1c9cf">fec::detail::Ldpc::PunctureOptions</a>
+, <a class="el" href="structfec_1_1detail_1_1_turbo_1_1_decoder_options.html#a6afc7cc424698ab9dbcac28c19a1c9cf">fec::detail::Turbo::DecoderOptions</a>
+, <a class="el" href="structfec_1_1detail_1_1_turbo_1_1_encoder_options.html#a6afc7cc424698ab9dbcac28c19a1c9cf">fec::detail::Turbo::EncoderOptions</a>
+, <a class="el" href="structfec_1_1detail_1_1_turbo_1_1_puncture_options.html#a6afc7cc424698ab9dbcac28c19a1c9cf">fec::detail::Turbo::PunctureOptions</a>
+</li>
+</ul>
+
+
+<h3><a class="anchor" id="index_t"></a>- t -</h3><ul>
+<li>Trellis
+: <a class="el" href="structfec_1_1_trellis_1_1_options.html#a923b5dbc4647011e523c96cd58498ecb">fec::Trellis::Options</a>
 </li>
 </ul>
 </div><!-- contents -->

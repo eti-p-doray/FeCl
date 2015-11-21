@@ -1,0 +1,9 @@
+<map id="detail/Ldpc.h" name="detail/Ldpc.h">
+<area shape="rect" id="node9" href="$detail_2_codec_8h.html" title="Codec.h" alt="" coords="1029,80,1101,107"/>
+<area shape="rect" id="node25" href="$_bit_matrix_8h.html" title="../BitMatrix.h" alt="" coords="185,169,281,196"/>
+<area shape="rect" id="node27" href="$_permutation_8h.html" title="../Permutation.h" alt="" coords="562,259,677,285"/>
+<area shape="rect" id="node16" href="$_llr_metrics_8h.html" title="LlrMetrics.h" alt="" coords="1616,169,1707,196"/>
+<area shape="rect" id="node20" href="$_bit_field_8h.html" title="../BitField.h" alt="" coords="702,259,791,285"/>
+<area shape="rect" id="node24" href="$_decoder_algorithm_8h.html" title="../DecoderAlgorithm.h" alt="" coords="1390,169,1540,196"/>
+<area shape="rect" id="node23" href="$_linear_table_8h.html" title="LinearTable.h" alt="" coords="1588,259,1692,285"/>
+</map>

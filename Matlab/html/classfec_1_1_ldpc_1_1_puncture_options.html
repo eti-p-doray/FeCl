@@ -95,6 +95,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">fec::Ldpc::PunctureOptions Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>This class gathers options affecting puncturing in <a class="el" href="classfec_1_1_turbo.html" title="This class represents a turbo encode / decoder. ">Turbo</a> <a class="el" href="classfec_1_1_codec.html" title="This class represents a general encoder / decoder. ">Codec</a>.  
+ <a href="classfec_1_1_ldpc_1_1_puncture_options.html#details">More...</a></p>
 <div class="dynheader">
 Inheritance diagram for fec::Ldpc::PunctureOptions:</div>
 <div class="dyncontent">
@@ -112,13 +115,16 @@ Public Member Functions</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a16318ac2ef4ec649ac38fa84c254dcf3"><td class="memItemLeft" align="right" valign="top">Property&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_ldpc_1_1_puncture_options.html#a16318ac2ef4ec649ac38fa84c254dcf3">mask</a></td></tr>
+<tr class="memdesc:a16318ac2ef4ec649ac38fa84c254dcf3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mask for parity bits.  <a href="#a16318ac2ef4ec649ac38fa84c254dcf3">More...</a><br /></td></tr>
 <tr class="separator:a16318ac2ef4ec649ac38fa84c254dcf3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a621596871afda129676ade3a9e4e2452"><td class="memItemLeft" align="right" valign="top">Property&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_ldpc_1_1_puncture_options.html#a621596871afda129676ade3a9e4e2452">systMask</a></td></tr>
+<tr class="memdesc:a621596871afda129676ade3a9e4e2452"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mask for systematic bits.  <a href="#a621596871afda129676ade3a9e4e2452">More...</a><br /></td></tr>
 <tr class="separator:a621596871afda129676ade3a9e4e2452"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock">
-<p>Definition at line <a class="el" href="_09_ldpc_2_puncture_options_8m_source.html#l00001">1</a> of file <a class="el" href="_09_ldpc_2_puncture_options_8m_source.html">PunctureOptions.m</a>.</p>
+<div class="textblock"><p>This class gathers options affecting puncturing in <a class="el" href="classfec_1_1_turbo.html" title="This class represents a turbo encode / decoder. ">Turbo</a> <a class="el" href="classfec_1_1_codec.html" title="This class represents a general encoder / decoder. ">Codec</a>. </p>
+
+<p>Definition at line <a class="el" href="_09_ldpc_2_puncture_options_8m_source.html#l00002">2</a> of file <a class="el" href="_09_ldpc_2_puncture_options_8m_source.html">PunctureOptions.m</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="ace2d22735d5d1fe506b38946a749c910"></a>
 <div class="memitem">
@@ -147,7 +153,10 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_09_ldpc_2_puncture_options_8m_source.html#l00006">6</a> of file <a class="el" href="_09_ldpc_2_puncture_options_8m_source.html">PunctureOptions.m</a>.</p>
+<p>Mask for parity bits. </p>
+<p>This array is a mask for parity bits. A mask is a vector in the form of a sequence of 0 and 1, where only ones are kept. The mask sequence is repeated until the end of the parity sequence. </p>
+
+<p>Definition at line <a class="el" href="_09_ldpc_2_puncture_options_8m_source.html#l00009">9</a> of file <a class="el" href="_09_ldpc_2_puncture_options_8m_source.html">PunctureOptions.m</a>.</p>
 
 </div>
 </div>
@@ -161,7 +170,9 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_09_ldpc_2_puncture_options_8m_source.html#l00008">8</a> of file <a class="el" href="_09_ldpc_2_puncture_options_8m_source.html">PunctureOptions.m</a>.</p>
+<p>Mask for systematic bits. </p>
+
+<p>Definition at line <a class="el" href="_09_ldpc_2_puncture_options_8m_source.html#l00012">12</a> of file <a class="el" href="_09_ldpc_2_puncture_options_8m_source.html">PunctureOptions.m</a>.</p>
 
 </div>
 </div>

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['length_5f',['length_',['../structfec_1_1_convolutional_1_1_encoder_options.html#acd0e64ae7cf779ae15acae584b77ff76',1,'fec::Convolutional::EncoderOptions']]]
+  ['nextstate',['nextState',['../classfec_1_1_trellis.html#a617bbb36f0cf46674ea011d93b617d2b',1,'fec::Trellis::Branch']]]
 ];

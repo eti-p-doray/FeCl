@@ -1,7 +1,11 @@
 <map id="Ldpc.h" name="Ldpc.h">
-<area shape="rect" id="node7" href="$_codec_8h.html" title="Codec.h" alt="" coords="872,80,944,107"/>
-<area shape="rect" id="node21" href="$_bit_matrix_8h.html" title="BitMatrix.h" alt="" coords="1573,80,1659,107"/>
-<area shape="rect" id="node23" href="$_permutation_8h.html" title="Permutation.h" alt="" coords="1709,169,1813,196"/>
-<area shape="rect" id="node16" href="$_bit_field_8h.html" title="BitField.h" alt="" coords="1556,169,1633,196"/>
-<area shape="rect" id="node20" href="$_decoder_algorithm_8h.html" title="DecoderAlgorithm.h" alt="" coords="419,169,559,196"/>
+<area shape="rect" id="node9" href="$detail_2_ldpc_8h.html" title="detail/Ldpc.h" alt="" coords="478,80,575,107"/>
+<area shape="rect" id="node26" href="$_bit_matrix_8h.html" title="../BitMatrix.h" alt="" coords="767,244,863,271"/>
+<area shape="rect" id="node28" href="$_permutation_8h.html" title="../Permutation.h" alt="" coords="1074,333,1189,360"/>
+<area shape="rect" id="node29" href="$_codec_8h.html" title="Codec.h" alt="" coords="1387,80,1459,107"/>
+<area shape="rect" id="node10" href="$detail_2_codec_8h.html" title="Codec.h" alt="" coords="1192,155,1264,181"/>
+<area shape="rect" id="node17" href="$_llr_metrics_8h.html" title="LlrMetrics.h" alt="" coords="652,244,743,271"/>
+<area shape="rect" id="node21" href="$_bit_field_8h.html" title="../BitField.h" alt="" coords="909,333,997,360"/>
+<area shape="rect" id="node25" href="$_decoder_algorithm_8h.html" title="../DecoderAlgorithm.h" alt="" coords="1039,244,1189,271"/>
+<area shape="rect" id="node24" href="$_linear_table_8h.html" title="LinearTable.h" alt="" coords="443,333,547,360"/>
 </map>
