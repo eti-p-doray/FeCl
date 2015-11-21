@@ -42,7 +42,7 @@ std::unique_ptr<BpDecoder> BpDecoder::create(const Ldpc::Structure& structure)
   }
 }
 
-void BpDecoder::decodeBlocks(std::vector<double>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n)
+void BpDecoder::decodeBlocks(std::vector<double>::const_iterator parity, std::vector<fec::BitField<size_t>>::iterator msg, size_t n)
 {
   for (size_t i = 0; i < n; ++i) {
     decodeBlock(parity, msg);

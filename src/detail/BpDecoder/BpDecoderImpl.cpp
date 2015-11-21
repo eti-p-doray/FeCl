@@ -35,7 +35,7 @@ BpDecoder(structure)
 }
 
 template <class LlrMetrics, template <class> class BoxSumAlg>
-void BpDecoderImpl<LlrMetrics, BoxSumAlg>::decodeBlock(std::vector<double>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg)
+void BpDecoderImpl<LlrMetrics, BoxSumAlg>::decodeBlock(std::vector<double>::const_iterator parity, std::vector<fec::BitField<size_t>>::iterator msg)
 {
   std::copy(parity, parity+structure().checks().cols(), parity_.begin());
 

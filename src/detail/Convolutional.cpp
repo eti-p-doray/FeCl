@@ -21,6 +21,7 @@
 
 #include "Convolutional.h"
 
+using namespace fec;
 using namespace fec::detail;
 
 BOOST_CLASS_EXPORT_IMPLEMENT(Convolutional::Structure);
@@ -76,7 +77,7 @@ Convolutional::DecoderOptions Convolutional::Structure::getDecoderOptions() cons
   return DecoderOptions().algorithm(decoderAlgorithm_).scalingFactor(scalingFactor_);
 }
 
-void Convolutional::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const
+void Convolutional::Structure::encode(std::vector<fec::BitField<size_t>>::const_iterator msg, std::vector<fec::BitField<size_t>>::iterator parity) const
 {
   size_t state = 0;
   
@@ -128,7 +129,7 @@ void Convolutional::Structure::encode(std::vector<BitField<size_t>>::const_itera
   assert(state == 0);
 }
 
-bool Convolutional::Structure::check(std::vector<BitField<size_t>>::const_iterator parity) const
+bool Convolutional::Structure::check(std::vector<fec::BitField<size_t>>::const_iterator parity) const
 {
   size_t state = 0;
   for (int j = 0; j < length()+tailSize(); ++j) {
@@ -163,7 +164,7 @@ bool Convolutional::Structure::check(std::vector<BitField<size_t>>::const_iterat
   }
 }
 
-void Convolutional::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity, std::vector<BitField<size_t>>::iterator tail) const
+void Convolutional::Structure::encode(std::vector<fec::BitField<size_t>>::const_iterator msg, std::vector<fec::BitField<size_t>>::iterator parity, std::vector<fec::BitField<size_t>>::iterator tail) const
 {
   size_t state = 0;
   

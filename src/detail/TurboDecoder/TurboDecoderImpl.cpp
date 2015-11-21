@@ -21,6 +21,7 @@
 
 #include "TurboDecoderImpl.h"
 
+using namespace fec;
 using namespace fec::detail;
 
 TurboDecoderImpl::TurboDecoderImpl(const Turbo::Structure& structure) : TurboDecoder(structure)

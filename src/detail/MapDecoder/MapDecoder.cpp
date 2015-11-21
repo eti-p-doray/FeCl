@@ -22,6 +22,7 @@
 #include "MapDecoder.h"
 #include "MapDecoderImpl.h"
 
+using namespace fec;
 using namespace fec::detail;
 
 /**

@@ -21,6 +21,7 @@
 
 #include "Ldpc.h"
 
+using namespace fec;
 using namespace fec::detail;
 
 BOOST_CLASS_EXPORT_IMPLEMENT(Ldpc::Structure);

@@ -23,6 +23,7 @@
 #define FEC_DETAIL_CONVOLUTIONAL_H
 
 #include "Codec.h"
+#include "../BitField.h"
 #include "../Trellis.h"
 #include "../Permutation.h"
 

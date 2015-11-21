@@ -21,6 +21,7 @@
 
 #include "Turbo.h"
 
+using namespace fec;
 using namespace fec::detail;
 
 BOOST_CLASS_EXPORT_IMPLEMENT(Turbo::Structure);

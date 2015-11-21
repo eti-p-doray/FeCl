@@ -22,6 +22,7 @@
 #include "TurboDecoder.h"
 #include "TurboDecoderImpl.h"
 
+using namespace fec;
 using namespace fec::detail;
 
 std::unique_ptr<TurboDecoder> TurboDecoder::create(const Turbo::Structure& structure)

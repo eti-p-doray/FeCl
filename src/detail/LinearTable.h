@@ -59,7 +59,7 @@ namespace fec {
       Impl(T step) {
         step_ = step;
       }
-      constexpr T operator()(T x) const {
+      T operator()(T x) const {
         return std::log(1.0+std::exp(-(double(x)/step_)));
       }
       T step_;

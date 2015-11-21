@@ -22,6 +22,7 @@
 #include "ViterbiDecoder.h"
 #include "ViterbiDecoderImpl.h"
 
+using namespace fec;
 using namespace fec::detail;
 
 /**
