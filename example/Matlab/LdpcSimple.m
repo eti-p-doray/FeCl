@@ -2,7 +2,7 @@
 %See 'operation' for encoding and decoding operations
 
 %>  [Creating a simple Ldpc Codec]
-%We define low density parity check matrixfrom the dvbs2 standard with a rate 1/2
+%We define low density parity check matrix from the dvbs2 standard with a rate 1/2
 H = fec.Ldpc.DvbS2.matrix(64800, 1/2);
 
 % We define a simple code with the ldpc matrix.

@@ -38,7 +38,7 @@ public:
     decoderOptions.iterations(  mxArrayTo<size_t>::f(mxGetField(in, 0, "iterations")) );
     decoderOptions.algorithm(  mxArrayTo<fec::DecoderAlgorithm>::f(mxGetField(in, 0, "algorithm")) );
     decoderOptions.scalingFactor(  mxArrayTo<std::unordered_map<size_t,std::vector<double>>>::f(mxGetField(in, 0, "scalingFactor")) );
-
+    
     return decoderOptions;
   }
 };

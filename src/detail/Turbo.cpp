@@ -147,8 +147,8 @@ Turbo::DecoderOptions Turbo::Structure::getDecoderOptions() const
 
 double Turbo::Structure::scalingFactor(size_t i, size_t j) const
 {
-  i %= scalingFactor_.size();
-  j %= scalingFactor_[i].size();
+  j %= scalingFactor_.size();
+  i %= scalingFactor_[j].size();
   return scalingFactor_[j][i];
 }
 

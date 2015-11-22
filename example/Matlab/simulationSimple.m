@@ -8,7 +8,7 @@
 % The number of row must be equal to the code msgSize.
 % Each row is one bloc of data encoded independently from the others.
 % We are defining 5 bloc of data.
-msg = logical( randi([0 1],codec.msgSize,5) );
+msg = uint64( randi([0 1],codec.msgSize,5) );
 
 % We can encode the msg to obtain a sequence of parity bits.
 parity = codec.encode(msg);
@@ -19,7 +19,7 @@ parity = codec.encode(msg);
 symbol =  -2*double(parity)+1;
 
 % And we add AWGN noise.
-snrdb = 0.0;
+snrdb = 1.0;
 snr = 10.0^(snrdb/10.0);
 signal = symbol + randn(size(symbol)) / sqrt(2*snr);
 

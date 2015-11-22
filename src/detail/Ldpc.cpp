@@ -64,7 +64,7 @@ void Ldpc::Structure::setDecoderOptions(const DecoderOptions& decoder)
 std::vector<std::vector<double>> Ldpc::Structure::scalingMapToVector(const std::unordered_map<size_t,std::vector<double>>& map) const
 {
   auto degree = checks().rowSizes();
-  size_t maxDegree = *std::max_element(degree.begin(), degree.begin());
+  size_t maxDegree = *std::max_element(degree.begin(), degree.end());
   std::vector<std::vector<double>> vec;
   auto def = map.find(0);
   if (def != map.end()) {
