@@ -6,6 +6,7 @@ set(SOURCES
   Lte3Gpp.cpp
   Ldpc.cpp
   DvbS2.cpp
+  detail/Codec.cpp
   detail/Convolutional.cpp
   detail/MapDecoder/MapDecoder.cpp
   detail/MapDecoder/MapDecoderImpl.cpp
