@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['granularity_5f',['granularity_',['../structfec_1_1detail_1_1_linearlog1pexpm.html#a8ffdea9c4ea5183b0c7e7bf2574f6568',1,'fec::detail::Linearlog1pexpm']]]
+  ['nextstate',['nextState',['../classfec_1_1_trellis.html#a617bbb36f0cf46674ea011d93b617d2b',1,'fec::Trellis::Branch']]]
 ];

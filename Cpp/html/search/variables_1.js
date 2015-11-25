@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['constellation_5f',['constellation_',['../structfec_1_1_modulation_1_1_mod_options.html#afcf3d5ded7a0f86fa7c66a7de2b5c389',1,'fec::Modulation::ModOptions']]]
+  ['granularity_5f',['granularity_',['../structfec_1_1detail_1_1_linearlog1pexpm.html#a8ffdea9c4ea5183b0c7e7bf2574f6568',1,'fec::detail::Linearlog1pexpm']]]
 ];

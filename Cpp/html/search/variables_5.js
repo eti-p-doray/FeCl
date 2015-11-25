@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['nextstate',['nextState',['../classfec_1_1_trellis.html#a617bbb36f0cf46674ea011d93b617d2b',1,'fec::Trellis::Branch']]]
+  ['step_5f',['step_',['../structfec_1_1detail_1_1_linearlog1pexpm_1_1_impl.html#a7a2c45341daf088a856959e901349f3e',1,'fec::detail::Linearlog1pexpm::Impl']]]
 ];

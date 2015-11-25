@@ -6,10 +6,7 @@ var searchData=
   ['decoderalgorithm',['decoderAlgorithm',['../classfec_1_1detail_1_1_codec_1_1_structure.html#a7c9a02169ed68b09b3cec7cf6e235667',1,'fec::detail::Codec::Structure']]],
   ['decoderoptions',['DecoderOptions',['../structfec_1_1detail_1_1_convolutional_1_1_decoder_options.html#a85b1dd344ea26d4557377a09bf12ddad',1,'fec::detail::Convolutional::DecoderOptions::DecoderOptions()'],['../structfec_1_1detail_1_1_ldpc_1_1_decoder_options.html#afa0e0f0cbc8c24394e716ffb9d9173af',1,'fec::detail::Ldpc::DecoderOptions::DecoderOptions()'],['../structfec_1_1detail_1_1_turbo_1_1_decoder_options.html#a876cce24a625d01993d30b2eb6ccdace',1,'fec::detail::Turbo::DecoderOptions::DecoderOptions()']]],
   ['deleterow',['deleteRow',['../classfec_1_1_bit_matrix.html#a4f54d4ae59129fba8b543e105bb1befa',1,'fec::BitMatrix']]],
-  ['demodulate',['demodulate',['../classfec_1_1_modulation.html#ac848caf5c35d411a1dadcac46fa4e49e',1,'fec::Modulation']]],
-  ['demodulateblocks',['demodulateBlocks',['../classfec_1_1_demodulator.html#a1db1be6693dd828cb9e583f9dc1f7905',1,'fec::Demodulator']]],
   ['depermute',['dePermute',['../classfec_1_1_permutation.html#aa730ce92399485e7cc5bbdbee0db0d21',1,'fec::Permutation::dePermute(const std::vector&lt; T1 &gt; &amp;input, std::vector&lt; T2 &gt; &amp;output) const '],['../classfec_1_1_permutation.html#a6f62eda6410caec5646476cffe945a72',1,'fec::Permutation::dePermute(const std::vector&lt; T &gt; &amp;input) const ']]],
   ['depermuteblock',['dePermuteBlock',['../classfec_1_1_permutation.html#ab87ca4289aabb95e621cce6438035bd3',1,'fec::Permutation']]],
-  ['depermuteblocks',['dePermuteBlocks',['../classfec_1_1_permutation.html#a62a07645116f8cbd8d2d61e7df6e45bd',1,'fec::Permutation']]],
-  ['dimension',['dimension',['../classfec_1_1_modulation_1_1detail_1_1_structure.html#aa5f411f1d72bdb015d269ec46be5d36b',1,'fec::Modulation::detail::Structure']]]
+  ['depermuteblocks',['dePermuteBlocks',['../classfec_1_1_permutation.html#a62a07645116f8cbd8d2d61e7df6e45bd',1,'fec::Permutation']]]
 ];

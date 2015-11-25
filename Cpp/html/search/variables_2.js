@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['dimension_5f',['dimension_',['../structfec_1_1_modulation_1_1_mod_options.html#a3f9ec31a275b5903ab7ed30a39bb41fa',1,'fec::Modulation::ModOptions']]]
+  ['length_5f',['length_',['../structfec_1_1detail_1_1_linearlog1pexpm.html#a722e9dd418b251fb9b491980f02626b4',1,'fec::detail::Linearlog1pexpm']]]
 ];

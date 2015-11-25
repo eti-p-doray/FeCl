@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['length_5f',['length_',['../structfec_1_1detail_1_1_linearlog1pexpm.html#a722e9dd418b251fb9b491980f02626b4',1,'fec::detail::Linearlog1pexpm']]]
+  ['output',['output',['../classfec_1_1_trellis.html#a823b03b7e65cae4553212e2956f37658',1,'fec::Trellis::Branch']]]
 ];
