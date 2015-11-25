@@ -43,16 +43,28 @@ public:
     out.resize(mxGetNumberOfElements(in));
     for (size_t i = 0; i < out.size(); ++i) {
       out[i] = {mxArrayTo<std::vector<size_t>>::f(mxGetField(in, i, "activation")), mxArrayTo<std::vector<std::vector<size_t>>>::f(mxGetField(in, i, "transfer"))};
+      for (size_t j = 0; j < out[i].activation.size(); ++j) {
+        out[i].activation[j] --;
+        for (size_t k = 0; k < out[i].transfer[j].size(); ++k) {
+          out[i].transfer[j][k] --;
+        }
+      }
     }
     return out;
   }
 };
 
-inline mxArray* toMxArray(const fec::Turbo::Scheduling& scheduling)
+inline mxArray* toMxArray(fec::Turbo::Scheduling scheduling)
 {
   const char* fieldnames[] = {"activation", "transfer"};
   mxArray* out = mxCreateStructMatrix(1,scheduling.size(), 2, fieldnames);
   for (size_t i = 0; i < scheduling.size(); ++i) {
+    for (size_t j = 0; j < scheduling[i].activation.size(); ++j) {
+      scheduling[i].activation[j] ++;
+      for (size_t k = 0; k < scheduling[i].transfer[j].size(); ++k) {
+        scheduling[i].transfer[j][k] ++;
+      }
+    }
     mxSetField(out, i, fieldnames[0], toMxArray(scheduling[i].activation));
     mxSetField(out, i, fieldnames[1], toMxArray(scheduling[i].transfer));
   }
