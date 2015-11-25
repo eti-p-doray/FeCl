@@ -108,7 +108,6 @@ Inheritance diagram for fec::Ldpc:</div>
   <img src="classfec_1_1_ldpc.png" usemap="#fec::Ldpc_map" alt=""/>
   <map id="fec::Ldpc_map" name="fec::Ldpc_map">
 <area href="classfec_1_1_codec.html" title="This class represents a general encoder / decoder. " alt="fec::Codec" shape="rect" coords="0,112,139,136"/>
-<area href="classfec_1_1_punctured_ldpc.html" alt="fec::PuncturedLdpc" shape="rect" coords="0,224,139,248"/>
 </map>
  </div></div>
 <table class="memberdecls">
@@ -257,7 +256,7 @@ Protected Member Functions</h2></td></tr>
 <p><a class="el" href="classfec_1_1_ldpc.html" title="This class represents an ldpc encode / decoder. ">Ldpc</a> constructor. </p>
 <p><code>codec = <a class="el" href="classfec_1_1_ldpc.html" title="This class represents an ldpc encode / decoder. ">fec.Ldpc(trellis, lenght, Name, Value)</a></code> creates an <a class="el" href="classfec_1_1_ldpc.html" title="This class represents an ldpc encode / decoder. ">Ldpc</a> object from a Trellis and lenght. Optionally, additional properties can be specified using Name (string inside single quotes) followed by its Value. See <a class="el" href="classfec_1_1_ldpc_1_1_encoder_options.html" title="This class gathers options affecting the encoder in Ldpc Codec. ">Ldpc::EncoderOptions</a> and <a class="el" href="classfec_1_1_ldpc_1_1_decoder_options.html" title="This class gathers options affecting the decoder in Ldpc Codec. ">Ldpc::DecoderOptions</a> for a list of properties.</p>
 <p><code>codec = <a class="el" href="classfec_1_1_ldpc.html" title="This class represents an ldpc encode / decoder. ">fec.Ldpc(encoderOptions, decoderOptions)</a></code> creates an <a class="el" href="classfec_1_1_ldpc.html" title="This class represents an ldpc encode / decoder. ">Ldpc</a> object from the <a class="el" href="classfec_1_1_ldpc_1_1_encoder_options.html" title="This class gathers options affecting the encoder in Ldpc Codec. ">Ldpc::EncoderOptions</a> and the <a class="el" href="classfec_1_1_ldpc_1_1_decoder_options.html" title="This class gathers options affecting the decoder in Ldpc Codec. ">Ldpc::DecoderOptions</a> structures, cell array or object containing encoder and decoder properties which describes the codec.</p>
-<p>See example. </p><div class="fragment"><div class="line">%We define low density parity <a class="code" href="classfec_1_1_codec.html#a2dbc54cf4c62e6cbba9a660e0387a383">check</a> matrixfrom the dvbs2 standard with a rate 1/2</div>
+<p>See example. </p><div class="fragment"><div class="line">%We define low density parity <a class="code" href="classfec_1_1_codec.html#a2dbc54cf4c62e6cbba9a660e0387a383">check</a> matrix from the dvbs2 standard with a rate 1/2</div>
 <div class="line">H = <a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_ldpc.html">Ldpc</a>.<a class="code" href="classfec_1_1_ldpc_1_1_dvb_s2.html">DvbS2</a>.<a class="code" href="classfec_1_1_ldpc_1_1_dvb_s2.html#a96ef82ea76c9d91e6d743e6863cef0af">matrix</a>(64800, 1/2);</div>
 <div class="line"></div>
 <div class="line">% We define a simple code with the ldpc matrix.</div>
