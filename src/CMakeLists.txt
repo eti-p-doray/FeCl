@@ -48,5 +48,3 @@ if(DOXYGEN_FOUND)
 		COMMENT "Generating API documentation with Doxygen" VERBATIM
 	)
 endif(DOXYGEN_FOUND)
-
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Wrap)

@@ -4,10 +4,9 @@ function make
 % The directoty path is automatically found
 %   
     cxxFlags = ['-std=c++11  -fno-common -fexceptions -fPIC -pthread'];
-    %cxxFlags = ['-std=c++11'];
 
-    srcPath = '../../../';
-    libsPath = '../../../../libs/';
+    srcPath = '../../../src/';
+    libsPath = '../../../libs/';
     trgPath = '../';
 
     iPath = {['-I' fullfile(srcPath)], ['-I' fullfile([libsPath 'include/'])]};
@@ -82,27 +81,27 @@ function make
      objs = '';
     for i = 1:length(src)
         [pathstr,name,ext] = fileparts(src{i});
-        objInfo = dir([objDst '/' pathstr '/' name '.*']);
-        srcInfo = dir([srcPath src{i}]);
+        objInfo = dir(fullfile(objDst, pathstr, [name '.*']));
+        srcInfo = dir(fullfile(srcPath, src{i}));
         if (isempty(objInfo) || objInfo.datenum < srcInfo.datenum)
-            mex('-v', ['CXXFLAGS=' cxxFlags], iPath{:}, '-largeArrayDims', '-DBOOST_ALL_NO_LIB','-outdir', [objDst pathstr], '-c', [srcPath src{i}]);
+            mex('-v', ['CXXFLAGS= ${CXXFLAGS}' cxxFlags], iPath{:}, '-largeArrayDims', '-DBOOST_ALL_NO_LIB','-outdir', fullfile(objDst, pathstr), '-c', [srcPath src{i}]);
         else
             disp('skip');
         end
-        objInfo = dir([objDst '/' pathstr '/' name '.*']);
+        objInfo = dir([fullfile(objDst, pathstr, [name '.*'])]);
         obj = fullfile(objDst, pathstr, objInfo.name);
         objs{length(objs)+1} = obj;
     end
     for i = 1:length(libs)
         [pathstr,name,ext] = fileparts(libs{i});
-        objInfo = dir([objDst '/' name '.*']);
-        srcInfo = dir([libsPath libs{i}]);
+        objInfo = dir(fullfile(objDst, [name '.*']));
+        srcInfo = dir(fullfile(libsPath, libs{i}));
         if (isempty(objInfo) || objInfo.datenum < srcInfo.datenum)
-            mex('-v',['CXXFLAGS=' cxxFlags], iPath{:}, '-largeArrayDims','-DBOOST_ALL_NO_LIB', '-outdir', objDst, '-c', [libsPath libs{i}]);
+            mex('-v',['CXXFLAGS= ${CXXFLAGS}' cxxFlags], iPath{:}, '-largeArrayDims','-DBOOST_ALL_NO_LIB', '-outdir', objDst, '-c', [libsPath libs{i}]);
         else
             disp('skip');
         end
-        objInfo = dir([objDst '/' name '.*']);
+        objInfo = dir(fullfile(objDst, [name '.*']));
         obj = fullfile(objDst, objInfo.name);
         objs{length(objs)+1} = obj;
     end
@@ -110,6 +109,7 @@ function make
     for i = 1:length(trg)
         trg{i} = [trgPath trg{i}];
     end
+
     mex('-v',['CXXFLAGS=' cxxFlags], iPath{:},lPath{:}, '-DBOOST_ALL_NO_LIB', '-largeArrayDims', '-outdir', trgDst, trg{:}, objs{:});
     
     cd(oldpath)

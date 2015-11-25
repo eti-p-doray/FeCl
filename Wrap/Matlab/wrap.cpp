@@ -27,7 +27,6 @@
 #include "util/BitField.h"
 #include "util/BitMatrix.h"
 #include "util/Permutation.h"
-
 #include "util/Trellis.h"
 #include "util/MexArgList.h"
 #include "util/SaveLoad.h"
