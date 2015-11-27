@@ -62,7 +62,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow2" class="tabs2">
     <ul class="tablist">
       <li><a href="files.html"><span>File&#160;List</span></a></li>
-      <li><a href="globals.html"><span>File&#160;Members</span></a></li>
     </ul>
   </div>
 <!-- window showing the filter options -->
@@ -89,7 +88,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">Convolutional.m</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="_convolutional_8m.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;</div>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;</div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;%&gt;  This <span class="keyword">class </span>represents a convolutional encode / decoder.</div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;%&gt;  It offers methods encode and to decode data given a Structure.</div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;%&gt;</div>
@@ -128,12 +127,12 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    methods</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        %&gt;  Convolutional constructor.</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        %&gt;  `codec = <a class="code" href="namespacefec.html">fec</a>.Convolutional(trellis, lenght, Name, Value)` creates a Convolutional <span class="keywordtype">object</span> from a <a class="code" href="_trellis_8m.html#a3bca8c135aad03939ccc9dbfef49cd75">Trellis</a> and lenght. Optionally, additional properties can be specified using Name (<span class="keywordtype">string</span> inside single quotes) followed by its Value. See Convolutional::<a class="code" href="classfec_1_1_convolutional_1_1_encoder_options.html">EncoderOptions</a> and Convolutional::<a class="code" href="classfec_1_1_convolutional_1_1_decoder_options.html">DecoderOptions</a> for a list of properties.</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        %&gt;  `codec = <a class="code" href="namespacefec.html">fec</a>.Convolutional(trellis, lenght, Name, Value)` creates a Convolutional <span class="keywordtype">object</span> from a Trellis and lenght. Optionally, additional properties can be specified using Name (<span class="keywordtype">string</span> inside single quotes) followed by its Value. See Convolutional::<a class="code" href="classfec_1_1_convolutional_1_1_encoder_options.html">EncoderOptions</a> and Convolutional::<a class="code" href="classfec_1_1_convolutional_1_1_decoder_options.html">DecoderOptions</a> for a list of properties.</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        %&gt;</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        %&gt; `codec = <a class="code" href="namespacefec.html">fec</a>.Convolutional(encoderOptions, decoderOptions)` creates a Convolutional <span class="keywordtype">object</span> from the Convolutional::<a class="code" href="classfec_1_1_convolutional_1_1_encoder_options.html">EncoderOptions</a> and the Convolutional::<a class="code" href="classfec_1_1_convolutional_1_1_decoder_options.html">DecoderOptions</a> structures, cell array or <span class="keywordtype">object</span> containing encoder and decoder properties which describes the codec.</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        %&gt;</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        %&gt;  See example.</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        %&gt;  @snippet ConvolutionalSimple.m  Creating a simple Convolutional <a class="code" href="classfec_1_1_codec.html">Codec</a></div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        %&gt;  @snippet Convolutional.m  Creating a simple Convolutional <a class="code" href="classfec_1_1_codec.html">Codec</a></div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        function self = Convolutional(varargin)</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;            if (nargin &gt; 0)</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;              self.structure = <a class="code" href="namespacefec.html">fec</a>.Convolutional.Structure(varargin{:});</div>
@@ -141,7 +140,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;            end</div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        end</div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        %&gt; Creates a permutation of parity bits from <a class="code" href="classfec_1_1_convolutional_1_1_puncture_options.html">Convolutional::PunctureOptions</a> structure, <span class="keywordtype">object</span> or NAME, Value list. The permutation can then transform (Permutation::permute() and then Permutation::dePermute()) the parity bits generated by the same <a class="code" href="classfec_1_1_convolutional.html">Convolutional</a> <a class="code" href="classfec_1_1_codec.html">Codec</a>.</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        %&gt; Note that the this function will not <a class="code" href="make_8m.html#a2d2e1cc42b2e99d1b16dfd051ab5ff96">make</a> the objet to apply the puncture pattern. You will have to use the created permutation to <a class="code" href="classfec_1_1_permutation.html">Permutation</a>::permute() after the encode() method and <a class="code" href="classfec_1_1_permutation.html">Permutation</a>::dePermute() before the decode() method. If you want to create a <a class="code" href="classfec_1_1_convolutional.html">Convolutional</a> <a class="code" href="classfec_1_1_codec.html">Codec</a> with a single puncturing permutation, see PuncturedConvolutional.</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        %&gt; Note that the this function will not make the objet to apply the puncture pattern. You will have to use the created permutation to <a class="code" href="classfec_1_1_permutation.html">Permutation</a>::permute() after the encode() method and <a class="code" href="classfec_1_1_permutation.html">Permutation</a>::dePermute() before the decode() method. If you want to create a <a class="code" href="classfec_1_1_convolutional.html">Convolutional</a> <a class="code" href="classfec_1_1_codec.html">Codec</a> with a single puncturing permutation, see PuncturedConvolutional.</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        %&gt;</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        %&gt;  @param  punctureOptions structure, <span class="keywordtype">object</span> or Name, Value list containing the permutation properties.</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        %&gt;  @return Generated permutation that will apply the specify punctureOptions</div>
@@ -159,7 +158,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        end</div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        %&gt;  Access the Turbo::decoderOptions <span class="keyword">property</span>.</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        <span class="keyword">function</span> val = <span class="keyword">get</span>.decoderOptions(<span class="keyword">self</span>)</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;            val = <span class="keyword">self</span>.<a class="code" href="classfec_1_1_codec.html#afea5eaf50f15625574441cef665d0be8">structure</a>.decoderOptions;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;            val = <span class="keyword">self</span>.structure.decoderOptions;</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        end</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        %&gt;  Access the Turbo::encoderOptions <span class="keyword">property</span>.</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        <span class="keyword">function</span> val = <span class="keyword">get</span>.encoderOptions(<span class="keyword">self</span>)</div>
@@ -190,9 +189,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;</div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;end</div>
 <div class="ttc" id="classfec_1_1_permutation_html"><div class="ttname"><a href="classfec_1_1_permutation.html">fec::Permutation</a></div><div class="ttdoc">This class represents a permutation vector. </div><div class="ttdef"><b>Definition:</b> <a href="_permutation_8m_source.html#l00006">Permutation.m:6</a></div></div>
-<div class="ttc" id="make_8m_html_a2d2e1cc42b2e99d1b16dfd051ab5ff96"><div class="ttname"><a href="make_8m.html#a2d2e1cc42b2e99d1b16dfd051ab5ff96">make</a></div><div class="ttdeci">function make()</div></div>
 <div class="ttc" id="classfec_1_1_convolutional_1_1_puncture_options_html"><div class="ttname"><a href="classfec_1_1_convolutional_1_1_puncture_options.html">fec::Convolutional::PunctureOptions</a></div><div class="ttdoc">This class gathers options affecting puncturing in Convolutional Codec. </div><div class="ttdef"><b>Definition:</b> <a href="_09_convolutional_2_puncture_options_8m_source.html#l00002">PunctureOptions.m:2</a></div></div>
-<div class="ttc" id="classfec_1_1_codec_html_afea5eaf50f15625574441cef665d0be8"><div class="ttname"><a href="classfec_1_1_codec.html#afea5eaf50f15625574441cef665d0be8">fec::Codec::structure</a></div><div class="ttdeci">Property structure</div><div class="ttdef"><b>Definition:</b> <a href="_codec_8m_source.html#l00035">Codec.m:35</a></div></div>
 <div class="ttc" id="namespacefec_1_1detail_html"><div class="ttname"><a href="namespacefec_1_1detail.html">fec::detail</a></div></div>
 <div class="ttc" id="classfec_1_1_convolutional_1_1_decoder_options_html"><div class="ttname"><a href="classfec_1_1_convolutional_1_1_decoder_options.html">fec::Convolutional::DecoderOptions</a></div><div class="ttdoc">This class gathers options affecting the decoder in Convolutional Codec. </div><div class="ttdef"><b>Definition:</b> <a href="_09_convolutional_2_decoder_options_8m_source.html#l00002">DecoderOptions.m:2</a></div></div>
 <div class="ttc" id="classfec_1_1_codec_html"><div class="ttname"><a href="classfec_1_1_codec.html">fec::Codec</a></div><div class="ttdoc">This class represents a general encoder / decoder. </div><div class="ttdef"><b>Definition:</b> <a href="_codec_8m_source.html#l00012">Codec.m:12</a></div></div>
@@ -200,7 +197,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="ttc" id="namespacefec_html"><div class="ttname"><a href="namespacefec.html">fec</a></div><div class="ttdoc">Foward Error Correction namespace. </div></div>
 <div class="ttc" id="classfec_1_1_decoder_algorithm_html"><div class="ttname"><a href="classfec_1_1_decoder_algorithm.html">fec::DecoderAlgorithm</a></div><div class="ttdoc">This class holds the DecoderAlgorithm enumeration. </div><div class="ttdef"><b>Definition:</b> <a href="_decoder_algorithm_8m_source.html#l00002">DecoderAlgorithm.m:2</a></div></div>
 <div class="ttc" id="classfec_1_1_convolutional_html"><div class="ttname"><a href="classfec_1_1_convolutional.html">fec::Convolutional</a></div><div class="ttdoc">This class represents a convolutional encode / decoder. </div><div class="ttdef"><b>Definition:</b> <a href="_convolutional_8m_source.html#l00019">Convolutional.m:19</a></div></div>
-<div class="ttc" id="_trellis_8m_html_a3bca8c135aad03939ccc9dbfef49cd75"><div class="ttname"><a href="_trellis_8m.html#a3bca8c135aad03939ccc9dbfef49cd75">Trellis</a></div><div class="ttdeci">function Trellis(in constraintLength, in generator, in feedback)</div></div>
 <div class="ttc" id="classfec_1_1detail_1_1_wrap_fcn_id_html"><div class="ttname"><a href="classfec_1_1detail_1_1_wrap_fcn_id.html">fec::detail::WrapFcnId</a></div><div class="ttdef"><b>Definition:</b> <a href="_wrap_fcn_id_8m_source.html#l00001">WrapFcnId.m:1</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

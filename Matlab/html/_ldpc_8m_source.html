@@ -62,7 +62,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow2" class="tabs2">
     <ul class="tablist">
       <li><a href="files.html"><span>File&#160;List</span></a></li>
-      <li><a href="globals.html"><span>File&#160;Members</span></a></li>
     </ul>
   </div>
 <!-- window showing the filter options -->
@@ -89,7 +88,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">Ldpc.m</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="_ldpc_8m.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;</div>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;</div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;%&gt;  This <span class="keyword">class </span>represents an ldpc encode / decoder.</div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;%&gt;  It offers methods encode and to decode data given an Structure.</div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;%&gt;</div>
@@ -111,9 +110,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        encoderOptions</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        decoderOptions</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    end</div>
-<div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="classfec_1_1_ldpc.html#abfb092fc49fb95db66dc0766101a655d">   23</a></span>&#160;    properties (Dependent = true)</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    properties (Dependent = true)</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        %&gt;  Maximum number of iterations in decoder.</div>
-<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="classfec_1_1_ldpc.html#a0f089326857ff519a6846a57d4b14a35">   25</a></span>&#160;        iterations;</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        iterations;</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        %&gt;  <a class="code" href="classfec_1_1_decoder_algorithm.html">DecoderAlgorithm</a> type used in decoder.</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        algorithm;</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    end</div>
@@ -127,12 +126,12 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    methods</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        %&gt;  Ldpc constructor.</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        %&gt;  `codec = <a class="code" href="namespacefec.html">fec</a>.Ldpc(trellis, lenght, Name, Value)` creates an Ldpc <span class="keywordtype">object</span> from a <a class="code" href="_trellis_8m.html#a3bca8c135aad03939ccc9dbfef49cd75">Trellis</a> and lenght. Optionally, additional properties can be specified using Name (<span class="keywordtype">string</span> inside single quotes) followed by its Value. See Ldpc::<a class="code" href="classfec_1_1_ldpc_1_1_encoder_options.html">EncoderOptions</a> and Ldpc::<a class="code" href="classfec_1_1_ldpc_1_1_decoder_options.html">DecoderOptions</a> for a list of properties.</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        %&gt;  `codec = <a class="code" href="namespacefec.html">fec</a>.Ldpc(trellis, lenght, Name, Value)` creates an Ldpc <span class="keywordtype">object</span> from a Trellis and lenght. Optionally, additional properties can be specified using Name (<span class="keywordtype">string</span> inside single quotes) followed by its Value. See Ldpc::<a class="code" href="classfec_1_1_ldpc_1_1_encoder_options.html">EncoderOptions</a> and Ldpc::<a class="code" href="classfec_1_1_ldpc_1_1_decoder_options.html">DecoderOptions</a> for a list of properties.</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        %&gt;</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        %&gt; `codec = <a class="code" href="namespacefec.html">fec</a>.Ldpc(encoderOptions, decoderOptions)` creates an Ldpc <span class="keywordtype">object</span> from the Ldpc::<a class="code" href="classfec_1_1_ldpc_1_1_encoder_options.html">EncoderOptions</a> and the Ldpc::<a class="code" href="classfec_1_1_ldpc_1_1_decoder_options.html">DecoderOptions</a> structures, cell array or <span class="keywordtype">object</span> containing encoder and decoder properties which describes the codec.</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        %&gt;</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        %&gt;  See example.</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        %&gt;  @snippet LdpcSimple.m  Creating a simple Ldpc <a class="code" href="classfec_1_1_codec.html">Codec</a></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        %&gt;  @snippet Ldpc.m  Creating a simple Ldpc <a class="code" href="classfec_1_1_codec.html">Codec</a></div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        function self = Ldpc(varargin)</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;            if (nargin &gt; 0)</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;              self.structure = <a class="code" href="namespacefec.html">fec</a>.Ldpc.Structure(varargin{:});</div>
@@ -156,7 +155,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;            <span class="keyword">self</span>.setDecoderOptions(<span class="stringliteral">&#39;algorithm&#39;</span>, val);</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        end</div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        <span class="keyword">function</span> val = <span class="keyword">get</span>.decoderOptions(<span class="keyword">self</span>)</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;            val = <span class="keyword">self</span>.<a class="code" href="classfec_1_1_codec.html#afea5eaf50f15625574441cef665d0be8">structure</a>.decoderOptions;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;            val = <span class="keyword">self</span>.structure.decoderOptions;</div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        end</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        <span class="keyword">function</span> val = <span class="keyword">get</span>.encoderOptions(<span class="keyword">self</span>)</div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;            val = <span class="keyword">self</span>.structure.encoderOptions;</div>
@@ -183,13 +182,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;</div>
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;end</div>
 <div class="ttc" id="classfec_1_1_permutation_html"><div class="ttname"><a href="classfec_1_1_permutation.html">fec::Permutation</a></div><div class="ttdoc">This class represents a permutation vector. </div><div class="ttdef"><b>Definition:</b> <a href="_permutation_8m_source.html#l00006">Permutation.m:6</a></div></div>
-<div class="ttc" id="classfec_1_1_codec_html_afea5eaf50f15625574441cef665d0be8"><div class="ttname"><a href="classfec_1_1_codec.html#afea5eaf50f15625574441cef665d0be8">fec::Codec::structure</a></div><div class="ttdeci">Property structure</div><div class="ttdef"><b>Definition:</b> <a href="_codec_8m_source.html#l00035">Codec.m:35</a></div></div>
 <div class="ttc" id="namespacefec_1_1detail_html"><div class="ttname"><a href="namespacefec_1_1detail.html">fec::detail</a></div></div>
 <div class="ttc" id="classfec_1_1_ldpc_1_1_decoder_options_html"><div class="ttname"><a href="classfec_1_1_ldpc_1_1_decoder_options.html">fec::Ldpc::DecoderOptions</a></div><div class="ttdoc">This class gathers options affecting the decoder in Ldpc Codec. </div><div class="ttdef"><b>Definition:</b> <a href="_09_ldpc_2_decoder_options_8m_source.html#l00002">DecoderOptions.m:2</a></div></div>
 <div class="ttc" id="classfec_1_1_codec_html"><div class="ttname"><a href="classfec_1_1_codec.html">fec::Codec</a></div><div class="ttdoc">This class represents a general encoder / decoder. </div><div class="ttdef"><b>Definition:</b> <a href="_codec_8m_source.html#l00012">Codec.m:12</a></div></div>
 <div class="ttc" id="namespacefec_html"><div class="ttname"><a href="namespacefec.html">fec</a></div><div class="ttdoc">Foward Error Correction namespace. </div></div>
 <div class="ttc" id="classfec_1_1_decoder_algorithm_html"><div class="ttname"><a href="classfec_1_1_decoder_algorithm.html">fec::DecoderAlgorithm</a></div><div class="ttdoc">This class holds the DecoderAlgorithm enumeration. </div><div class="ttdef"><b>Definition:</b> <a href="_decoder_algorithm_8m_source.html#l00002">DecoderAlgorithm.m:2</a></div></div>
-<div class="ttc" id="_trellis_8m_html_a3bca8c135aad03939ccc9dbfef49cd75"><div class="ttname"><a href="_trellis_8m.html#a3bca8c135aad03939ccc9dbfef49cd75">Trellis</a></div><div class="ttdeci">function Trellis(in constraintLength, in generator, in feedback)</div></div>
 <div class="ttc" id="classfec_1_1_ldpc_html"><div class="ttname"><a href="classfec_1_1_ldpc.html">fec::Ldpc</a></div><div class="ttdoc">This class represents an ldpc encode / decoder. </div><div class="ttdef"><b>Definition:</b> <a href="_ldpc_8m_source.html#l00018">Ldpc.m:18</a></div></div>
 <div class="ttc" id="classfec_1_1detail_1_1_wrap_fcn_id_html"><div class="ttname"><a href="classfec_1_1detail_1_1_wrap_fcn_id.html">fec::detail::WrapFcnId</a></div><div class="ttdef"><b>Definition:</b> <a href="_wrap_fcn_id_8m_source.html#l00001">WrapFcnId.m:1</a></div></div>
 <div class="ttc" id="classfec_1_1_ldpc_1_1_encoder_options_html"><div class="ttname"><a href="classfec_1_1_ldpc_1_1_encoder_options.html">fec::Ldpc::EncoderOptions</a></div><div class="ttdoc">This class gathers options affecting the encoder in Ldpc Codec. </div><div class="ttdef"><b>Definition:</b> <a href="_09_ldpc_2_encoder_options_8m_source.html#l00002">EncoderOptions.m:2</a></div></div>
