@@ -8,10 +8,6 @@ cmake_minimum_required(VERSION 2.8.11)
 #
 
 if (UNIX)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-endif(UNIX)
-
-if (UNIX)
   set(CMAKE_CXX_FLAGS " -std=c++11 -pthread -fPIC ${CMAKE_CXX_FLAGS}")
   add_definitions( -ftemplate-depth=300 )
 else()
