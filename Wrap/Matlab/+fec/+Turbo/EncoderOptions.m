@@ -5,7 +5,7 @@ classdef EncoderOptions < hgsetget
         trellis;
         %>  Interleaver feeding every constituent.
         interleaver;
-        %>  Termination type of each constituent.
+        %>  Convolutional::Termination type of each constituent.
         termination = {uint32(fec.Convolutional.Termination.('Tail'))};
     end
 

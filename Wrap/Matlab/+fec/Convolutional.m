@@ -42,7 +42,7 @@ classdef Convolutional < fec.Codec
         %> `codec = fec.Convolutional(encoderOptions, decoderOptions)` creates a Convolutional object from the Convolutional::EncoderOptions and the Convolutional::DecoderOptions structures, cell array or object containing encoder and decoder properties which describes the codec.
         %>
         %>  See example.
-        %>  @snippet ConvolutionalSimple.m  Creating a simple Convolutional Codec
+        %>  @snippet Convolutional.m  Creating a simple Convolutional Codec
         function self = Convolutional(varargin)
             if (nargin > 0)
               self.structure = fec.Convolutional.Structure(varargin{:});

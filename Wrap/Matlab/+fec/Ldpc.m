@@ -41,7 +41,7 @@ classdef Ldpc < fec.Codec
         %> `codec = fec.Ldpc(encoderOptions, decoderOptions)` creates an Ldpc object from the Ldpc::EncoderOptions and the Ldpc::DecoderOptions structures, cell array or object containing encoder and decoder properties which describes the codec.
         %>
         %>  See example.
-        %>  @snippet LdpcSimple.m  Creating a simple Ldpc Codec
+        %>  @snippet Ldpc.m  Creating a simple Ldpc Codec
         function self = Ldpc(varargin)
             if (nargin > 0)
               self.structure = fec.Ldpc.Structure(varargin{:});

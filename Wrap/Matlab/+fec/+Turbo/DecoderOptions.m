@@ -6,14 +6,14 @@ classdef DecoderOptions < hgsetget
         %>  DecoderAlgorithm type used in decoder.
         algorithm = uint32(fec.DecoderAlgorithm.('Linear'));
         %>  Turbo::Scheduling type used in decoder.
-scheduling;
+        scheduling;
         %>  Multiplicative scalingFactor in Approximate decoder.
+        %>  This can be a scalar, a row-vector, a column vector or a matrix. If there is multiple rows, each row will be used for a different constituent. If there is multiple columns, each columns will be used for a different iteration.
         scalingFactor = 1.0;
-schedulingType = uint32(fec.Turbo.Scheduling.('Serial'));
     end
-    %properties ()
-        %schedulingType;
-    %end
+    properties (SetAccess = private)
+        schedulingType = uint32(fec.Turbo.Scheduling.('Serial'));
+    end
 
     methods
         function self = DecoderOptions(varargin)

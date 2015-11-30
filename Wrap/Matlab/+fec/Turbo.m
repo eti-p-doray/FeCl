@@ -48,7 +48,7 @@ classdef Turbo < fec.Codec
         %> `codec = fec.Turbo(encoderOptions, decoderOptions)` creates a Turbo object from the Turbo::EncoderOptions and the Turbo::DecoderOptions structures, cell array or object containing encoder and decoder properties which describes the codec.
         %>
         %>  See example.
-        %>  @snippet TurboSimple.m  Creating a simple Turbo Codec
+        %>  @snippet Turbo.m  Creating a simple Turbo Codec
         function self = Turbo(varargin)
             if (nargin > 0)
               self.structure = fec.Turbo.Structure(varargin{:});

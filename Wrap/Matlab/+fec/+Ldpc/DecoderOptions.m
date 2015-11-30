@@ -6,6 +6,7 @@ classdef DecoderOptions < hgsetget
         %>  DecoderAlgorithm type used in decoder.
         algorithm = uint32(fec.DecoderAlgorithm.('Linear'));
         %>  Multiplicative scalingFactor in Approximate decoder.
+%>  This can be a scalar, or a map in the form {key1, value1; key2 value2; ...}, where value, which will be used for the check degree defined by key, is a scalar or a vector with factors for every iterations. The key 0 is the default key which will be used for every degree that is not otherwise defined.
         scalingFactor = cell2struct({0, 1.0}, {'key', 'value'}, 2);
     end
 

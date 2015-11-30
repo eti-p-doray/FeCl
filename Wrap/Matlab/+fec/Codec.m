@@ -83,7 +83,6 @@ classdef (Abstract) Codec < fec.detail.WrapObject
             consistent = fec.bin.wrap(uint32(fec.detail.WrapFcnId.Codec_check), self, parity);
         end
 
-        function parity = encode(self, msg)
         %> Encode several blocs of data according to the object structure.
         %>
         %>  @param msg Information bits to be coded
@@ -92,13 +91,16 @@ classdef (Abstract) Codec < fec.detail.WrapObject
         %>       Many msg blocs can be encoded at once.
         %>
         %>  @return parity Parity bits encoding the msg bits
+        %>
+        %>  See example.
+        %>  @snippet SimulationSimple.m  Encode
+        function parity = encode(self, msg)
             parity = reshape(fec.bin.wrap(uint32(fec.detail.WrapFcnId.Codec_encode), self, msg), [], size(msg,2));
         end
 
-        function msg = decode(self, parity)
         %> Decode several blocs of soft data according to the object structure.
         %>
-        %>  @param parityIn - Parity L-values correspondig to the received signal.
+        %>  @param parity - Parity L-values correspondig to the received signal.
         %>       Given a signal y and a parity bit x, we define the correspondig L-value as
         %>         L = ln[ p(x = 1 | y) / p(x = 0 | y) ] = ln[ p(y | x = 1) / p(y | x = 0) ]
         %>       This array is expected to have its number of rows equals to the
@@ -108,6 +110,9 @@ classdef (Abstract) Codec < fec.detail.WrapObject
         %>
         %> @return Decoded msg
         %>
+        %>  See example.
+        %>  @snippet SimulationSimple.m  Decode
+        function msg = decode(self, parity)
             msg = reshape(fec.bin.wrap(uint32(fec.detail.WrapFcnId.Codec_decode), self, parity), [], size(parity,2));
         end
 

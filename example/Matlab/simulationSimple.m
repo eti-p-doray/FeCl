@@ -11,23 +11,26 @@
 msg = uint64( randi([0 1],codec.msgSize,5) );
 
 % We can encode the msg to obtain a sequence of parity bits.
-parity = codec.encode(msg);
+c = codec.encode(msg);
 
 %>  [Encode]
 
 % Now we modulate (with bpsk) the parity bits.
-symbol =  -2*double(parity)+1;
+x =  -2*double(c)+1;
 
 % And we add AWGN noise.
 snrdb = 1.0;
 snr = 10.0^(snrdb/10.0);
-signal = symbol + randn(size(symbol)) / sqrt(2*snr);
+y = x + randn(size(x)) / sqrt(2*snr);
 
 % And we compute L-values from signal.
-llr = -4.0 * signal * snr;
+llr = -4.0 * y * snr;
 
+%>  [Decode]
 % Now, we decode and hope for success.
 msgDecoded = codec.decode(llr);
 
 % Lets now count the errors in the decoded msg
 errorCount = sum(sum(msgDecoded ~= msg))
+
+%>  [Decode]

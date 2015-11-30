@@ -1,65 +1,60 @@
-%This file shows how to construct a turbo code with more advanced options.
-%See operation for encoding and decoding operations
+%This file shows how to construct a simple turbo codec.
+%See 'operation' for encoding and decoding operations
 
-%We define a trellis structure from a polynomial.
-%   This structure is recursive.
-%   We do not need to add the systematic part of the trellis since the
-%   turbo code implicitly use it.
-%The code is generalized to any number of constituents. Different trellis structures can be used.
-trellis{1} = fec.Trellis(4, [15], 13);
-trellis{2} = fec.Trellis(4, [15 17], 13);
-trellis{3} = fec.Trellis([3, 4], [3; 15], [7, 13]);
+%>  [Creating a simple Turbo Codec]
+% To create a valid Turbo Codec, we need to give it at least a trellis and an interleaver.
+% Optionally, we can configure several other parameters.
+
+%>  [Creating a Trellis]
+% We define a trellis structure with a constraint length of 4, one output of polynomial 15 and a feedback polynomial of 13.
+% We do not need to add the systematic part for of the trellis for Turbo since it is implicitly used.
+trellis = fec.Trellis(4, 15, 13);
+
+% This function is compatible with the structure used in poly2trellis. Thus, the function is equivalent to the following
+trellis = poly2trellis(4, 15, 13);
+%>  [Creating a Trellis]
 
 % We define interleaved sequences of indices
-% These sequences will be used as interleaver for the first and
-%   second constituents of the parallel concatenated code.
-% The interleavers are used such that the entire sequence of bits
-%   is read out from a sequence of addresses that are
-%   defined by these indices array.
-% We can create a turbo code with its constituents of different sizes.
-%   The constituent size is defined by the length of the interleaver.
-interl{1} = randperm(248);
+% These sequences will be used as interleaver for the first and second constituents of the parallel concatenated code.
+% The interleavers are used such that the entire sequence of bits is read out from a sequence of addresses that are defined by these indices array.
+% The first constituent will be given systematic inputs.
+% The second constituent will be given random permutation of the input sequence.
+interl{1} = [];
 interl{2} = randperm(256);
-interl{3} = randperm(192, 128);
 
-%We can specify the trellis termination type :
-%   Tail | Truncate default = Tail
-% Constituents can have different terminations
-term{1} = 'Tail';
-term{2} = 'Truncate';
-term{3} = 'Tail';
+%We define a simple codec with the trellis and the interleavers.
+codec = fec.Turbo(trellis, interl)
 
-codec = fec.Turbo(trellis, interl, 'termination', term)
+%>  [Creating a simple Turbo Codec]
 
-% We can specify the number of iteration for decoding. default = 5
-% We are replacing the code object by a new one.
-codec = fec.Turbo(trellis, interl, 'iterations', 4)
+%>  [Encode]
+% Lets define a random sequence of message bits.
+% The number of row must be equal to the code msgSize.
+% Each row is one bloc of data encoded independently from the others.
+% We are defining 5 bloc of data.
+msg = uint64( randi([0 1],codec.msgSize,5) );
 
-% Or we can change it after creation
-codec.iterations = 6;
+% We can encode the msg to obtain a sequence of parity bits.
+c = codec.encode(msg);
 
-% We can specify the decoder scheduling type.
-% In serial decoding,
-%   each constituent tries to decode and gives its extrinsic
-%   information to the next constituent in a serial behavior.
-% In parallel decoding, each constituent tries to decode in parallel.
-%   The extrinsic information is then combined and shared to every
-%   constituents.
-%   Serial | Parallel default = Serial
-codec = fec.Turbo(trellis, interl, 'scheduling', 'Parallel')
+%>  [Encode]
 
-% We can also specify the decoder algorithm.:
-%   Exact | Linear | Approximate default = Linear
-codec = fec.Turbo(trellis, interl, 'algorithm', 'Approximate')
+% Now we modulate (with bpsk) the parity bits.
+x =  -2*double(c)+1;
 
-% Suppose we are interested in applying a puncturing patern, but we do not want the puncturing
-% step to be part of the encoding / decoding scheme. This happens when simulationg harq models with incremental reduncdency.
-% The mother codec is a low rate codec that will be punctured with different masks to generate several transmitted frames.
+% And we add AWGN noise.
+snrdb = 1.0;
+snr = 10.0^(snrdb/10.0);
+y = x + randn(size(x)) / sqrt(2*snr);
 
-puncturingPermutation{1} = codec.puncturing('mask', [1 1; 1 0; 0 1; 0 0]);
-puncturingPermutation{2} = codec.puncturing('mask', [1 1; 0 1; 1 0; 0 0]);
+% And we compute L-values from signal.
+llr = -4.0 * y * snr;
 
+%>  [Decode]
+% Now, we decode and hope for success.
+msgDecoded = codec.decode(llr);
 
-%And as all codecs, with can change the number of thread used for
-%operations. In this case, we are using 2 threads.
-codec.workGroupSize = 2;
+% Lets now count the errors in the decoded msg
+errorCount = sum(sum(msgDecoded ~= msg))
+
+%>  [Decode]
