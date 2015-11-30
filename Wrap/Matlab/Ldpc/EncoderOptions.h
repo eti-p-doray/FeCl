@@ -34,8 +34,8 @@
 template <>
 class mxArrayTo<fec::Ldpc::EncoderOptions> {
 public:
-  static fec::Ldpc::EncoderOptions f(const mxArray* in) {
-    auto checkMatrix = mxArrayTo<fec::SparseBitMatrix>::f(mxGetField(in, 0, "checkMatrix"));
+  fec::Ldpc::EncoderOptions operator() (const mxArray* in) const {
+    auto checkMatrix = mxArrayTo<fec::SparseBitMatrix>{}(mxGetField(in, 0, "checkMatrix"));
     fec::Ldpc::EncoderOptions encoderOptions(checkMatrix);
     return encoderOptions;
   }

@@ -33,11 +33,11 @@
 template <>
 class mxArrayTo<fec::Permutation> {
 public:
-  static fec::Permutation f(const mxArray* in) {
+  fec::Permutation operator() (const mxArray* in) const {
     if (in == nullptr) {
       throw std::invalid_argument("null");
     }
-    std::vector<size_t> perm = mxArrayTo<std::vector<size_t>>::f(in);
+    std::vector<size_t> perm = mxArrayTo<std::vector<size_t>>{}(in);
     for (auto & i : perm) {
       i--;
     }

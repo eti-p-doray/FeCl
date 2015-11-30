@@ -54,7 +54,7 @@ const std::vector<std::function<typename WrapFcn<Wrap>::Signature>> WrapFcn<Wrap
   [](const InArgList in, OutArgList out) //Codec_destroy
   {
     try {
-      auto codec = wrapTo<Handle<Codec>>::f(in[0]);
+      auto codec = wrapTo<Handle<Codec>>{}(in[0]);
       codec.reset();
       out[0] = toWrap(std::move(codec));
     } catch (...) {
@@ -65,7 +65,7 @@ const std::vector<std::function<typename WrapFcn<Wrap>::Signature>> WrapFcn<Wrap
   
   [](const InArgList in, OutArgList out) //Codec_save
   {
-    auto codec = wrapTo<Handle<Codec>>::f(in[0]);
+    auto codec = wrapTo<Handle<Codec>>{}(in[0]);
     out[0] = save(codec, derivedCodec);
   },
   
@@ -77,11 +77,11 @@ const std::vector<std::function<typename WrapFcn<Wrap>::Signature>> WrapFcn<Wrap
   
   [](const InArgList in, OutArgList out) //Codec_check
   {
-    auto codec = wrapTo<Handle<Codec>>::f(in[0]);
+    auto codec = wrapTo<Handle<Codec>>{}(in[0]);
     
     std::vector<BitField<size_t>,Allocator<BitField<size_t>>> parity;
     try {
-      parity = wrapTo<std::vector<BitField<size_t>,Allocator<BitField<size_t>>>>::f(in[1]);
+      parity = wrapTo<std::vector<BitField<size_t>,Allocator<BitField<size_t>>>>{}(in[1]);
     } catch (std::exception& e) {
       throw std::invalid_argument("Parity vector is invalid");
     }
@@ -90,11 +90,11 @@ const std::vector<std::function<typename WrapFcn<Wrap>::Signature>> WrapFcn<Wrap
   
   [](const InArgList in, OutArgList out) //Codec_encode
   {
-    auto codec = wrapTo<Handle<Codec>>::f(in[0]);
+    auto codec = wrapTo<Handle<Codec>>{}(in[0]);
     
     std::vector<BitField<size_t>,Allocator<BitField<size_t>>> msg;
     try {
-      msg = wrapTo<std::vector<BitField<size_t>,Allocator<BitField<size_t>>>>::f(in[1]);
+      msg = wrapTo<std::vector<BitField<size_t>,Allocator<BitField<size_t>>>>{}(in[1]);
     } catch (std::exception& e) {
       throw std::invalid_argument("Msg vector is invalid");
     }
@@ -105,11 +105,11 @@ const std::vector<std::function<typename WrapFcn<Wrap>::Signature>> WrapFcn<Wrap
   
   [](const InArgList in, OutArgList out) //Codec_decode
   {
-    auto codec = wrapTo<Handle<Codec>>::f(in[0]);
+    auto codec = wrapTo<Handle<Codec>>{}(in[0]);
     
     std::vector<double,Allocator<double>> parity;
     try {
-      parity = wrapTo<std::vector<double,Allocator<double>>>::f(in[1]);
+      parity = wrapTo<std::vector<double,Allocator<double>>>{}(in[1]);
     } catch (std::exception& e) {
       throw std::invalid_argument("Parity vector is invalid");
     }
@@ -120,13 +120,13 @@ const std::vector<std::function<typename WrapFcn<Wrap>::Signature>> WrapFcn<Wrap
   
   [](const InArgList in, OutArgList out) //Codec_soDecode
   {
-    auto codec = wrapTo<Handle<Codec>>::f(in[0]);
+    auto codec = wrapTo<Handle<Codec>>{}(in[0]);
     
-    std::vector<double,Allocator<double>> parityIn = wrapTo<std::vector<double,Allocator<double>>>::f(in[1]);
+    std::vector<double,Allocator<double>> parityIn = wrapTo<std::vector<double,Allocator<double>>>{}(in[1]);
     std::vector<double,Allocator<double>> stateIn;
-    if (in.size() > 2) stateIn = wrapTo<std::vector<double,Allocator<double>>>::f(in[2]);
+    if (in.size() > 2) stateIn = wrapTo<std::vector<double,Allocator<double>>>{}(in[2]);
     std::vector<double,Allocator<double>> systIn;
-    if (in.size() > 3) systIn = wrapTo<std::vector<double,Allocator<double>>>::f(in[3]);
+    if (in.size() > 3) systIn = wrapTo<std::vector<double,Allocator<double>>>{}(in[3]);
     
     auto input = Codec::Input<Allocator>();
     if (parityIn.size()) input.parity(parityIn);
@@ -152,117 +152,117 @@ const std::vector<std::function<typename WrapFcn<Wrap>::Signature>> WrapFcn<Wrap
   
   [](const InArgList in, OutArgList out) //Codec_get_msgSize
   {
-    out[0] = toWrap(wrapTo<Handle<Codec>>::f(in[0])->msgSize());
+    out[0] = toWrap(wrapTo<Handle<Codec>>{}(in[0])->msgSize());
   },
   
   [](const InArgList in, OutArgList out) //Codec_get_systSize
   {
-    out[0] = toWrap(wrapTo<Handle<Codec>>::f(in[0])->systSize());
+    out[0] = toWrap(wrapTo<Handle<Codec>>{}(in[0])->systSize());
   },
   
   [](const InArgList in, OutArgList out) //Codec_get_stateSize
   {
-    out[0] = toWrap(wrapTo<Handle<Codec>>::f(in[0])->stateSize());
+    out[0] = toWrap(wrapTo<Handle<Codec>>{}(in[0])->stateSize());
   },
   
   [](const InArgList in, OutArgList out) //Codec_get_paritySize
   {
-    out[0] = toWrap(wrapTo<Handle<Codec>>::f(in[0])->paritySize());
+    out[0] = toWrap(wrapTo<Handle<Codec>>{}(in[0])->paritySize());
   },
   
   [](const InArgList in, OutArgList out) //Codec_get_workGroupSize
   {
-    out[0] = toWrap(wrapTo<Handle<Codec>>::f(in[0])->getWorkGroupSize());
+    out[0] = toWrap(wrapTo<Handle<Codec>>{}(in[0])->getWorkGroupSize());
   },
   
   [](const InArgList in, OutArgList out) //Codec_set_workGroupSize
   {
-    wrapTo<Handle<Codec>>::f(in[0])->setWorkGroupSize(wrapTo<int>::f(in[1]));
+    wrapTo<Handle<Codec>>{}(in[0])->setWorkGroupSize(wrapTo<int>{}(in[1]));
   },
   
   [](const InArgList in, OutArgList out) //Turbo_constructor
   {
-    Handle<Codec> codec(new Turbo(wrapTo<Turbo::EncoderOptions>::f(in[0]), wrapTo<Turbo::DecoderOptions>::f(in[1])));
+    Handle<Codec> codec(new Turbo(wrapTo<Turbo::EncoderOptions>{}(in[0]), wrapTo<Turbo::DecoderOptions>{}(in[1])));
     out[0] = toWrap(std::move(codec));
   },
   
   [](const InArgList in, OutArgList out) //Turbo_getDecoderOptions
   {
-    out[0] = toWrap(wrapTo<Handle<Turbo>>::f(in[0])->getDecoderOptions());
+    out[0] = toWrap(wrapTo<Handle<Turbo>>{}(in[0])->getDecoderOptions());
   },
   
   [](const InArgList in, OutArgList out) //Turbo_setDecoderOptions
   {
-    wrapTo<Handle<Turbo>>::f(in[0])->setDecoderOptions(wrapTo<Turbo::DecoderOptions>::f(in[1]));
+    wrapTo<Handle<Turbo>>{}(in[0])->setDecoderOptions(wrapTo<Turbo::DecoderOptions>{}(in[1]));
   },
   
   [](const InArgList in, OutArgList out) //Turbo_puncturing
   {
-    out[0] = toWrap(wrapTo<Handle<Turbo>>::f(in[0])->puncturing(wrapTo<Turbo::PunctureOptions>::f(in[1])));
+    out[0] = toWrap(wrapTo<Handle<Turbo>>{}(in[0])->puncturing(wrapTo<Turbo::PunctureOptions>{}(in[1])));
   },
   
   [](const InArgList in, OutArgList out) //Turbo_Lte3Gpp_interleaver
   {
-    out[0] = toWrap(Turbo::Lte3Gpp::interleaver(wrapTo<size_t>::f(in[0])));
+    out[0] = toWrap(Turbo::Lte3Gpp::interleaver(wrapTo<size_t>{}(in[0])));
   },
   
   [](const InArgList in, OutArgList out) //Ldpc_constructor
   {
-    Handle<Codec> codec(new Ldpc(wrapTo<Ldpc::EncoderOptions>::f(in[0]), wrapTo<Ldpc::DecoderOptions>::f(in[1])));
+    Handle<Codec> codec(new Ldpc(wrapTo<Ldpc::EncoderOptions>{}(in[0]), wrapTo<Ldpc::DecoderOptions>{}(in[1])));
     out[0] = toWrap(std::move(codec));
   },
   
   [](const InArgList in, OutArgList out) //Ldpc_getDecoderOptions
   {
-    out[0] = toWrap(wrapTo<Handle<Ldpc>>::f(in[0])->getDecoderOptions());
+    out[0] = toWrap(wrapTo<Handle<Ldpc>>{}(in[0])->getDecoderOptions());
   },
   
   [](const InArgList in, OutArgList out) //Ldpc_setDecoderOptions
   {
-    wrapTo<Handle<Ldpc>>::f(in[0])->setDecoderOptions(wrapTo<Ldpc::DecoderOptions>::f(in[1]));
+    wrapTo<Handle<Ldpc>>{}(in[0])->setDecoderOptions(wrapTo<Ldpc::DecoderOptions>{}(in[1]));
   },
   
   [](const InArgList in, OutArgList out) //Ldpc_puncturing
   {
-    out[0] = toWrap(wrapTo<Handle<Ldpc>>::f(in[0])->puncturing(wrapTo<Ldpc::PunctureOptions>::f(in[1])));
+    out[0] = toWrap(wrapTo<Handle<Ldpc>>{}(in[0])->puncturing(wrapTo<Ldpc::PunctureOptions>{}(in[1])));
   },
   
   [](const InArgList in, OutArgList out) //Ldpc_DvbS2_matrix
   {
-    out[0] = toWrap(Ldpc::DvbS2::matrix(wrapTo<size_t>::f(in[0]), wrapTo<double>::f(in[1])));
+    out[0] = toWrap(Ldpc::DvbS2::matrix(wrapTo<size_t>{}(in[0]), wrapTo<double>{}(in[1])));
   },
   
   [](const InArgList in, OutArgList out) //Convolutional_constructor
   {
-    Handle<Codec> codec(new Convolutional(wrapTo<Convolutional::EncoderOptions>::f(in[0]), wrapTo<Convolutional::DecoderOptions>::f(in[1])));
+    Handle<Codec> codec(new Convolutional(wrapTo<Convolutional::EncoderOptions>{}(in[0]), wrapTo<Convolutional::DecoderOptions>{}(in[1])));
     out[0] = toWrap(std::move(codec));
   },
   
   [](const InArgList in, OutArgList out) //Convolutional_getDecoderOptions
   {
-    out[0] = toWrap(wrapTo<Handle<Convolutional>>::f(in[0])->getDecoderOptions());
+    out[0] = toWrap(wrapTo<Handle<Convolutional>>{}(in[0])->getDecoderOptions());
   },
   
   [](const InArgList in, OutArgList out) //Convolutional_setDecoderOptions
   {
-    wrapTo<Handle<Convolutional>>::f(in[0])->setDecoderOptions(wrapTo<Convolutional::DecoderOptions>::f(in[1]));
+    wrapTo<Handle<Convolutional>>{}(in[0])->setDecoderOptions(wrapTo<Convolutional::DecoderOptions>{}(in[1]));
   },
   
   /*[](const InArgList in, OutArgList out) //Convolutional_setEncoderOptions
   {
-    wrapTo<Handle<Convolutional>>::f(in[0])->setEncoderOptions(wrapTo<Convolutional::EncoderOptions>::f(in[1]));
+    wrapTo<Handle<Convolutional>>{}(in[0])->setEncoderOptions(wrapTo<Convolutional::EncoderOptions>{}(in[1]));
   },*/
   
   [](const InArgList in, OutArgList out) //Convolutional_puncturing
   {
-    out[0] = toWrap(wrapTo<Handle<Convolutional>>::f(in[0])->puncturing(wrapTo<Convolutional::PunctureOptions>::f(in[1])));
+    out[0] = toWrap(wrapTo<Handle<Convolutional>>{}(in[0])->puncturing(wrapTo<Convolutional::PunctureOptions>{}(in[1])));
   },
   
   [](const InArgList in, OutArgList out) //Trellis_constructor
   {
-    auto constraintLength = wrapTo<std::vector<size_t>>::f(in[0]);
-    auto generator = wrapTo<std::vector<std::vector<BitField<size_t>>>>::f(in[1]);
-    auto feedback = wrapTo<std::vector<BitField<size_t>>>::f(in[2]);
+    auto constraintLength = wrapTo<std::vector<size_t>>{}(in[0]);
+    auto generator = wrapTo<std::vector<std::vector<BitField<size_t>>>>{}(in[1]);
+    auto feedback = wrapTo<std::vector<BitField<size_t>>>{}(in[2]);
     
     out[0] = toWrap(Trellis(constraintLength, generator, feedback));
   },

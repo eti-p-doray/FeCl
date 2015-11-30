@@ -34,13 +34,13 @@
 template <>
 class mxArrayTo<fec::Convolutional::EncoderOptions> {
 public:
-  static fec::Convolutional::EncoderOptions f(const mxArray* in) {
+  fec::Convolutional::EncoderOptions operator() (const mxArray* in) const {
     try {
-      auto trellis = mxArrayTo<fec::Trellis>::f(mxGetField(in, 0, "trellis"));
-      size_t length = mxArrayTo<size_t>::f(mxGetField(in, 0, "length"));
+      auto trellis = mxArrayTo<fec::Trellis>{}(mxGetField(in, 0, "trellis"));
+      size_t length = mxArrayTo<size_t>{}(mxGetField(in, 0, "length"));
       fec::Convolutional::EncoderOptions encoderOptions(trellis, length);
     
-      encoderOptions.termination(mxArrayTo<fec::Trellis::Termination>::f(mxGetField(in, 0, "termination")));
+      encoderOptions.termination(mxArrayTo<fec::Trellis::Termination>{}(mxGetField(in, 0, "termination")));
     
       return encoderOptions;
     } catch (std::exception& e) {

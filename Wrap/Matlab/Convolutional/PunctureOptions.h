@@ -34,11 +34,11 @@
 template <>
 class mxArrayTo<fec::Convolutional::PunctureOptions> {
 public:
-  static fec::Convolutional::PunctureOptions f(const mxArray* in) {
+  fec::Convolutional::PunctureOptions operator() (const mxArray* in) const {
     try {
       fec::Convolutional::PunctureOptions punctureOptions;
-      punctureOptions.mask(mxArrayTo<std::vector<bool>>::f(mxGetField(in, 0, "mask")));
-      punctureOptions.tailMask(mxArrayTo<std::vector<bool>>::f(mxGetField(in, 0, "tailMask")));
+      punctureOptions.mask(mxArrayTo<std::vector<bool>>{}(mxGetField(in, 0, "mask")));
+      punctureOptions.tailMask(mxArrayTo<std::vector<bool>>{}(mxGetField(in, 0, "tailMask")));
       
       return punctureOptions;
     } catch (std::exception& e) {

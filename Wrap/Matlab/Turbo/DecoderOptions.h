@@ -34,14 +34,14 @@
 template <>
 class mxArrayTo<fec::Turbo::DecoderOptions> {
 public:
-  static fec::Turbo::DecoderOptions f(const mxArray* in) {
+  fec::Turbo::DecoderOptions operator() (const mxArray* in) const {
     try {
       fec::Turbo::DecoderOptions decoderOptions;
-      decoderOptions.iterations(  mxArrayTo<size_t>::f(mxGetField(in, 0, "iterations")) );
-      decoderOptions.scheduling(  mxArrayTo<fec::Turbo::Scheduling>::f(mxGetField(in, 0, "scheduling")) );
-      decoderOptions.scheduling(  mxArrayTo<fec::SchedulingType>::f(mxGetField(in, 0, "schedulingType")) );
-      decoderOptions.algorithm(  mxArrayTo<fec::DecoderAlgorithm>::f(mxGetField(in, 0, "algorithm")) );
-      decoderOptions.scalingFactor(  mxArrayTo<std::vector<std::vector<double>>>::f(mxGetField(in, 0, "scalingFactor")) );
+      decoderOptions.iterations(  mxArrayTo<size_t>{}(mxGetField(in, 0, "iterations")) );
+      decoderOptions.scheduling(  mxArrayTo<fec::Turbo::Scheduling>{}(mxGetField(in, 0, "scheduling")) );
+      decoderOptions.scheduling(  mxArrayTo<fec::SchedulingType>{}(mxGetField(in, 0, "schedulingType")) );
+      decoderOptions.algorithm(  mxArrayTo<fec::DecoderAlgorithm>{}(mxGetField(in, 0, "algorithm")) );
+      decoderOptions.scalingFactor(  mxArrayTo<std::vector<std::vector<double>>>{}(mxGetField(in, 0, "scalingFactor")) );
       
       return decoderOptions;
     } catch (std::exception& e) {

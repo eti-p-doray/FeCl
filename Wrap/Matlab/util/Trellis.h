@@ -34,16 +34,16 @@
 template<>
 class mxArrayTo<fec::Trellis> {
 public:
-  static fec::Trellis f(const mxArray* in, size_t i = 0) {
+  fec::Trellis operator() (const mxArray* in, size_t i = 0) const {
     if (in == nullptr) {
       throw std::invalid_argument("Trellis is null");
     }
     try {
-    return fec::Trellis(mxArrayTo<std::vector<fec::BitField<size_t>>>::f(mxGetField(in, i, "nextStates")),
-                            mxArrayTo<std::vector<fec::BitField<size_t>>>::f(mxGetField(in, i, "outputs")),
-                            log2(mxArrayTo<size_t>::f(mxGetField(in, i, "numInputSymbols"))),
-                            log2(mxArrayTo<size_t>::f(mxGetField(in, i, "numOutputSymbols"))),
-                            log2(mxArrayTo<size_t>::f(mxGetField(in, i, "numStates"))));
+    return fec::Trellis(mxArrayTo<std::vector<fec::BitField<size_t>>>{}(mxGetField(in, i, "nextStates")),
+                            mxArrayTo<std::vector<fec::BitField<size_t>>>{}(mxGetField(in, i, "outputs")),
+                            log2(mxArrayTo<size_t>{}(mxGetField(in, i, "numInputSymbols"))),
+                            log2(mxArrayTo<size_t>{}(mxGetField(in, i, "numOutputSymbols"))),
+                            log2(mxArrayTo<size_t>{}(mxGetField(in, i, "numStates"))));
     } catch (std::exception& e) {
       throw std::invalid_argument("In trellis: " + std::string(e.what()));
     }

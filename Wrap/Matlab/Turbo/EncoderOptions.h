@@ -35,13 +35,13 @@
 template <>
 class mxArrayTo<fec::Turbo::EncoderOptions> {
 public:
-  static fec::Turbo::EncoderOptions f(const mxArray* in) {
+  fec::Turbo::EncoderOptions operator() (const mxArray* in) const {
     try {
-      auto trellis = mxArrayTo<std::vector<fec::Trellis>>::f(mxGetField(in, 0, "trellis"));
-      auto interl = mxArrayTo<std::vector<fec::Permutation>>::f(mxGetField(in, 0, "interleaver"));
+      auto trellis = mxArrayTo<std::vector<fec::Trellis>>{}(mxGetField(in, 0, "trellis"));
+      auto interl = mxArrayTo<std::vector<fec::Permutation>>{}(mxGetField(in, 0, "interleaver"));
       fec::Turbo::EncoderOptions encoderOptions(trellis, interl);
       
-      encoderOptions.termination(mxArrayTo<std::vector<fec::Trellis::Termination>>::f(mxGetField(in, 0, "termination")));
+      encoderOptions.termination(mxArrayTo<std::vector<fec::Trellis::Termination>>{}(mxGetField(in, 0, "termination")));
       
       return encoderOptions;
     } catch (std::exception& e) {

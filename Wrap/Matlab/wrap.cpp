@@ -55,7 +55,7 @@ public:
 
 void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 {
-  size_t fcnId = mxArrayTo<size_t>::f(prhs[0]);
+  size_t fcnId = mxArrayTo<size_t>{}(prhs[0]);
   nrhs -= 1;
   prhs += 1;
   if (fcnId > WrapFcn<MatlabWrap>::list.size()) {

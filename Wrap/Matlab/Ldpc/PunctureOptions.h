@@ -35,10 +35,10 @@
 template <>
 class mxArrayTo<fec::Ldpc::PunctureOptions> {
 public:
-  static fec::Ldpc::PunctureOptions f(const mxArray* in) {
+  fec::Ldpc::PunctureOptions operator() (const mxArray* in) const {
     fec::Ldpc::PunctureOptions punctureOptions;
-    punctureOptions.mask(mxArrayTo<std::vector<bool>>::f(mxGetField(in, 0, "mask")));
-    punctureOptions.systMask(mxArrayTo<std::vector<bool>>::f(mxGetField(in, 0, "systMask")));
+    punctureOptions.mask(mxArrayTo<std::vector<bool>>{}(mxGetField(in, 0, "mask")));
+    punctureOptions.systMask(mxArrayTo<std::vector<bool>>{}(mxGetField(in, 0, "systMask")));
     return punctureOptions;
   }
 };

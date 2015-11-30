@@ -34,11 +34,11 @@
 template <>
 class mxArrayTo<fec::Turbo::PunctureOptions> {
 public:
-  static fec::Turbo::PunctureOptions f(const mxArray* in) {
+  fec::Turbo::PunctureOptions operator() (const mxArray* in) const {
     fec::Turbo::PunctureOptions punctureOptions;
-    punctureOptions.mask(mxArrayTo<std::vector<std::vector<bool>>>::f(mxGetField(in, 0, "mask")));
-    punctureOptions.tailMask(mxArrayTo<std::vector<std::vector<bool>>>::f(mxGetField(in, 0, "tailMask")));
-    punctureOptions.bitOrdering(mxArrayTo<fec::Turbo::BitOrdering>::f(mxGetField(in, 0, "bitOrdering")));
+    punctureOptions.mask(mxArrayTo<std::vector<std::vector<bool>>>{}(mxGetField(in, 0, "mask")));
+    punctureOptions.tailMask(mxArrayTo<std::vector<std::vector<bool>>>{}(mxGetField(in, 0, "tailMask")));
+    punctureOptions.bitOrdering(mxArrayTo<fec::Turbo::BitOrdering>{}(mxGetField(in, 0, "bitOrdering")));
     
     return punctureOptions;
   }

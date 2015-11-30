@@ -35,7 +35,7 @@
 template <>
 class mxArrayTo<fec::SparseBitMatrix> {
 public:
-  static fec::SparseBitMatrix f(const mxArray* in) {
+  fec::SparseBitMatrix operator() (const mxArray* in) const {
     if (in == nullptr) {
       throw std::invalid_argument("Null mxArray");
     }

@@ -52,11 +52,11 @@ template <class Wrap>
 const std::vector<std::function<typename TestWrapFcn<Wrap>::Signature>> TestWrapFcn<Wrap>::list = {
   [](const InArgList in, OutArgList out) //scalarConversion
   {
-    out[0] = toWrap(wrapTo<double>::f(in[0]));
+    out[0] = toWrap(wrapTo<double>{}(in[0]));
   },
   [](const InArgList in, OutArgList out) //vectorConversion
   {
-    out[0] = toWrap(wrapTo<std::vector<double>>::f(in[0]));
+    out[0] = toWrap(wrapTo<std::vector<double>>{}(in[0]));
   },
 };
 

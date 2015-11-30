@@ -33,11 +33,11 @@
 template <>
 class mxArrayTo<fec::Ldpc::DecoderOptions> {
 public:
-  static fec::Ldpc::DecoderOptions f(const mxArray* in) {
+  fec::Ldpc::DecoderOptions operator() (const mxArray* in) const {
     fec::Ldpc::DecoderOptions decoderOptions;
-    decoderOptions.iterations(  mxArrayTo<size_t>::f(mxGetField(in, 0, "iterations")) );
-    decoderOptions.algorithm(  mxArrayTo<fec::DecoderAlgorithm>::f(mxGetField(in, 0, "algorithm")) );
-    decoderOptions.scalingFactor(  mxArrayTo<std::unordered_map<size_t,std::vector<double>>>::f(mxGetField(in, 0, "scalingFactor")) );
+    decoderOptions.iterations(  mxArrayTo<size_t>{}(mxGetField(in, 0, "iterations")) );
+    decoderOptions.algorithm(  mxArrayTo<fec::DecoderAlgorithm>{}(mxGetField(in, 0, "algorithm")) );
+    decoderOptions.scalingFactor(  mxArrayTo<std::unordered_map<size_t,std::vector<double>>>{}(mxGetField(in, 0, "scalingFactor")) );
     
     return decoderOptions;
   }

@@ -84,7 +84,7 @@ template <class T>
 class mxArrayTo<T, typename std::enable_if<std::is_arithmetic<T>::value>::type>
 {
 public:
-  static T f(const mxArray* in) {
+  T operator() (const mxArray* in) const {
     if (in == nullptr) {
       throw std::invalid_argument("Null input");
     }
@@ -127,15 +127,15 @@ public:
 template <class T>
 class mxArrayTo<T, typename std::enable_if<std::is_enum<T>::value>::type> {
 public:
-  static T f(const mxArray* in) {
-    return static_cast<T>(mxArrayTo<typename std::underlying_type<T>::type>::f(in));
+  T operator() (const mxArray* in) const {
+    return static_cast<T>(mxArrayTo<typename std::underlying_type<T>::type>{}(in));
   }
 };
 
 template <class T, class A>
 class mxArrayTo<typename std::vector<T,A>, typename std::enable_if<std::is_arithmetic<T>::value && !std::is_same<A,  MexAllocator<T>>::value>::type> {
 public:
-  static std::vector<T,A> f(const mxArray* in) {
+  std::vector<T,A> operator() (const mxArray* in) const {
     if (in == nullptr) {
       throw std::invalid_argument("Null input");
     }
@@ -151,7 +151,7 @@ public:
     std::vector<T,A> vec(mxGetNumberOfElements(in));
     if (mxIsCell(in)) {
       for (size_t i = 0; i < vec.size(); ++i) {
-        vec[i] = mxArrayTo<T>::f(mxGetCell(in, i));
+        vec[i] = mxArrayTo<T>{}(mxGetCell(in, i));
       }
     }
     else {
@@ -216,7 +216,7 @@ public:
 template <class T>
 class mxArrayTo<typename std::vector<T,  MexAllocator<T>>, typename std::enable_if<std::is_arithmetic<T>::value>::type> {
 public:
-  static std::vector<T,  MexAllocator<T>> f(const mxArray* in) {
+  std::vector<T,  MexAllocator<T>> operator() (const mxArray* in) const {
     if (in == nullptr) {
       throw std::invalid_argument("Null input");
     }
@@ -246,7 +246,7 @@ public:
 template <class T>
 class mxArrayTo<typename std::vector<typename std::vector<T>>, typename std::enable_if<std::is_arithmetic<T>::value>::type> {
 public:
-  static std::vector<std::vector<T>> f(const mxArray* in) {
+  std::vector<std::vector<T>> operator() (const mxArray* in) const {
     if (in == nullptr) {
       throw std::invalid_argument("Null input");
     }
@@ -254,7 +254,7 @@ public:
     if (mxIsCell(in)) {
       std::vector<std::vector<T>> out(mxGetNumberOfElements(in));
       for (size_t i = 0; i < out.size(); ++i) {
-        out[i] = mxArrayTo<std::vector<T>>::f(mxGetCell(in, i));
+        out[i] = mxArrayTo<std::vector<T>>{}(mxGetCell(in, i));
       }
       return out;
     }
@@ -342,7 +342,7 @@ public:
 template <class T, class A>
 class mxArrayTo<typename std::vector<T,A>, typename std::enable_if<!std::is_arithmetic<T>::value && !is_vector<T>::value>::type> {
 public:
-  static std::vector<T> f(const mxArray* in) {
+  std::vector<T> operator() (const mxArray* in) const {
     if (in == nullptr) {
       throw std::invalid_argument("Null input");
     }
@@ -351,7 +351,7 @@ public:
     }
     std::vector<T,A> out(mxGetNumberOfElements(in));
     for (size_t i = 0; i < out.size(); ++i) {
-      out[i] = mxArrayTo<T>::f(mxGetCell(in, i));
+      out[i] = mxArrayTo<T>{}(mxGetCell(in, i));
     }
     return out;
   }
@@ -360,14 +360,14 @@ public:
 template <class Key, class T, class Hash, class KeyEqual, class Allocator>
 class mxArrayTo<typename std::unordered_map<Key,T,Hash,KeyEqual,Allocator>, void> {
 public:
-  static std::unordered_map<Key,T,Hash,KeyEqual,Allocator> f(const mxArray* in) {
+  std::unordered_map<Key,T,Hash,KeyEqual,Allocator> operator() (const mxArray* in) const {
     if (in == nullptr) {
       throw std::invalid_argument("Null input");
     }
     std::unordered_map<Key,T,Hash,KeyEqual,Allocator> map;
     size_t size = mxGetNumberOfElements(in);
     for (size_t i = 0; i < size; ++i) {
-      map.insert(std::make_pair(mxArrayTo<Key>::f(mxGetField(in, i, "key")), mxArrayTo<T>::f(mxGetField(in, i, "value"))));
+      map.insert(std::make_pair(mxArrayTo<Key>{}(mxGetField(in, i, "key")), mxArrayTo<T>{}(mxGetField(in, i, "value"))));
     }
     return map;
   }
@@ -376,7 +376,7 @@ public:
 template <class T>
 class mxArrayTo<MexHandle<T>,void> {
 public:
-  static MexHandle<T> f(const mxArray* in) {
+  MexHandle<T> operator() (const mxArray* in) const {
     if (in == nullptr) {
       throw std::invalid_argument("Null object");
     }

@@ -33,11 +33,11 @@
 template <>
 class mxArrayTo<fec::Convolutional::DecoderOptions> {
 public:
-  static fec::Convolutional::DecoderOptions f(const mxArray* in) {
+  fec::Convolutional::DecoderOptions operator() (const mxArray* in) const {
     try {
       fec::Convolutional::DecoderOptions decoderOptions;
-      decoderOptions.algorithm(  mxArrayTo<fec::DecoderAlgorithm>::f(mxGetField(in, 0, "algorithm")) );
-      decoderOptions.scalingFactor(  mxArrayTo<double>::f(mxGetField(in, 0, "scalingFactor")) );
+      decoderOptions.algorithm(  mxArrayTo<fec::DecoderAlgorithm>{}(mxGetField(in, 0, "algorithm")) );
+      decoderOptions.scalingFactor(  mxArrayTo<double>{}(mxGetField(in, 0, "scalingFactor")) );
       return decoderOptions;
     } catch (std::exception& e) {
       throw std::invalid_argument("In decoder options: " + std::string(e.what()));
