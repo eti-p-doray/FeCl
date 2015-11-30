@@ -32,7 +32,6 @@
 #include <boost/serialization/type_info_implementation.hpp>
 #include <boost/serialization/extended_type_info_no_rtti.hpp>
 
-#include "LlrMetrics.h"
 #include "../BitField.h"
 #include "../DecoderAlgorithm.h"
 
