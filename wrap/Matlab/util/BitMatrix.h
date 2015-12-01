@@ -33,20 +33,24 @@
 #include "BitField.h"
 
 template <>
-class mxArrayTo<fec::SparseBitMatrix> {
+class mxArrayTo<fec::SparseBitMatrix> : private ExceptionThrower
+{
 public:
+  mxArrayTo(const std::string& msg = "") : ExceptionThrower(msg) {}
+  mxArrayTo& operator() (const std::string& msg) {ExceptionThrower::operator() (msg); return *this;}
+
   fec::SparseBitMatrix operator() (const mxArray* in) const {
     if (in == nullptr) {
-      throw std::invalid_argument("Null mxArray");
+      throw std::invalid_argument(msg() + "Null mxArray");
     }
     if (mxIsComplex(in) || mxGetData(in) == nullptr) {
-      throw std::invalid_argument("Invalid data");
+      throw std::invalid_argument(msg() + "Invalid data");
     }
     if (mxIsSparse(in)) {
       auto jc = mxGetJc(in);
       auto ir = mxGetIr(in);
       if (jc == nullptr || ir == nullptr) {
-        throw std::invalid_argument("Invalid data");
+        throw std::invalid_argument(msg() + "Invalid data");
       }
       
       std::vector<size_t> rowSizes(mxGetM(in), 0);

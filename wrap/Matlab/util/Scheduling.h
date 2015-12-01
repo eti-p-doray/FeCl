@@ -32,8 +32,12 @@
 #include "BitField.h"
 
 template<>
-class mxArrayTo<fec::Turbo::Scheduling> {
+class mxArrayTo<fec::Turbo::Scheduling> : private ExceptionThrower
+{
 public:
+  mxArrayTo(const std::string& msg = "") : ExceptionThrower(msg) {}
+  mxArrayTo& operator() (const std::string& msg) {ExceptionThrower::operator() (msg); return *this;}
+
   fec::Turbo::Scheduling operator() (const mxArray* in) const {
     if (in == nullptr) {
       return {};
@@ -42,7 +46,7 @@ public:
     fec::Turbo::Scheduling out;
     out.resize(mxGetNumberOfElements(in));
     for (size_t i = 0; i < out.size(); ++i) {
-      out[i] = {mxArrayTo<std::vector<size_t>>{}(mxGetField(in, i, "activation")), mxArrayTo<std::vector<std::vector<size_t>>>{}(mxGetField(in, i, "transfer"))};
+      out[i] = {mxArrayTo<std::vector<size_t>>{msg()}("activation")(mxGetField(in, i, "activation")), mxArrayTo<std::vector<std::vector<size_t>>>{msg()}("transfer")(mxGetField(in, i, "transfer"))};
       for (size_t j = 0; j < out[i].activation.size(); ++j) {
         out[i].activation[j] --;
         for (size_t k = 0; k < out[i].transfer[j].size(); ++k) {

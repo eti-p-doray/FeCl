@@ -32,13 +32,17 @@
 #include "../util/Conversion.h"
 
 template <>
-class mxArrayTo<fec::Turbo::PunctureOptions> {
+class mxArrayTo<fec::Turbo::PunctureOptions> : private ExceptionThrower
+{
 public:
+  mxArrayTo(const std::string& msg = "") : ExceptionThrower(msg) {}
+  mxArrayTo& operator() (const std::string& msg) {ExceptionThrower::operator() (msg); return *this;}
+
   fec::Turbo::PunctureOptions operator() (const mxArray* in) const {
     fec::Turbo::PunctureOptions punctureOptions;
-    punctureOptions.mask(mxArrayTo<std::vector<std::vector<bool>>>{}(mxGetField(in, 0, "mask")));
-    punctureOptions.tailMask(mxArrayTo<std::vector<std::vector<bool>>>{}(mxGetField(in, 0, "tailMask")));
-    punctureOptions.bitOrdering(mxArrayTo<fec::Turbo::BitOrdering>{}(mxGetField(in, 0, "bitOrdering")));
+    punctureOptions.mask(mxArrayTo<std::vector<std::vector<bool>>>{msg()}("mask")(mxGetField(in, 0, "mask")));
+    punctureOptions.tailMask(mxArrayTo<std::vector<std::vector<bool>>>{msg()}("tail mask")(mxGetField(in, 0, "tailMask")));
+    punctureOptions.bitOrdering(mxArrayTo<fec::Turbo::BitOrdering>{msg()}("bit ordering")(mxGetField(in, 0, "bitOrdering")));
     
     return punctureOptions;
   }

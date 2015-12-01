@@ -26,6 +26,7 @@
 #include <cstring>
 #include <type_traits>
 #include <vector>
+#include <string>
 #include <unordered_map>
 
 #include <boost/serialization/type_info_implementation.hpp>
@@ -77,22 +78,35 @@ template <typename T> struct MexType<T, typename std::enable_if<is_equiv_int<T,u
 template <> struct MexType<float> {using ID = std::integral_constant<mxClassID, mxSINGLE_CLASS>; using isScalar = std::true_type;};
 template <> struct MexType<double> {using ID = std::integral_constant<mxClassID, mxDOUBLE_CLASS>; using isScalar = std::true_type;};
 
+class ExceptionThrower {
+public:
+  ExceptionThrower(const std::string& msg) {msg_ = msg;}
+  ExceptionThrower& operator() (const std::string& msg) {msg_ += "In " + msg + ": ";}
+  inline std::string msg() const {return msg_;}
+
+private:
+  std::string msg_;
+};
+
 template <class T, class Enable = void>
 class mxArrayTo {};
 
 template <class T>
-class mxArrayTo<T, typename std::enable_if<std::is_arithmetic<T>::value>::type>
+class mxArrayTo<T, typename std::enable_if<std::is_arithmetic<T>::value>::type> : private ExceptionThrower
 {
 public:
+  mxArrayTo(const std::string& msg = "") : ExceptionThrower(msg) {}
+  mxArrayTo& operator() (const std::string& msg) {ExceptionThrower::operator() (msg); return *this;}
+
   T operator() (const mxArray* in) const {
     if (in == nullptr) {
-      throw std::invalid_argument("Null input");
+      throw std::invalid_argument(msg() + "Null input");
     }
     if (mxIsComplex(in)) {
-      throw std::invalid_argument("Input is complex");
+      throw std::invalid_argument(msg() + "Input is complex");
     }
     if (mxGetNumberOfElements(in) != 1 || mxGetData(in) == nullptr) {
-      throw std::invalid_argument("Input is not a scalar");
+      throw std::invalid_argument(msg() + "Input is not a scalar");
     }
     switch (mxGetClassID(in))
     {
@@ -119,31 +133,39 @@ public:
       case mxDOUBLE_CLASS:
         return *reinterpret_cast<double*>(mxGetData(in));
       default:
-        throw std::invalid_argument("Unknown input type");
+        throw std::invalid_argument(msg() + "Unknown input type");
     }
   }
 };
 
 template <class T>
-class mxArrayTo<T, typename std::enable_if<std::is_enum<T>::value>::type> {
+class mxArrayTo<T, typename std::enable_if<std::is_enum<T>::value>::type> : private ExceptionThrower
+{
 public:
+  mxArrayTo(const std::string& msg = "") : ExceptionThrower(msg) {}
+  mxArrayTo& operator() (const std::string& msg) {ExceptionThrower::operator() (msg); return *this;}
+
   T operator() (const mxArray* in) const {
     return static_cast<T>(mxArrayTo<typename std::underlying_type<T>::type>{}(in));
   }
 };
 
 template <class T, class A>
-class mxArrayTo<typename std::vector<T,A>, typename std::enable_if<std::is_arithmetic<T>::value && !std::is_same<A,  MexAllocator<T>>::value>::type> {
+class mxArrayTo<typename std::vector<T,A>, typename std::enable_if<std::is_arithmetic<T>::value && !std::is_same<A,  MexAllocator<T>>::value>::type> : private ExceptionThrower
+{
 public:
+  mxArrayTo(const std::string& msg = "") : ExceptionThrower(msg) {}
+  mxArrayTo& operator() (const std::string& msg) {ExceptionThrower::operator() (msg); return *this;}
+
   std::vector<T,A> operator() (const mxArray* in) const {
     if (in == nullptr) {
-      throw std::invalid_argument("Null input");
+      throw std::invalid_argument(msg() + "Null input");
     }
     if (mxIsComplex(in)) {
-      throw std::invalid_argument("Input is complex");
+      throw std::invalid_argument(msg() + "Input is complex");
     }
     if (mxGetNumberOfElements(in) != 0 && mxGetData(in) == nullptr) {
-      throw std::invalid_argument("Input is invalid");
+      throw std::invalid_argument(msg() + "Input is invalid");
     }
     if (mxGetData(in) == nullptr && mxGetNumberOfElements(in) == 0) {
       return std::vector<T,A>();
@@ -160,15 +182,15 @@ public:
     return vec;
   }
   
-  static void copy(const mxArray* in, typename std::vector<T,A>::iterator begin) {
+  void copy(const mxArray* in, typename std::vector<T,A>::iterator begin) const {
     if (in == nullptr) {
-      throw std::invalid_argument("Null input");
+      throw std::invalid_argument(msg() + "Null input");
     }
     if (mxIsComplex(in)) {
-      throw std::invalid_argument("Input is complex");
+      throw std::invalid_argument(msg() + "Input is complex");
     }
     if (mxGetData(in) == nullptr) {
-      throw std::invalid_argument("Input is invalid");
+      throw std::invalid_argument(msg() + "Input is invalid");
     }
     size_t size = mxGetNumberOfElements(in);
     switch (mxGetClassID(in))
@@ -207,24 +229,28 @@ public:
         std::copy(reinterpret_cast<double*>(mxGetData(in)), reinterpret_cast<double*>(mxGetData(in))+size, begin);
         break;
       default:
-        throw std::invalid_argument("Unknown input type");
+        throw std::invalid_argument(msg() + "Unknown input type");
         break;
     }
   }
 };
 
 template <class T>
-class mxArrayTo<typename std::vector<T,  MexAllocator<T>>, typename std::enable_if<std::is_arithmetic<T>::value>::type> {
+class mxArrayTo<typename std::vector<T,  MexAllocator<T>>, typename std::enable_if<std::is_arithmetic<T>::value>::type> : private ExceptionThrower
+{
 public:
+  mxArrayTo(const std::string& msg = "") : ExceptionThrower(msg) {}
+  mxArrayTo& operator() (const std::string& msg) {ExceptionThrower::operator() (msg); return *this;}
+
   std::vector<T,  MexAllocator<T>> operator() (const mxArray* in) const {
     if (in == nullptr) {
-      throw std::invalid_argument("Null input");
+      throw std::invalid_argument(msg() + "Null input");
     }
     if (mxIsComplex(in)) {
-      throw std::invalid_argument("Input is complex");
+      throw std::invalid_argument(msg() + "Input is complex");
     }
     if (mxGetNumberOfElements(in) != 0 && mxGetData(in) == nullptr) {
-      throw std::invalid_argument("Input is invalid");
+      throw std::invalid_argument(msg() + "Input is invalid");
     }
     if (mxGetData(in) == nullptr && mxGetNumberOfElements(in) == 0) {
       return std::vector<T, MexAllocator<T>>();
@@ -232,7 +258,7 @@ public:
     if (MexType<T>::ID::value != mxGetClassID(in)) {
       std::vector<T,  MexAllocator<T>> vec;
       vec.resize(mxGetNumberOfElements(in));
-      mxArrayTo<std::vector<T>>::copy(in, vec.begin());
+      mxArrayTo<std::vector<T>>{msg()}.copy(in, vec.begin());
       return vec;
     }
     else {
@@ -244,11 +270,15 @@ public:
 };
 
 template <class T>
-class mxArrayTo<typename std::vector<typename std::vector<T>>, typename std::enable_if<std::is_arithmetic<T>::value>::type> {
+class mxArrayTo<typename std::vector<typename std::vector<T>>, typename std::enable_if<std::is_arithmetic<T>::value>::type> : private ExceptionThrower
+{
 public:
+  mxArrayTo(const std::string& msg = "") : ExceptionThrower(msg) {}
+  mxArrayTo& operator() (const std::string& msg) {ExceptionThrower::operator() (msg); return *this;}
+
   std::vector<std::vector<T>> operator() (const mxArray* in) const {
     if (in == nullptr) {
-      throw std::invalid_argument("Null input");
+      throw std::invalid_argument(msg() + "Null input");
     }
     
     if (mxIsCell(in)) {
@@ -260,10 +290,10 @@ public:
     }
     else {
       if (mxIsComplex(in)) {
-        throw std::invalid_argument("Input is complex");
+        throw std::invalid_argument(msg() + "Input is complex");
       }
       if (mxGetNumberOfElements(in) != 0 && mxGetData(in) == nullptr) {
-        throw std::invalid_argument("Input is invalid");
+        throw std::invalid_argument(msg() + "Input is invalid");
       }
       if (mxGetData(in) == nullptr && mxGetNumberOfElements(in) == 0) {
         return std::vector<std::vector<T>>();
@@ -330,7 +360,7 @@ public:
             }
             break;
           default:
-            throw std::invalid_argument("Unknown input type");
+            throw std::invalid_argument(msg() + "Unknown input type");
             break;
         }
       }
@@ -340,14 +370,18 @@ public:
 };
 
 template <class T, class A>
-class mxArrayTo<typename std::vector<T,A>, typename std::enable_if<!std::is_arithmetic<T>::value && !is_vector<T>::value>::type> {
+class mxArrayTo<typename std::vector<T,A>, typename std::enable_if<!std::is_arithmetic<T>::value && !is_vector<T>::value>::type> : private ExceptionThrower
+{
 public:
+  mxArrayTo(const std::string& msg = "") : ExceptionThrower(msg) {}
+  mxArrayTo& operator() (const std::string& msg) {ExceptionThrower::operator() (msg); return *this;}
+
   std::vector<T> operator() (const mxArray* in) const {
     if (in == nullptr) {
-      throw std::invalid_argument("Null input");
+      throw std::invalid_argument(msg() + "Null input");
     }
     if (!mxIsCell(in)) {
-      throw std::invalid_argument("Input is not a cell array");
+      throw std::invalid_argument(msg() + "Input is not a cell array");
     }
     std::vector<T,A> out(mxGetNumberOfElements(in));
     for (size_t i = 0; i < out.size(); ++i) {
@@ -358,11 +392,15 @@ public:
 };
 
 template <class Key, class T, class Hash, class KeyEqual, class Allocator>
-class mxArrayTo<typename std::unordered_map<Key,T,Hash,KeyEqual,Allocator>, void> {
+class mxArrayTo<typename std::unordered_map<Key,T,Hash,KeyEqual,Allocator>, void>  : private ExceptionThrower
+{
 public:
+  mxArrayTo(const std::string& msg = "") : ExceptionThrower(msg) {}
+  mxArrayTo& operator() (const std::string& msg) {ExceptionThrower::operator() (msg); return *this;}
+
   std::unordered_map<Key,T,Hash,KeyEqual,Allocator> operator() (const mxArray* in) const {
     if (in == nullptr) {
-      throw std::invalid_argument("Null input");
+      throw std::invalid_argument(msg() + "Null input");
     }
     std::unordered_map<Key,T,Hash,KeyEqual,Allocator> map;
     size_t size = mxGetNumberOfElements(in);
@@ -374,22 +412,26 @@ public:
 };
 
 template <class T>
-class mxArrayTo<MexHandle<T>,void> {
+class mxArrayTo<MexHandle<T>,void>  : private ExceptionThrower
+{
 public:
+  mxArrayTo(const std::string& msg = "") : ExceptionThrower(msg) {}
+  mxArrayTo& operator() (const std::string& msg) {ExceptionThrower::operator() (msg); return *this;}
+
   MexHandle<T> operator() (const mxArray* in) const {
     if (in == nullptr) {
-      throw std::invalid_argument("Null object");
+      throw std::invalid_argument(msg() + "Null object");
     }
     if (mxGetProperty(in, 0, "mexHandle_") == nullptr) {
-      throw std::invalid_argument("Invalid object");
+      throw std::invalid_argument(msg() + "Invalid object");
     }
     if (mxGetData(mxGetProperty(in, 0, "mexHandle_")) == nullptr) {
-      throw std::invalid_argument("Invalid object");
+      throw std::invalid_argument(msg() + "Invalid object");
     }
     T* ptr = reinterpret_cast<T*>(*((uint64_t *)mxGetData(mxGetProperty(in, 0, "mexHandle_"))));
     ptr = dynamic_cast<T*>(ptr);
     if (ptr == nullptr) {
-      throw std::invalid_argument("Null object");
+      throw std::invalid_argument(msg() + "Null object");
     }
     MexHandle<T> handle;
     handle.set(ptr);

@@ -1,3 +1,3 @@
-addpath(fullfile(pwd, '..', 'Wrap', 'Matlab'));
+addpath(fullfile(pwd, '..', 'wrap', 'Matlab'));
 savepath;
 fec.make;

@@ -32,21 +32,21 @@
 #include "BitField.h"
 
 template<>
-class mxArrayTo<fec::Trellis> {
+class mxArrayTo<fec::Trellis> : private ExceptionThrower
+{
 public:
+  mxArrayTo(const std::string& msg = "") : ExceptionThrower(msg) {}
+  mxArrayTo& operator() (const std::string& msg) {ExceptionThrower::operator() (msg); return *this;}
+
   fec::Trellis operator() (const mxArray* in, size_t i = 0) const {
     if (in == nullptr) {
-      throw std::invalid_argument("Trellis is null");
+      throw std::invalid_argument(msg() + "Trellis is null");
     }
-    try {
-    return fec::Trellis(mxArrayTo<std::vector<fec::BitField<size_t>>>{}(mxGetField(in, i, "nextStates")),
-                            mxArrayTo<std::vector<fec::BitField<size_t>>>{}(mxGetField(in, i, "outputs")),
-                            log2(mxArrayTo<size_t>{}(mxGetField(in, i, "numInputSymbols"))),
-                            log2(mxArrayTo<size_t>{}(mxGetField(in, i, "numOutputSymbols"))),
-                            log2(mxArrayTo<size_t>{}(mxGetField(in, i, "numStates"))));
-    } catch (std::exception& e) {
-      throw std::invalid_argument("In trellis: " + std::string(e.what()));
-    }
+    return fec::Trellis(mxArrayTo<std::vector<fec::BitField<size_t>>>{msg()}("nextStates")(mxGetField(in, i, "nextStates")),
+                            mxArrayTo<std::vector<fec::BitField<size_t>>>{msg()}("outputs")(mxGetField(in, i, "outputs")),
+                            log2(mxArrayTo<size_t>{msg()}("numInputSymbols")(mxGetField(in, i, "numInputSymbols"))),
+                            log2(mxArrayTo<size_t>{msg()}("numOutputSymbols")(mxGetField(in, i, "numOutputSymbols"))),
+                            log2(mxArrayTo<size_t>{msg()}("numStates")(mxGetField(in, i, "numStates"))));
   }
 };
 

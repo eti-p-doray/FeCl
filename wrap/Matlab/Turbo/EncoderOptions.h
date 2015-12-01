@@ -19,31 +19,34 @@
  along with FeCl.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#ifndef WRAP_CONVOLUTIONAL_PUNCTURE_OPTIONS
-#define WRAP_CONVOLUTIONAL_PUNCTURE_OPTIONS
+#ifndef WRAP_TURBO_ENCODER_OPTIONS
+#define WRAP_TURBO_ENCODER_OPTIONS
 
 #include <memory>
 #include <type_traits>
 
 #include <mex.h>
 
-#include "Convolutional.h"
+#include "Turbo.h"
+#include "../util/Trellis.h"
 #include "../util/Permutation.h"
 #include "../util/Conversion.h"
 
 template <>
-class mxArrayTo<fec::Convolutional::PunctureOptions> {
+class mxArrayTo<fec::Turbo::EncoderOptions> : private ExceptionThrower
+{
 public:
-  fec::Convolutional::PunctureOptions operator() (const mxArray* in) const {
-    try {
-      fec::Convolutional::PunctureOptions punctureOptions;
-      punctureOptions.mask(mxArrayTo<std::vector<bool>>{}(mxGetField(in, 0, "mask")));
-      punctureOptions.tailMask(mxArrayTo<std::vector<bool>>{}(mxGetField(in, 0, "tailMask")));
-      
-      return punctureOptions;
-    } catch (std::exception& e) {
-      throw std::invalid_argument("In puncture options: " + std::string(e.what()));
-    }
+  mxArrayTo(const std::string& msg = "") : ExceptionThrower(msg) {}
+  mxArrayTo& operator() (const std::string& msg) {ExceptionThrower::operator() (msg); return *this;}
+
+  fec::Turbo::EncoderOptions operator() (const mxArray* in) const {
+    auto trellis = mxArrayTo<std::vector<fec::Trellis>>{msg()}("trellis")(mxGetField(in, 0, "trellis"));
+    auto interl = mxArrayTo<std::vector<fec::Permutation>>{msg()}("interleaver")(mxGetField(in, 0, "interleaver"));
+    fec::Turbo::EncoderOptions encoderOptions(trellis, interl);
+    
+    encoderOptions.termination(mxArrayTo<std::vector<fec::Trellis::Termination>>{msg()}("termination")(mxGetField(in, 0, "termination")));
+    
+    return encoderOptions;
   }
 };
 

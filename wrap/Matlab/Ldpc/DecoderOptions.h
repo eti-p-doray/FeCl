@@ -31,13 +31,17 @@
 #include "../util/Conversion.h"
 
 template <>
-class mxArrayTo<fec::Ldpc::DecoderOptions> {
+class mxArrayTo<fec::Ldpc::DecoderOptions> : private ExceptionThrower
+{
 public:
+  mxArrayTo(const std::string& msg = "") : ExceptionThrower(msg) {}
+  mxArrayTo& operator() (const std::string& msg) {ExceptionThrower::operator() (msg); return *this;}
+
   fec::Ldpc::DecoderOptions operator() (const mxArray* in) const {
     fec::Ldpc::DecoderOptions decoderOptions;
-    decoderOptions.iterations(  mxArrayTo<size_t>{}(mxGetField(in, 0, "iterations")) );
-    decoderOptions.algorithm(  mxArrayTo<fec::DecoderAlgorithm>{}(mxGetField(in, 0, "algorithm")) );
-    decoderOptions.scalingFactor(  mxArrayTo<std::unordered_map<size_t,std::vector<double>>>{}(mxGetField(in, 0, "scalingFactor")) );
+    decoderOptions.iterations(  mxArrayTo<size_t>{msg()}("iterations")(mxGetField(in, 0, "iterations")) );
+    decoderOptions.algorithm(  mxArrayTo<fec::DecoderAlgorithm>{msg()}("algorithm")(mxGetField(in, 0, "algorithm")) );
+    decoderOptions.scalingFactor(  mxArrayTo<std::unordered_map<size_t,std::vector<double>>>{msg()}("scaling factor")(mxGetField(in, 0, "scalingFactor")) );
     
     return decoderOptions;
   }

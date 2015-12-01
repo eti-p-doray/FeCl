@@ -19,28 +19,42 @@
  along with FeCl.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#ifndef WRAP_LDPC_PUNCTURE_OPTIONS
-#define WRAP_LDPC_PUNCTURE_OPTIONS
+#ifndef WRAP_INTERLEAVER_H
+#define WRAP_INTERLEAVER_H
 
 #include <memory>
-#include <type_traits>
-
+#include <math.h>
+#include <vector>
 #include <mex.h>
 
-#include "Ldpc.h"
-#include "../util/Trellis.h"
-#include "../util/Permutation.h"
-#include "../util/Conversion.h"
+#include "Conversion.h"
+#include "Permutation.h"
 
 template <>
-class mxArrayTo<fec::Ldpc::PunctureOptions> {
+class mxArrayTo<fec::Permutation> : private ExceptionThrower
+{
 public:
-  fec::Ldpc::PunctureOptions operator() (const mxArray* in) const {
-    fec::Ldpc::PunctureOptions punctureOptions;
-    punctureOptions.mask(mxArrayTo<std::vector<bool>>{}(mxGetField(in, 0, "mask")));
-    punctureOptions.systMask(mxArrayTo<std::vector<bool>>{}(mxGetField(in, 0, "systMask")));
-    return punctureOptions;
+  mxArrayTo(const std::string& msg = "") : ExceptionThrower(msg) {}
+  mxArrayTo& operator() (const std::string& msg) {ExceptionThrower::operator() (msg); return *this;}
+
+  fec::Permutation operator() (const mxArray* in) const {
+    if (in == nullptr) {
+      throw std::invalid_argument(msg() + "Null input");
+    }
+    std::vector<size_t> perm = mxArrayTo<std::vector<size_t>>{msg()}(in);
+    for (auto & i : perm) {
+      i--;
+    }
+    return fec::Permutation(perm);
   }
 };
+
+inline mxArray* toMxArray(const fec::Permutation& in) {
+  std::vector<size_t> indices(in.outputSize());
+  for (size_t i = 0; i < indices.size(); ++i) {
+    indices[i] = in[i]+1;
+  }
+  return toMxArray(indices);
+}
 
 #endif

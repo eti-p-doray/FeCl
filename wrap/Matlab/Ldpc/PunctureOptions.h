@@ -19,8 +19,8 @@
  along with FeCl.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#ifndef WRAP_LDPC_ENCODER_OPTIONS
-#define WRAP_LDPC_ENCODER_OPTIONS
+#ifndef WRAP_LDPC_PUNCTURE_OPTIONS
+#define WRAP_LDPC_PUNCTURE_OPTIONS
 
 #include <memory>
 #include <type_traits>
@@ -28,16 +28,22 @@
 #include <mex.h>
 
 #include "Ldpc.h"
-#include "../util/BitMatrix.h"
+#include "../util/Trellis.h"
+#include "../util/Permutation.h"
 #include "../util/Conversion.h"
 
 template <>
-class mxArrayTo<fec::Ldpc::EncoderOptions> {
+class mxArrayTo<fec::Ldpc::PunctureOptions> : private ExceptionThrower
+{
 public:
-  fec::Ldpc::EncoderOptions operator() (const mxArray* in) const {
-    auto checkMatrix = mxArrayTo<fec::SparseBitMatrix>{}(mxGetField(in, 0, "checkMatrix"));
-    fec::Ldpc::EncoderOptions encoderOptions(checkMatrix);
-    return encoderOptions;
+  mxArrayTo(const std::string& msg = "") : ExceptionThrower(msg) {}
+  mxArrayTo& operator() (const std::string& msg) {ExceptionThrower::operator() (msg); return *this;}
+
+  fec::Ldpc::PunctureOptions operator() (const mxArray* in) const {
+    fec::Ldpc::PunctureOptions punctureOptions;
+    punctureOptions.mask(mxArrayTo<std::vector<bool>>{msg()}("mask")(mxGetField(in, 0, "mask")));
+    punctureOptions.systMask(mxArrayTo<std::vector<bool>>{msg()}("systematic mask")(mxGetField(in, 0, "systMask")));
+    return punctureOptions;
   }
 };
 

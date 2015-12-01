@@ -19,38 +19,30 @@
  along with FeCl.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#ifndef WRAP_INTERLEAVER_H
-#define WRAP_INTERLEAVER_H
+#ifndef WRAP_LDPC_ENCODER_OPTIONS
+#define WRAP_LDPC_ENCODER_OPTIONS
 
 #include <memory>
-#include <math.h>
-#include <vector>
+#include <type_traits>
+
 #include <mex.h>
 
-#include "Conversion.h"
-#include "Permutation.h"
+#include "Ldpc.h"
+#include "../util/BitMatrix.h"
+#include "../util/Conversion.h"
 
 template <>
-class mxArrayTo<fec::Permutation> {
+class mxArrayTo<fec::Ldpc::EncoderOptions> : private ExceptionThrower
+{
 public:
-  fec::Permutation operator() (const mxArray* in) const {
-    if (in == nullptr) {
-      throw std::invalid_argument("null");
-    }
-    std::vector<size_t> perm = mxArrayTo<std::vector<size_t>>{}(in);
-    for (auto & i : perm) {
-      i--;
-    }
-    return fec::Permutation(perm);
+  mxArrayTo(const std::string& msg = "") : ExceptionThrower(msg) {}
+  mxArrayTo& operator() (const std::string& msg) {ExceptionThrower::operator() (msg); return *this;}
+
+  fec::Ldpc::EncoderOptions operator() (const mxArray* in) const {
+    auto checkMatrix = mxArrayTo<fec::SparseBitMatrix>{msg()}("check matrix")(mxGetField(in, 0, "checkMatrix"));
+    fec::Ldpc::EncoderOptions encoderOptions(checkMatrix);
+    return encoderOptions;
   }
 };
-
-inline mxArray* toMxArray(const fec::Permutation& in) {
-  std::vector<size_t> indices(in.outputSize());
-  for (size_t i = 0; i < indices.size(); ++i) {
-    indices[i] = in[i]+1;
-  }
-  return toMxArray(indices);
-}
 
 #endif

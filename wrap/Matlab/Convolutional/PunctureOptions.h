@@ -19,8 +19,8 @@
  along with FeCl.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#ifndef WRAP_CONVOLUTIONAL_DECODER_OPTIONS
-#define WRAP_CONVOLUTIONAL_DECODER_OPTIONS
+#ifndef WRAP_CONVOLUTIONAL_PUNCTURE_OPTIONS
+#define WRAP_CONVOLUTIONAL_PUNCTURE_OPTIONS
 
 #include <memory>
 #include <type_traits>
@@ -28,33 +28,23 @@
 #include <mex.h>
 
 #include "Convolutional.h"
+#include "../util/Permutation.h"
 #include "../util/Conversion.h"
 
 template <>
-class mxArrayTo<fec::Convolutional::DecoderOptions> {
+class mxArrayTo<fec::Convolutional::PunctureOptions> : private ExceptionThrower
+{
 public:
-  fec::Convolutional::DecoderOptions operator() (const mxArray* in) const {
-    try {
-      fec::Convolutional::DecoderOptions decoderOptions;
-      decoderOptions.algorithm(  mxArrayTo<fec::DecoderAlgorithm>{}(mxGetField(in, 0, "algorithm")) );
-      decoderOptions.scalingFactor(  mxArrayTo<double>{}(mxGetField(in, 0, "scalingFactor")) );
-      return decoderOptions;
-    } catch (std::exception& e) {
-      throw std::invalid_argument("In decoder options: " + std::string(e.what()));
-    }
+  mxArrayTo(const std::string& msg = "") : ExceptionThrower(msg) {}
+  mxArrayTo& operator() (const std::string& msg) {ExceptionThrower::operator() (msg); return *this;}
+
+  fec::Convolutional::PunctureOptions operator() (const mxArray* in) const {
+    fec::Convolutional::PunctureOptions punctureOptions;
+    punctureOptions.mask(mxArrayTo<std::vector<bool>>{msg()}("mask")(mxGetField(in, 0, "mask")));
+    punctureOptions.tailMask(mxArrayTo<std::vector<bool>>{msg()}("tailMask")(mxGetField(in, 0, "tailMask")));
+    
+    return punctureOptions;
   }
 };
-
-
-inline mxArray* toMxArray(fec::Convolutional::DecoderOptions decoder)
-{
-  const char* fieldnames[] = {"algorithm", "scalingFactor"};
-  mxArray* out = mxCreateStructMatrix(1,1,2, fieldnames);
-  
-  mxSetField(out, 0, fieldnames[0], toMxArray(decoder.algorithm()));
-  mxSetField(out, 0, fieldnames[1], toMxArray(decoder.scalingFactor()));
-    
-  return out;
-}
 
 #endif

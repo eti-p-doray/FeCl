@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 2.8.11)
 
 add_library(MatlabTestWrap MODULE testWrap.cpp Matlabdef.def)
-target_include_directories(MatlabTestWrap PRIVATE ${CMAKE_SOURCE_DIR}/Wrap/Matlab)
+target_include_directories(MatlabTestWrap PRIVATE ${CMAKE_SOURCE_DIR}/wrap/Matlab)
 target_include_directories(MatlabTestWrap PRIVATE ${MATLAB_INCLUDE_DIRS})
 target_include_directories(MatlabTestWrap PRIVATE ${Boost_INCLUDE_DIRS})
 target_include_directories(MatlabTestWrap PRIVATE ${CMAKE_SOURCE_DIR}/src)

@@ -32,21 +32,21 @@
 #include "../util/Scheduling.h"
 
 template <>
-class mxArrayTo<fec::Turbo::DecoderOptions> {
+class mxArrayTo<fec::Turbo::DecoderOptions> : private ExceptionThrower
+{
 public:
+  mxArrayTo(const std::string& msg = "") : ExceptionThrower(msg) {}
+  mxArrayTo& operator() (const std::string& msg) {ExceptionThrower::operator() (msg); return *this;}
+
   fec::Turbo::DecoderOptions operator() (const mxArray* in) const {
-    try {
-      fec::Turbo::DecoderOptions decoderOptions;
-      decoderOptions.iterations(  mxArrayTo<size_t>{}(mxGetField(in, 0, "iterations")) );
-      decoderOptions.scheduling(  mxArrayTo<fec::Turbo::Scheduling>{}(mxGetField(in, 0, "scheduling")) );
-      decoderOptions.scheduling(  mxArrayTo<fec::SchedulingType>{}(mxGetField(in, 0, "schedulingType")) );
-      decoderOptions.algorithm(  mxArrayTo<fec::DecoderAlgorithm>{}(mxGetField(in, 0, "algorithm")) );
-      decoderOptions.scalingFactor(  mxArrayTo<std::vector<std::vector<double>>>{}(mxGetField(in, 0, "scalingFactor")) );
-      
-      return decoderOptions;
-    } catch (std::exception& e) {
-      throw std::invalid_argument("In decoder options: " + std::string(e.what()));
-    }
+    fec::Turbo::DecoderOptions decoderOptions;
+    decoderOptions.iterations(  mxArrayTo<size_t>{msg()}("iterations")(mxGetField(in, 0, "iterations")) );
+    decoderOptions.scheduling(  mxArrayTo<fec::Turbo::Scheduling>{msg()}("scheduling")(mxGetField(in, 0, "scheduling")) );
+    decoderOptions.scheduling(  mxArrayTo<fec::SchedulingType>{msg()}("scheduling type")(mxGetField(in, 0, "schedulingType")) );
+    decoderOptions.algorithm(  mxArrayTo<fec::DecoderAlgorithm>{msg()}("algorithm")(mxGetField(in, 0, "algorithm")) );
+    decoderOptions.scalingFactor(  mxArrayTo<std::vector<std::vector<double>>>{msg()}("scaling factor")(mxGetField(in, 0, "scalingFactor")) );
+    
+    return decoderOptions;
   }
 };
 

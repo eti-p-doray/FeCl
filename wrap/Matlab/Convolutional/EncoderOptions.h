@@ -32,20 +32,20 @@
 #include "../util/Conversion.h"
 
 template <>
-class mxArrayTo<fec::Convolutional::EncoderOptions> {
+class mxArrayTo<fec::Convolutional::EncoderOptions> : private ExceptionThrower
+{
 public:
+  mxArrayTo(const std::string& msg = "") : ExceptionThrower(msg) {}
+  mxArrayTo& operator() (const std::string& msg) {ExceptionThrower::operator() (msg); return *this;}
+
   fec::Convolutional::EncoderOptions operator() (const mxArray* in) const {
-    try {
-      auto trellis = mxArrayTo<fec::Trellis>{}(mxGetField(in, 0, "trellis"));
-      size_t length = mxArrayTo<size_t>{}(mxGetField(in, 0, "length"));
-      fec::Convolutional::EncoderOptions encoderOptions(trellis, length);
-    
-      encoderOptions.termination(mxArrayTo<fec::Trellis::Termination>{}(mxGetField(in, 0, "termination")));
-    
-      return encoderOptions;
-    } catch (std::exception& e) {
-      throw std::invalid_argument("In encoder options: " + std::string(e.what()));
-    }
+    auto trellis = mxArrayTo<fec::Trellis>{msg()}("trellis")(mxGetField(in, 0, "trellis"));
+    size_t length = mxArrayTo<size_t>{msg()}("length")(mxGetField(in, 0, "length"));
+    fec::Convolutional::EncoderOptions encoderOptions(trellis, length);
+  
+    encoderOptions.termination(mxArrayTo<fec::Trellis::Termination>{msg()}("termination")(mxGetField(in, 0, "termination")));
+  
+    return encoderOptions;
   }
 };
 
