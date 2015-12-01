@@ -31,6 +31,7 @@ llr = -4.0 * y * snr;
 msgDecoded = codec.decode(llr);
 
 % Lets now count the errors in the decoded msg
-errorCount = sum(sum(msgDecoded ~= msg))
+bitError = sum(sum(msgDecoded ~= msg))
+wordError = sum(sum(msgDecoded ~= msg)~=0)
 
 %>  [Decode]
