@@ -81,7 +81,7 @@ template <> struct MexType<double> {using ID = std::integral_constant<mxClassID,
 class ExceptionThrower {
 public:
   ExceptionThrower(const std::string& msg) {msg_ = msg;}
-  ExceptionThrower& operator() (const std::string& msg) {msg_ += "In " + msg + ": ";}
+  ExceptionThrower& operator() (const std::string& msg) {msg_ += "In " + msg + ": "; return *this;}
   inline std::string msg() const {return msg_;}
 
 private:
@@ -493,6 +493,7 @@ mxArray* toMxArray(const std::vector<T,  MexAllocator<T>>& vec) {
 
 template <typename T>
 mxArray* toMxArray(MexHandle<T>&& u) {
+  //mexPrintf("%i\n", u.get());
   mxArray* out = mxCreateNumericMatrix(1, 1, mxUINT64_CLASS, mxREAL);
   *((uint64_t *)mxGetData(out)) = reinterpret_cast<uint64_t>(u.get());
   return out;

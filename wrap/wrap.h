@@ -43,7 +43,6 @@ public:
   template <typename T> using Handle = typename Wrap::template Handle<T>;
   using InArgList = typename Wrap::InArgList;
   using OutArgList = typename Wrap::OutArgList;
-  template <typename T, typename... Args> static Handle<T> load(Args&&... args) {return Wrap::template load<T>(std::forward<Args>(args)...);}
   
   using Signature = void(const InArgList in, OutArgList out);
   static const std::vector<std::function<Signature>> list;

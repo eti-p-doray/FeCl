@@ -19,6 +19,8 @@
  along with FeCl.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
+#include "util/SaveLoad.h"
+
 #include "../wrap.h"
 
 #include "util/Conversion.h"
@@ -29,7 +31,6 @@
 #include "util/Permutation.h"
 #include "util/Trellis.h"
 #include "util/MexArgList.h"
-#include "util/SaveLoad.h"
 #include "Turbo/EncoderOptions.h"
 #include "Turbo/DecoderOptions.h"
 #include "Turbo/PunctureOptions.h"
@@ -50,7 +51,6 @@ public:
   template <typename T> using Handle = MexHandle<T>;
   using InArgList = MexArgList<const mxArray*>;
   using OutArgList = MexArgList<mxArray*>;
-  template <typename T, typename... Args> static Handle<T> load(Args&&... args) {return load<T>(std::forward<Args>(args)...);}
 };
 
 void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
