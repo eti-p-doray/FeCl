@@ -38,6 +38,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
@@ -96,44 +97,45 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;        %&gt;  <a class="code" href="classfec_1_1_decoder_algorithm.html">DecoderAlgorithm</a> type used in decoder.</div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;        algorithm = uint32(<a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_decoder_algorithm.html">DecoderAlgorithm</a>.(<span class="stringliteral">&#39;Linear&#39;</span>));</div>
 <div class="line"><a name="l00008"></a><span class="lineno"><a class="line" href="classfec_1_1_ldpc_1_1_decoder_options.html#a42d7f71fa481fd7c93fe9b6a5a346d30">    8</a></span>&#160;        %&gt;  Multiplicative scalingFactor in Approximate decoder.</div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;        scalingFactor = cell2struct({0, 1.0}, {<span class="stringliteral">&#39;key&#39;</span>, <span class="stringliteral">&#39;value&#39;</span>}, 2);</div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    end</div>
-<div class="line"><a name="l00011"></a><span class="lineno"><a class="line" href="classfec_1_1_ldpc_1_1_decoder_options.html#a268f0cd96781037bea398c23f4147451">   11</a></span>&#160;</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    methods</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;        <span class="keyword">function</span> <span class="keyword">self</span> = <a class="code" href="classfec_1_1_ldpc_1_1_decoder_options.html">DecoderOptions</a>(varargin)</div>
-<div class="line"><a name="l00014"></a><span class="lineno"><a class="line" href="classfec_1_1_ldpc_1_1_decoder_options.html#a8a25a92d774cf184a0251940210daba9">   14</a></span>&#160;            if (nargin == 1 &amp;&amp; isa(varargin{1}, <span class="stringliteral">&#39;fec.Ldpc.DecoderOptions&#39;</span>))</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;                <span class="keyword">self</span>.set(varargin{1}.get());</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;            elseif (nargin == 1 &amp;&amp; isstruct(varargin{1}))</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;                self.set(varargin{1});</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;            elseif (nargin == 1 &amp;&amp; iscell(varargin{1}))</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;                varargin = varargin{1};</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;                <span class="keywordflow">if</span> (~isempty(varargin))</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;                    <span class="keyword">self</span>.set(varargin{:});</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;                end</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;            <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;                <span class="keywordflow">if</span> (~isempty(varargin))</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;                    <span class="keyword">self</span>.set(varargin{:});</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;                end</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;            end</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        end</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        <span class="keyword">function</span> <span class="keyword">self</span> = set.<a class="code" href="classfec_1_1_ldpc_1_1_decoder_options.html#a268f0cd96781037bea398c23f4147451">algorithm</a>(<span class="keyword">self</span>,val)</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;            <span class="keywordflow">if</span> (ischar(val))</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;                <span class="keyword">self</span>.algorithm = uint32(<a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_decoder_algorithm.html">DecoderAlgorithm</a>.(val));</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;            <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;                <span class="keyword">self</span>.algorithm = uint32(<a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_decoder_algorithm.html">DecoderAlgorithm</a>(val));</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;            end</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        end</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        <span class="keyword">function</span> <span class="keyword">self</span> = set.scalingFactor(<span class="keyword">self</span>,val)</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;            <span class="keywordflow">if</span> (isscalar(val))</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;                val = {0 val};</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;            end;</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;            <span class="keywordflow">if</span> (iscell(val))</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;                <span class="keyword">self</span>.scalingFactor = cell2struct(val, {<span class="stringliteral">&#39;key&#39;</span>, <span class="stringliteral">&#39;value&#39;</span>}, 2);</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;            end;</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        end</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    end</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;end</div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;%&gt;  This can be a scalar, or a map in the form {key1, value1; key2 value2; ...}, where value, which will be used <span class="keywordflow">for</span> the check degree defined by key, is a scalar or a vector with factors <span class="keywordflow">for</span> every iterations. The key 0 is the <span class="keywordflow">default</span> key which will be used <span class="keywordflow">for</span> every degree that is not otherwise defined.</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;        scalingFactor = cell2struct({0, 1.0}, {<span class="stringliteral">&#39;key&#39;</span>, <span class="stringliteral">&#39;value&#39;</span>}, 2);</div>
+<div class="line"><a name="l00011"></a><span class="lineno"><a class="line" href="classfec_1_1_ldpc_1_1_decoder_options.html#a268f0cd96781037bea398c23f4147451">   11</a></span>&#160;    end</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    methods</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;        <span class="keyword">function</span> <span class="keyword">self</span> = <a class="code" href="classfec_1_1_ldpc_1_1_decoder_options.html">DecoderOptions</a>(varargin)</div>
+<div class="line"><a name="l00015"></a><span class="lineno"><a class="line" href="classfec_1_1_ldpc_1_1_decoder_options.html#a8a25a92d774cf184a0251940210daba9">   15</a></span>&#160;            if (nargin == 1 &amp;&amp; isa(varargin{1}, <span class="stringliteral">&#39;fec.Ldpc.DecoderOptions&#39;</span>))</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;                <span class="keyword">self</span>.set(varargin{1}.get());</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;            elseif (nargin == 1 &amp;&amp; isstruct(varargin{1}))</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;                self.set(varargin{1});</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;            elseif (nargin == 1 &amp;&amp; iscell(varargin{1}))</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;                varargin = varargin{1};</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;                <span class="keywordflow">if</span> (~isempty(varargin))</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;                    <span class="keyword">self</span>.set(varargin{:});</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;                end</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;            <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;                <span class="keywordflow">if</span> (~isempty(varargin))</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;                    <span class="keyword">self</span>.set(varargin{:});</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;                end</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;            end</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        end</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        <span class="keyword">function</span> <span class="keyword">self</span> = set.<a class="code" href="classfec_1_1_ldpc_1_1_decoder_options.html#a268f0cd96781037bea398c23f4147451">algorithm</a>(<span class="keyword">self</span>,val)</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;            <span class="keywordflow">if</span> (ischar(val))</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;                <span class="keyword">self</span>.algorithm = uint32(<a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_decoder_algorithm.html">DecoderAlgorithm</a>.(val));</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;            <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;                <span class="keyword">self</span>.algorithm = uint32(<a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_decoder_algorithm.html">DecoderAlgorithm</a>(val));</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;            end</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        end</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        <span class="keyword">function</span> <span class="keyword">self</span> = set.scalingFactor(<span class="keyword">self</span>,val)</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;            <span class="keywordflow">if</span> (isscalar(val))</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;                val = {0 val};</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;            end;</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;            <span class="keywordflow">if</span> (iscell(val))</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;                <span class="keyword">self</span>.scalingFactor = cell2struct(val, {<span class="stringliteral">&#39;key&#39;</span>, <span class="stringliteral">&#39;value&#39;</span>}, 2);</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;            end;</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        end</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    end</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;end</div>
 <div class="ttc" id="classfec_1_1_ldpc_1_1_decoder_options_html"><div class="ttname"><a href="classfec_1_1_ldpc_1_1_decoder_options.html">fec::Ldpc::DecoderOptions</a></div><div class="ttdoc">This class gathers options affecting the decoder in Ldpc Codec. </div><div class="ttdef"><b>Definition:</b> <a href="_09_ldpc_2_decoder_options_8m_source.html#l00002">DecoderOptions.m:2</a></div></div>
 <div class="ttc" id="namespacefec_html"><div class="ttname"><a href="namespacefec.html">fec</a></div><div class="ttdoc">Foward Error Correction namespace. </div></div>
 <div class="ttc" id="classfec_1_1_decoder_algorithm_html"><div class="ttname"><a href="classfec_1_1_decoder_algorithm.html">fec::DecoderAlgorithm</a></div><div class="ttdoc">This class holds the DecoderAlgorithm enumeration. </div><div class="ttdef"><b>Definition:</b> <a href="_decoder_algorithm_8m_source.html#l00002">DecoderAlgorithm.m:2</a></div></div>

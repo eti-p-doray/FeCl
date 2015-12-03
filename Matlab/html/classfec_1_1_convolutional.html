@@ -38,6 +38,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
@@ -63,7 +64,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="annotated.html"><span>Class&#160;List</span></a></li>
       <li><a href="classes.html"><span>Class&#160;Index</span></a></li>
-      <li><a href="hierarchy.html"><span>Class&#160;Hierarchy</span></a></li>
+      <li><a href="inherits.html"><span>Class&#160;Hierarchy</span></a></li>
       <li><a href="functions.html"><span>Class&#160;Members</span></a></li>
     </ul>
   </div>
@@ -103,12 +104,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="dynheader">
 Inheritance diagram for fec::Convolutional:</div>
 <div class="dyncontent">
- <div class="center">
-  <img src="classfec_1_1_convolutional.png" usemap="#fec::Convolutional_map" alt=""/>
-  <map id="fec::Convolutional_map" name="fec::Convolutional_map">
-<area href="classfec_1_1_codec.html" title="This class represents a general encoder / decoder. " alt="fec::Codec" shape="rect" coords="0,112,139,136"/>
-</map>
- </div></div>
+<div class="center"><img src="classfec_1_1_convolutional__inherit__graph.png" border="0" usemap="#fec_1_1_convolutional_inherit__map" alt="Inheritance graph"/></div>
+<map name="fec_1_1_convolutional_inherit__map" id="fec_1_1_convolutional_inherit__map">
+<area shape="rect" id="node2" href="classfec_1_1_codec.html" title="This class represents a general encoder / decoder. " alt="" coords="41,155,127,181"/></map>
+<center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
@@ -513,7 +512,7 @@ Property&#160;</td><td class="memItemRight" valign="bottom"><b>structure</b></td
 <p>Decode several blocs of soft data according to the object structure. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">parityIn</td><td>- Parity L-values correspondig to the received signal. Given a signal y and a parity bit x, we define the correspondig L-value as L = ln[ p(x = 1 | y) / p(x = 0 | y) ] = ln[ p(y | x = 1) / p(y | x = 0) ] This array is expected to have its number of rows equals to the paritySize. Each column corresponds to one bloc of data. Many parity blocs can be decoded at once.</td></tr>
+    <tr><td class="paramname">parity</td><td>- Parity L-values correspondig to the received signal. Given a signal y and a parity bit x, we define the correspondig L-value as L = ln[ p(x = 1 | y) / p(x = 0 | y) ] = ln[ p(y | x = 1) / p(y | x = 0) ] This array is expected to have its number of rows equals to the paritySize. Each column corresponds to one bloc of data. Many parity blocs can be decoded at once.</td></tr>
   </table>
   </dd>
 </dl>
@@ -522,7 +521,8 @@ Property&#160;</td><td class="memItemRight" valign="bottom"><b>structure</b></td
 <div class="line">msgDecoded = codec.decode(llr);</div>
 <div class="line"></div>
 <div class="line">% Lets now count the errors in the decoded msg</div>
-<div class="line">errorCount = sum(sum(msgDecoded ~= msg))</div>
+<div class="line">bitError = sum(sum(msgDecoded ~= msg))</div>
+<div class="line">wordError = sum(sum(msgDecoded ~= msg)~=0)</div>
 </div><!-- fragment -->
 </div>
 </div>

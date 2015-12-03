@@ -1,0 +1,11 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node2" href="$classfec_1_1_convolutional_1_1_decoder_options.html" title="This class gathers options affecting the decoder in Convolutional Codec. " alt="" coords="159,5,287,46"/>
+<area shape="rect" id="node3" href="$classfec_1_1_convolutional_1_1_encoder_options.html" title="This class gathers options affecting the encoder in Convolutional Codec. " alt="" coords="159,70,287,111"/>
+<area shape="rect" id="node4" href="$classfec_1_1_convolutional_1_1_puncture_options.html" title="This class gathers options affecting puncturing in Convolutional Codec. " alt="" coords="158,135,287,177"/>
+<area shape="rect" id="node5" href="$classfec_1_1_ldpc_1_1_decoder_options.html" title="This class gathers options affecting the decoder in Ldpc Codec. " alt="" coords="133,201,313,228"/>
+<area shape="rect" id="node6" href="$classfec_1_1_ldpc_1_1_encoder_options.html" title="This class gathers options affecting the encoder in Ldpc Codec. " alt="" coords="133,252,312,279"/>
+<area shape="rect" id="node7" href="$classfec_1_1_ldpc_1_1_puncture_options.html" title="This class gathers options affecting puncturing in Turbo Codec. " alt="" coords="131,303,314,329"/>
+<area shape="rect" id="node8" href="$classfec_1_1_turbo_1_1_decoder_options.html" title="This class gathers options affecting the decoder in Turbo Codec. " alt="" coords="130,353,315,380"/>
+<area shape="rect" id="node9" href="$classfec_1_1_turbo_1_1_encoder_options.html" title="This class gathers options affecting the encoder in Turbo Codec. " alt="" coords="130,404,315,431"/>
+<area shape="rect" id="node10" href="$classfec_1_1_turbo_1_1_puncture_options.html" title="This class gathers options affecting puncturing in Turbo Codec. " alt="" coords="128,455,317,481"/>
+</map>

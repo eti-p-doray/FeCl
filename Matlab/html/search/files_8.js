@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['termination_2em',['Termination.m',['../_termination_8m.html',1,'']]],
-  ['trellis_2em',['Trellis.m',['../_trellis_8m.html',1,'']]],
-  ['turbo_2em',['Turbo.m',['../_turbo_8m.html',1,'']]]
+  ['scheduling_2em',['Scheduling.m',['../_scheduling_8m.html',1,'']]],
+  ['structure_2em',['Structure.m',['../_09_ldpc_2_structure_8m.html',1,'']]],
+  ['structure_2em',['Structure.m',['../_09_turbo_2_structure_8m.html',1,'']]],
+  ['structure_2em',['Structure.m',['../_09_convolutional_2_structure_8m.html',1,'']]]
 ];

@@ -1,10 +1,12 @@
 var searchData=
 [
+  ['my_20main_20page',['My Main Page',['../index.html',1,'']]],
+  ['mainpage_2emd',['mainPage.md',['../main_page_8md.html',1,'']]],
   ['mapdecoder',['MapDecoder',['../classfec_1_1detail_1_1_map_decoder.html',1,'fec::detail']]],
   ['mapdecoder_2ecpp',['MapDecoder.cpp',['../_map_decoder_8cpp.html',1,'']]],
   ['mapdecoder_2eh',['MapDecoder.h',['../_map_decoder_8h.html',1,'']]],
-  ['mapdecoderimpl',['MapDecoderImpl',['../classfec_1_1detail_1_1_map_decoder_impl.html#aa9796f2dfee0c88486df21b68c6e1e40',1,'fec::detail::MapDecoderImpl']]],
   ['mapdecoderimpl',['MapDecoderImpl',['../classfec_1_1detail_1_1_map_decoder_impl.html',1,'fec::detail']]],
+  ['mapdecoderimpl',['MapDecoderImpl',['../classfec_1_1detail_1_1_map_decoder_impl.html#aa9796f2dfee0c88486df21b68c6e1e40',1,'fec::detail::MapDecoderImpl']]],
   ['mapdecoderimpl_2ecpp',['MapDecoderImpl.cpp',['../_map_decoder_impl_8cpp.html',1,'']]],
   ['mapdecoderimpl_2eh',['MapDecoderImpl.h',['../_map_decoder_impl_8h.html',1,'']]],
   ['mask',['mask',['../structfec_1_1detail_1_1_convolutional_1_1_puncture_options.html#aef60ca2e94b06680ed0b03b4173fadcf',1,'fec::detail::Convolutional::PunctureOptions::mask()'],['../structfec_1_1detail_1_1_ldpc_1_1_puncture_options.html#a202b3f3279c911243082308c64ee1cf7',1,'fec::detail::Ldpc::PunctureOptions::mask(std::vector&lt; bool &gt; mask)'],['../structfec_1_1detail_1_1_ldpc_1_1_puncture_options.html#a9e41c557465cecb102d23adedfd80bd3',1,'fec::detail::Ldpc::PunctureOptions::mask() const '],['../structfec_1_1detail_1_1_turbo_1_1_puncture_options.html#a54ec1eb91c20f3b65305f251876c0218',1,'fec::detail::Turbo::PunctureOptions::mask()']]],

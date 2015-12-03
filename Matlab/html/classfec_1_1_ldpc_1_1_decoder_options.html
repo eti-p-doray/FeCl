@@ -38,6 +38,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
@@ -63,7 +64,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="annotated.html"><span>Class&#160;List</span></a></li>
       <li><a href="classes.html"><span>Class&#160;Index</span></a></li>
-      <li><a href="hierarchy.html"><span>Class&#160;Hierarchy</span></a></li>
+      <li><a href="inherits.html"><span>Class&#160;Hierarchy</span></a></li>
       <li><a href="functions.html"><span>Class&#160;Members</span></a></li>
     </ul>
   </div>
@@ -101,11 +102,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="dynheader">
 Inheritance diagram for fec::Ldpc::DecoderOptions:</div>
 <div class="dyncontent">
- <div class="center">
-  <img src="classfec_1_1_ldpc_1_1_decoder_options.png" usemap="#fec::Ldpc::DecoderOptions_map" alt=""/>
-  <map id="fec::Ldpc::DecoderOptions_map" name="fec::Ldpc::DecoderOptions_map">
-</map>
- </div></div>
+<div class="center"><img src="classfec_1_1_ldpc_1_1_decoder_options__inherit__graph.png" border="0" usemap="#fec_1_1_ldpc_1_1_decoder_options_inherit__map" alt="Inheritance graph"/></div>
+<center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -129,16 +127,33 @@ Property&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 Property&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_ldpc_1_1_decoder_options.html#a268f0cd96781037bea398c23f4147451">algorithm</a></td></tr>
 <tr class="memdesc:a268f0cd96781037bea398c23f4147451"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classfec_1_1_decoder_algorithm.html" title="This class holds the DecoderAlgorithm enumeration. ">DecoderAlgorithm</a> type used in decoder. <br /></td></tr>
 <tr class="separator:a268f0cd96781037bea398c23f4147451"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8a25a92d774cf184a0251940210daba9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8a25a92d774cf184a0251940210daba9"></a>
-Property&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_ldpc_1_1_decoder_options.html#a8a25a92d774cf184a0251940210daba9">scalingFactor</a></td></tr>
-<tr class="memdesc:a8a25a92d774cf184a0251940210daba9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Multiplicative scalingFactor in Approximate decoder. <br /></td></tr>
+<tr class="memitem:a8a25a92d774cf184a0251940210daba9"><td class="memItemLeft" align="right" valign="top">Property&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfec_1_1_ldpc_1_1_decoder_options.html#a8a25a92d774cf184a0251940210daba9">scalingFactor</a></td></tr>
+<tr class="memdesc:a8a25a92d774cf184a0251940210daba9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Multiplicative scalingFactor in Approximate decoder.  <a href="#a8a25a92d774cf184a0251940210daba9">More...</a><br /></td></tr>
 <tr class="separator:a8a25a92d774cf184a0251940210daba9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>This class gathers options affecting the decoder in <a class="el" href="classfec_1_1_ldpc.html" title="This class represents an ldpc encode / decoder. ">Ldpc</a> <a class="el" href="classfec_1_1_codec.html" title="This class represents a general encoder / decoder. ">Codec</a>. </p>
 
 <p>Definition at line <a class="el" href="_09_ldpc_2_decoder_options_8m_source.html#l00002">2</a> of file <a class="el" href="_09_ldpc_2_decoder_options_8m_source.html">DecoderOptions.m</a>.</p>
-</div><hr/>The documentation for this class was generated from the following file:<ul>
+</div><h2 class="groupheader">Member Data Documentation</h2>
+<a class="anchor" id="a8a25a92d774cf184a0251940210daba9"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Property fec::Ldpc::DecoderOptions::scalingFactor</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Multiplicative scalingFactor in Approximate decoder. </p>
+<p>This can be a scalar, or a map in the form {key1, value1; key2 value2; ...}, where value, which will be used for the check degree defined by key, is a scalar or a vector with factors for every iterations. The key 0 is the default key which will be used for every degree that is not otherwise defined. </p>
+
+<p>Definition at line <a class="el" href="_09_ldpc_2_decoder_options_8m_source.html#l00015">15</a> of file <a class="el" href="_09_ldpc_2_decoder_options_8m_source.html">DecoderOptions.m</a>.</p>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following file:<ul>
 <li>+fec/+Ldpc/<a class="el" href="_09_ldpc_2_decoder_options_8m_source.html">DecoderOptions.m</a></li>
 </ul>
 </div><!-- contents -->

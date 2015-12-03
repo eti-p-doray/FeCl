@@ -38,6 +38,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
@@ -98,54 +99,55 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00008"></a><span class="lineno"><a class="line" href="classfec_1_1_turbo_1_1_decoder_options.html#afcf0d12ad928bbc0b258a324d4362b68">    8</a></span>&#160;        %&gt;  <a class="code" href="classfec_1_1_turbo_1_1_scheduling.html">Turbo::Scheduling</a> type used in decoder.</div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;        scheduling;</div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;        %&gt;  Multiplicative scalingFactor in Approximate decoder.</div>
-<div class="line"><a name="l00011"></a><span class="lineno"><a class="line" href="classfec_1_1_turbo_1_1_decoder_options.html#a1dc5878f738621995d4f950c9f2902e0">   11</a></span>&#160;        scalingFactor = 1.0;</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    end</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    properties (SetAccess = <span class="keyword">private</span>)</div>
-<div class="line"><a name="l00014"></a><span class="lineno"><a class="line" href="classfec_1_1_turbo_1_1_decoder_options.html#a464b64b3ea7ad27bd9cac744a0bec82e">   14</a></span>&#160;        schedulingType = uint32(<a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_turbo.html">Turbo</a>.<a class="code" href="classfec_1_1_turbo_1_1_scheduling.html">Scheduling</a>.(&#39;Serial&#39;));</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    end</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;</div>
-<div class="line"><a name="l00017"></a><span class="lineno"><a class="line" href="classfec_1_1_turbo_1_1_decoder_options.html#ac8e075ad5bd5c9cd7f42b36766b8e557">   17</a></span>&#160;    methods</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        function self = <a class="code" href="classfec_1_1_turbo_1_1_decoder_options.html">DecoderOptions</a>(varargin)</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;            if (nargin == 1 &amp;&amp; isa(varargin{1}, <span class="stringliteral">&#39;fec.Turbo.DecoderOptions&#39;</span>))</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;                <span class="keyword">self</span>.set(varargin{1}.get());</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;            elseif (nargin == 1 &amp;&amp; isstruct(varargin{1}))</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;                self.set(varargin{1});</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;            elseif (nargin == 1 &amp;&amp; iscell(varargin{1}))</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;                varargin = varargin{1};</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;                <span class="keywordflow">if</span> (~isempty(varargin))</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;                    <span class="keyword">self</span>.set(varargin{:});</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;                end</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;            <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;                <span class="keywordflow">if</span> (~isempty(varargin))</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;                    <span class="keyword">self</span>.set(varargin{:});</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;                end</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;            end</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        end</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        <span class="keyword">function</span> <span class="keyword">self</span> = set.<a class="code" href="classfec_1_1_turbo_1_1_decoder_options.html#a1dc5878f738621995d4f950c9f2902e0">algorithm</a>(<span class="keyword">self</span>,val)</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;            <span class="keywordflow">if</span> (ischar(val))</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;                <span class="keyword">self</span>.algorithm = uint32(<a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_decoder_algorithm.html">DecoderAlgorithm</a>.(val));</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;            <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;                <span class="keyword">self</span>.algorithm = uint32(<a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_decoder_algorithm.html">DecoderAlgorithm</a>(val));</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;            end</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        end</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <span class="keyword">function</span> <span class="keyword">self</span> = set.scheduling(<span class="keyword">self</span>,val)</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;            <span class="keywordflow">if</span> (ischar(val) || isa(val, <span class="stringliteral">&#39;fec.Turbo.Scheduling&#39;</span>))</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;                <span class="keyword">self</span>.schedulingType = val;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;            elseif (iscell(val))</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;                self.scheduling = cell2struct(val, {<span class="stringliteral">&#39;activation&#39;</span>, <span class="stringliteral">&#39;transfer&#39;</span>}, 2);</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;                <span class="keyword">self</span>.schedulingType = <span class="stringliteral">&#39;Custom&#39;</span>;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;            end</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        end</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        <span class="keyword">function</span> <span class="keyword">self</span> = set.schedulingType(<span class="keyword">self</span>,val)</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;            <span class="keywordflow">if</span> (ischar(val))</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;                <span class="keyword">self</span>.schedulingType = uint32(<a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_turbo.html">Turbo</a>.<a class="code" href="classfec_1_1_turbo_1_1_scheduling.html">Scheduling</a>.(val));</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;            <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;                <span class="keyword">self</span>.schedulingType = uint32(<a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_turbo.html">Turbo</a>.<a class="code" href="classfec_1_1_turbo_1_1_scheduling.html">Scheduling</a>(val));</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;            end</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        end</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    end</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;end</div>
+<div class="line"><a name="l00011"></a><span class="lineno"><a class="line" href="classfec_1_1_turbo_1_1_decoder_options.html#a1dc5878f738621995d4f950c9f2902e0">   11</a></span>&#160;        %&gt;  This can be a scalar, a row-vector, a column vector or a matrix. If there is multiple rows, each row will be used <span class="keywordflow">for</span> a different constituent. If there is multiple columns, each columns will be used <span class="keywordflow">for</span> a different iteration.</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;        scalingFactor = 1.0;</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    end</div>
+<div class="line"><a name="l00014"></a><span class="lineno"><a class="line" href="classfec_1_1_turbo_1_1_decoder_options.html#a464b64b3ea7ad27bd9cac744a0bec82e">   14</a></span>&#160;    properties (SetAccess = <span class="keyword">private</span>)</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        schedulingType = uint32(<a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_turbo.html">Turbo</a>.<a class="code" href="classfec_1_1_turbo_1_1_scheduling.html">Scheduling</a>.(&#39;Serial&#39;));</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    end</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;</div>
+<div class="line"><a name="l00018"></a><span class="lineno"><a class="line" href="classfec_1_1_turbo_1_1_decoder_options.html#ac8e075ad5bd5c9cd7f42b36766b8e557">   18</a></span>&#160;    methods</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        function self = <a class="code" href="classfec_1_1_turbo_1_1_decoder_options.html">DecoderOptions</a>(varargin)</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;            if (nargin == 1 &amp;&amp; isa(varargin{1}, <span class="stringliteral">&#39;fec.Turbo.DecoderOptions&#39;</span>))</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;                <span class="keyword">self</span>.set(varargin{1}.get());</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;            elseif (nargin == 1 &amp;&amp; isstruct(varargin{1}))</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;                self.set(varargin{1});</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;            elseif (nargin == 1 &amp;&amp; iscell(varargin{1}))</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;                varargin = varargin{1};</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;                <span class="keywordflow">if</span> (~isempty(varargin))</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;                    <span class="keyword">self</span>.set(varargin{:});</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;                end</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;            <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;                <span class="keywordflow">if</span> (~isempty(varargin))</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;                    <span class="keyword">self</span>.set(varargin{:});</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;                end</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;            end</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        end</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        <span class="keyword">function</span> <span class="keyword">self</span> = set.<a class="code" href="classfec_1_1_turbo_1_1_decoder_options.html#a1dc5878f738621995d4f950c9f2902e0">algorithm</a>(<span class="keyword">self</span>,val)</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;            <span class="keywordflow">if</span> (ischar(val))</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;                <span class="keyword">self</span>.algorithm = uint32(<a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_decoder_algorithm.html">DecoderAlgorithm</a>.(val));</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;            <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;                <span class="keyword">self</span>.algorithm = uint32(<a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_decoder_algorithm.html">DecoderAlgorithm</a>(val));</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;            end</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        end</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        <span class="keyword">function</span> <span class="keyword">self</span> = set.scheduling(<span class="keyword">self</span>,val)</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;            <span class="keywordflow">if</span> (ischar(val) || isa(val, <span class="stringliteral">&#39;fec.Turbo.Scheduling&#39;</span>))</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;                <span class="keyword">self</span>.schedulingType = val;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;            elseif (iscell(val))</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;                self.scheduling = cell2struct(val, {<span class="stringliteral">&#39;activation&#39;</span>, <span class="stringliteral">&#39;transfer&#39;</span>}, 2);</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;                <span class="keyword">self</span>.schedulingType = <span class="stringliteral">&#39;Custom&#39;</span>;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;            end</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        end</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <span class="keyword">function</span> <span class="keyword">self</span> = set.schedulingType(<span class="keyword">self</span>,val)</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;            <span class="keywordflow">if</span> (ischar(val))</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;                <span class="keyword">self</span>.schedulingType = uint32(<a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_turbo.html">Turbo</a>.<a class="code" href="classfec_1_1_turbo_1_1_scheduling.html">Scheduling</a>.(val));</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;            <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;                <span class="keyword">self</span>.schedulingType = uint32(<a class="code" href="namespacefec.html">fec</a>.<a class="code" href="classfec_1_1_turbo.html">Turbo</a>.<a class="code" href="classfec_1_1_turbo_1_1_scheduling.html">Scheduling</a>(val));</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;            end</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        end</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    end</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;end</div>
 <div class="ttc" id="classfec_1_1_turbo_1_1_scheduling_html"><div class="ttname"><a href="classfec_1_1_turbo_1_1_scheduling.html">fec::Turbo::Scheduling</a></div><div class="ttdoc">This class holds the Scheduling enumeration. </div><div class="ttdef"><b>Definition:</b> <a href="_scheduling_8m_source.html#l00002">Scheduling.m:2</a></div></div>
 <div class="ttc" id="namespacefec_html"><div class="ttname"><a href="namespacefec.html">fec</a></div><div class="ttdoc">Foward Error Correction namespace. </div></div>
 <div class="ttc" id="classfec_1_1_decoder_algorithm_html"><div class="ttname"><a href="classfec_1_1_decoder_algorithm.html">fec::DecoderAlgorithm</a></div><div class="ttdoc">This class holds the DecoderAlgorithm enumeration. </div><div class="ttdef"><b>Definition:</b> <a href="_decoder_algorithm_8m_source.html#l00002">DecoderAlgorithm.m:2</a></div></div>
