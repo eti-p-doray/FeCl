@@ -55,16 +55,16 @@ namespace fec {
         virtual ~Structure() = default; /**< Default destructor. */
         
         virtual const char * get_key() const = 0; /**< Access the type info key. */
+       
+        virtual size_t msgWidth() const = 0; /**< Access the size of msg in each code bloc. */
+        virtual size_t systWidth() const = 0; /**< Access the size of systematics in each code bloc. */
+        virtual size_t parityWidth() const = 0; /**< Access the size of parities in each code bloc. */
+        virtual size_t stateWidth() const = 0; /**< Access the size of state information in each code bloc. */
         
-        size_t msgWidth() const = 0; /**< Access the size of msg in each code bloc. */
-        size_t systWidth() const = 0; /**< Access the size of systematics in each code bloc. */
-        size_t parityWidth() const = 0; /**< Access the size of parities in each code bloc. */
-        size_t stateWidth() const = 0; /**< Access the size of state information in each code bloc. */
-
-        size_t msgSize() const = 0; /**< Access the size of msg in each code bloc. */
-        size_t systSize() const = 0; /**< Access the size of systematics in each code bloc. */
-        size_t paritySize() const = 0; /**< Access the size of parities in each code bloc. */
-        size_t stateSize() const = 0; /**< Access the size of state information in each code bloc. */
+        virtual size_t msgSize() const = 0; /**< Access the size of msg in each code bloc. */
+        virtual size_t systSize() const = 0; /**< Access the size of systematics in each code bloc. */
+        virtual size_t paritySize() const = 0; /**< Access the size of parities in each code bloc. */
+        virtual size_t stateSize() const = 0; /**< Access the size of state information in each code bloc. */
         
         DecoderAlgorithm decoderAlgorithm() const {return decoderAlgorithm_;} /**< Access the algorithm used in decoder. */
         

@@ -48,11 +48,6 @@ namespace fec {
     friend class boost::serialization::access;
   public:
     
-    template <template <typename> class A = std::allocator>
-    using Input = detail::Info<const std::vector<double,A<double>>>;
-    template <template <typename> class A = std::allocator>
-    using Output = detail::Info<std::vector<double,A<double>>>;
-    
     virtual ~Codec() = default;
     
     virtual const char * get_key() const = 0; /**< Access the type info key. */
@@ -79,7 +74,7 @@ namespace fec {
     std::vector<BitField<size_t>,A<BitField<size_t>>> decode(const std::vector<double,A<double>>& parity) const;
     
     template <template <typename> class A>
-    void soDecode(Input<A> input, Output<A> output) const;
+    void soDecode(Input<double, A> input, Output<double, A> output) const;
     
   protected:
     Codec() = default;
