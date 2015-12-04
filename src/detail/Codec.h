@@ -55,11 +55,16 @@ namespace fec {
         virtual ~Structure() = default; /**< Default destructor. */
         
         virtual const char * get_key() const = 0; /**< Access the type info key. */
+       
+        virtual size_t msgWidth() const = 0; /**< Access the size of msg in each code bloc. */
+        virtual size_t systWidth() const = 0; /**< Access the size of systematics in each code bloc. */
+        virtual size_t parityWidth() const = 0; /**< Access the size of parities in each code bloc. */
+        virtual size_t stateWidth() const = 0; /**< Access the size of state information in each code bloc. */
         
-        size_t msgSize() const {return msgSize_;} /**< Access the size of msg in each code bloc. */
-        size_t systSize() const {return systSize_;} /**< Access the size of systematics in each code bloc. */
-        size_t paritySize() const {return paritySize_;} /**< Access the size of parities in each code bloc. */
-        size_t stateSize() const {return stateSize_;} /**< Access the size of state information in each code bloc. */
+        virtual size_t msgSize() const = 0; /**< Access the size of msg in each code bloc. */
+        virtual size_t systSize() const = 0; /**< Access the size of systematics in each code bloc. */
+        virtual size_t paritySize() const = 0; /**< Access the size of parities in each code bloc. */
+        virtual size_t stateSize() const = 0; /**< Access the size of state information in each code bloc. */
         
         DecoderAlgorithm decoderAlgorithm() const {return decoderAlgorithm_;} /**< Access the algorithm used in decoder. */
         
@@ -79,10 +84,6 @@ namespace fec {
         virtual bool check(std::vector<BitField<size_t>>::const_iterator parity) const = 0;
         
       protected:
-        size_t msgSize_ = 0;/**< Size of msg in each code bloc. */
-        size_t systSize_ = 0;/**< Size of systematics in each code bloc. */
-        size_t paritySize_ = 0;/**< Size of parities in each code bloc. */
-        size_t stateSize_ = 0;/**< Size of state information in each code bloc. */
         DecoderAlgorithm decoderAlgorithm_; /**< Algorithm type used in decoder. */
         
       private:
@@ -110,8 +111,17 @@ namespace fec {
         InfoIterator& msg(Iterator msg) {msg_ = msg; hasMsg_ = true; return *this;} /**< Link msg data. */
         
         inline void operator ++ ();
+        inline void operator ++ (int);
+        inline void operator -- ();
+        inline void operator -- (int);
         inline void operator += (size_t x);
+        inline void operator -= (size_t x);
+        inline bool operator == (const InfoIterator& b);
         inline bool operator != (const InfoIterator& b);
+        inline bool operator - (const InfoIterator& b);
+        
+        inline InfoIterator operator [] (size_t i);
+        inline InfoIterator* operator -> ();
         
         Iterator syst() const {return syst_;}
         Iterator parity() const {return parity_;}
@@ -135,8 +145,10 @@ namespace fec {
         const Structure* structureRef_;
       };
       
-      using InputIterator = InfoIterator<std::vector<double>::const_iterator>;
-      using OutputIterator = InfoIterator<std::vector<double>::iterator>;
+      template <typename T>
+      using iterator = InfoIterator<typename std::vector<T>::const_iterator>;
+      template <typename T>
+      using const_iterator = InfoIterator<typename std::vector<T>::iterator>;
       
       template <class Vector>
       class Info {

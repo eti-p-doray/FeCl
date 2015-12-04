@@ -27,12 +27,7 @@
 #include <vector>
 
 #include <boost/serialization/nvp.hpp>
-#include <boost/serialization/unique_ptr.hpp>
 #include <boost/serialization/utility.hpp>
-#include <boost/serialization/export.hpp>
-#include <boost/serialization/assume_abstract.hpp>
-#include <boost/serialization/type_info_implementation.hpp>
-#include <boost/serialization/extended_type_info_no_rtti.hpp>
 
 namespace fec {
   
@@ -43,7 +38,7 @@ namespace fec {
       friend class boost::serialization::access;
     public:
       template <typename Functor, typename Input, typename Output>
-      void execute(Functor f, Input in, Output out);
+      void executeTask(Functor f, Input begin, Input end, in, Output out);
       
     private:
       template <typename Archive>
@@ -58,11 +53,33 @@ namespace fec {
   }
 }
 
+
 template <typename Archive>
-void fec::Codec::serialize(Archive & ar, const unsigned int version) {
+void fec::WorkGroup::serialize(Archive & ar, const unsigned int version) {
   using namespace boost::serialization;
-  ar & ::BOOST_SERIALIZATION_NVP(workGroupSize_);
   ar & ::BOOST_SERIALIZATION_NVP(structure_);
+}
+
+template <typename Functor, typename Input, typename Output>
+void fec::WorkGroup::executeTask(Functor f, Input begin, Input end, Output out)
+{
+  size_t blockCount = end - begin;
+  
+  auto threadGroup = createWorkGroup();
+  auto thread = threadGroup.begin();
+  size_t step = taskSize(blockCount);
+  for (int i = 0; i + step <= blockCount; i += step) {
+    threadGroup.push_back( std::thread(&f, begin, out, step) );
+    ++begin;
+    ++out;
+    ++thread;
+  }
+  if (msgOutIt != msg.end()) {
+    decodeBlocks(begin, out, blockCount % step);
+  }
+  for (auto & thread : threadGroup) {
+    thread.join();
+  }
 }
 
 #endif
