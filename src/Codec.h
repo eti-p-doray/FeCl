@@ -49,9 +49,9 @@ namespace fec {
   public:
     
     template <template <typename> class A = std::allocator>
-    using Input = detail::Codec::Info<const std::vector<double,A<double>>>;
+    using Input = detail::Info<const std::vector<double,A<double>>>;
     template <template <typename> class A = std::allocator>
-    using Output = detail::Codec::Info<std::vector<double,A<double>>>;
+    using Output = detail::Info<std::vector<double,A<double>>>;
     
     virtual ~Codec() = default;
     
