@@ -33,15 +33,15 @@ using namespace fec;
  *  \param  outputSize  Number of output symbol for each branch
  *  \param  stateSize Number of bits (registers) in the state
  */
-Trellis::Trellis(const std::vector<BitField<size_t>>& nextState, const std::vector<BitField<size_t>>& output, size_t inputSize, size_t outputSize, size_t stateSize)
+Trellis::Trellis(const std::vector<BitField<size_t>>& nextState, const std::vector<BitField<size_t>>& output, size_t inputWidth, size_t outputWidth, size_t stateWidth)
 {
-  stateSize_ = stateSize;
-  outputSize_ = outputSize;
-  inputSize_ = inputSize;
+  stateWidth_ = stateWidth;
+  outputWidth_ = outputWidth;
+  inputWidth_ = inputWidth;
   
-  stateCount_ = 1<<stateSize_;
-  outputCount_ = 1<<outputSize_;
-  inputCount_ = 1<<inputSize_;
+  stateCount_ = 1<<stateWidth_;
+  outputCount_ = 1<<outputWidth_;
+  inputCount_ = 1<<inputWidth_;
   
   nextState_.resize(inputCount()*stateCount());
   output_.resize(inputCount()*stateCount());
@@ -49,14 +49,14 @@ Trellis::Trellis(const std::vector<BitField<size_t>>& nextState, const std::vect
   for (size_t i = 0; i < stateCount(); i++) {
     for (BitField<size_t> j = 0; j < inputCount(); j++) {
       BitField<size_t> input = 0;
-      for (int k = 0; k < this->inputSize(); ++k) {
-        input[k] = j[this->inputSize()-k-1];
+      for (int k = 0; k < this->inputWidth(); ++k) {
+        input[k] = j[this->inputWidth()-k-1];
       }
       nextState_[i*inputCount()+j] = nextState[i+input*stateCount()];
       assert(nextState_[i*inputCount()+j] < stateCount());
       output_[i*inputCount()+j] = 0;
-      for (size_t k = 0; k < this->outputSize(); k++) {
-        output_[i*inputCount()+j][k] = output[i+input*stateCount()].test(this->outputSize()-k-1);
+      for (size_t k = 0; k < this->outputWidth(); k++) {
+        output_[i*inputCount()+j][k] = output[i+input*stateCount()].test(this->outputWidth()-k-1);
       }
       assert(output_[i*inputCount()+j] < outputCount());
     }
@@ -75,16 +75,16 @@ Trellis::Trellis(const std::vector<BitField<size_t>>& nextState, const std::vect
  */
 Trellis::Trellis(const std::vector<size_t>& constraintLengths, const std::vector<std::vector<BitField<size_t>>>& generator, std::vector<BitField<size_t>> feedback)
 {
-  inputSize_ = size_t(generator.size());
-  outputSize_ = size_t(generator[0].size());
+  inputWidth_ = size_t(generator.size());
+  outputWidth_ = size_t(generator[0].size());
   if (constraintLengths.size() != generator.size()) {
     throw std::invalid_argument("Invalid number of generators");
   }
   if (constraintLengths.size() != feedback.size() && feedback.size() != 0) {
     throw std::invalid_argument("Invalid number of feedback");
   }
-  for (size_t i = 0; i < inputSize(); i++) {
-    if (outputSize_ != generator[i].size()) {
+  for (size_t i = 0; i < inputWidth(); i++) {
+    if (outputWidth_ != generator[i].size()) {
       throw std::invalid_argument("Invalid number of generators");
     }
   }
@@ -96,17 +96,17 @@ Trellis::Trellis(const std::vector<size_t>& constraintLengths, const std::vector
     }
   }
   
-  outputCount_ = 1<<outputSize_;
-  inputCount_ = 1<<inputSize_;
+  outputCount_ = 1<<outputWidth_;
+  inputCount_ = 1<<inputWidth_;
   
   
   std::vector<BitField<size_t> > inputStates(constraintLengths.size(), 0);
   
-  stateSize_ = 0;
+  stateWidth_ = 0;
   for (size_t i = 0; i < constraintLengths.size(); i++) {
-    stateSize_ += constraintLengths[i] - 1;
+    stateWidth_ += constraintLengths[i] - 1;
   }
-  stateCount_ = 1<<stateSize_;
+  stateCount_ = 1<<stateWidth_;
   nextState_.resize(stateCount()*inputCount());
   output_.resize(stateCount()*inputCount());
   
@@ -120,7 +120,7 @@ Trellis::Trellis(const std::vector<size_t>& constraintLengths, const std::vector
           inputStates[i][k] = state[j+k];
         }
         
-        for (size_t k = 0; k < outputSize_; k++) {
+        for (size_t k = 0; k < outputWidth_; k++) {
           if ((generator[i][k]>>constraintLengths[i]) != 0) {
             throw std::invalid_argument("Invalid connection in generator");
           }

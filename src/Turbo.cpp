@@ -47,14 +47,14 @@ const char * Turbo::get_key() const
   return boost::serialization::type_info_implementation<Turbo>::type::get_const_instance().get_key();
 }
 
-void Turbo::decodeBlocks(std::vector<double>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const
+void Turbo::decodeBlocks(detail::Codec::const_iterator<double> first, detail::Codec::const_iterator<double> last, detail::Codec::iterator<BitField<size_t>> output) const
 {
   auto worker = detail::TurboDecoder::create(structure());
-  worker->decodeBlocks(parity, msg, n);
+  worker->decodeBlocks(first.at(detail::Codec::Parity), last.at(detail::Codec::Parity), output.at(detail::Codec::Msg));
 }
 
-void Turbo::soDecodeBlocks(detail::Codec::InputIterator input, detail::Codec::OutputIterator output, size_t n) const
+void Turbo::soDecodeBlocks(detail::Codec::const_iterator<double> first, detail::Codec::const_iterator<double> last, detail::Codec::iterator<double> output) const
 {
   auto worker = detail::TurboDecoder::create(structure());
-  worker->soDecodeBlocks(input, output, n);
+  worker->soDecodeBlocks(first, last, output);
 }

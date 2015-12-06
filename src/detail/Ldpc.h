@@ -107,6 +107,16 @@ namespace fec {
         DecoderOptions getDecoderOptions() const;
         Permutation puncturing(const PunctureOptions& options) const;
         
+        size_t msgWidth() const override {return 1;} /**< Access the width of msg in each code bloc. */
+        size_t systWidth() const override {return 1;} /**< Access the width of systematics in each code bloc. */
+        size_t parityWidth() const override {return 1;} /**< Access the width of parities in each code bloc. */
+        size_t stateWidth() const override {return 1;} /**< Access the width of state information in each code bloc. */
+        
+        size_t msgSize() const override {return msgSize_;} /**< Access the size of msg in each code bloc. */
+        size_t systSize() const override {return H_.rows();} /**< Access the size of systematics in each code bloc. */
+        size_t paritySize() const override {return H_.cols();} /**< Access the size of parities in each code bloc. */
+        size_t stateSize() const override {return H_.size();} /**< Access the size of state information in each code bloc. */
+        
         inline const SparseBitMatrix& checks() const {return H_;}
         inline size_t iterations() const {return iterations_;}
         double scalingFactor(size_t i, size_t j) const; /**< Access the scalingFactor value used in decoder. */
@@ -132,6 +142,8 @@ namespace fec {
         SparseBitMatrix A_;
         SparseBitMatrix B_;
         
+        size_t msgSize_;
+        
         size_t iterations_;
         std::vector<std::vector<double>> scalingFactor_;
       };
@@ -154,6 +166,7 @@ void fec::detail::Ldpc::Structure::serialize(Archive & ar, const unsigned int ve
   ar & ::BOOST_SERIALIZATION_NVP(T_);
   ar & ::BOOST_SERIALIZATION_NVP(A_);
   ar & ::BOOST_SERIALIZATION_NVP(B_);
+  ar & ::BOOST_SERIALIZATION_NVP(msgSize_);
   ar & ::BOOST_SERIALIZATION_NVP(iterations_);
   ar & ::BOOST_SERIALIZATION_NVP(scalingFactor_);
 }

@@ -70,20 +70,21 @@ void BpDecoderImpl<LlrMetrics, BoxSumAlg>::decodeBlock(std::vector<double>::cons
 }
 
 template <class LlrMetrics, template <class> class BoxSumAlg>
-void BpDecoderImpl<LlrMetrics, BoxSumAlg>::soDecodeBlock(Codec::InputIterator input, Codec::OutputIterator output)
+void BpDecoderImpl<LlrMetrics, BoxSumAlg>::soDecodeBlock(detail::Codec::const_iterator<double> input, detail::Codec::iterator<double> output)
 {
-  std::copy(input.parity(), input.parity()+structure().checks().cols(), parity_.begin());
-  if (input.hasSyst()) {
+  std::copy(input.at(Codec::Parity), input.at(Codec::Parity)+structure().checks().cols(), parity_.begin());
+  if (input.count(Codec::Syst)) {
+    auto syst = input.at(Codec::Syst);
     for (size_t i = 0; i < structure().systSize(); ++i) {
-      parity_[i] += input.syst()[i];
+      parity_[i] += syst[i];
     }
   }
-  if (input.hasState()) {
-    std::copy(input.state(), input.state()+structure().stateSize(), checkMetrics_.begin());
+  if (input.count(Codec::State)) {
+    std::copy(input.at(Codec::State), input.at(Codec::State)+structure().stateSize(), checkMetrics_.begin());
   }
   
   if (structure().iterations() > 0) {
-    if (input.hasState()) {
+    if (input.count(Codec::State)) {
       bitUpdate();
     }
     else {
@@ -113,18 +114,19 @@ void BpDecoderImpl<LlrMetrics, BoxSumAlg>::soDecodeBlock(Codec::InputIterator in
     bitMetrics_[structure().checks().at(i)] += checkMetrics_[i];
   }
   
-  if (output.hasSyst()) {
-    std::copy(bitMetrics_.begin(), bitMetrics_.begin()+structure().systSize(), output.syst());
+  if (output.count(Codec::Syst)) {
+    std::copy(bitMetrics_.begin(), bitMetrics_.begin()+structure().systSize(), output.at(Codec::Syst));
   }
-  if (output.hasParity()) {
-    std::copy(bitMetrics_.begin(), bitMetrics_.begin()+structure().checks().cols(), output.parity());
+  if (output.count(Codec::Parity)) {
+    std::copy(bitMetrics_.begin(), bitMetrics_.begin()+structure().checks().cols(), output.at(Codec::Parity));
   }
-  if (output.hasState()) {
-    std::copy(checkMetrics_.begin(), checkMetrics_.end(), output.state());
+  if (output.count(Codec::State)) {
+    std::copy(checkMetrics_.begin(), checkMetrics_.end(), output.at(Codec::State));
   }
-  if (output.hasMsg()) {
+  if (output.count(Codec::Msg)) {
+    auto msg = output.at(Codec::Msg);
     for (size_t i = 0; i < structure().msgSize(); ++i) {
-      output.msg()[i] = parity_[i] + bitMetrics_[i];
+      msg[i] = parity_[i] + bitMetrics_[i];
     }
   }
 }

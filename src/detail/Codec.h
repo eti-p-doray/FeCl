@@ -32,8 +32,9 @@
 #include <boost/serialization/type_info_implementation.hpp>
 #include <boost/serialization/extended_type_info_no_rtti.hpp>
 
-#include "../BitField.h"
 #include "../DecoderAlgorithm.h"
+#include "../BitField.h"
+#include "MultiIterator.h"
 
 namespace fec {
   
@@ -43,6 +44,13 @@ namespace fec {
   namespace detail {
     
     namespace Codec {
+      
+      enum Field {
+        Msg,
+        Syst,
+        Parity,
+        State,
+      };
       
       /**
        *  This class represents a general codec structure
@@ -90,6 +98,34 @@ namespace fec {
         template <typename Archive>
         void serialize(Archive & ar, const unsigned int version);
       };
+      
+      template <class T>
+      class Arguments {
+        struct Value {
+          T* arg;
+          bool has = false;
+        };
+      public:
+        Arguments() = default;
+        
+        Arguments& msg(T& arg) {insert(Msg, &arg); return *this;}
+        Arguments& syst(T& arg) {insert(Syst, &arg); return *this;}
+        Arguments& parity(T& arg) {insert(Parity, &arg); return *this;}
+        Arguments& state(T& arg) {insert(State, &arg); return *this;}
+        
+        bool count(Field key) {return map_[key].has;}
+        T& at(Field key) {return *map_[key].arg;}
+        T& at(Field key) const {return *map_[key].arg;}
+        void insert(Field key, T* arg) {map_[key].arg = arg; map_[key].has = true;}
+        
+      private:
+        std::array<Value, 4> map_;
+      };
+      
+      template <class T>
+      using const_iterator = MultiIterator<typename std::vector<T>::const_iterator, Field, Msg, Syst, Parity, State>;
+      template <class T>
+      using iterator = MultiIterator<typename std::vector<T>::iterator, Field, Msg, Syst, Parity, State>;
       
     }
     

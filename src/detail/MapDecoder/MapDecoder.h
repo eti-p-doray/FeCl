@@ -45,8 +45,8 @@ namespace fec {
       static std::unique_ptr<MapDecoder> create(const Convolutional::Structure&); /**< Creating function */
       virtual ~MapDecoder() = default; /**< Default destructor */
       
-      void soDecodeBlocks(Codec::InputIterator input, Codec::OutputIterator output, size_t n);
-      virtual void soDecodeBlock(Codec::InputIterator input, Codec::OutputIterator output) = 0;
+      void soDecodeBlocks(Codec::const_iterator<double> first, Codec::const_iterator<double> last, Codec::iterator<double> output);
+      virtual void soDecodeBlock(Codec::const_iterator<double> input, Codec::iterator<double> output) = 0;
       
       void setScalingFactor(double factor) {structure_.setScalingFactor(factor);}
       

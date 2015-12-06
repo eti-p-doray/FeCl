@@ -26,6 +26,7 @@
 #include <memory>
 
 #include "../Convolutional.h"
+#include "../LlrMetrics.h"
 
 namespace fec {
   
@@ -41,7 +42,7 @@ namespace fec {
       static std::unique_ptr<ViterbiDecoder> create(const Convolutional::Structure&); /**< Creating function */
       ~ViterbiDecoder() = default;
       
-      void decodeBlocks(std::vector<double>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n);
+      void decodeBlocks(std::vector<double>::const_iterator first, std::vector<double>::const_iterator last, std::vector<BitField<size_t>>::iterator msg);
       virtual void decodeBlock(std::vector<double>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg) = 0;
       
     protected:

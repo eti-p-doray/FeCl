@@ -26,6 +26,7 @@
 #include <memory>
 
 #include "MapDecoder.h"
+#include "../LlrMetrics.h"
 
 namespace fec {
   
@@ -46,14 +47,13 @@ namespace fec {
       MapDecoderImpl(const Convolutional::Structure&); /**< Constructor */
       virtual ~MapDecoderImpl() = default; /**< Default destructor */
       
-      virtual void soDecodeBlock(Codec::InputIterator input, Codec::OutputIterator output);
-      template <class T> void soDecodeBlockImpl(Codec::InfoIterator<typename std::vector<T>::const_iterator> input, Codec::InfoIterator<typename std::vector<T>::iterator> output);
+      void soDecodeBlock(Codec::const_iterator<double> input, Codec::iterator<double> output) override;
       
     protected:
-      template <class T> void branchUpdate(Codec::InfoIterator<typename std::vector<T>::const_iterator> input);/**< Branch metric calculation. */
+      void branchUpdate(Codec::const_iterator<double> input);/**< Branch metric calculation. */
       void forwardUpdate();/**< Forward metric calculation. */
       void backwardUpdate();/**< Backard metric calculation. */
-      template <class T> void aPosterioriUpdate(Codec::InfoIterator<typename std::vector<T>::const_iterator> input, Codec::InfoIterator<typename std::vector<T>::iterator> output);/**< Final (msg) L-values calculation. */
+      void aPosterioriUpdate(Codec::const_iterator<double> input, Codec::iterator<double> output);/**< Final (msg) L-values calculation. */
       
     private:
       template <class U = typename LogSumAlg<LlrMetrics>::isRecursive, typename std::enable_if<U::value>::type* = nullptr>
@@ -76,11 +76,11 @@ namespace fec {
       template <class U = typename LogSumAlg<LlrMetrics>::isRecursive, typename std::enable_if<!U::value>::type* = nullptr>
       typename LlrMetrics::Type parityUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator branchMetric, size_t j);/**< Forward metric calculation. */
       
-      std::vector<typename LlrMetrics::Type> bufferMetrics_;
+      std::vector<typename LlrMetrics::Type> buffer_;
       
-      std::vector<typename LlrMetrics::Type> branchMetrics_;/**< Branch metric buffer (gamma) */
-      std::vector<typename LlrMetrics::Type> forwardMetrics_;/**< Forward metric buffer (alpha) */
-      std::vector<typename LlrMetrics::Type> backwardMetrics_;/**< Backard metric buffer (beta) */
+      std::vector<typename LlrMetrics::Type> branch_;/**< Branch metric buffer (gamma) */
+      std::vector<typename LlrMetrics::Type> forward_;/**< Forward metric buffer (alpha) */
+      std::vector<typename LlrMetrics::Type> backward_;/**< Backard metric buffer (beta) */
       
       LlrMetrics llrMetrics_;
       LogSumAlg<LlrMetrics> logSum_;

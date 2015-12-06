@@ -57,17 +57,18 @@ std::vector<double> distort(const std::vector<fec::BitField<size_t>>& input, dou
   return llr;
 }
 
-int per(const std::unique_ptr<fec::Codec>& code, double snrdb)
+int per(const fec::Codec& codec, double snrdb)
 {
-  auto msg = randomBits(code->msgSize());
-  auto parity = code->encode(msg);
+  auto msg = randomBits(codec.msgSize());
+  auto parity = codec.encode(msg);
   
   auto llr = distort(parity, snrdb);
   
-  auto msgDec = code->decode(llr);
+  auto msgDec = codec.decode(llr);
   
   std::vector<double> msgPost;
-  code->soDecode(fec::Codec::Input<>().parity(llr), fec::Codec::Output<>().syst(msgPost));
+  codec.soDecode(codec.input(llr), codec.output(msgPost));
+  
   
   int errorCount = 0;
   for (size_t i = 0; i < msg.size(); ++i) {

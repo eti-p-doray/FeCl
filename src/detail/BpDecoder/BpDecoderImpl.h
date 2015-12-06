@@ -26,6 +26,7 @@
 #include <cmath>
 
 #include "BpDecoder.h"
+#include "../LlrMetrics.h"
 
 namespace fec {
   
@@ -44,9 +45,8 @@ namespace fec {
       BpDecoderImpl(const Ldpc::Structure& structure);
       ~BpDecoderImpl() = default;
       
-    protected:
-      virtual void decodeBlock(std::vector<double>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg);
-      virtual void soDecodeBlock(Codec::InputIterator input, Codec::OutputIterator output);
+      void decodeBlock(std::vector<double>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg) override;
+      void soDecodeBlock(detail::Codec::const_iterator<double> first, detail::Codec::iterator<double> output) override;
       
     private:
       void checkUpdate(size_t i);

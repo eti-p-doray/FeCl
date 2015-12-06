@@ -44,14 +44,14 @@ namespace fec {
       static std::unique_ptr<BpDecoder> create(const Ldpc::Structure&);
       virtual ~BpDecoder() = default;
       
-      void decodeBlocks(std::vector<double>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n);
-      void soDecodeBlocks(Codec::InputIterator input, Codec::OutputIterator output, size_t n);
+      void decodeBlocks(std::vector<double>::const_iterator parityf, std::vector<double>::const_iterator parityl, std::vector<BitField<size_t>>::iterator msg);
+      void soDecodeBlocks(detail::Codec::const_iterator<double> first, detail::Codec::const_iterator<double> last, detail::Codec::iterator<double> output);
+      
+      virtual void decodeBlock(std::vector<double>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg) = 0;
+      virtual void soDecodeBlock(detail::Codec::const_iterator<double> first, detail::Codec::iterator<double> output) = 0;
       
     protected:
       BpDecoder(const Ldpc::Structure& codeStructure);
-      
-      virtual void decodeBlock(std::vector<double>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg) = 0;
-      virtual void soDecodeBlock(Codec::InputIterator input, Codec::OutputIterator output) = 0;
       
       inline const Ldpc::Structure& structure() const {return structure_;}
       

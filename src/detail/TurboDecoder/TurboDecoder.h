@@ -39,8 +39,11 @@ namespace fec {
       static std::unique_ptr<TurboDecoder> create(const Turbo::Structure&);
       virtual ~TurboDecoder() = default;
       
-      void decodeBlocks(std::vector<double>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n);
-      void soDecodeBlocks(Codec::InputIterator input, Codec::OutputIterator output, size_t n);
+      void decodeBlocks(std::vector<double>::const_iterator first, std::vector<double>::const_iterator last, std::vector<BitField<size_t>>::iterator output);
+      void soDecodeBlocks(Codec::const_iterator<double> first, Codec::const_iterator<double> last, Codec::iterator<double> output);
+      
+      virtual void decodeBlock(std::vector<double>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg) = 0;
+      virtual void soDecodeBlock(Codec::const_iterator<double> input, Codec::iterator<double> output) = 0;
       
     protected:
       TurboDecoder(const Turbo::Structure& codeStructure);
@@ -48,13 +51,10 @@ namespace fec {
       
       inline const Turbo::Structure& structure() const {return structure_;}
       
-      virtual void decodeBlock(std::vector<double>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg) = 0;
-      virtual void soDecodeBlock(Codec::InputIterator input, Codec::OutputIterator output) = 0;
-      
       std::vector<std::unique_ptr<MapDecoder>> code_;
       
-      std::vector<double> extrinsic_;
-      std::vector<double> extrinsicBuffer_;
+      std::vector<double> state_;
+      std::vector<double> stateBuffer_;
       std::vector<double> parityIn_;
       std::vector<double> parityOut_;
       

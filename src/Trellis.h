@@ -78,7 +78,7 @@ public:
   
   Trellis() = default;
   Trellis(const Options& options);
-  Trellis(const std::vector<BitField<size_t>>& nextState, const std::vector<BitField<size_t>>& output, size_t inputSize, size_t outputSize, size_t stateSize);
+  Trellis(const std::vector<BitField<size_t>>& nextState, const std::vector<BitField<size_t>>& output, size_t inputWidth, size_t outputWidth, size_t stateWidth);
   Trellis(const std::vector<size_t>& constraintLengths, const std::vector<std::vector<BitField<size_t>>>& generator, std::vector<BitField<size_t>> feedback = {});
   
   Trellis(const Trellis&) = default;
@@ -89,7 +89,7 @@ public:
    *  Access the state size (register count) of the trellis.
    *  \return State size
    */
-  inline size_t stateSize() const {return stateSize_;}
+  inline size_t stateWidth() const {return stateWidth_;}
   /**
    *  Access the number of possible states (2^stateSize) of the trellis.
    *  \return State count
@@ -99,7 +99,7 @@ public:
    *  Access the number of input bits per branch.
    *  \return Input size
    */
-  inline size_t inputSize() const {return inputSize_;}
+  inline size_t inputWidth() const {return inputWidth_;}
   /**
    *  Access the number of possible configuration of input bits per branch (2^inputSize).
    *  \return Input count
@@ -109,7 +109,7 @@ public:
    *  Access the number of output symbols per branch.
    *  \return Output size
    */
-  inline size_t outputSize() const {return outputSize_;}
+  inline size_t outputWidth() const {return outputWidth_;}
   /**
    *  Access the number of possible configuration of output symbols per branch (2^outputSize).
    *  \return Output count
@@ -174,9 +174,9 @@ public:
 private:
   template <typename Archive>
   void serialize(Archive & ar, const unsigned int version) {
-    ar & ::BOOST_SERIALIZATION_NVP(stateSize_);
-    ar & ::BOOST_SERIALIZATION_NVP(inputSize_);
-    ar & ::BOOST_SERIALIZATION_NVP(outputSize_);
+    ar & ::BOOST_SERIALIZATION_NVP(stateWidth_);
+    ar & ::BOOST_SERIALIZATION_NVP(inputWidth_);
+    ar & ::BOOST_SERIALIZATION_NVP(outputWidth_);
     ar & ::BOOST_SERIALIZATION_NVP(stateCount_);
     ar & ::BOOST_SERIALIZATION_NVP(inputCount_);
     ar & ::BOOST_SERIALIZATION_NVP(outputCount_);
@@ -184,9 +184,9 @@ private:
     ar & ::BOOST_SERIALIZATION_NVP(output_);
   }
   
-  size_t stateSize_;
-  size_t inputSize_;
-  size_t outputSize_;
+  size_t stateWidth_;
+  size_t inputWidth_;
+  size_t outputWidth_;
   
   size_t stateCount_;
   size_t inputCount_;

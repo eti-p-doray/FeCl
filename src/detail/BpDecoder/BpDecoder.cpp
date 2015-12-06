@@ -42,21 +42,19 @@ std::unique_ptr<BpDecoder> BpDecoder::create(const Ldpc::Structure& structure)
   }
 }
 
-void BpDecoder::decodeBlocks(std::vector<double>::const_iterator parity, std::vector<fec::BitField<size_t>>::iterator msg, size_t n)
+void BpDecoder::decodeBlocks(std::vector<double>::const_iterator parityf, std::vector<double>::const_iterator parityl, std::vector<BitField<size_t>>::iterator msg)
 {
-  for (size_t i = 0; i < n; ++i) {
-    decodeBlock(parity, msg);
-    parity += structure().paritySize();
+  while (parityf != parityl) {
+    decodeBlock(parityf, msg);
+    parityf += structure().paritySize();
     msg += structure().msgSize();
   }
 }
 
-void BpDecoder::soDecodeBlocks(Codec::InputIterator input, Codec::OutputIterator output, size_t n)
+void BpDecoder::soDecodeBlocks(detail::Codec::const_iterator<double> first, detail::Codec::const_iterator<double> last, detail::Codec::iterator<double> output)
 {
-  for (size_t i = 0; i < n; ++i) {
-    soDecodeBlock(input, output);
-    ++input;
-    ++output;
+  while (first != last) {
+    soDecodeBlock(first++, output++);
   }
 }
 

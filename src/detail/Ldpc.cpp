@@ -46,12 +46,8 @@ Ldpc::Structure::Structure(const EncoderOptions& encoder)
 void Ldpc::Structure::setEncoderOptions(const EncoderOptions& encoder)
 {
   msgSize_ = encoder.checkMatrix_.cols()-encoder.checkMatrix_.rows();
-  paritySize_ = encoder.checkMatrix_.cols();
-  stateSize_ = encoder.checkMatrix_.size();
   
   computeGeneratorMatrix(encoder.checkMatrix_);
-  
-  systSize_ = msgSize_;
 }
 
 void Ldpc::Structure::setDecoderOptions(const DecoderOptions& decoder)

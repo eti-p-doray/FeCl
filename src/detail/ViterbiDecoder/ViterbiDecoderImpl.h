@@ -42,7 +42,7 @@ namespace fec {
       ViterbiDecoderImpl(const Convolutional::Structure&);
       ~ViterbiDecoderImpl() = default;
       
-      virtual void decodeBlock(std::vector<double>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg);
+      void decodeBlock(std::vector<double>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg) override;
       
     protected:
       std::vector<typename LlrMetrics::Type> previousPathMetrics_;

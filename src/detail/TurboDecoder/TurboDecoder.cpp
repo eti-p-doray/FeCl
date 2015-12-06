@@ -35,26 +35,23 @@ TurboDecoder::TurboDecoder(const Turbo::Structure& structure) : structure_(struc
   for (size_t i = 0; i < this->structure().constituentCount(); ++i) {
     code_.push_back(MapDecoder::create(this->structure().constituent(i)));
   }
-  extrinsic_.resize(this->structure().stateSize());
-  extrinsicBuffer_.resize(this->structure().stateSize());;
+  state_.resize(this->structure().stateSize());
+  stateBuffer_.resize(this->structure().stateSize());;
   parityIn_.resize(this->structure().paritySize());
   parityOut_.resize(this->structure().paritySize());
 }
 
-void TurboDecoder::decodeBlocks(std::vector<double>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n)
+void TurboDecoder::decodeBlocks(std::vector<double>::const_iterator first, std::vector<double>::const_iterator last, std::vector<BitField<size_t>>::iterator output)
 {
-  for (size_t i = 0; i < n; ++i) {
-    decodeBlock(parity, msg);
-    parity += structure().paritySize();
-    msg += structure().msgSize();
+  while (first != last) {
+    decodeBlock(first, output);
+    first+= structure().paritySize(); output+=structure().msgSize();
   }
 }
 
-void TurboDecoder::soDecodeBlocks(Codec::InputIterator input, Codec::OutputIterator output, size_t n)
+void TurboDecoder::soDecodeBlocks(Codec::const_iterator<double> first, Codec::const_iterator<double> last, Codec::iterator<double> output)
 {
-  for (size_t i = 0; i < n; ++i) {
-    soDecodeBlock(input, output);
-    ++input;
-    ++output;
+  while (first != last) {
+    soDecodeBlock(first++, output++);
   }
 }

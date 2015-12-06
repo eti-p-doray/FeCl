@@ -55,10 +55,13 @@ int main( int argc, char* argv[] )
   /*
    A code is created and ready to operate
    */
+  Convolutional codec(Convolutional::Options{trellis, 1024}.termination(fec::Trellis::Tail).algorithm(fec::Approximate));
+  Convolutional codec(trellis, 1024, {Termination(Trellis::Tail)}, {Algorithm(Approximate)});
+  
   std::unique_ptr<fec::Codec> codec(new fec::Convolutional(options));
   //! [Creating a Convolutional code]
   
-  std::cout << per(codec, 3.0) << std::endl;
+  std::cout << per(codec, 10.0) << std::endl;
   
   return 0;
 }

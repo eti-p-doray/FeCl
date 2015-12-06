@@ -90,21 +90,30 @@ namespace fec {
         
         void setDecoderOptions(const DecoderOptions& decoder);
         DecoderOptions getDecoderOptions() const;
+        Permutation puncturing(const PunctureOptions& options) const;
+        
+        size_t msgWidth() const override {return 1;} /**< Access the width of msg in each code bloc. */
+        size_t systWidth() const override {return 1;} /**< Access the width of systematics in each code bloc. */
+        size_t parityWidth() const override {return 1;} /**< Access the width of parities in each code bloc. */
+        size_t stateWidth() const override {return 1;} /**< Access the width of state information in each code bloc. */
+        
+        size_t msgSize() const override {return trellis().inputWidth()*length();} /**< Access the size of msg in each code bloc. */
+        size_t systSize() const override {return trellis().inputWidth()*(length()+tailLength());} /**< Access the size of systematics in each code bloc. */
+        size_t paritySize() const override {return trellis().outputWidth()*(length()+tailLength());} /**< Access the size of parities in each code bloc. */
+        size_t stateSize() const override {return 0;} /**< Access the size of state information in each code bloc. */
         
         inline size_t length() const {return length_;}
-        inline size_t tailSize() const {return tailSize_;}
-        inline size_t systTailSize() const {return tailSize_ * trellis().inputSize();}
+        inline size_t tailLength() const {return tailLength_;}
+        inline size_t tailSize() const {return tailLength_ * trellis().inputWidth();}
         inline Trellis::Termination termination() const {return termination_;}
         inline const Trellis& trellis() const {return trellis_;}
         
         double scalingFactor() const {return scalingFactor_;} /**< Access the scalingFactor value used in decoder. */
         void setScalingFactor(double factor) {scalingFactor_ = factor;} /**< Modify the scalingFactor value used in decoder. */
         
-        virtual bool check(std::vector<BitField<size_t>>::const_iterator parity) const;
-        virtual void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const;
+        bool check(std::vector<BitField<size_t>>::const_iterator parity) const override;
+        void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const override;
         void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity, std::vector<BitField<size_t>>::iterator tail) const;
-        
-        Permutation puncturing(const PunctureOptions& options) const;
         
       protected:
         void setEncoderOptions(const EncoderOptions& encoder);
@@ -115,8 +124,8 @@ namespace fec {
         
         Trellis trellis_;
         size_t length_;
+        size_t tailLength_;
         Trellis::Termination termination_;
-        size_t tailSize_;
         double scalingFactor_;
       };
       
@@ -137,7 +146,7 @@ void fec::detail::Convolutional::Structure::serialize(Archive & ar, const unsign
   ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(Codec::Structure);
   ar & ::BOOST_SERIALIZATION_NVP(trellis_);
   ar & ::BOOST_SERIALIZATION_NVP(termination_);
-  ar & ::BOOST_SERIALIZATION_NVP(tailSize_);
+  ar & ::BOOST_SERIALIZATION_NVP(tailLength_);
   ar & ::BOOST_SERIALIZATION_NVP(length_);
   ar & ::BOOST_SERIALIZATION_NVP(scalingFactor_);
 }

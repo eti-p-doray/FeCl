@@ -44,9 +44,9 @@ void ViterbiDecoderImpl<LlrMetrics>::decodeBlock(std::vector<double>::const_iter
     std::fill(nextPathMetrics_.begin(), nextPathMetrics_.end(), -llrMetrics_.max());
     
     for (BitField<size_t> j = 0; j < structure().trellis().outputCount(); ++j) {
-      branchMetrics_[j] = correlation<LlrMetrics>(j, parityIn, structure().trellis().outputSize());
+      branchMetrics_[j] = correlation<LlrMetrics>(j, parityIn, structure().trellis().outputWidth());
     }
-    parityIn += structure().trellis().outputSize();
+    parityIn += structure().trellis().outputWidth();
   
     auto previousPathMetricsIt = previousPathMetrics_.begin();
     auto state = structure().trellis().beginState();
@@ -98,13 +98,13 @@ void ViterbiDecoderImpl<LlrMetrics>::decodeBlock(std::vector<double>::const_iter
       break;
   }
   
-  messageOut += (structure().length() - 1) * structure().trellis().inputSize();
+  messageOut += (structure().length() - 1) * structure().trellis().inputWidth();
   for (int64_t i = structure().length() + structure().tailSize() - 1; i >= 0; --i) {
     if (i < structure().length()) {
-      for (BitField<size_t> j = 0; j < structure().trellis().inputSize(); ++j) {
+      for (BitField<size_t> j = 0; j < structure().trellis().inputWidth(); ++j) {
         messageOut[j] = inputTraceBack[bestState].test(j);
       }
-      messageOut -= structure().trellis().inputSize();
+      messageOut -= structure().trellis().inputWidth();
     }
     bestState = stateTraceBack[bestState];
     stateTraceBack -= structure().trellis().stateCount();

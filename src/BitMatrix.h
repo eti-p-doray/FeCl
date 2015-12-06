@@ -353,7 +353,7 @@ public:
    *  This is a random access input iterator of a SparseBitMatrix.
    *  It iterates over the matrix rows.
    */
-  class ConstIterator
+  class const_iterator
   {
     friend class SparseBitMatrix;
   public:
@@ -363,25 +363,25 @@ public:
     inline void operator+=(size_t x) {rowIdx_ += x;}
     inline void operator-=(size_t x) {rowIdx_ -= x;}
     
-    inline bool operator<(ConstIterator b) const {return rowIdx_ < b.rowIdx_;}
-    inline bool operator<=(ConstIterator b) const {return rowIdx_ <= b.rowIdx_;}
-    inline bool operator>(ConstIterator b) const {return rowIdx_ > b.rowIdx_;}
-    inline bool operator>=(ConstIterator b) const {return rowIdx_ >= b.rowIdx_;}
-    inline bool operator==(ConstIterator b) const {return rowIdx_ == b.rowIdx_;}
-    inline bool operator!=(ConstIterator b) const {return rowIdx_ != b.rowIdx_;}
+    inline bool operator<(const_iterator b) const {return rowIdx_ < b.rowIdx_;}
+    inline bool operator<=(const_iterator b) const {return rowIdx_ <= b.rowIdx_;}
+    inline bool operator>(const_iterator b) const {return rowIdx_ > b.rowIdx_;}
+    inline bool operator>=(const_iterator b) const {return rowIdx_ >= b.rowIdx_;}
+    inline bool operator==(const_iterator b) const {return rowIdx_ == b.rowIdx_;}
+    inline bool operator!=(const_iterator b) const {return rowIdx_ != b.rowIdx_;}
     
-    template <typename T> friend ConstIterator operator+(const ConstIterator& a, T b) {return ConstIterator(a.begin_, a.rowIdx_+b);}
-    template <typename T> friend ConstIterator operator+(T a, const ConstIterator& b) {return ConstIterator(b.begin_, b.rowIdx_+a);}
+    template <typename T> friend const_iterator operator+(const const_iterator& a, T b) {return const_iterator(a.begin_, a.rowIdx_+b);}
+    template <typename T> friend const_iterator operator+(T a, const const_iterator& b) {return const_iterator(b.begin_, b.rowIdx_+a);}
     
-    template <typename T> friend ConstIterator operator-(const ConstIterator& a, T b)  {return ConstIterator(a.begin_, a.rowIdx_-b);}
-    inline friend size_t operator-(const ConstIterator& a, const ConstIterator& b) {return a.rowIdx_ - b.rowIdx_;}
+    template <typename T> friend const_iterator operator-(const const_iterator& a, T b)  {return const_iterator(a.begin_, a.rowIdx_-b);}
+    inline friend size_t operator-(const const_iterator& a, const const_iterator& b) {return a.rowIdx_ - b.rowIdx_;}
     
     inline ConstRowRef operator*() const {return ConstRowRef(begin_ + rowIdx_->begin, begin_ + rowIdx_->end);}
     inline ConstRowPtr operator-> () const {return ConstRowPtr(*(*this));}
     inline ConstRowRef operator[] (size_t i) const {return ConstRowRef(begin_ + rowIdx_[i].begin, begin_ + rowIdx_[i].end);}
     
   private:
-    inline ConstIterator(::std::vector<size_t>::const_iterator begin, ::std::vector<RowIdx>::const_iterator rowIdx) :begin_(begin), rowIdx_(rowIdx) {}
+    inline const_iterator(::std::vector<size_t>::const_iterator begin, ::std::vector<RowIdx>::const_iterator rowIdx) :begin_(begin), rowIdx_(rowIdx) {}
     
     ::std::vector<size_t>::const_iterator begin_;
     ::std::vector<RowIdx>::const_iterator rowIdx_;
@@ -390,30 +390,30 @@ public:
    *  This is a random access iterator of a SparseBitMatrix.
    *  It iterates over the matrix rows.
    */
-  class Iterator
+  class iterator
   {
     friend class SparseBitMatrix;
   public:
-    inline void operator++() {++rowIdx_;}
-    inline void operator--() {--rowIdx_;}
-    inline void operator++(int) {++rowIdx_;}
-    inline void operator--(int) {--rowIdx_;}
+    inline iterator& operator++() {++rowIdx_; return *this;}
+    inline iterator& operator--() {--rowIdx_; return *this;}
+    inline iterator operator++(int) {auto tmp = *this; ++rowIdx_; return tmp;}
+    inline iterator operator--(int) {auto tmp = *this; --rowIdx_; return tmp;}
     
-    inline void operator+=(size_t x) {rowIdx_ += x;}
-    inline void operator-=(size_t x) {rowIdx_ -= x;}
+    inline iterator& operator+=(size_t x) {rowIdx_ += x; return *this;}
+    inline iterator& operator-=(size_t x) {rowIdx_ -= x; return *this;}
     
-    inline bool operator<(Iterator b) const {return rowIdx_ < b.rowIdx_;}
-    inline bool operator<=(Iterator b) const {return rowIdx_ <= b.rowIdx_;}
-    inline bool operator>(Iterator b) const {return rowIdx_ > b.rowIdx_;}
-    inline bool operator>=(Iterator b) const {return rowIdx_ >= b.rowIdx_;}
-    inline bool operator==(Iterator b) const {return rowIdx_ == b.rowIdx_;}
-    inline bool operator!=(Iterator b) const {return rowIdx_ != b.rowIdx_;}
+    inline bool operator<(iterator b) const {return rowIdx_ < b.rowIdx_;}
+    inline bool operator<=(iterator b) const {return rowIdx_ <= b.rowIdx_;}
+    inline bool operator>(iterator b) const {return rowIdx_ > b.rowIdx_;}
+    inline bool operator>=(iterator b) const {return rowIdx_ >= b.rowIdx_;}
+    inline bool operator==(iterator b) const {return rowIdx_ == b.rowIdx_;}
+    inline bool operator!=(iterator b) const {return rowIdx_ != b.rowIdx_;}
     
-    template <typename T> friend Iterator operator+(const Iterator& a, T b) {return Iterator(a.begin_, a.rowIdx_+b);}
-    template <typename T> friend Iterator operator+(T a, const Iterator& b) {return Iterator(b.begin_, b.rowIdx_+a);}
+    template <typename T> friend iterator operator+(const iterator& a, T b) {return iterator(a.begin_, a.rowIdx_+b);}
+    template <typename T> friend iterator operator+(T a, const iterator& b) {return Iterator(b.begin_, b.rowIdx_+a);}
     
-    template <typename T> friend Iterator operator-(const Iterator& a, T b)  {return Iterator(a.begin_, a.rowIdx_-b);}
-    inline friend size_t operator-(const Iterator& a, const Iterator& b) {return a.rowIdx_ - b.rowIdx_;}
+    template <typename T> friend iterator operator-(const iterator& a, T b)  {return iterator(a.begin_, a.rowIdx_-b);}
+    inline friend size_t operator-(const iterator& a, const iterator& b) {return a.rowIdx_ - b.rowIdx_;}
     
     inline RowRef operator*() {return RowRef(begin_, *rowIdx_);}
     inline RowPtr operator-> () {return RowPtr(*(*this));}
@@ -424,7 +424,7 @@ public:
     inline ConstRowRef operator[] (size_t i) const {return ConstRowRef(begin_ + rowIdx_[i].begin, begin_ + rowIdx_[i].end);}
     
   private:
-    inline Iterator(::std::vector<size_t>::iterator begin, ::std::vector<RowIdx>::iterator rowIdx) : begin_(begin), rowIdx_(rowIdx) {}
+    inline iterator(::std::vector<size_t>::iterator begin, ::std::vector<RowIdx>::iterator rowIdx) : begin_(begin), rowIdx_(rowIdx) {}
     
     ::std::vector<size_t>::iterator begin_;
     ::std::vector<RowIdx>::iterator rowIdx_;
@@ -500,32 +500,32 @@ public:
    *  Access a random access input iterator pointing to the first row in the object.
    *  \return Random access input iterator
    */
-  inline ConstIterator begin() const {return ConstIterator(elementIdx_.begin(), rowIdx_.begin());}
+  inline const_iterator begin() const {return const_iterator(elementIdx_.begin(), rowIdx_.begin());}
   /**
    *  Access a random access input iterator referring to the past-the-end row in the object.
    *  \return Random access input iterator
    */
-  inline ConstIterator end() const {return ConstIterator(elementIdx_.begin(), rowIdx_.end());}
+  inline const_iterator end() const {return const_iterator(elementIdx_.begin(), rowIdx_.end());}
   /**
    *  Access a random access input iterator pointing to the first row in the object.
    *  \return Random access input iterator
    */
-  inline ConstIterator cbegin() const {return ConstIterator(elementIdx_.begin(), rowIdx_.begin());}
+  inline const_iterator cbegin() const {return const_iterator(elementIdx_.begin(), rowIdx_.begin());}
   /**
    *  Access a random access input iterator referring to the past-the-end row in the object.
    *  \return Random access input iterator
    */
-  inline ConstIterator cend() const {return ConstIterator(elementIdx_.begin(), rowIdx_.end());}
+  inline const_iterator cend() const {return const_iterator(elementIdx_.begin(), rowIdx_.end());}
   /**
    *  Access a random access iterator pointing to the first row in the object.
    *  \return Random access iterator
    */
-  inline Iterator begin() {return Iterator(elementIdx_.begin(), rowIdx_.begin());}
+  inline iterator begin() {return iterator(elementIdx_.begin(), rowIdx_.begin());}
   /**
    *  Access a random access iterator referring to the past-the-end row in the object.
    *  \return Random access iterator
    */
-  inline Iterator end() {return Iterator(elementIdx_.begin(), rowIdx_.end());}
+  inline iterator end() {return iterator(elementIdx_.begin(), rowIdx_.end());}
   
   inline ConstRowRef operator[] (size_t i) const {return ConstRowRef(elementIdx_.begin() + rowIdx_[i].begin, elementIdx_.begin() + rowIdx_[i].end);}
   inline RowRef operator[] (size_t i) {return RowRef(elementIdx_.begin(), rowIdx_[i]);}

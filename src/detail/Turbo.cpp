@@ -71,8 +71,8 @@ void Turbo::Structure::setEncoderOptions(const Turbo::EncoderOptions &encoder)
     if (encoder.trellis_.size() == 1) {
       j = 0;
     }
-    size_t length = interleaver_[i].outputSize() / encoder.trellis_[j].inputSize();
-    if (length * encoder.trellis_[j].inputSize() != interleaver_[i].outputSize()) {
+    size_t length = interleaver_[i].outputSize() / encoder.trellis_[j].inputWidth();
+    if (length * encoder.trellis_[j].inputWidth() != interleaver_[i].outputSize()) {
       throw std::invalid_argument("Invalid size for interleaver");
     }
     auto encoderConstituentOptions = Convolutional::EncoderOptions(encoder.trellis_[j], length);
@@ -91,11 +91,11 @@ void Turbo::Structure::setEncoderOptions(const Turbo::EncoderOptions &encoder)
   tailSize_ = 0;
   stateSize_ = 0;
   for (auto & i : constituents()) {
-    tailSize_ += i.systTailSize();
+    tailSize_ += i.tailSize();
     paritySize_ += i.paritySize();
     stateSize_ += i.systSize();
   }
-  systSize_ = msgSize_ + systTailSize();
+  systSize_ = msgSize_ + tailSize();
   paritySize_ += systSize();
 }
 
@@ -155,17 +155,15 @@ double Turbo::Structure::scalingFactor(size_t i, size_t j) const
 void Turbo::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const
 {
   std::vector<BitField<size_t>> messageInterl;
-  std::vector<BitField<size_t>>::iterator parityOutIt;
-  parityOutIt = parity;
-  std::copy(msg, msg + msgSize(), parityOutIt);
-  auto systTail = parityOutIt + msgSize();
-  parityOutIt += systSize();
+  std::copy(msg, msg + msgSize(), parity);
+  auto systTail = parity + msgSize();
+  parity += systSize();
   for (size_t i = 0; i < constituentCount(); ++i) {
     messageInterl.resize(constituent(i).msgSize());
     interleaver(i).permuteBlock<BitField<size_t>>(msg, messageInterl.begin());
-    constituent(i).encode(messageInterl.begin(), parityOutIt, systTail);
-    systTail += constituent(i).systTailSize();
-    parityOutIt += constituent(i).paritySize();
+    constituent(i).encode(messageInterl.begin(), parity, systTail);
+    systTail += constituent(i).tailSize();
+    parity += constituent(i).paritySize();
   }
 }
 
@@ -182,7 +180,7 @@ bool Turbo::Structure::check(std::vector<BitField<size_t>>::const_iterator parit
   for (size_t i = 0; i < constituentCount(); ++i) {
     messageInterl.resize(constituent(i).msgSize());
     parityTest.resize(constituent(i).paritySize());
-    tailTest.resize(constituent(i).systTailSize());
+    tailTest.resize(constituent(i).tailSize());
     interleaver(i).permuteBlock<BitField<size_t>,BitField<size_t>>(systIt, messageInterl.begin());
     constituent(i).encode(messageInterl.begin(), parityTest.begin(), tailTest.begin());
     if (!std::equal(parityTest.begin(), parityTest.end(), parityInIt)) {
@@ -192,7 +190,7 @@ bool Turbo::Structure::check(std::vector<BitField<size_t>>::const_iterator parit
       return false;
     }
     parityInIt += constituent(i).paritySize();
-    tailIt += constituent(i).systTailSize();
+    tailIt += constituent(i).tailSize();
   }
   return true;
 }
@@ -233,8 +231,8 @@ fec::Permutation Turbo::Structure::puncturing(const PunctureOptions& options) co
         size_t parityBaseIdx = systSize();
         for (size_t j = 0; j < constituentCount(); ++j) {
           if (i < constituent(j).length()) {
-            for (size_t k = 0; k < constituent(j).trellis().outputSize(); ++k) {
-              size_t parityIdx = i*constituent(j).trellis().outputSize()+k;
+            for (size_t k = 0; k < constituent(j).trellis().outputWidth(); ++k) {
+              size_t parityIdx = i*constituent(j).trellis().outputWidth()+k;
               if (mask_[j+1][parityIdx % mask_[j+1].size()]) {
                 perms.push_back(parityBaseIdx+parityIdx);
               }
@@ -245,11 +243,11 @@ fec::Permutation Turbo::Structure::puncturing(const PunctureOptions& options) co
       }
       size_t parityIdx = systSize();
       for (size_t i = 0; i < constituentCount(); ++i) {
-        parityIdx += constituent(i).paritySize() - constituent(i).tailSize() * constituent(i).trellis().outputSize();
+        parityIdx += constituent(i).paritySize() - constituent(i).tailSize() * constituent(i).trellis().outputWidth();
         size_t tailIdx = 0;
         size_t systTailIdx = 0;
         for (size_t j = 0; j < constituent(i).tailSize(); ++j) {
-          for (size_t k = 0; k < constituent(i).trellis().inputSize(); ++k) {
+          for (size_t k = 0; k < constituent(i).trellis().inputWidth(); ++k) {
             if ((tailMask_[i*2].size() == 0 && (mask_[0][systIdx % mask_[0].size()])) ||
                 (tailMask_[i*2].size() != 0 && (tailMask_[i*2][systTailIdx % tailMask_[i*2].size()]))) {
               perms.push_back(systIdx);
@@ -257,7 +255,7 @@ fec::Permutation Turbo::Structure::puncturing(const PunctureOptions& options) co
             ++systIdx;
             ++systTailIdx;
           }
-          for (size_t k = 0; k < constituent(i).trellis().outputSize(); ++k) {
+          for (size_t k = 0; k < constituent(i).trellis().outputWidth(); ++k) {
             if ((tailMask_[i*2+1].size() == 0 && (mask_[i+1][parityIdx % mask_[i+1].size()])) ||
                 (tailMask_[i*2+1].size() != 0 && (tailMask_[i*2+1][tailIdx % tailMask_[i*2+1].size()]))) {
               perms.push_back(parityIdx);
@@ -280,7 +278,7 @@ fec::Permutation Turbo::Structure::puncturing(const PunctureOptions& options) co
       }
       for (size_t i = 0; i < constituentCount(); ++i) {
         size_t tailIdx = 0;
-        for (size_t j = 0; j < constituent(i).tailSize() * constituent(i).trellis().inputSize(); ++j) {
+        for (size_t j = 0; j < constituent(i).tailSize() * constituent(i).trellis().inputWidth(); ++j) {
           if ((tailMask_[i*2].size() == 0 && (mask_[0][idx % mask_[0].size()])) ||
               (tailMask_[i*2].size() != 0 && (tailMask_[i*2][tailIdx % tailMask_[i*2].size()]))) {
             perms.push_back(idx);
@@ -291,7 +289,7 @@ fec::Permutation Turbo::Structure::puncturing(const PunctureOptions& options) co
       }
       for (size_t i = 0; i < constituentCount(); ++i) {
         size_t parityIdx = 0;
-        for (size_t j = 0; j < constituent(i).length() * constituent(i).trellis().outputSize(); ++j) {
+        for (size_t j = 0; j < constituent(i).length() * constituent(i).trellis().outputWidth(); ++j) {
           if (mask_[i+1][parityIdx % mask_[i+1].size()]) {
             perms.push_back(idx);
           }
@@ -299,7 +297,7 @@ fec::Permutation Turbo::Structure::puncturing(const PunctureOptions& options) co
           ++idx;
         }
         size_t tailIdx = 0;
-        for (size_t j = 0; j < constituent(i).tailSize() * constituent(i).trellis().outputSize(); ++j) {
+        for (size_t j = 0; j < constituent(i).tailSize() * constituent(i).trellis().outputWidth(); ++j) {
           if ((tailMask_[i*2+1].size() == 0 && (mask_[i+1][parityIdx % mask_[i+1].size()])) ||
               (tailMask_[i*2+1].size() != 0 && (tailMask_[i*2+1][tailIdx % tailMask_[i*2+1].size()]))) {
             perms.push_back(idx);

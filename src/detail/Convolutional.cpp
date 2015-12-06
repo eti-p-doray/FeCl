@@ -48,20 +48,14 @@ void Convolutional::Structure::setEncoderOptions(const EncoderOptions& encoder)
   length_ = encoder.length_;
   termination_ = encoder.termination_;
   
-  msgSize_ = length_ * trellis_.inputSize();
-  systSize_ = length_ * trellis_.inputSize();
-  paritySize_ = length_ * trellis_.outputSize();
-  stateSize_ = 0;
   switch (termination_) {
     case Trellis::Tail:
-      tailSize_ = trellis_.stateSize();
-      paritySize_ += trellis_.stateSize() * trellis_.outputSize();
-      systSize_ += trellis_.stateSize() * trellis_.inputSize();
+      tailLength_ = trellis_.stateWidth();
       break;
       
     default:
     case Trellis::Truncate:
-      tailSize_ = 0;
+      tailLength_ = 0;
       break;
   }
 }
@@ -77,67 +71,15 @@ Convolutional::DecoderOptions Convolutional::Structure::getDecoderOptions() cons
   return DecoderOptions().algorithm(decoderAlgorithm_).scalingFactor(scalingFactor_);
 }
 
-void Convolutional::Structure::encode(std::vector<fec::BitField<size_t>>::const_iterator msg, std::vector<fec::BitField<size_t>>::iterator parity) const
-{
-  size_t state = 0;
-  
-  for (int j = 0; j < length(); ++j) {
-    BitField<size_t> input = 0;
-    for (int k = 0; k < trellis().inputSize(); k++) {
-      input.set(k, msg[k]);
-    }
-    msg += trellis().inputSize();
-    
-    BitField<size_t> output = trellis().getOutput(state, input);
-    state = trellis().getNextState(state, input);
-    
-    for (int k = 0; k < trellis().outputSize(); k++) {
-      parity[k] = output.test(k);
-    }
-    parity  += trellis().outputSize();
-  }
-  
-  switch (termination()) {
-    case Trellis::Tail:
-      for (int j = 0; j < tailSize(); ++j) {
-        int maxCount = -1;
-        BitField<size_t> bestInput = 0;
-        for (BitField<size_t> input = 0; input < trellis().inputCount(); ++input) {
-          BitField<size_t> nextState = trellis().getNextState(state, input);
-          int count = weigth(BitField<size_t>(state)) - weigth(nextState);
-          if (count > maxCount) {
-            maxCount = count;
-            bestInput = input;
-          }
-        }
-        BitField<size_t> nextState = trellis().getNextState(state, bestInput);
-        BitField<size_t> output = trellis().getOutput(state, bestInput);
-        for (int k = 0; k < trellis().outputSize(); ++k) {
-          parity[k] = output.test(k);
-        }
-        parity += trellis().outputSize();
-        state = nextState;
-      }
-      break;
-      
-    default:
-    case Trellis::Truncate:
-      state = 0;
-      break;
-  }
-  
-  assert(state == 0);
-}
-
 bool Convolutional::Structure::check(std::vector<fec::BitField<size_t>>::const_iterator parity) const
 {
   size_t state = 0;
-  for (int j = 0; j < length()+tailSize(); ++j) {
+  for (int j = 0; j < length()+tailLength(); ++j) {
     bool found = false;
     for (BitField<size_t> input = 0; input < trellis().inputCount(); ++input) {
       BitField<size_t> output = trellis().getOutput(state, input);
       bool equal = true;
-      for (int k = 0; k < trellis().outputSize(); ++k) {
+      for (int k = 0; k < trellis().outputWidth(); ++k) {
         if (output[k] != parity[k]) {
           equal = false;
           break;
@@ -152,7 +94,7 @@ bool Convolutional::Structure::check(std::vector<fec::BitField<size_t>>::const_i
     if (found == false) {
       return false;
     }
-    parity += trellis().outputSize();
+    parity += trellis().outputWidth();
   }
   switch (termination()) {
     case Trellis::Tail:
@@ -164,29 +106,35 @@ bool Convolutional::Structure::check(std::vector<fec::BitField<size_t>>::const_i
   }
 }
 
+void Convolutional::Structure::encode(std::vector<fec::BitField<size_t>>::const_iterator msg, std::vector<fec::BitField<size_t>>::iterator parity) const
+{
+  std::vector<BitField<size_t>> tail(tailLength()*trellis().inputWidth());
+  encode(msg, parity, tail.begin());
+}
+
 void Convolutional::Structure::encode(std::vector<fec::BitField<size_t>>::const_iterator msg, std::vector<fec::BitField<size_t>>::iterator parity, std::vector<fec::BitField<size_t>>::iterator tail) const
 {
   size_t state = 0;
   
   for (int j = 0; j < length(); ++j) {
     BitField<size_t> input = 0;
-    for (int k = 0; k < trellis().inputSize(); k++) {
+    for (int k = 0; k < trellis().inputWidth(); k++) {
       input.set(k, msg[k]);
     }
-    msg += trellis().inputSize();
+    msg += trellis().inputWidth();
     
     BitField<size_t> output = trellis().getOutput(state, input);
     state = trellis().getNextState(state, input);
     
-    for (int k = 0; k < trellis().outputSize(); k++) {
+    for (int k = 0; k < trellis().outputWidth(); k++) {
       parity[k] = output.test(k);
     }
-    parity  += trellis().outputSize();
+    parity  += trellis().outputWidth();
   }
   
   switch (termination()) {
     case Trellis::Tail:
-      for (int j = 0; j < tailSize(); ++j) {
+      for (int j = 0; j < tailLength(); ++j) {
         int maxCount = -1;
         BitField<size_t> bestInput = 0;
         for (BitField<size_t> input = 0; input < trellis().inputCount(); ++input) {
@@ -199,14 +147,14 @@ void Convolutional::Structure::encode(std::vector<fec::BitField<size_t>>::const_
         }
         BitField<size_t> nextState = trellis().getNextState(state, bestInput);
         BitField<size_t> output = trellis().getOutput(state, bestInput);
-        for (int k = 0; k < trellis().outputSize(); ++k) {
+        for (int k = 0; k < trellis().outputWidth(); ++k) {
           parity[k] = output.test(k);
         }
-        for (int k = 0; k < trellis().inputSize(); ++k) {
+        for (int k = 0; k < trellis().inputWidth(); ++k) {
           tail[k] = bestInput.test(k);
         }
-        parity += trellis().outputSize();
-        tail += trellis().inputSize();
+        parity += trellis().outputWidth();
+        tail += trellis().inputWidth();
         state = nextState;
       }
       break;
@@ -216,21 +164,19 @@ void Convolutional::Structure::encode(std::vector<fec::BitField<size_t>>::const_
       state = 0;
       break;
   }
-  
-  assert(state == 0);
 }
 
 fec::Permutation Convolutional::Structure::puncturing(const PunctureOptions& options) const
 {
   std::vector<size_t> perms;
   size_t systIdx = 0;
-  for (size_t i = 0; i < length() * trellis().outputSize(); ++i) {
+  for (size_t i = 0; i < length() * trellis().outputWidth(); ++i) {
     if (options.mask_.size() == 0 || options.mask_[i % options.mask_.size()]) {
       perms.push_back(systIdx);
     }
     ++systIdx;
   }
-  for (size_t i = 0; i < tailSize()*trellis().outputSize(); ++i) {
+  for (size_t i = 0; i < tailLength()*trellis().outputWidth(); ++i) {
     if ((options.tailMask_.size() == 0 && (options.mask_.size() == 0 || options.mask_[i % options.mask_.size()])) ||
         (options.tailMask_.size() != 0 && (options.tailMask_[systIdx % options.tailMask_.size()]))) {
       perms.push_back(systIdx);

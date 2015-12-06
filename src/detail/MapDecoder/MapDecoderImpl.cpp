@@ -33,13 +33,13 @@ template <class LlrMetrics, template <class> class LogSumAlg>
 MapDecoderImpl<LlrMetrics, LogSumAlg>::MapDecoderImpl(const Convolutional::Structure& structure) :
 MapDecoder(structure)
 {
-  branchMetrics_.resize((this->structure().length()+this->structure().tailSize())*this->structure().trellis().inputCount()*this->structure().trellis().stateCount());
-  forwardMetrics_.resize((this->structure().length()+this->structure().tailSize())*this->structure().trellis().stateCount());
-  backwardMetrics_.resize((this->structure().length()+this->structure().tailSize())*this->structure().trellis().stateCount());
+  branch_.resize((this->structure().length()+this->structure().tailSize())*this->structure().trellis().inputCount()*this->structure().trellis().stateCount());
+  forward_.resize((this->structure().length()+this->structure().tailLength())*this->structure().trellis().stateCount());
+  backward_.resize((this->structure().length()+this->structure().tailLength())*this->structure().trellis().stateCount());
   
-  bufferMetrics_.resize(std::max(this->structure().trellis().outputCount(), this->structure().trellis().inputCount()));
+  buffer_.resize(std::max(this->structure().trellis().outputCount(), this->structure().trellis().inputCount()));
   if (!LogSumAlg<LlrMetrics>::isRecursive::value) {
-    bufferMetrics_.resize(this->structure().trellis().stateCount()*(this->structure().trellis().inputCount()+1));
+    buffer_.resize(this->structure().trellis().stateCount()*(this->structure().trellis().inputCount()+1));
   }
 }
 
@@ -53,87 +53,70 @@ MapDecoder(structure)
  *    Output needs to be pre-allocated.
  */
 template <class LlrMetrics, template <class> class LogSumAlg>
-void MapDecoderImpl<LlrMetrics, LogSumAlg>::soDecodeBlock(Codec::InputIterator input, Codec::OutputIterator output)
+void MapDecoderImpl<LlrMetrics, LogSumAlg>::soDecodeBlock(Codec::const_iterator<double> input, Codec::iterator<double> output)
 {
-  soDecodeBlockImpl<double>(input, output);
-}
-
-/**
- *  Decodes one blocs of information bits.
- *  A posteriori information about the msg is output instead of the decoded bit sequence.
- *  \param  parityIn  Input iterator pointing to the first element
- *    in the parity L-value sequence
- *  \param  messageOut[out] Output iterator pointing to the first element
- *    in the a posteriori information L-value sequence.
- *    Output needs to be pre-allocated.
- */
-template <class LlrMetrics, template <class> class LogSumAlg>
-template <class T>
-void MapDecoderImpl<LlrMetrics, LogSumAlg>::soDecodeBlockImpl(Codec::InfoIterator<typename std::vector<T>::const_iterator> input, Codec::InfoIterator<typename std::vector<T>::iterator> output)
-{
-  branchUpdate<T>(input);
+  branchUpdate(input);
   forwardUpdate();
   backwardUpdate();
-  aPosterioriUpdate<T>(input, output);
+  aPosterioriUpdate(input, output);
 }
 
 template <class LlrMetrics, template <class> class LogSumAlg>
-template <class T>
-void MapDecoderImpl<LlrMetrics, LogSumAlg>::branchUpdate(Codec::InfoIterator<typename std::vector<T>::const_iterator> input)
+void MapDecoderImpl<LlrMetrics, LogSumAlg>::branchUpdate(Codec::const_iterator<double> input)
 {
-  auto parity = input.parity();
-  auto syst = input.syst();
-  auto branchMetric = branchMetrics_.begin();
-  for (size_t i = 0; i < structure().length() + structure().tailSize(); ++i) {
+  auto parity = input.at(Codec::Parity);
+  auto syst = input.at(Codec::Syst);
+  auto branch = branch_.begin();
+  for (size_t i = 0; i < structure().length() + structure().tailLength(); ++i) {
     for (BitField<size_t> j = 0; j < structure().trellis().outputCount(); ++j) {
-      bufferMetrics_[j] = correlation<LlrMetrics>(j, parity, structure().trellis().outputSize());
+      buffer_[j] = correlation<LlrMetrics>(j, parity, structure().trellis().outputWidth());
     }
-    auto branchMetricTmp = branchMetric;
+    auto branchTmp = branch;
     for (auto output = structure().trellis().beginOutput(); output < structure().trellis().endOutput();) {
       for (size_t k = 0; k < structure().trellis().inputCount(); ++k) {
-        branchMetric[k] = bufferMetrics_[size_t(output[k])];
+        branch[k] = buffer_[size_t(output[k])];
       }
       output += structure().trellis().inputCount();
-      branchMetric += structure().trellis().inputCount();
+      branch += structure().trellis().inputCount();
     }
     
-    if (input.hasSyst()) {
-      branchMetric = branchMetricTmp;
+    if (input.count(Codec::Syst)) {
+      branch = branchTmp;
       for (BitField<size_t> j = 0; j < structure().trellis().inputCount(); ++j) {
-        bufferMetrics_[j] = correlation<LlrMetrics>(j, syst, structure().trellis().inputSize());
+        buffer_[j] = correlation<LlrMetrics>(j, syst, structure().trellis().inputWidth());
       }
       for (size_t j = 0; j < structure().trellis().stateCount(); ++j) {
         for (size_t k = 0; k < structure().trellis().inputCount(); ++k) {
-          branchMetric[k] += bufferMetrics_[k];
+          branch[k] += buffer_[k];
         }
-        branchMetric += structure().trellis().inputCount();
+        branch += structure().trellis().inputCount();
       }
     }
-    parity += structure().trellis().outputSize();
-    syst += structure().trellis().inputSize();
+    parity += structure().trellis().outputWidth();
+    syst += structure().trellis().inputWidth();
   }
 }
 
 template <class LlrMetrics, template <class> class LogSumAlg>
 void MapDecoderImpl<LlrMetrics, LogSumAlg>::forwardUpdate()
 {
-  auto forwardMetric = forwardMetrics_.begin();
-  auto branchMetric = branchMetrics_.cbegin();
+  auto forward = forward_.begin();
+  auto branch = branch_.cbegin();
   
-  *forwardMetric = 0;
-  std::fill(forwardMetric+1, forwardMetric + structure().trellis().stateCount(), -llrMetrics_.max());
+  *forward = 0;
+  std::fill(forward+1, forward + structure().trellis().stateCount(), -llrMetrics_.max());
   
-  for (; forwardMetric < forwardMetrics_.end() - structure().trellis().stateCount();) {
-    forwardUpdateImpl(forwardMetric, branchMetric);
-    forwardMetric += structure().trellis().stateCount();
-    branchMetric += structure().trellis().tableSize();
+  for (; forward < forward_.end() - structure().trellis().stateCount();) {
+    forwardUpdateImpl(forward, branch);
+    forward += structure().trellis().stateCount();
+    branch += structure().trellis().tableSize();
     typename LlrMetrics::Type max = -llrMetrics_.max();
     for (BitField<size_t> j = 0; j < structure().trellis().stateCount(); ++j) {
-      forwardMetric[j] = logSum_.post(forwardMetric[j]);
-      max = std::max(forwardMetric[j], max);
+      forward[j] = logSum_.post(forward[j]);
+      max = std::max(forward[j], max);
     }
     for (BitField<size_t> j = 0; j < structure().trellis().stateCount(); ++j) {
-      forwardMetric[j] -= max;
+      forward[j] -= max;
     }
   }
 }
@@ -141,217 +124,216 @@ void MapDecoderImpl<LlrMetrics, LogSumAlg>::forwardUpdate()
 template <class LlrMetrics, template <class> class LogSumAlg>
 void MapDecoderImpl<LlrMetrics, LogSumAlg>::backwardUpdate()
 {
-  auto backwardMetric = backwardMetrics_.end()-structure().trellis().stateCount();
+  auto backward = backward_.end()-structure().trellis().stateCount();
   switch (structure().termination()) {
     case Trellis::Tail:
-      *backwardMetric = 0;
-      std::fill(backwardMetric+1, backwardMetric + structure().trellis().stateCount(), -llrMetrics_.max());
+      *backward = 0;
+      std::fill(backward+1, backward + structure().trellis().stateCount(), -llrMetrics_.max());
       break;
       
     default:
     case Trellis::Truncate:
-      std::fill(backwardMetric, backwardMetric + structure().trellis().stateCount(), 0.0);
+      std::fill(backward, backward + structure().trellis().stateCount(), 0.0);
       break;
   }
-  backwardMetric -= structure().trellis().stateCount();
-  auto branchMetric = branchMetrics_.cend()-structure().trellis().tableSize();
+  backward -= structure().trellis().stateCount();
+  auto branch = branch_.cend()-structure().trellis().tableSize();
   
-  for ( ; backwardMetric >= backwardMetrics_.begin();) {
-    backwardUpdateImpl(backwardMetric, branchMetric);
+  for ( ; backward >= backward_.begin();) {
+    backwardUpdateImpl(backward, branch);
     typename LlrMetrics::Type max = -llrMetrics_.max();
     for (BitField<size_t> j = 0; j < structure().trellis().stateCount(); ++j) {
-      backwardMetric[j] = logSum_.post(backwardMetric[j]);
-      max = std::max(backwardMetric[j], max);
+      backward[j] = logSum_.post(backward[j]);
+      max = std::max(backward[j], max);
     }
     for (BitField<size_t> j = 0; j < structure().trellis().stateCount(); ++j) {
-      backwardMetric[j] -= max;
+      backward[j] -= max;
     }
-    backwardMetric -= structure().trellis().stateCount();
-    branchMetric -= structure().trellis().tableSize();
+    backward -= structure().trellis().stateCount();
+    branch -= structure().trellis().tableSize();
   }
 }
 
 template <class LlrMetrics, template <class> class LogSumAlg>
-template <typename T>
-void MapDecoderImpl<LlrMetrics, LogSumAlg>::aPosterioriUpdate(Codec::InfoIterator<typename std::vector<T>::const_iterator> input, Codec::InfoIterator<typename std::vector<T>::iterator> output)
+void MapDecoderImpl<LlrMetrics, LogSumAlg>::aPosterioriUpdate(Codec::const_iterator<double> input, Codec::iterator<double> output)
 {
-  auto systOut = output.syst();
-  auto systIn = input.syst();
-  auto parityOut = output.parity();
-  auto parityIn = input.parity();
-  auto msgOut = output.msg();
+  auto systOut = output.at(Codec::Syst);
+  auto systIn = input.at(Codec::Syst);
+  auto parityOut = output.at(Codec::Parity);
+  auto parityIn = input.at(Codec::Parity);
+  auto msgOut = output.at(Codec::Msg);
 
-  for (size_t i = 0; i < structure().length() + structure().tailSize(); ++i) {
-    auto branchMetric = branchMetrics_.begin() + i * structure().trellis().tableSize();
-    auto forwardMetric = forwardMetrics_.cbegin() + i * structure().trellis().stateCount();
-    auto backwardMetric = backwardMetrics_.cbegin() + i * structure().trellis().stateCount();
+  for (size_t i = 0; i < structure().length() + structure().tailLength(); ++i) {
+    auto branch = branch_.begin() + i * structure().trellis().tableSize();
+    auto forward = forward_.cbegin() + i * structure().trellis().stateCount();
+    auto backward = backward_.cbegin() + i * structure().trellis().stateCount();
     
     for (auto state = structure().trellis().beginState(); state < structure().trellis().endState(); ) {
       for (BitField<size_t> input = 0; input < structure().trellis().inputCount(); ++input) {
-        branchMetric[input] = logSum_.prior(branchMetric[input] + *forwardMetric + backwardMetric[size_t(state[input])]);
+        branch[input] = logSum_.prior(branch[input] + *forward + backward[size_t(state[input])]);
       }
       state += structure().trellis().inputCount();
-      branchMetric += structure().trellis().inputCount();
-      ++forwardMetric;
+      branch += structure().trellis().inputCount();
+      ++forward;
     }
     
-    if (output.hasSyst() || (output.hasMsg() && i < structure().length())) {
-      for (size_t j = 0; j < structure().trellis().inputSize(); ++j) {
-        branchMetric = branchMetrics_.begin() + i * structure().trellis().tableSize();
-        typename LlrMetrics::Type tmp = msgUpdateImpl(branchMetric, j);
+    if (output.count(Codec::Syst) || (output.count(Codec::Msg) && i < structure().length())) {
+      for (size_t j = 0; j < structure().trellis().inputWidth(); ++j) {
+        branch = branch_.begin() + i * structure().trellis().tableSize();
+        typename LlrMetrics::Type tmp = msgUpdateImpl(branch, j);
 
-        if (output.hasSyst()) {
-          if (input.hasSyst()) {
+        if (output.count(Codec::Syst)) {
+          if (input.count(Codec::Syst)) {
             systOut[j] = structure().scalingFactor() * (tmp - systIn[j]);
           }
           else {
             systOut[j] = structure().scalingFactor() * (tmp);
           }
         }
-        if (output.hasMsg() && i < structure().length()) {
+        if (output.count(Codec::Msg) && i < structure().length()) {
           msgOut[j] = structure().scalingFactor() * (tmp);
         }
       }
-      systIn += structure().trellis().inputSize();
-      systOut += structure().trellis().inputSize();
-      msgOut += structure().trellis().inputSize();
+      systIn += structure().trellis().inputWidth();
+      systOut += structure().trellis().inputWidth();
+      msgOut += structure().trellis().inputWidth();
     }
-    if (output.hasParity()) {
-      for (size_t j = 0; j < structure().trellis().outputSize(); ++j) {
-        branchMetric = branchMetrics_.begin() + i * structure().trellis().tableSize();
-        typename LlrMetrics::Type tmp = parityUpdateImpl(branchMetric, j);
+    if (output.count(Codec::Parity)) {
+      for (size_t j = 0; j < structure().trellis().outputWidth(); ++j) {
+        branch = branch_.begin() + i * structure().trellis().tableSize();
+        typename LlrMetrics::Type tmp = parityUpdateImpl(branch, j);
         
-        if (input.hasParity()) {
+        if (input.count(Codec::Parity)) {
           parityOut[j] = structure().scalingFactor() * (tmp - parityIn[j]);
         }
         else {
           parityOut[j] = structure().scalingFactor() * (tmp);
         }
       }
-      parityIn += structure().trellis().outputSize();
-      parityOut += structure().trellis().outputSize();
+      parityIn += structure().trellis().outputWidth();
+      parityOut += structure().trellis().outputWidth();
     }
   }
 }
 
 template <class LlrMetrics, template <class> class LogSumAlg>
 template <class U, typename std::enable_if<U::value>::type*>
-void MapDecoderImpl<LlrMetrics, LogSumAlg>::forwardUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator forwardMetric, typename std::vector<typename LlrMetrics::Type>::const_iterator branchMetric)
+void MapDecoderImpl<LlrMetrics, LogSumAlg>::forwardUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator forward, typename std::vector<typename LlrMetrics::Type>::const_iterator branch)
 {
-  std::fill(forwardMetric + structure().trellis().stateCount(), forwardMetric + 2*structure().trellis().stateCount(), logSum_.prior(-llrMetrics_.max()));
+  std::fill(forward + structure().trellis().stateCount(), forward + 2*structure().trellis().stateCount(), logSum_.prior(-llrMetrics_.max()));
   auto state = structure().trellis().beginState();
   for (BitField<size_t> j = 0; j < structure().trellis().stateCount(); ++j) {
     for (BitField<size_t> k = 0; k < structure().trellis().inputCount(); ++k) {
-      auto & forwardMetricRef = forwardMetric[structure().trellis().stateCount() + size_t(state[k])];
+      auto & forwardMetricRef = forward[structure().trellis().stateCount() + size_t(state[k])];
       forwardMetricRef =
-      logSum_.sum(forwardMetricRef, logSum_.prior(forwardMetric[j] + branchMetric[k]));
+      logSum_.sum(forwardMetricRef, logSum_.prior(forward[j] + branch[k]));
     }
-    branchMetric += structure().trellis().inputCount();
+    branch += structure().trellis().inputCount();
     state += structure().trellis().inputCount();
   }
 }
 
 template <class LlrMetrics, template <class> class LogSumAlg>
 template <class U, typename std::enable_if<!U::value>::type*>
-void MapDecoderImpl<LlrMetrics, LogSumAlg>::forwardUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator forwardMetric, typename std::vector<typename LlrMetrics::Type>::const_iterator branchMetric)
+void MapDecoderImpl<LlrMetrics, LogSumAlg>::forwardUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator forward, typename std::vector<typename LlrMetrics::Type>::const_iterator branch)
 {
   auto state = structure().trellis().beginState();
-  auto bufferMetric = bufferMetrics_.begin();
-  auto maxMetric = bufferMetric + structure().trellis().stateCount()*structure().trellis().inputCount();
+  auto buffer = buffer_.begin();
+  auto maxMetric = buffer + structure().trellis().stateCount()*structure().trellis().inputCount();
   std::fill(maxMetric, maxMetric + structure().trellis().stateCount(), -llrMetrics_.max());
   for (BitField<size_t> j = 0; j < structure().trellis().stateCount(); ++j) {
     for (BitField<size_t> k = 0; k < structure().trellis().inputCount(); ++k) {
-      bufferMetric[k] = forwardMetric[j] + branchMetric[k];
-      maxMetric[size_t(state[k])] = logSum_.max(bufferMetric[k], maxMetric[size_t(state[k])]);
+      buffer[k] = forward[j] + branch[k];
+      maxMetric[size_t(state[k])] = logSum_.max(buffer[k], maxMetric[size_t(state[k])]);
     }
-    branchMetric += structure().trellis().inputCount();
-    bufferMetric += structure().trellis().inputCount();
+    branch += structure().trellis().inputCount();
+    buffer += structure().trellis().inputCount();
     state += structure().trellis().inputCount();
   }
-  forwardMetric += structure().trellis().stateCount();
-  std::fill(forwardMetric, forwardMetric + structure().trellis().stateCount(), 0);
+  forward += structure().trellis().stateCount();
+  std::fill(forward, forward + structure().trellis().stateCount(), 0);
   state = structure().trellis().beginState();
-  bufferMetric = bufferMetrics_.begin();
+  buffer = buffer_.begin();
   for (BitField<size_t> j = 0; j < structure().trellis().stateCount(); ++j) {
     for (BitField<size_t> k = 0; k < structure().trellis().inputCount(); ++k) {
-      bufferMetric[k] = logSum_.prior(bufferMetric[k], maxMetric[size_t(state[k])]);
-      forwardMetric[size_t(state[k])] = logSum_.sum(bufferMetric[k], forwardMetric[size_t(state[k])]);
+      buffer[k] = logSum_.prior(buffer[k], maxMetric[size_t(state[k])]);
+      forward[size_t(state[k])] = logSum_.sum(buffer[k], forward[size_t(state[k])]);
     }
-    bufferMetric += structure().trellis().inputCount();
+    buffer += structure().trellis().inputCount();
     state += structure().trellis().inputCount();
   }
   for (BitField<size_t> j = 0; j < structure().trellis().stateCount(); ++j) {
-    forwardMetric[j] = logSum_.post(forwardMetric[j], maxMetric[j]);
+    forward[j] = logSum_.post(forward[j], maxMetric[j]);
   }
 }
 
 template <class LlrMetrics, template <class> class LogSumAlg>
 template <class U, typename std::enable_if<U::value>::type*>
-void MapDecoderImpl<LlrMetrics, LogSumAlg>::backwardUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator backwardMetric, typename std::vector<typename LlrMetrics::Type>::const_iterator branchMetric)
+void MapDecoderImpl<LlrMetrics, LogSumAlg>::backwardUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator backward, typename std::vector<typename LlrMetrics::Type>::const_iterator branch)
 {
-  std::fill(backwardMetric, backwardMetric + structure().trellis().stateCount(), logSum_.prior(-llrMetrics_.max()));
+  std::fill(backward, backward + structure().trellis().stateCount(), logSum_.prior(-llrMetrics_.max()));
   auto state = structure().trellis().beginState();
   for (BitField<size_t> j = 0; j < structure().trellis().stateCount(); ++j) {
     for (BitField<size_t> k = 0; k < structure().trellis().inputCount(); ++k) {
-      backwardMetric[j] =
+      backward[j] =
       logSum_.sum(
-             backwardMetric[j],
-             logSum_.prior(backwardMetric[size_t(state[k])+structure().trellis().stateCount()] + branchMetric[k])
+             backward[j],
+             logSum_.prior(backward[size_t(state[k])+structure().trellis().stateCount()] + branch[k])
              );
     }
-    branchMetric += structure().trellis().inputCount();
+    branch += structure().trellis().inputCount();
     state += structure().trellis().inputCount();
   }
 }
 
 template <class LlrMetrics, template <class> class LogSumAlg>
 template <class U, typename std::enable_if<!U::value>::type*>
-void MapDecoderImpl<LlrMetrics, LogSumAlg>::backwardUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator backwardMetric, typename std::vector<typename LlrMetrics::Type>::const_iterator branchMetric)
+void MapDecoderImpl<LlrMetrics, LogSumAlg>::backwardUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator backward, typename std::vector<typename LlrMetrics::Type>::const_iterator branch)
 {
   auto state = structure().trellis().beginState();
-  auto bufferMetric = bufferMetrics_.begin();
-  std::fill(backwardMetric, backwardMetric + structure().trellis().stateCount(), 0);
+  auto buffer = buffer_.begin();
+  std::fill(backward, backward + structure().trellis().stateCount(), 0);
   for (BitField<size_t> j = 0; j < structure().trellis().stateCount(); ++j) {
     typename LlrMetrics::Type max = -llrMetrics_.max();
     for (BitField<size_t> k = 0; k < structure().trellis().inputCount(); ++k) {
-      bufferMetric[k] = backwardMetric[size_t(state[k])+structure().trellis().stateCount()] + branchMetric[k];
-      max = logSum_.max(bufferMetric[k], max);
+      buffer[k] = backward[size_t(state[k])+structure().trellis().stateCount()] + branch[k];
+      max = logSum_.max(buffer[k], max);
     }
     for (BitField<size_t> k = 0; k < structure().trellis().inputCount(); ++k) {
-      bufferMetric[k] = logSum_.prior(bufferMetric[k], max);
-      backwardMetric[j] = logSum_.sum(bufferMetric[k], backwardMetric[j]);
+      buffer[k] = logSum_.prior(buffer[k], max);
+      backward[j] = logSum_.sum(buffer[k], backward[j]);
     }
-    backwardMetric[j] = logSum_.post(backwardMetric[j], max);
-    branchMetric += structure().trellis().inputCount();
-    bufferMetric += structure().trellis().inputCount();
+    backward[j] = logSum_.post(backward[j], max);
+    branch += structure().trellis().inputCount();
+    buffer += structure().trellis().inputCount();
     state += structure().trellis().inputCount();
   }
 }
 
 template <class LlrMetrics, template <class> class LogSumAlg>
 template <class U, typename std::enable_if<U::value>::type*>
-typename LlrMetrics::Type MapDecoderImpl<LlrMetrics, LogSumAlg>::msgUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator branchMetric, size_t j)
+typename LlrMetrics::Type MapDecoderImpl<LlrMetrics, LogSumAlg>::msgUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator branch, size_t j)
 {
   typename LlrMetrics::Type metric[2] = {logSum_.prior(-llrMetrics_.max()), logSum_.prior(-llrMetrics_.max())};
   for (size_t k = 0; k < structure().trellis().stateCount(); ++k) {
     for (BitField<size_t> input = 0; input < structure().trellis().inputCount(); ++input) {
-      metric[input.test(j)] = logSum_.sum(metric[input.test(j)], branchMetric[input]);
+      metric[input.test(j)] = logSum_.sum(metric[input.test(j)], branch[input]);
     }
-    branchMetric += structure().trellis().inputCount();
+    branch += structure().trellis().inputCount();
   }
   return logSum_.post(metric[1]) - logSum_.post(metric[0]);
 }
 
 template <class LlrMetrics, template <class> class LogSumAlg>
 template <class U, typename std::enable_if<U::value>::type*>
-typename LlrMetrics::Type MapDecoderImpl<LlrMetrics, LogSumAlg>::parityUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator branchMetric, size_t j)
+typename LlrMetrics::Type MapDecoderImpl<LlrMetrics, LogSumAlg>::parityUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator branch, size_t j)
 {
   typename LlrMetrics::Type metric[2] = {logSum_.prior(-llrMetrics_.max()), logSum_.prior(-llrMetrics_.max())};
   for (auto output = structure().trellis().beginOutput(); output < structure().trellis().endOutput();) {
     for (BitField<size_t> input = 0; input < structure().trellis().inputCount(); ++input) {
-      metric[output[input].test(j)] = logSum_.sum(metric[output[input].test(j)], branchMetric[input]);
+      metric[output[input].test(j)] = logSum_.sum(metric[output[input].test(j)], branch[input]);
     }
-    branchMetric += structure().trellis().inputCount();
+    branch += structure().trellis().inputCount();
     output += structure().trellis().inputCount();
   }
   return logSum_.post(metric[1]) - logSum_.post(metric[0]);
@@ -359,51 +341,51 @@ typename LlrMetrics::Type MapDecoderImpl<LlrMetrics, LogSumAlg>::parityUpdateImp
 
 template <class LlrMetrics, template <class> class LogSumAlg>
 template <class U, typename std::enable_if<!U::value>::type*>
-typename LlrMetrics::Type MapDecoderImpl<LlrMetrics, LogSumAlg>::msgUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator branchMetric, size_t j)
+typename LlrMetrics::Type MapDecoderImpl<LlrMetrics, LogSumAlg>::msgUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator branch, size_t j)
 {
   typename LlrMetrics::Type max[2] = {typename LlrMetrics::Type(-llrMetrics_.max()), typename LlrMetrics::Type(-llrMetrics_.max())};
   typename LlrMetrics::Type metric[2] = {
     typename LlrMetrics::Type(0),
     typename LlrMetrics::Type(0)};
-  auto branchMetricTmp = branchMetric;
+  auto branchTmp = branch;
   for (size_t k = 0; k < structure().trellis().stateCount(); ++k) {
     for (BitField<size_t> input = 0; input < structure().trellis().inputCount(); ++input) {
-      max[input.test(j)] = logSum_.max(branchMetric[input], max[input.test(j)]);
+      max[input.test(j)] = logSum_.max(branch[input], max[input.test(j)]);
     }
-    branchMetric += structure().trellis().inputCount();
+    branch += structure().trellis().inputCount();
   }
-  branchMetric = branchMetricTmp;
+  branch = branchTmp;
   for (size_t k = 0; k < structure().trellis().stateCount(); ++k) {
     for (BitField<size_t> input = 0; input < structure().trellis().inputCount(); ++input) {
-      metric[input.test(j)] = logSum_.sum(logSum_.prior(branchMetric[input], max[input.test(j)]), metric[input.test(j)]);
+      metric[input.test(j)] = logSum_.sum(logSum_.prior(branch[input], max[input.test(j)]), metric[input.test(j)]);
     }
-    branchMetric += structure().trellis().inputCount();
+    branch += structure().trellis().inputCount();
   }
   return logSum_.post(metric[1], max[1]) - logSum_.post(metric[0], max[0]);
 }
 
 template <class LlrMetrics, template <class> class LogSumAlg>
 template <class U, typename std::enable_if<!U::value>::type*>
-typename LlrMetrics::Type MapDecoderImpl<LlrMetrics, LogSumAlg>::parityUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator branchMetric, size_t j)
+typename LlrMetrics::Type MapDecoderImpl<LlrMetrics, LogSumAlg>::parityUpdateImpl(typename std::vector<typename LlrMetrics::Type>::iterator branch, size_t j)
 {
   typename LlrMetrics::Type max[2] = {typename LlrMetrics::Type(-llrMetrics_.max()), typename LlrMetrics::Type(-llrMetrics_.max())};
   typename LlrMetrics::Type metric[2] = {
     typename LlrMetrics::Type(0),
     typename LlrMetrics::Type(0)};
-  auto branchMetricTmp = branchMetric;
+  auto branchTmp = branch;
   for (auto output = structure().trellis().beginOutput(); output < structure().trellis().endOutput();) {
     for (BitField<size_t> input = 0; input < structure().trellis().inputCount(); ++input) {
-      max[output[input].test(j)] = logSum_.max(branchMetric[input], max[output[input].test(j)]);
+      max[output[input].test(j)] = logSum_.max(branch[input], max[output[input].test(j)]);
     }
-    branchMetric += structure().trellis().inputCount();
+    branch += structure().trellis().inputCount();
     output += structure().trellis().inputCount();
   }
-  branchMetric = branchMetricTmp;
+  branch = branchTmp;
   for (auto output = structure().trellis().beginOutput(); output < structure().trellis().endOutput();) {
     for (BitField<size_t> input = 0; input < structure().trellis().inputCount(); ++input) {
-      metric[output[input].test(j)] = logSum_.sum(logSum_.prior(branchMetric[input], max[output[input].test(j)]), metric[output[input].test(j)]);
+      metric[output[input].test(j)] = logSum_.sum(logSum_.prior(branch[input], max[output[input].test(j)]), metric[output[input].test(j)]);
     }
-    branchMetric += structure().trellis().inputCount();
+    branch += structure().trellis().inputCount();
     output += structure().trellis().inputCount();
   }
   return logSum_.post(metric[1], max[1]) - logSum_.post(metric[0], max[0]);

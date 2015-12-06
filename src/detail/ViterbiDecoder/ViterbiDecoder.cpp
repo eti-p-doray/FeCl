@@ -40,12 +40,12 @@ std::unique_ptr<ViterbiDecoder> ViterbiDecoder::create(const Convolutional::Stru
 /**
  *  Implementation of Codec#decodeNBloc
  */
-void ViterbiDecoder::decodeBlocks(std::vector<double>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n)
+void ViterbiDecoder::decodeBlocks(std::vector<double>::const_iterator first, std::vector<double>::const_iterator last, std::vector<BitField<size_t>>::iterator output)
 {
-  for (size_t i = 0; i < n; i++) {
-    decodeBlock(parity, msg);
-    parity += structure().trellis().outputSize() * (structure().length() + structure().tailSize());
-    msg += structure().trellis().inputSize() * structure().length();
+  while (first != last) {
+    decodeBlock(first, output);
+    first += structure().paritySize();
+    output += structure().msgSize();
   }
 }
 

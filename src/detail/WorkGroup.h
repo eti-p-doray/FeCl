@@ -37,17 +37,18 @@ namespace fec {
     {
       friend class boost::serialization::access;
     public:
-      template <typename Functor, typename Input, typename Output>
-      void executeTask(Functor f, Input begin, Input end, in, Output out);
+      WorkGroup(size_t maxSize = 1) {maxSize_ = 1;}
+      
+      template <class InputIterator, class OutputIterator, class Functor>
+      void execute(InputIterator first, InputIterator last, OutputIterator output, Functor f) const;
+      
+      inline size_t getStep(size_t blocks) const;
       
     private:
       template <typename Archive>
       void serialize(Archive & ar, const unsigned int version);
       
-      std::vector<std::thread> createWorkGroup() const;
-      size_t taskSize(size_t blockCount) const;
-      
-      int workGroupSize_;
+      int maxSize_;
     };
     
   }
@@ -55,31 +56,37 @@ namespace fec {
 
 
 template <typename Archive>
-void fec::WorkGroup::serialize(Archive & ar, const unsigned int version) {
+void fec::detail::WorkGroup::serialize(Archive & ar, const unsigned int version) {
   using namespace boost::serialization;
-  ar & ::BOOST_SERIALIZATION_NVP(structure_);
+  ar & ::BOOST_SERIALIZATION_NVP(maxSize_);
 }
 
-template <typename Functor, typename Input, typename Output>
-void fec::WorkGroup::executeTask(Functor f, Input begin, Input end, Output out)
+size_t fec::detail::WorkGroup::getStep(size_t blockCount) const
 {
-  size_t blockCount = end - begin;
-  
-  auto threadGroup = createWorkGroup();
-  auto thread = threadGroup.begin();
-  size_t step = taskSize(blockCount);
+  int n = std::thread::hardware_concurrency();
+  if (n > maxSize_ || n == 0) {
+    n = maxSize_;
+  }
+  return (blockCount+n-1)/n;
+}
+
+template <class InputIterator, class OutputIterator, class Functor>
+void fec::detail::WorkGroup::execute(InputIterator first, InputIterator last, OutputIterator output, Functor f) const
+{
+  size_t blockCount = std::distance(first, last);
+  size_t step = getStep(blockCount);
+  std::vector<std::thread> group;
   for (int i = 0; i + step <= blockCount; i += step) {
-    threadGroup.push_back( std::thread(&f, begin, out, step) );
-    ++begin;
-    ++out;
-    ++thread;
+    group.push_back( std::thread(f, first, first+step, output) );
+    output += step; first += step;
   }
-  if (msgOutIt != msg.end()) {
-    decodeBlocks(begin, out, blockCount % step);
+  if (first != last) {
+    f(first, last, output);
   }
-  for (auto & thread : threadGroup) {
-    thread.join();
+  for (auto& t : group) {
+    t.join();
   }
 }
+
 
 #endif

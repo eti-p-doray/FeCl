@@ -78,8 +78,8 @@ namespace fec {
     inline const detail::Convolutional::Structure& structure() const {return dynamic_cast<const detail::Convolutional::Structure&>(Codec::structure());}
     inline detail::Convolutional::Structure& structure() {return dynamic_cast<detail::Convolutional::Structure&>(Codec::structure());}
     
-    virtual void decodeBlocks(std::vector<double>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const;
-    virtual void soDecodeBlocks(detail::Codec::InputIterator input, detail::Codec::OutputIterator output, size_t n) const;
+    virtual void decodeBlocks(detail::Codec::const_iterator<double> first, detail::Codec::const_iterator<double> last, detail::Codec::iterator<BitField<size_t>> output) const;
+    virtual void soDecodeBlocks(detail::Codec::const_iterator<double> first, detail::Codec::const_iterator<double> last, detail::Codec::iterator<double> output) const;
     
   private:
     template <typename Archive>

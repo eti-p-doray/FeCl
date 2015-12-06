@@ -50,12 +50,10 @@ std::unique_ptr<MapDecoder> MapDecoder::create(const Convolutional::Structure& s
 /**
  *  Implementation of Codec#softOutDecodeNBloc.
  */
-void MapDecoder::soDecodeBlocks(Codec::InputIterator input, Codec::OutputIterator output, size_t n)
+void MapDecoder::soDecodeBlocks(Codec::const_iterator<double> first, Codec::const_iterator<double> last, Codec::iterator<double> output)
 {
-  for (size_t i = 0; i < n; ++i) {
-    soDecodeBlock(input,output);
-    ++input;
-    ++output;
+  while (first != last) {
+    soDecodeBlock(first++,output++);
   }
 }
 

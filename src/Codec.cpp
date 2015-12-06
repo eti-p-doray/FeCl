@@ -25,23 +25,22 @@ using namespace fec;
 
 BOOST_CLASS_EXPORT_IMPLEMENT(Codec);
 
-Codec::Codec(std::unique_ptr<detail::Codec::Structure>&& structure, int workGroupSize) : structure_(std::move(structure))
+Codec::Codec(std::unique_ptr<detail::Codec::Structure>&& structure, int workGroupSize) : structure_(std::move(structure)), workGroup_(workGroupSize)
 {
-  workGroupSize_ = workGroupSize;
 }
 
 /**
  *  Checks several blocs of msg bits.
  *  \param  parityIt Input iterator pointing to the first element in the parity bit sequence.
  */
-bool Codec::checkBlocks(std::vector<BitField<size_t>>::const_iterator parity, size_t n) const
+bool Codec::checkBlocks(detail::Codec::const_iterator<BitField<size_t>> first, detail::Codec::const_iterator<BitField<size_t>> last) const
 {
-  for (size_t i = 0; i < n; ++i) {
-    bool check = structure().check(parity);
+  while (first != last) {
+    bool check = structure().check(first.at(detail::Codec::Parity));
     if (!check) {
       return false;
     }
-    parity += paritySize();
+    ++first;
   }
   return true;
 }
@@ -52,27 +51,11 @@ bool Codec::checkBlocks(std::vector<BitField<size_t>>::const_iterator parity, si
  *  \param  parityIt[out] Output iterator pointing to the first element in the parity bit sequence.
  *    The output neeeds to be pre-allocated.
  */
-void Codec::encodeBlocks(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity, size_t n) const
+void Codec::encodeBlocks(detail::Codec::const_iterator<BitField<size_t>> first, detail::Codec::const_iterator<BitField<size_t>> last, detail::Codec::iterator<BitField<size_t>> output) const
 {
-  for (size_t i = 0; i < n; ++i) {
-    structure().encode(msg, parity);
-    msg += msgSize();
-    parity += paritySize();
+  while (first != last) {
+    structure().encode(first.at(detail::Codec::Msg), output.at(detail::Codec::Parity));
+    ++first; ++output;
   }
 }
 
-std::vector<std::thread> Codec::createWorkGroup() const
-{
-  std::vector<std::thread> threadGroup;
-  threadGroup.reserve(getWorkGroupSize());
-  return threadGroup;
-}
-
-size_t Codec::taskSize(size_t blockCount) const
-{
-  int n = std::thread::hardware_concurrency();
-  if (n > getWorkGroupSize() || n == 0) {
-    n = getWorkGroupSize();
-  }
-  return (blockCount+n-1)/n;
-}

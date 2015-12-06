@@ -132,12 +132,22 @@ namespace fec {
         void setDecoderOptions(const DecoderOptions& decoder);
         DecoderOptions getDecoderOptions() const;
         
+        size_t msgWidth() const override {return 1;} /**< Access the width of msg in each code bloc. */
+        size_t systWidth() const override {return 1;} /**< Access the width of systematics in each code bloc. */
+        size_t parityWidth() const override {return 1;} /**< Access the width of parities in each code bloc. */
+        size_t stateWidth() const override {return 1;} /**< Access the width of state information in each code bloc. */
+        
+        size_t msgSize() const override {return msgSize_;} /**< Access the size of msg in each code bloc. */
+        size_t systSize() const override {return systSize_;} /**< Access the size of systematics in each code bloc. */
+        size_t paritySize() const override {return paritySize_;} /**< Access the size of parities in each code bloc. */
+        size_t stateSize() const override {return stateSize_;} /**< Access the size of state information in each code bloc. */
+        
         /**
          *  Access the size of added msg bit for the trellis termination.
          *  This is zero in the cas of trunction.
          *  \return Tail size
          */
-        inline size_t systTailSize() const {return tailSize_;}
+        inline size_t tailSize() const {return tailSize_;}
         inline size_t constituentCount() const {return constituents_.size();}
         inline const std::vector<Convolutional::Structure>& constituents() const {return constituents_;}
         inline const std::vector<Permutation>& interleavers() const {return interleaver_;}
@@ -162,6 +172,11 @@ namespace fec {
         template <typename Archive>
         void serialize(Archive & ar, const unsigned int version);
         
+        size_t msgSize_;
+        size_t systSize_;
+        size_t paritySize_;
+        size_t stateSize_;
+        
         std::vector<Convolutional::Structure> constituents_;
         std::vector<Permutation> interleaver_;
         size_t tailSize_;
@@ -185,6 +200,11 @@ template <typename Archive>
 void fec::detail::Turbo::Structure::serialize(Archive & ar, const unsigned int version) {
   using namespace boost::serialization;
   ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(Codec::Structure);
+  ar & ::BOOST_SERIALIZATION_NVP(msgSize_);
+  ar & ::BOOST_SERIALIZATION_NVP(systSize_);
+  ar & ::BOOST_SERIALIZATION_NVP(paritySize_);
+  ar & ::BOOST_SERIALIZATION_NVP(stateSize_);
+  
   ar & ::BOOST_SERIALIZATION_NVP(constituents_);
   ar & ::BOOST_SERIALIZATION_NVP(interleaver_);
   ar & ::BOOST_SERIALIZATION_NVP(tailSize_);

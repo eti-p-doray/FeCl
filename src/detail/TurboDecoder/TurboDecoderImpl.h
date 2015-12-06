@@ -39,16 +39,16 @@ namespace fec {
       TurboDecoderImpl(const Turbo::Structure& structure);
       virtual ~TurboDecoderImpl() = default;
       
+      void decodeBlock(std::vector<double>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg) override;
+      void soDecodeBlock(Codec::const_iterator<double> input, Codec::iterator<double> output) override;
+      
     protected:
       TurboDecoderImpl() = default;
-      
-      virtual void decodeBlock(std::vector<double>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg);
-      virtual void soDecodeBlock(Codec::InputIterator input, Codec::OutputIterator output);
       
     private:
       void aPosterioriUpdate();
       
-      void customActivationUpdate(size_t i, size_t stage);
+      void customActivationUpdate(size_t i, size_t stage, bool outputParity);
       
       void serialTransferUpdate(size_t i);
       void parallelTransferUpdate();

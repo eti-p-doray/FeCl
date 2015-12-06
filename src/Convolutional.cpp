@@ -48,14 +48,14 @@ const char * Convolutional::get_key() const
 }
 
 
-void Convolutional::soDecodeBlocks(detail::Codec::InputIterator input, detail::Codec::OutputIterator output, size_t n) const
+void Convolutional::soDecodeBlocks(detail::Codec::const_iterator<double> first, detail::Codec::const_iterator<double> last, detail::Codec::iterator<double> output) const
 {
   auto worker = detail::MapDecoder::create(structure());
-  worker->soDecodeBlocks(input, output, n);
+  worker->soDecodeBlocks(first, last, output);
 }
 
-void Convolutional::decodeBlocks(std::vector<double>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg, size_t n) const
+void Convolutional::decodeBlocks(detail::Codec::const_iterator<double> first, detail::Codec::const_iterator<double> last, detail::Codec::iterator<BitField<size_t>> output) const
 {
   auto worker = detail::ViterbiDecoder::create(structure());
-  worker->decodeBlocks(parity, msg, n);
+  worker->decodeBlocks(first.at(detail::Codec::Parity), last.at(detail::Codec::Parity), output.at(detail::Codec::Msg));
 }
