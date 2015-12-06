@@ -84,7 +84,7 @@ function make
         objInfo = dir(fullfile(objDst, pathstr, [name '.*']));
         srcInfo = dir(fullfile(srcPath, src{i}));
         if (isempty(objInfo) || objInfo.datenum < srcInfo.datenum)
-            mex('-v', ['CXXFLAGS= ${CXXFLAGS}' cxxFlags], iPath{:}, '-largeArrayDims', '-DBOOST_ALL_NO_LIB','-outdir', fullfile(objDst, pathstr), '-c', [srcPath src{i}]);
+            mex('-v', ['CXXFLAGS= ' cxxFlags], iPath{:}, '-largeArrayDims', '-DBOOST_ALL_NO_LIB','-outdir', fullfile(objDst, pathstr), '-c', [srcPath src{i}]);
         else
             disp('skip');
         end
@@ -97,7 +97,7 @@ function make
         objInfo = dir(fullfile(objDst, [name '.*']));
         srcInfo = dir(fullfile(libsPath, libs{i}));
         if (isempty(objInfo) || objInfo.datenum < srcInfo.datenum)
-            mex('-v',['CXXFLAGS= ${CXXFLAGS}' cxxFlags], iPath{:}, '-largeArrayDims','-DBOOST_ALL_NO_LIB', '-outdir', objDst, '-c', [libsPath libs{i}]);
+            mex('-v',['CXXFLAGS= ' cxxFlags], iPath{:}, '-largeArrayDims','-DBOOST_ALL_NO_LIB', '-outdir', objDst, '-c', [libsPath libs{i}]);
         else
             disp('skip');
         end
