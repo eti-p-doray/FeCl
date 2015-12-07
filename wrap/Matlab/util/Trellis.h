@@ -64,13 +64,13 @@ inline mxArray* toMxArray(const fec::Trellis& trellis)
   for (size_t i = 0; i < trellis.stateCount(); ++i) {
     for (fec::BitField<size_t> j = 0; j < trellis.inputCount(); j++) {
       fec::BitField<size_t> input = 0;
-      for (int k = 0; k < trellis.inputSize(); ++k) {
-        input[k] = j[trellis.inputSize()-k-1];
+      for (int k = 0; k < trellis.inputWidth(); ++k) {
+        input[k] = j[trellis.inputWidth()-k-1];
       }
       nextStates[i+input*trellis.stateCount()] = trellis.getNextState(i, j);
       outputs[i+input*trellis.stateCount()] = 0;
-      for (size_t k = 0; k < trellis.outputSize(); k++) {
-        outputs[i+input*trellis.stateCount()][trellis.outputSize()-k-1] = trellis.getOutput(i, j).test(k);
+      for (size_t k = 0; k < trellis.outputWidth(); k++) {
+        outputs[i+input*trellis.stateCount()][trellis.outputWidth()-k-1] = trellis.getOutput(i, j).test(k);
       }
     }
   }

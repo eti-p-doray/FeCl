@@ -164,8 +164,8 @@ void TurboDecoderImpl::aPosterioriUpdate()
     for (size_t k = 0; k < structure().constituent(j).tailLength(); ++k) {
       tail[k] += state[k];
     }
-    state += structure().constituent(j).tailLength();
-    tail += structure().constituent(j).tailLength();
+    state += structure().constituent(j).tailSize();
+    tail += structure().constituent(j).tailSize();
   }
 }
   

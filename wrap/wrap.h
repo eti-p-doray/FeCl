@@ -112,12 +112,12 @@ const std::vector<std::function<typename WrapFcn<Wrap>::Signature>> WrapFcn<Wrap
     std::vector<double,Allocator<double>> systIn;
     if (in.size() > 3) systIn = wrapTo<std::vector<double,Allocator<double>>>{}("Syst vector")(in[3]);
     
-    auto input = Codec::Input<Allocator>();
+    auto input = Codec::Input<double,Allocator>();
     if (parityIn.size()) input.parity(parityIn);
     if (stateIn.size()) input.state(stateIn);
     if (systIn.size()) input.syst(systIn);
     
-    auto output = Codec::Output<Allocator>();
+    auto output = Codec::Output<double,Allocator>();
     std::vector<double,Allocator<double>> msg;
     std::vector<double,Allocator<double>> systOut;
     std::vector<double,Allocator<double>> stateOut;

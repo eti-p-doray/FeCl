@@ -37,7 +37,10 @@ namespace fec {
     {
       friend class boost::serialization::access;
     public:
-      WorkGroup(size_t maxSize = 1) {maxSize_ = 1;}
+      WorkGroup(int maxSize = 0) {maxSize_ = maxSize;}
+      
+      void setMaxSize(int maxSize) {maxSize_ = maxSize;}
+      int getMaxSize() const {return maxSize_;}
       
       template <class InputIterator, class OutputIterator, class Functor>
       void execute(InputIterator first, InputIterator last, OutputIterator output, Functor f) const;
@@ -64,7 +67,7 @@ void fec::detail::WorkGroup::serialize(Archive & ar, const unsigned int version)
 size_t fec::detail::WorkGroup::getStep(size_t blockCount) const
 {
   int n = std::thread::hardware_concurrency();
-  if (n > maxSize_ || n == 0) {
+  if (maxSize_ <= 0 && (n > maxSize_ || n == 0)) {
     n = maxSize_;
   }
   return (blockCount+n-1)/n;

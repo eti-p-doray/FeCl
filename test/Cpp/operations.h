@@ -108,6 +108,10 @@ void test_saveLoad(const fec::Codec& code) {
   std::vector<char> archive(archiveSize(&code, derived));
   save(&code, &archive[0], archive.size(), derived);
   auto recover = fec::detail::load<fec::Codec>(&archive[0], archive.size(), derived);
+  BOOST_CHECK(recover->msgSize() == code.msgSize());
+  BOOST_CHECK(recover->systSize() == code.systSize());
+  BOOST_CHECK(recover->paritySize() == code.paritySize());
+  BOOST_CHECK(recover->stateSize() == code.stateSize());
 }
 
 void test_decode(const fec::Codec& code, double snr, size_t n = 1)
@@ -123,24 +127,6 @@ void test_decode(const fec::Codec& code, double snr, size_t n = 1)
   BOOST_REQUIRE(msgOut.size() == code.msgSize()*n);
   for (size_t i = 0; i < msg.size(); ++i) {
     BOOST_REQUIRE(msg[i] == msgOut[i]);
-  }
-}
-
-void test_decode_puncture(const fec::Codec& codec, const fec::Permutation& perm, const fec::Codec& puncturedCodec, double snr, size_t n)
-{
-  std::vector<fec::BitField<size_t>> msg(puncturedCodec.msgSize()*n, 1);
-  std::vector<fec::BitField<size_t>> puncturedParity = puncturedCodec.encode(msg);
-  
-  std::vector<double> puncturedParityIn = distort(puncturedParity, snr);
-  
-  std::vector<double> parityIn = perm.dePermute(puncturedParityIn);
-  
-  auto msg1 = codec.decode(parityIn);
-  auto msg2 = puncturedCodec.decode(puncturedParityIn);
-  
-  BOOST_REQUIRE(msg1.size() == msg2.size());
-  for (size_t i = 0; i < msg1.size(); ++i) {
-    BOOST_REQUIRE(msg1[i] == msg2[i]);
   }
 }
 
@@ -165,16 +151,13 @@ void test_soDecode(const fec::Codec& code, double snr, size_t n = 1)
   std::vector<double> parityIn = distort(parity, snr);
   
   std::vector<double> msgOut;
-  code.soDecode(fec::Codec::Input<>().parity(parityIn), fec::Codec::Output<>().msg(msgOut));
+  code.soDecode(fec::Codec::Input<double>{}.parity(parityIn), fec::Codec::Output<double>{}.msg(msgOut));
   
   std::vector<fec::BitField<size_t>> msgDec;
   code.decode(parityIn, msgDec);
   
   BOOST_REQUIRE(msgOut.size() == code.msgSize()*n);
   for (size_t i = 0; i < msg.size(); ++i) {
-    if (msgDec[i] != (msgOut[i]>0)) {
-      std::cout << i << std::endl;
-    }
     BOOST_REQUIRE(msgDec[i] == (msgOut[i]>0));
   }
 }
@@ -193,8 +176,8 @@ void test_soDecode_puncture(const fec::Codec& codec, const fec::Permutation& per
   std::vector<double> parityOut1;
   std::vector<double> parityOut2;
   
-  codec.soDecode(fec::Codec::Input<>().parity(parityIn), fec::Codec::Output<>().msg(msgOut1).parity(parityOut1));
-  puncturedCodec.soDecode(fec::Codec::Input<>().parity(puncturedParityIn), fec::Codec::Output<>().msg(msgOut2).parity(parityOut2));
+  codec.soDecode(fec::Codec::Input<double>{}.parity(parityIn), fec::Codec::Output<double>{}.msg(msgOut1).parity(parityOut1));
+  puncturedCodec.soDecode(fec::Codec::Input<double>{}.parity(puncturedParityIn), fec::Codec::Output<double>{}.msg(msgOut2).parity(parityOut2));
   parityOut1 = perm.permute(parityOut1);
   
   BOOST_REQUIRE(msgOut1.size() == msgOut2.size());
@@ -216,7 +199,7 @@ void test_soDecode_parityOut(const fec::Codec& code, double snr, size_t n = 1)
   std::vector<double> parityIn = distort(parity, snr);
   std::vector<double> msgOut;
   std::vector<double> parityOut;
-  code.soDecode(fec::Codec::Input<>().parity(parityIn), fec::Codec::Output<>().msg(msgOut).parity(parityOut));
+  code.soDecode(fec::Codec::Input<double>{}.parity(parityIn), fec::Codec::Output<double>{}.msg(msgOut).parity(parityOut));
   
   BOOST_REQUIRE(msgOut.size() == code.msgSize()*n);
   BOOST_REQUIRE(parityOut.size() == code.paritySize()*n);
@@ -245,7 +228,7 @@ void test_soDecode_systIn(const fec::Codec& code, double snr, size_t n = 1)
   systIn.resize(code.systSize());
   std::vector<double> msgOut;
   std::vector<double> parityOut;
-  code.soDecode(fec::Codec::Input<>().parity(parityIn), fec::Codec::Output<>().msg(msgOut).parity(parityOut));
+  code.soDecode(fec::Codec::Input<double>{}.parity(parityIn), fec::Codec::Output<double>{}.msg(msgOut).parity(parityOut));
   
   size_t msgErrorCount1 = 0;
   for (size_t i = 0; i < msg.size(); ++i) {
@@ -257,7 +240,7 @@ void test_soDecode_systIn(const fec::Codec& code, double snr, size_t n = 1)
     parityErrorCount1 += (parity[i] != parityOut[i]);
   }
   
-  code.soDecode(fec::Codec::Input<>().parity(parityIn).syst(systIn), fec::Codec::Output<>().msg(msgOut).parity(parityOut));
+  code.soDecode(fec::Codec::Input<double>().parity(parityIn).syst(systIn), fec::Codec::Output<double>().msg(msgOut).parity(parityOut));
   
   size_t msgErrorCount2 = 0;
   for (size_t i = 0; i < msg.size()*n; ++i) {
@@ -285,13 +268,13 @@ void test_soDecode_0systIn(const fec::Codec& code, size_t n = 1)
   std::vector<double> msgOut1;
   std::vector<double> systOut1;
   std::vector<double> parityOut1;
-  code.soDecode(fec::Codec::Input<>().parity(parityIn), fec::Codec::Output<>().msg(msgOut1).syst(systOut1).parity(parityOut1));
+  code.soDecode(fec::Codec::Input<double>().parity(parityIn), fec::Codec::Output<double>().msg(msgOut1).syst(systOut1).parity(parityOut1));
   
   std::vector<double> syst(code.systSize()*n, 0);
   std::vector<double> msgOut2;
   std::vector<double> systOut2;
   std::vector<double> parityOut2;
-  code.soDecode(fec::Codec::Input<>().parity(parityIn).syst(syst), fec::Codec::Output<>().msg(msgOut2).syst(systOut2).parity(parityOut2));
+  code.soDecode(fec::Codec::Input<double>().parity(parityIn).syst(syst), fec::Codec::Output<double>().msg(msgOut2).syst(systOut2).parity(parityOut2));
   
   BOOST_REQUIRE(msgOut1.size() == msgOut2.size());
   BOOST_REQUIRE(systOut1.size() == systOut2.size());
@@ -319,13 +302,13 @@ void test_soDecode_0stateIn(const fec::Codec& code, size_t n = 1)
   std::vector<double> msgOut1;
   std::vector<double> systOut1;
   std::vector<double> parityOut1;
-  code.soDecode(fec::Codec::Input<>().parity(parityIn), fec::Codec::Output<>().msg(msgOut1).syst(systOut1).parity(parityOut1));
+  code.soDecode(fec::Codec::Input<double>().parity(parityIn), fec::Codec::Output<double>().msg(msgOut1).syst(systOut1).parity(parityOut1));
   
   std::vector<double> state(code.stateSize()*n, 0);
   std::vector<double> msgOut2;
   std::vector<double> systOut2;
   std::vector<double> parityOut2;
-  code.soDecode(fec::Codec::Input<>().parity(parityIn).state(state), fec::Codec::Output<>().msg(msgOut2).syst(systOut2).parity(parityOut2));
+  code.soDecode(fec::Codec::Input<double>().parity(parityIn).state(state), fec::Codec::Output<double>().msg(msgOut2).syst(systOut2).parity(parityOut2));
   
   BOOST_REQUIRE(msgOut1.size() == msgOut2.size());
   BOOST_REQUIRE(systOut1.size() == systOut2.size());
@@ -360,13 +343,13 @@ void test_soDecode_2phases(const fec::Codec& code1, const fec::Codec& code2, siz
   std::vector<double> systOut1;
   std::vector<double> parityOut1;
   std::vector<double> state;
-  code1.soDecode(fec::Codec::Input<>().parity(parityIn), fec::Codec::Output<>().state(state));
-  code1.soDecode(fec::Codec::Input<>().parity(parityIn).state(state), fec::Codec::Output<>().msg(msgOut1).syst(systOut1).parity(parityOut1));
+  code1.soDecode(fec::Codec::Input<double>().parity(parityIn), fec::Codec::Output<double>().state(state));
+  code1.soDecode(fec::Codec::Input<double>().parity(parityIn).state(state), fec::Codec::Output<double>().msg(msgOut1).syst(systOut1).parity(parityOut1));
   
   std::vector<double> msgOut2;
   std::vector<double> systOut2;
   std::vector<double> parityOut2;
-  code2.soDecode(fec::Codec::Input<>().parity(parityIn), fec::Codec::Output<>().msg(msgOut2).syst(systOut2).parity(parityOut2));
+  code2.soDecode(fec::Codec::Input<double>().parity(parityIn), fec::Codec::Output<double>().msg(msgOut2).syst(systOut2).parity(parityOut2));
   
   BOOST_REQUIRE(msgOut1.size() == msgOut2.size());
   BOOST_REQUIRE(systOut1.size() == systOut2.size());
@@ -387,7 +370,7 @@ void test_soDecode_badParitySize(const fec::Codec& code)
   std::vector<double> parityIn(code.paritySize()+1);
   std::vector<double> syst;
   try {
-    code.soDecode(fec::Codec::Input<>().parity(parityIn), fec::Codec::Output<>().syst(syst));
+    code.soDecode(fec::Codec::Input<double>().parity(parityIn), fec::Codec::Output<double>().syst(syst));
   } catch (std::exception& e) {
     return;
   }
@@ -400,7 +383,7 @@ void test_soDecode_badSystSize(const fec::Codec& code)
   std::vector<double> systIn(code.systSize()+1);
   std::vector<double> syst;
   try {
-    code.soDecode(fec::Codec::Input<>().syst(systIn), fec::Codec::Output<>().syst(syst));
+    code.soDecode(fec::Codec::Input<double>().syst(systIn), fec::Codec::Output<double>().syst(syst));
   } catch (std::exception& e) {
     return;
   }
@@ -413,7 +396,7 @@ void test_soDecode_badStateSize(const fec::Codec& code)
   std::vector<double> stateIn(code.stateSize()+1);
   std::vector<double> syst;
   try {
-    code.soDecode(fec::Codec::Input<>().state(stateIn), fec::Codec::Output<>().syst(syst));
+    code.soDecode(fec::Codec::Input<double>().state(stateIn), fec::Codec::Output<double>().syst(syst));
   } catch (std::exception& e) {
     return;
   }
@@ -424,7 +407,7 @@ void test_soDecode_noParity(const fec::Codec& code)
 {
   std::vector<double> syst;
   try {
-    code.soDecode(fec::Codec::Input<>(), fec::Codec::Output<>().syst(syst));
+    code.soDecode(fec::Codec::Input<double>(), fec::Codec::Output<double>().syst(syst));
   } catch (std::exception& e) {
     return;
   }

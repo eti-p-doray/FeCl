@@ -70,8 +70,8 @@ namespace fec {
     inline size_t paritySize() const {return structure().paritySize();} /**< Access the size of the parity in each code bloc. */
     inline size_t stateSize() const {return structure().stateSize();} /**< Access the size of the extrinsic in each code bloc. */
     
-    //int getWorkGroupSize() const {return workGroupSize_;}
-    //void setWorkGroupSize(int size) {workGroupSize_ = size;}
+    int getWorkGroupSize() const {return workGroup_.getMaxSize();}
+    void setWorkGroupSize(int size) {workGroup_.setMaxSize(size);}
     
     template <template <typename> class A>
     bool check(const std::vector<BitField<size_t>,A<BitField<size_t>>>& parity) const;
@@ -132,7 +132,9 @@ bool fec::Codec::check(const std::vector<BitField<size_t>,A<BitField<size_t>>>& 
   if (parity.size() != blockCount * paritySize()) {
     throw std::invalid_argument("Invalid size for parity");
   }
-  return checkBlocks(parity.begin(), blockCount);
+  detail::Codec::const_iterator<BitField<size_t>> begin{{detail::Codec::Parity, parity.begin(), paritySize()}};
+  detail::Codec::const_iterator<BitField<size_t>> end{{detail::Codec::Parity, parity.end(), paritySize()}};
+  return checkBlocks(begin, end);
 }
 
 /**
@@ -255,8 +257,8 @@ void fec::Codec::soDecode(Input<double,A> input, Output<double,A> output) const
     }
   }
   if (input.count(detail::Codec::State)) {
-    begin.insert(detail::Codec::State, input.at(detail::Codec::State).begin(), systSize());
-    end.insert(detail::Codec::State, input.at(detail::Codec::State).end(), systSize());
+    begin.insert(detail::Codec::State, input.at(detail::Codec::State).begin(), stateSize());
+    end.insert(detail::Codec::State, input.at(detail::Codec::State).end(), stateSize());
     if (input.at(detail::Codec::State).size() != blockCount * stateSize()) {
       throw std::invalid_argument("Invalid size for state");
     }

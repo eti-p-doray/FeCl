@@ -33,7 +33,7 @@ template <class LlrMetrics, template <class> class LogSumAlg>
 MapDecoderImpl<LlrMetrics, LogSumAlg>::MapDecoderImpl(const Convolutional::Structure& structure) :
 MapDecoder(structure)
 {
-  branch_.resize((this->structure().length()+this->structure().tailSize())*this->structure().trellis().inputCount()*this->structure().trellis().stateCount());
+  branch_.resize((this->structure().length()+this->structure().tailLength())*this->structure().trellis().inputCount()*this->structure().trellis().stateCount());
   forward_.resize((this->structure().length()+this->structure().tailLength())*this->structure().trellis().stateCount());
   backward_.resize((this->structure().length()+this->structure().tailLength())*this->structure().trellis().stateCount());
   
