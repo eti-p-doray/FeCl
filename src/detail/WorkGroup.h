@@ -25,6 +25,7 @@
 #include <memory>
 #include <thread>
 #include <vector>
+#include <future>
 
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/utility.hpp>
@@ -43,7 +44,11 @@ namespace fec {
       int getMaxSize() const {return maxSize_;}
       
       template <class InputIterator, class OutputIterator, class Functor>
-      void execute(InputIterator first, InputIterator last, OutputIterator output, Functor f) const;
+      void executeTask(InputIterator first, InputIterator last, OutputIterator output, Functor f);
+      template <class InputIterator, class OutputIterator, class Functor>
+      void addTask(InputIterator first, InputIterator last, OutputIterator output, Functor f);
+      
+      inline void wait();
       
       inline size_t getStep(size_t blocks) const;
       
@@ -51,6 +56,7 @@ namespace fec {
       template <typename Archive>
       void serialize(Archive & ar, const unsigned int version);
       
+      std::vector<std::future<void>> group_;
       int maxSize_;
     };
     
@@ -67,28 +73,39 @@ void fec::detail::WorkGroup::serialize(Archive & ar, const unsigned int version)
 size_t fec::detail::WorkGroup::getStep(size_t blockCount) const
 {
   int n = std::thread::hardware_concurrency();
-  if (maxSize_ <= 0 && (n > maxSize_ || n == 0)) {
+  if (maxSize_ > 0 && (n > maxSize_ || n == 0)) {
     n = maxSize_;
   }
   return (blockCount+n-1)/n;
 }
 
 template <class InputIterator, class OutputIterator, class Functor>
-void fec::detail::WorkGroup::execute(InputIterator first, InputIterator last, OutputIterator output, Functor f) const
+void fec::detail::WorkGroup::executeTask(InputIterator first, InputIterator last, OutputIterator output, Functor f)
+{
+  addTask(first, last, output, f);
+  wait();
+}
+
+template <class InputIterator, class OutputIterator, class Functor>
+void fec::detail::WorkGroup::addTask(InputIterator first, InputIterator last, OutputIterator output, Functor f)
 {
   size_t blockCount = std::distance(first, last);
   size_t step = getStep(blockCount);
-  std::vector<std::thread> group;
   for (int i = 0; i + step <= blockCount; i += step) {
-    group.push_back( std::thread(f, first, first+step, output) );
+    group_.push_back(std::async(f, first, first+step, output));
+    
     output += step; first += step;
   }
   if (first != last) {
     f(first, last, output);
   }
-  for (auto& t : group) {
-    t.join();
+}
+
+void fec::detail::WorkGroup::wait() {
+  for (auto& t : group_) {
+    t.wait();
   }
+  group_.clear();
 }
 
 

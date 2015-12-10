@@ -19,44 +19,40 @@
  along with FeCl.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#ifndef FEC_MAP_DECODER_H
-#define FEC_MAP_DECODER_H
+#ifndef FEC_DEMODULATOR_H
+#define FEC_DEMODULATOR_H
 
 #include <vector>
 #include <memory>
 
-#include "../Convolutional.h"
+#include "../Modulation.h"
 
 namespace fec {
   
   namespace detail {
     
     /**
-     *  This class contains the abstract implementation of the map decoder.
-     *  This algorithm is used for decoding with a-priori information
-     *  in a ConvolutionalCodec.
-     *  The reason for this class is to offer an common interface of map decoders
+     *  This class contains the abstract implementation of the demodulator.
+     *  The reason for this class is to offer an common interface of demodulators
      *  while allowing the compiler to inline implementation specific functions
-     *  by using templates instead of polymorphism.
+     *  by using metaprogramming instead of polymorphism.
      */
-    class MapDecoder
+    class Demodulator
     {
     public:
-      static std::unique_ptr<MapDecoder> create(const Convolutional::Structure&); /**< Creating function */
-      virtual ~MapDecoder() = default; /**< Default destructor */
+      static std::unique_ptr<Demodulator> create(const Modulation::Structure&); /**< Creating function */
+      virtual ~Demodulator() = default; /**< Default destructor */
       
-      void soDecodeBlocks(Codec::const_iterator<double> inputf, Codec::const_iterator<double> inputl, Codec::iterator<double> output);
-      virtual void soDecodeBlock(Codec::const_iterator<double> input, Codec::iterator<double> output) = 0;
-      
-      void setScalingFactor(double factor) {structure_.setScalingFactor(factor);}
+      virtual void soDemodulateBlocks(Modulation::const_iterator<double> inputf, Modulation::const_iterator<double> inputl, double k, std::vector<double>::iterator word) = 0;
+      virtual void soDemodulateBlock(Modulation::const_iterator<double> input, double k, std::vector<double>::iterator word) = 0;
       
     protected:
-      MapDecoder(const Convolutional::Structure&); /**< Constructor */
+      Demodulator(const Modulation::Structure&); /**< Constructor */
       
-      inline const Convolutional::Structure& structure() const {return structure_;} /**< Access the code structure */
+      inline const Modulation::Structure& structure() const {return structure_;} /**< Access the code structure */
       
     private:
-      Convolutional::Structure structure_;
+      Modulation::Structure structure_;
     };
     
   }

@@ -204,12 +204,21 @@ namespace fec {
      *  \return Correlation between the two inputs
      */
     template <class LlrMetrics>
-    inline typename LlrMetrics::Type correlation(const fec::BitField<size_t>& a, typename std::vector<double>::const_iterator b, size_t size) {
+    inline typename LlrMetrics::Type correlation(const fec::BitField<size_t>& a, std::vector<double>::const_iterator b, size_t size) {
       typename LlrMetrics::Type x = 0;
       for (size_t i = 0; i < size; ++i) {
         if (a.test(i)) {
           x += typename LlrMetrics::Type(b[i]);
         }
+      }
+      return x;
+    }
+    
+    template <class LlrMetrics>
+    inline typename LlrMetrics::Type sqDistance(std::vector<double>::const_iterator a, std::vector<double>::const_iterator b, size_t size) {
+      typename LlrMetrics::Type x = 0;
+      for (size_t i = 0; i < size; ++i) {
+        x += std::pow(a[i] - b[i], 2);
       }
       return x;
     }

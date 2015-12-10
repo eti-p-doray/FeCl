@@ -87,7 +87,6 @@ namespace fec {
     };
     
     Turbo() = default;
-    Turbo(const detail::Turbo::Structure& structure, int workGroupSize = 8);
     Turbo(const EncoderOptions& encoder, const DecoderOptions& decoder, int workGroupSize = 8);
     Turbo(const EncoderOptions& encoder, int workGroupSize = 8);
     Turbo(const Turbo& other) {*this = other;}
@@ -111,6 +110,8 @@ namespace fec {
     virtual void soDecodeBlocks(detail::Codec::const_iterator<double> first, detail::Codec::const_iterator<double> last, detail::Codec::iterator<double> output) const;
     
   private:
+    Turbo(const detail::Turbo::Structure& structure, int workGroupSize = 8);
+    
     template <typename Archive>
     void serialize(Archive & ar, const unsigned int version);
   };

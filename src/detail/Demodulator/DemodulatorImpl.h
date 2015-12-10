@@ -19,13 +19,14 @@
  along with FeCl.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#ifndef FEC_MAP_DECODER_H
-#define FEC_MAP_DECODER_H
+#ifndef FEC_DEMODULATOR_IMPL_H
+#define FEC_DEMODULATOR_IMPL_H
 
 #include <vector>
 #include <memory>
 
-#include "../Convolutional.h"
+#include "Demodulator.h"
+#include "../LlrMetrics.h"
 
 namespace fec {
   
@@ -39,24 +40,30 @@ namespace fec {
      *  while allowing the compiler to inline implementation specific functions
      *  by using templates instead of polymorphism.
      */
-    class MapDecoder
+    template <class LlrMetrics, template <class> class LogSumAlg>
+    class DemodulatorImpl : public Demodulator
     {
     public:
-      static std::unique_ptr<MapDecoder> create(const Convolutional::Structure&); /**< Creating function */
-      virtual ~MapDecoder() = default; /**< Default destructor */
+      DemodulatorImpl(const Modulation::Structure&); /**< Constructor */
+      virtual ~DemodulatorImpl() = default; /**< Default destructor */
       
-      void soDecodeBlocks(Codec::const_iterator<double> inputf, Codec::const_iterator<double> inputl, Codec::iterator<double> output);
-      virtual void soDecodeBlock(Codec::const_iterator<double> input, Codec::iterator<double> output) = 0;
-      
-      void setScalingFactor(double factor) {structure_.setScalingFactor(factor);}
+      void soDemodulateBlocks(Modulation::const_iterator<double> inputf, Modulation::const_iterator<double> inputl, double k, std::vector<double>::iterator word) override;
+      void soDemodulateBlock(Modulation::const_iterator<double> input, double k, std::vector<double>::iterator word) override;
       
     protected:
-      MapDecoder(const Convolutional::Structure&); /**< Constructor */
-      
-      inline const Convolutional::Structure& structure() const {return structure_;} /**< Access the code structure */
+      void distanceUpdate(Modulation::const_iterator<double> input);/**< distance metric calculation. */
+      void aPosterioriUpdate(Modulation::const_iterator<double> input, double k, std::vector<double>::iterator output);/**< Final (msg) L-values calculation. */
       
     private:
-      Convolutional::Structure structure_;
+      template <class U = typename LogSumAlg<LlrMetrics>::isRecursive, typename std::enable_if<U::value>::type* = nullptr>
+      typename LlrMetrics::Type wordUpdateImpl(size_t j);/**< Forward metric calculation. */
+      template <class U = typename LogSumAlg<LlrMetrics>::isRecursive, typename std::enable_if<!U::value>::type* = nullptr>
+      typename LlrMetrics::Type wordUpdateImpl(size_t j);/**< Forward metric calculation. */
+      
+      std::vector<typename LlrMetrics::Type> distance_;
+      
+      LlrMetrics llrMetrics_;
+      LogSumAlg<LlrMetrics> logSum_;
     };
     
   }

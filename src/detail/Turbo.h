@@ -125,9 +125,9 @@ namespace fec {
         Structure() = default;
         Structure(const EncoderOptions&, const DecoderOptions&);
         Structure(const EncoderOptions&);
-        virtual ~Structure() = default;
+        ~Structure() = default;
         
-        virtual const char * get_key() const;
+        const char * get_key() const override;
         
         void setDecoderOptions(const DecoderOptions& decoder);
         DecoderOptions getDecoderOptions() const;
@@ -160,8 +160,8 @@ namespace fec {
         
         double scalingFactor(size_t i, size_t j) const; /**< Access the scalingFactor value used in decoder. */
         
-        virtual bool check(std::vector<BitField<size_t>>::const_iterator parity) const;
-        virtual void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const;
+        bool check(std::vector<BitField<size_t>>::const_iterator parity) const override;
+        void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const override;
         
         Permutation puncturing(const PunctureOptions& options) const;
         

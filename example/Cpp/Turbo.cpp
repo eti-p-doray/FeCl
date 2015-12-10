@@ -25,7 +25,7 @@
 #include <iostream>
 
 #include "Turbo.h"
-//#include "Modulation.h"
+#include "Modulation.h"
 
 #include "operations.h"
 
@@ -55,7 +55,7 @@ int main( int argc, char* argv[] )
   /*
    The trellis and interleaver indices are used to create a code structure.
    */
-  auto encOptions = fec::Turbo::EncoderOptions({trellis, trellis}, {{}, permIdx}).termination(fec::Trellis::Truncate);
+  auto encOptions = fec::Turbo::EncoderOptions(trellis, {{}, permIdx}).termination(fec::Trellis::Truncate);
   auto decOptions = fec::Turbo::DecoderOptions({}).algorithm(fec::Approximate).iterations(10);
   //! [Creating a Turbo code structure]
   
@@ -66,7 +66,28 @@ int main( int argc, char* argv[] )
   fec::Turbo codec(encOptions, decOptions);
   //! [Creating a Turbo code]
   
-  std::cout << per(codec, 10) << std::endl;
+  auto modOptions = fec::Modulation::ModOptions({{-1.0, -1.0}, {-1.0, 1.0}, {1.0, -1.0}, {1.0, 1.0}});
+  fec::Modulation mod(modOptions);
+  
+  double snrdB = -0.0;
+  double snr = pow(10.0, snrdB/10.0);
+  
+  auto m = randomBits(codec.msgSize());
+  
+  auto c = codec.encode(m);
+  auto x = mod.modulate(c);
+  
+  auto y = distort(x, snrdB, 2);
+  
+  auto l = mod.soDemodulate(mod.symbol(y), {0.5/snr});
+  auto md = codec.decode(l);
+  
+  int errorCount = 0;
+  for (size_t i = 0; i < m.size(); ++i) {
+    errorCount += (m[i] != md[i]);
+  }
+  
+  std::cout << errorCount << std::endl;
   
   return 0;
 }

@@ -56,10 +56,14 @@ namespace fec {
     template <typename T, template <typename> class A = std::allocator>
     using Output = detail::Codec::Arguments<std::vector<T,A<T>>>;
     
-    template <typename T, template <typename> class A = std::allocator>
-    static Input<T,A> input(const std::vector<T,A<T>>& parity) {return Input<T,A>{}.parity(parity);}
-    template <typename T, template <typename> class A = std::allocator>
-    static Output<T,A> output(std::vector<T,A<T>>& msg) {return Output<T,A>{}.msg(msg);}
+    template <typename T>
+    static detail::Codec::Arguments<T> msg(T& msg) {return detail::Codec::Arguments<T>{}.msg(msg);}
+    template <typename T>
+    static detail::Codec::Arguments<T> syst(T& syst) {return detail::Codec::Arguments<T>{}.syst(syst);}
+    template <typename T>
+    static detail::Codec::Arguments<T> parity(T& parity) {return detail::Codec::Arguments<T>{}.parity(parity);}
+    template <typename T>
+    static detail::Codec::Arguments<T> state(T& state) {return detail::Codec::Arguments<T>{}.state(state);}
     
     virtual ~Codec() = default;
     
@@ -70,8 +74,8 @@ namespace fec {
     inline size_t paritySize() const {return structure().paritySize();} /**< Access the size of the parity in each code bloc. */
     inline size_t stateSize() const {return structure().stateSize();} /**< Access the size of the extrinsic in each code bloc. */
     
-    int getWorkGroupSize() const {return workGroup_.getMaxSize();}
-    void setWorkGroupSize(int size) {workGroup_.setMaxSize(size);}
+    int getWorkGroupSize() const {return workGroupSize_;}
+    void setWorkGroupSize(int size) {workGroupSize_ = size;}
     
     template <template <typename> class A>
     bool check(const std::vector<BitField<size_t>,A<BitField<size_t>>>& parity) const;
@@ -79,29 +83,28 @@ namespace fec {
     template <template <typename> class A>
     void encode(const std::vector<BitField<size_t>,A<BitField<size_t>>>& message, std::vector<BitField<size_t>,A<BitField<size_t>>>& parity) const;
     template <template <typename> class A>
-    std::vector<BitField<size_t>,A<BitField<size_t>>> encode(const std::vector<BitField<size_t>,A<BitField<size_t>>>& message) const;
+    std::vector<BitField<size_t>> encode(const std::vector<BitField<size_t>,A<BitField<size_t>>>& message) const;
     
     template <template <typename> class A>
     void decode(const std::vector<double,A<double>>& parity, std::vector<BitField<size_t>,A<BitField<size_t>>>& msg) const;
     template <template <typename> class A>
-    std::vector<BitField<size_t>,A<BitField<size_t>>> decode(const std::vector<double,A<double>>& parity) const;
+    std::vector<BitField<size_t>> decode(const std::vector<double,A<double>>& parity) const;
     
-    template <template <typename> class A>
-    void soDecode(Input<double, A> input, Output<double, A> output) const;
+    template <class T1, class T2>
+    void soDecode(detail::Codec::Arguments<T1> input, detail::Codec::Arguments<T2> output) const;
     
   protected:
     Codec() = default;
     Codec(std::unique_ptr<detail::Codec::Structure>&&, int workGroupSize = 8);
     
     Codec(const Codec& other) {*this = other;}
-    Codec& operator=(const Codec& other) {workGroup_ = other.workGroup_; return *this;}
+    Codec& operator=(const Codec& other) {workGroupSize_ = other.workGroupSize_; return *this;}
     
     inline const detail::Codec::Structure& structure() const {return *structure_;}
     inline detail::Codec::Structure& structure() {return *structure_;}
     
     virtual bool checkBlocks(detail::Codec::const_iterator<BitField<size_t>> first, detail::Codec::const_iterator<BitField<size_t>> last) const;
     virtual void encodeBlocks(detail::Codec::const_iterator<BitField<size_t>> first, detail::Codec::const_iterator<BitField<size_t>> last, detail::Codec::iterator<BitField<size_t>> output) const;
-    
     virtual void decodeBlocks(detail::Codec::const_iterator<double> first, detail::Codec::const_iterator<double> last, detail::Codec::iterator<BitField<size_t>> output) const = 0;
     virtual void soDecodeBlocks(detail::Codec::const_iterator<double> first, detail::Codec::const_iterator<double> last, detail::Codec::iterator<double> output) const = 0;
     
@@ -111,10 +114,7 @@ namespace fec {
     template <typename Archive>
     void serialize(Archive & ar, const unsigned int version);
     
-    std::vector<std::thread> createWorkGroup() const;
-    size_t taskSize(size_t blockCount) const;
-    
-    detail::WorkGroup workGroup_;
+    int workGroupSize_;
   };
   
 }
@@ -146,7 +146,7 @@ bool fec::Codec::check(const std::vector<BitField<size_t>,A<BitField<size_t>>>& 
  *    the matlab API to use a custom mex allocator
  */
 template <template <typename> class A>
-std::vector<fec::BitField<size_t>,A<fec::BitField<size_t>>> fec::Codec::encode(const std::vector<fec::BitField<size_t>,A<fec::BitField<size_t>>>& message) const
+std::vector<fec::BitField<size_t>> fec::Codec::encode(const std::vector<fec::BitField<size_t>,A<fec::BitField<size_t>>>& message) const
 {
   std::vector<fec::BitField<size_t>,A<fec::BitField<size_t>>> parity;
   encode(message, parity);
@@ -174,7 +174,8 @@ void fec::Codec::encode(const std::vector<BitField<size_t>,A<BitField<size_t>>>&
   detail::Codec::const_iterator<BitField<size_t>> end{{detail::Codec::Msg, msg.end(), msgSize()}};
   detail::Codec::iterator<BitField<size_t>> output{{detail::Codec::Parity, parity.begin(), paritySize()}};
   
-  workGroup_.execute(begin, end, output, std::bind(&Codec::encodeBlocks, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+  detail::WorkGroup workGroup(workGroupSize_);
+  workGroup.executeTask(begin, end, output, std::bind(&Codec::encodeBlocks, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 }
 
 /**
@@ -188,7 +189,7 @@ void fec::Codec::encode(const std::vector<BitField<size_t>,A<BitField<size_t>>>&
  *    the matlab API to use a custom mex allocator
  */
 template <template <typename> class A>
-std::vector<fec::BitField<size_t>,A<fec::BitField<size_t>>> fec::Codec::decode(const std::vector<double,A<double>>& parity) const
+std::vector<fec::BitField<size_t>> fec::Codec::decode(const std::vector<double,A<double>>& parity) const
 {
   std::vector<fec::BitField<size_t>,A<fec::BitField<size_t>>> message;
   decode(parity, message);
@@ -219,7 +220,8 @@ void fec::Codec::decode(const std::vector<double,A<double>>& parity, std::vector
   detail::Codec::const_iterator<double> end{{detail::Codec::Parity, parity.end(), paritySize()}};
   detail::Codec::iterator<BitField<size_t>> output{{detail::Codec::Msg, msg.begin(), msgSize()}};
   
-  workGroup_.execute(begin, end, output, std::bind(&Codec::decodeBlocks, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+  detail::WorkGroup workGroup(workGroupSize_);
+  workGroup.executeTask(begin, end, output, std::bind(&Codec::decodeBlocks, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 }
 
 /**
@@ -231,8 +233,8 @@ void fec::Codec::decode(const std::vector<double,A<double>>& parity, std::vector
  *  \tparam A Container allocator. The reason for different allocator is to allow
  *    the matlab API to use a custom mex allocator
  */
-template <template <typename> class A>
-void fec::Codec::soDecode(Input<double,A> input, Output<double,A> output) const
+template <class T1, class T2>
+void fec::Codec::soDecode(detail::Codec::Arguments<T1> input, detail::Codec::Arguments<T2> output) const
 {
   if (!input.count(detail::Codec::Parity)) {
     throw std::invalid_argument("Input must contains parity");
@@ -253,7 +255,7 @@ void fec::Codec::soDecode(Input<double,A> input, Output<double,A> output) const
     begin.insert(detail::Codec::Syst, input.at(detail::Codec::Syst).begin(), systSize());
     end.insert(detail::Codec::Syst, input.at(detail::Codec::Syst).end(), systSize());
     if (input.at(detail::Codec::Syst).size() != blockCount * systSize()) {
-      throw std::invalid_argument("Invalid size for msg");
+      throw std::invalid_argument("Invalid size for syst");
     }
   }
   if (input.count(detail::Codec::State)) {
@@ -281,13 +283,14 @@ void fec::Codec::soDecode(Input<double,A> input, Output<double,A> output) const
     outputIt.insert(detail::Codec::Msg, output.at(detail::Codec::Msg).begin(), msgSize());
   }
   
-  workGroup_.execute(begin, end, outputIt, std::bind(&Codec::soDecodeBlocks, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+  detail::WorkGroup workGroup(workGroupSize_);
+  workGroup.executeTask(begin, end, outputIt, std::bind(&Codec::soDecodeBlocks, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 }
 
 template <typename Archive>
 void fec::Codec::serialize(Archive & ar, const unsigned int version) {
   using namespace boost::serialization;
-  ar & ::BOOST_SERIALIZATION_NVP(workGroup_);
+  ar & ::BOOST_SERIALIZATION_NVP(workGroupSize_);
   ar & ::BOOST_SERIALIZATION_NVP(structure_);
 }
 

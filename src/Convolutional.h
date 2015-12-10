@@ -58,7 +58,6 @@ namespace fec {
     using PunctureOptions = detail::Convolutional::PunctureOptions;
     
     Convolutional() = default;
-    Convolutional(const detail::Convolutional::Structure& structure, int workGroupSize = 8);
     Convolutional(const EncoderOptions& encoder, const DecoderOptions& decoder, int workGroupSize = 8);
     Convolutional(const EncoderOptions& encoder, int workGroupSize = 8);
     Convolutional(const Convolutional& other) {*this = other;}
@@ -82,6 +81,8 @@ namespace fec {
     virtual void soDecodeBlocks(detail::Codec::const_iterator<double> first, detail::Codec::const_iterator<double> last, detail::Codec::iterator<double> output) const;
     
   private:
+    Convolutional(const detail::Convolutional::Structure& structure, int workGroupSize = 8);
+    
     template <typename Archive>
     void serialize(Archive & ar, const unsigned int version);
   };

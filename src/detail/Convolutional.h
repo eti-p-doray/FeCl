@@ -84,9 +84,9 @@ namespace fec {
         Structure() = default;
         Structure(const EncoderOptions& encoder, const DecoderOptions& decoder);
         Structure(const EncoderOptions& encoder);
-        virtual ~Structure() = default;
+        ~Structure() = default;
         
-        virtual const char * get_key() const;
+        const char * get_key() const override;
         
         void setDecoderOptions(const DecoderOptions& decoder);
         DecoderOptions getDecoderOptions() const;

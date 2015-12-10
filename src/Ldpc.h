@@ -79,7 +79,6 @@ namespace fec {
     using PunctureOptions = detail::Ldpc::PunctureOptions;
     
     Ldpc() = default;
-    Ldpc(const detail::Ldpc::Structure& structure, int workGroupSize = 8);
     Ldpc(const EncoderOptions& encoder, const DecoderOptions& decoder, int workGroupSize = 8);
     Ldpc(const EncoderOptions& encoder, int workGroupSize = 8);
     Ldpc(const Ldpc& other) {*this = other;}
@@ -103,6 +102,8 @@ namespace fec {
     void soDecodeBlocks(detail::Codec::const_iterator<double> first, detail::Codec::const_iterator<double> last, detail::Codec::iterator<double> output) const override;
     
   private:
+    Ldpc(const detail::Ldpc::Structure& structure, int workGroupSize = 8);
+    
     template <typename Archive>
     void serialize(Archive & ar, const unsigned int version);
   };

@@ -47,7 +47,7 @@ namespace fec {
       public:
         EncoderOptions(const SparseBitMatrix& checkMatrix) {checkMatrix_ = checkMatrix;}
         
-        SparseBitMatrix checkMatrix() const {return checkMatrix_;}
+        inline const SparseBitMatrix& checkMatrix() const {return checkMatrix_;}
         
       private:
         SparseBitMatrix checkMatrix_;
@@ -65,7 +65,7 @@ namespace fec {
         
         DecoderAlgorithm algorithm() const {return algorithm_;}
         size_t iterations() const {return iterations_;}
-        std::unordered_map<size_t,std::vector<double>> scalingFactor() const {return scalingFactor_;}
+        inline const std::unordered_map<size_t,std::vector<double>>& scalingFactor() const {return scalingFactor_;}
         
       private:
         DecoderAlgorithm algorithm_ = Approximate;
@@ -99,9 +99,9 @@ namespace fec {
         Structure() = default;
         Structure(const EncoderOptions&, const DecoderOptions&);
         Structure(const EncoderOptions&);
-        virtual ~Structure() = default;
+        ~Structure() = default;
         
-        virtual const char * get_key() const;
+        const char * get_key() const override;
         
         void setDecoderOptions(const DecoderOptions& decoder);
         DecoderOptions getDecoderOptions() const;
@@ -122,15 +122,14 @@ namespace fec {
         double scalingFactor(size_t i, size_t j) const; /**< Access the scalingFactor value used in decoder. */
         
         void syndrome(std::vector<uint8_t>::const_iterator parity, std::vector<uint8_t>::iterator syndrome) const;
-        virtual bool check(std::vector<BitField<size_t>>::const_iterator parity) const;
-        virtual void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const;
-        
-      protected:
-        void setEncoderOptions(const EncoderOptions& encoder);
+        bool check(std::vector<BitField<size_t>>::const_iterator parity) const override;
+        void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const override;
         
       private:
         template <typename Archive>
         void serialize(Archive & ar, const unsigned int version);
+        
+        void setEncoderOptions(const EncoderOptions& encoder);
         
         void computeGeneratorMatrix(SparseBitMatrix H);
         std::vector<std::vector<double>> scalingMapToVector(const std::unordered_map<size_t,std::vector<double>>& map) const;

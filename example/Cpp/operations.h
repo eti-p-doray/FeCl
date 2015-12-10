@@ -57,6 +57,22 @@ std::vector<double> distort(const std::vector<fec::BitField<size_t>>& input, dou
   return llr;
 }
 
+std::vector<double> distort(const std::vector<double>& input, double snrdb, int dim)
+{
+  double snr = pow(10.0, snrdb/10.0);
+  
+  uint64_t seed = 0;//std::chrono::system_clock::now().time_since_epoch().count();
+  std::default_random_engine randomGenerator;
+  randomGenerator.seed(uint32_t(seed));
+  std::normal_distribution<double> normalDistribution(0.0, 1.0/sqrt(dim*snr));
+  
+  std::vector<double> llr(input.size());
+  for (int i = 0; i < input.size(); i++) {
+    llr[i] = input[i] + normalDistribution(randomGenerator);
+  }
+  return llr;
+}
+
 int per(const fec::Codec& codec, double snrdb)
 {
   auto msg = randomBits(codec.msgSize());
@@ -67,7 +83,7 @@ int per(const fec::Codec& codec, double snrdb)
   auto msgDec = codec.decode(llr);
   
   std::vector<double> msgPost;
-  codec.soDecode(codec.input(llr), codec.output(msgPost));
+  codec.soDecode(codec.parity(llr), codec.msg(msgPost));
   
   
   int errorCount = 0;

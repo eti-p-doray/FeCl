@@ -56,7 +56,8 @@ namespace fec {
       MultiIterator(std::initializer_list<std::tuple<Key, Iterator, size_t>> l);
       
       void insert(Key key, Iterator it, size_t increment);
-      const Iterator at(Key key) const;
+      const Iterator& at(Key key) const;
+      Iterator& at(Key key);
       bool count(Key key) const;
       
       inline MultiIterator& operator ++ ();
@@ -105,7 +106,13 @@ void fec::detail::MultiIterator<Iterator,Key,keys...>::insert(Key key, Iterator 
 }
 
 template <class Iterator, class Key, Key... keys>
-const Iterator fec::detail::MultiIterator<Iterator,Key,keys...>::at(Key key) const
+const Iterator& fec::detail::MultiIterator<Iterator,Key,keys...>::at(Key key) const
+{
+  return map_[key].iterator;
+}
+
+template <class Iterator, class Key, Key... keys>
+Iterator& fec::detail::MultiIterator<Iterator,Key,keys...>::at(Key key)
 {
   return map_[key].iterator;
 }
