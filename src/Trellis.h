@@ -67,17 +67,17 @@ public:
     Options(const std::vector<size_t>& constraintLengths, const std::vector<std::vector<BitField<size_t>>>& generator) {constraintLengths_ = constraintLengths; generator_ = generator;}
     
     Options& feedback(const std::vector<BitField<size_t>>& feedback) {feedback_ = feedback; return *this;}
-    Options& order(const std::vector<size_t>& order) {order_ = order; return *this;}
+    Options& width(const std::vector<size_t>& width) {width_ = width; return *this;}
     
   private:
     std::vector<size_t> constraintLengths_;
     std::vector<std::vector<BitField<size_t>>> generator_;
     std::vector<BitField<size_t>> feedback_ = {};
-    std::vector<size_t> order_ = {};
+    std::vector<size_t> width_ = {1};
   };
   
   Trellis() = default;
-  Trellis(const Options& options);
+  Trellis(Options options);
   Trellis(const std::vector<BitField<size_t>>& nextState, const std::vector<BitField<size_t>>& output, size_t inputWidth, size_t outputWidth, size_t stateWidth);
   Trellis(const std::vector<size_t>& constraintLengths, const std::vector<std::vector<BitField<size_t>>>& generator, std::vector<BitField<size_t>> feedback = {});
   

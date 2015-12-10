@@ -63,48 +63,60 @@ Trellis::Trellis(const std::vector<BitField<size_t>>& nextState, const std::vect
   }
 }
 
-/**
- *  Trellis structure constructor.
- *  Generates the state and output table lookup from a given constraint lenght and
- *  a code generator given in Proakis integer form.
- *  \snippet Convolutional.cpp Creating a trellis
- *  \param  constraintLengths Vector specifying the delay for each input bit stream.
- *  \param  output  generator Vector specifying the generator polynomials 
- *    (connections from each register to each output)
- *    associated with each input bit stream
- */
-Trellis::Trellis(const std::vector<size_t>& constraintLengths, const std::vector<std::vector<BitField<size_t>>>& generator, std::vector<BitField<size_t>> feedback)
+Trellis::Trellis(Options options)
 {
-  inputWidth_ = size_t(generator.size());
-  outputWidth_ = size_t(generator[0].size());
-  if (constraintLengths.size() != generator.size()) {
+  if (options.constraintLengths_.size() != options.generator_.size()) {
     throw std::invalid_argument("Invalid number of generators");
   }
-  if (constraintLengths.size() != feedback.size() && feedback.size() != 0) {
+  if (options.constraintLengths_.size() != options.feedback_.size() && options.feedback_.size() != 0) {
     throw std::invalid_argument("Invalid number of feedback");
   }
-  for (size_t i = 0; i < inputWidth(); i++) {
-    if (outputWidth_ != generator[i].size()) {
-      throw std::invalid_argument("Invalid number of generators");
+  if (options.feedback_.size() == 0) {
+    options.feedback_.resize(options.constraintLengths_.size());
+    for (int i = 0; i < options.feedback_.size(); ++i) {
+      options.feedback_[i] = 0;
+      options.feedback_[i].set(options.constraintLengths_[i]-1);
     }
   }
-  if (feedback.size() == 0) {
-    feedback.resize(constraintLengths.size());
-    for (int i = 0; i < feedback.size(); ++i) {
-      feedback[i] = 0;
-      feedback[i].set(constraintLengths[i]-1);
+  if (options.width_.size() == 1) {
+    options.width_.resize(options.constraintLengths_.size(), options.width_[0]);
+  } else if (options.width_.size() != options.constraintLengths_.size()) {
+    throw std::invalid_argument("Invalid number of widths");
+  }
+  
+  inputWidth_ = 0;
+  outputWidth_ = 0;
+  std::vector<BitField<size_t>> outputWidths(options.generator_[0].size(), {});
+  
+  for (size_t i = 0; i < options.width_.size(); ++i) {
+    inputWidth_ += options.width_[i];
+    for (size_t j = 0; j < outputWidths.size(); j++) {
+      for (size_t k = 0; k < options.constraintLengths_[i]-1; ++k) {
+        if (options.generator_[i][j].test(k)) {
+          if (outputWidths[j] != 0 && outputWidths[j] != options.width_[i]) {
+            throw std::invalid_argument("Invalid connection in generator");
+          } else {
+            outputWidths[j] = options.width_[i];
+          }
+        }
+      }
     }
+  }
+  for (auto i : outputWidths) {
+    outputWidth_ += i;
   }
   
   outputCount_ = 1<<outputWidth_;
   inputCount_ = 1<<inputWidth_;
   
-  
-  std::vector<BitField<size_t> > inputStates(constraintLengths.size(), 0);
-  
+  for (size_t i = 0; i < options.generator_.size(); i++) {
+    if (outputWidths.size() != options.generator_[i].size()) {
+      throw std::invalid_argument("Invalid number of generators");
+    }
+  }
   stateWidth_ = 0;
-  for (size_t i = 0; i < constraintLengths.size(); i++) {
-    stateWidth_ += constraintLengths[i] - 1;
+  for (size_t i = 0; i < options.constraintLengths_.size(); i++) {
+    stateWidth_ += (options.constraintLengths_[i] - 1) * options.width_[i];
   }
   stateCount_ = 1<<stateWidth_;
   nextState_.resize(stateCount()*inputCount());
@@ -114,32 +126,64 @@ Trellis::Trellis(const std::vector<size_t>& constraintLengths, const std::vector
     for (BitField<size_t> input = 0; input < inputCount(); input++) {
       nextState_[state*inputCount()+input] = 0;
       output_[state*inputCount()+input] = 0;
-      size_t j = 0;
-      for (size_t i = 0; i < constraintLengths.size(); i++) {
-        for (size_t k = 0; k < constraintLengths[i]-1; k++) {
-          inputStates[i][k] = state[j+k];
+      size_t stateIdx = 0;
+      size_t inIdx = 0;
+      std::vector<BitField<size_t>> out(outputWidths.size(), {});
+      BitField<size_t> nextState = 0;
+      for (size_t i = 0; i < options.constraintLengths_.size(); ++i) {
+        std::vector<BitField<size_t>> s(options.constraintLengths_[i]-1, {});
+        for (size_t j = 0; j < options.constraintLengths_[i]-1; ++j) {
+          s[j] = state.test(stateIdx+j*options.width_[i], options.width_[i]);
         }
+        BitField<size_t> in = input.test(inIdx, options.width_[i]);
+        in += sum(options.feedback_[i], s.begin(), options.constraintLengths_[i]-1);
+        in %= 1<<options.width_[i];
         
-        for (size_t k = 0; k < outputWidth_; k++) {
-          if ((generator[i][k]>>constraintLengths[i]) != 0) {
+        for (size_t j = 0; j < outputWidths.size(); j++) {
+          if ((options.generator_[i][j]>>options.constraintLengths_[i]) != 0) {
             throw std::invalid_argument("Invalid connection in generator");
           }
-          output_[state*inputCount()+input][k] ^=
-          ((input[i] ^ parity(inputStates[i] & feedback[i])) & generator[i][k].test(constraintLengths[i]-1))
-          ^ parity(inputStates[i] & generator[i][k]);
+          if (options.generator_[i][j].test(options.constraintLengths_[i]-1)) {
+            out[j] += in;
+          }
+          out[j] += sum(options.generator_[i][j], s.begin(), options.constraintLengths_[i]-1);
+          out[j] %= 1<<options.width_[i];
         }
-        
-        if (feedback[i].test(constraintLengths[i]-1) != 1) {
+        if (options.feedback_[i].test(options.constraintLengths_[i]-1) != 1) {
           throw std::invalid_argument("Feedback must connect systematic");
         }
-        nextState_[state*inputCount()+input][j+constraintLengths[i]-2] = (input[i] & feedback[i].test(constraintLengths[i]-1))
-        ^ parity(inputStates[i] & feedback[i]);
-        nextState_[state*inputCount()+input] |= (inputStates[i] >> 1) << j ;
         
-        j += constraintLengths[i]-1;
+        size_t j;
+        for (j = 0; j < options.constraintLengths_[i]-2; ++j) {
+          nextState.set(stateIdx+j*options.width_[i], s[j+1], options.width_[i]);
+        }
+        nextState.set(stateIdx+j*options.width_[i], in, options.width_[i]);
+
+        stateIdx += options.constraintLengths_[i]-1;
+        inIdx += options.width_[i];
+      }
+      nextState_[state*inputCount()+input] = nextState;
+      size_t outIdx = 0;
+      for (size_t k = 0; k < outputWidths.size(); k++) {
+        output_[state*inputCount()+input].set(outIdx, out[k], outputWidths[k]);
+        outIdx += outputWidths[k];
       }
     }
   }
+}
+
+/**
+ *  Trellis structure constructor.
+ *  Generates the state and output table lookup from a given constraint lenght and
+ *  a code generator given in Proakis integer form.
+ *  \snippet Convolutional.cpp Creating a trellis
+ *  \param  constraintLengths Vector specifying the delay for each input bit stream.
+ *  \param  output  generator Vector specifying the generator polynomials
+ *    (connections from each register to each output)
+ *    associated with each input bit stream
+ */
+Trellis::Trellis(const std::vector<size_t>& constraintLengths, const std::vector<std::vector<BitField<size_t>>>& generator, std::vector<BitField<size_t>> feedback) : Trellis(Options(constraintLengths, generator).feedback(feedback))
+{
 }
 
 std::ostream& operator<<(std::ostream& os, const Trellis& trellis)

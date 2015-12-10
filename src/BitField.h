@@ -71,14 +71,17 @@ public:
   
   inline operator T() const {return value_;}
   
-  inline BitReference operator[](size_t i) {return BitReference(&at<uint8_t>(i/8), i%8);}
+  inline BitReference operator[](size_t i) {return BitReference(&at<uint8_t>(i>>3), i&7);}
   inline bool operator[](size_t i) const {return (value_>>i) & 1;}
-  inline bool test(size_t i) const {return value_ & (size_t(1)<<i);}
-  inline BitField<T> test(size_t i, size_t size) const {return (value_ >> i) % (size);}
-  inline void set(size_t i) {value_ |= (size_t(1)<<i);}
-  inline void set(size_t i, bool val) {value_ &= ~(size_t(1)<<i); value_ |= size_t(val) << i;}
-  inline void clear(size_t i) {value_ &= ~(size_t(1)<<i);}
-  inline void toggle(size_t i) {value_ ^= (size_t(1)<<i);}
+  inline bool test(size_t i) const {return value_ & (T(1)<<i);}
+  inline BitField<T> test(size_t i, size_t size) const {return (value_ >> i) & ((1<<size)-1);}
+  inline void set(size_t i) {value_ |= (T(1)<<i);}
+  inline void set(size_t i, size_t size) {value_ |= ((T(1)<<(i+size))-1) xor (T(1)<<i)-1;}
+  inline void set(size_t i, bool val) {clear(i); value_ |= T(val) << i;}
+  inline void set(size_t i, BitField<T> val, size_t size) {clear(i, size); value_ |= ((val&((1<<size)-1)) << int(i));}
+  inline void clear(size_t i) {value_ &= ~(T(1)<<i);}
+  inline void clear(size_t i, size_t size) {value_ &= (T(1)<<i)-1 | ~((T(1)<<(i+size))-1);}
+  inline void toggle(size_t i) {value_ ^= (T(1)<<i);}
   
   BitField operator~();
   BitField operator<<(int b) {return value_ << b;}
@@ -144,9 +147,20 @@ bool parity(fec::BitField<T> a) {
 }
 
 template <typename T>
+fec::BitField<T> sum(fec::BitField<T> a, typename std::vector<fec::BitField<T>>::const_iterator b, size_t size) {
+  fec::BitField<T> x = 0;
+  for (size_t i = 0; i < size; ++i) {
+    if (a.test(i)) {
+      x += b[i];
+    }
+  }
+  return x;
+}
+
+template <typename T>
 std::ostream& operator<<(std::ostream& os, const fec::BitField<T>& a)
 {
-  for (uint64_t i = 0; i < 8; ++i) {
+  for (int64_t i = 10-1; i >= 0; --i) {
     os << a.test(i);
   }
   return os;

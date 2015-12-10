@@ -41,8 +41,10 @@ int main( int argc, char* argv[] )
    There is one output bits, with generator 17 (in octal) associated
    with the input bit.
    */
-  fec::Trellis trellis({4}, {{017}}, {015});
+  fec::Trellis trellis(fec::Trellis::Options({4}, {{017}}).feedback({015}).width({2}));
   //! [Creating a trellis]
+  
+  std::cout << trellis << std::endl;
   
   uint64_t seed = std::chrono::system_clock::now().time_since_epoch().count();
   std::srand ( unsigned (seed ) );
@@ -66,10 +68,11 @@ int main( int argc, char* argv[] )
   fec::Turbo codec(encOptions, decOptions);
   //! [Creating a Turbo code]
   
-  //auto modOptions = fec::Modulation::ModOptions({{-1.0, -1.0}, {-1.0, 1.0}, {1.0, -1.0}, {1.0, 1.0}});
-  fec::Modulation mod({fec::Modulation::RectangularQam(16).avgPower(1.0)});
+  auto modOptions = fec::Modulation::ModOptions({{-1.0, -1.0}, {-1.0, 1.0}, {1.0, -1.0}, {1.0, 1.0}});
+  //fec::Modulation mod({fec::Modulation::RectangularQam(16).avgPower(1.0)});
+  fec::Modulation mod(modOptions);
   
-  double snrdB = -0.0;
+  double snrdB = 0.0;
   double snr = pow(10.0, snrdB/10.0);
   
   auto m = randomBits(codec.msgSize());
