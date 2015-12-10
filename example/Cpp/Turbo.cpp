@@ -66,8 +66,8 @@ int main( int argc, char* argv[] )
   fec::Turbo codec(encOptions, decOptions);
   //! [Creating a Turbo code]
   
-  auto modOptions = fec::Modulation::ModOptions({{-1.0, -1.0}, {-1.0, 1.0}, {1.0, -1.0}, {1.0, 1.0}});
-  fec::Modulation mod(modOptions);
+  //auto modOptions = fec::Modulation::ModOptions({{-1.0, -1.0}, {-1.0, 1.0}, {1.0, -1.0}, {1.0, 1.0}});
+  fec::Modulation mod({fec::Modulation::RectangularQam(16).avgPower(1.0)});
   
   double snrdB = -0.0;
   double snr = pow(10.0, snrdB/10.0);

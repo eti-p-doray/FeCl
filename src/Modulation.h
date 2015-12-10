@@ -33,6 +33,38 @@ namespace fec {
 
   class Modulation {
   public:
+    enum SymbolMapping {
+      Binary,
+      Grey,
+      Custom,
+    };
+    
+    struct RectangularQam {
+    public:
+      RectangularQam(size_t order);
+      RectangularQam& avgPower(double power);
+      RectangularQam& phaseOffset(double offset);
+      RectangularQam& symbolMapping(SymbolMapping mapping);
+      
+      operator std::vector<std::vector<double>>();
+      
+    private:
+      
+    };
+    
+    struct Pam {
+    public:
+      Pam(size_t order);
+      Pam& avgPower(double power);
+      Pam& phaseOffset(double offset);
+      Pam& symbolMapping(SymbolMapping mapping);
+      
+      operator std::vector<std::vector<double>>();
+      
+    private:
+      
+    };
+    
     template <class T, template <typename> class A = std::allocator>
     using Input = detail::Modulation::Arguments<const std::vector<T,A<T>>>;
     template <class T, template <typename> class A = std::allocator>

@@ -69,16 +69,13 @@ namespace fec {
      */
     struct Lte3Gpp {
     public:
-      //static Trellis trellis();
       /*
        *  Access an interleaver defined in the standard.
        *  \param  length  Lenght of the interleaver to be created.
        *  \return A Permutation of the specified length as defined in the standard.
        */
       static Permutation interleaver(size_t length);
-      //static Structure structure();
-      //static Turbo codec();
-      //static Permutation permutation();
+      static Trellis trellis() {return Trellis({4}, {{13}}, {15});}
       
     private:
       static const std::array<size_t, 188> length_;
