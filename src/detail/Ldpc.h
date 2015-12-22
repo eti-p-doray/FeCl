@@ -121,9 +121,12 @@ namespace fec {
         inline size_t iterations() const {return iterations_;}
         double scalingFactor(size_t i, size_t j) const; /**< Access the scalingFactor value used in decoder. */
         
-        void syndrome(std::vector<uint8_t>::const_iterator parity, std::vector<uint8_t>::iterator syndrome) const;
-        bool check(std::vector<BitField<size_t>>::const_iterator parity) const override;
-        void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const override;
+        template <class InputIterator, class OutputIterator>
+        void syndrome(InputIterator parity, OutputIterator syndrome) const;
+        template <class InputIterator>
+        bool check(InputIterator parity) const;
+        template <class InputIterator, class OutputIterator>
+        void encode(InputIterator msg, OutputIterator parity) const;
         
       private:
         template <typename Archive>
@@ -146,6 +149,7 @@ namespace fec {
         size_t iterations_;
         std::vector<std::vector<double>> scalingFactor_;
       };
+      
     }
   }
 }
@@ -155,6 +159,79 @@ namespace fec {
 BOOST_CLASS_EXPORT_KEY(fec::detail::Ldpc::Structure);
 BOOST_CLASS_TYPE_INFO(fec::detail::Ldpc::Structure,extended_type_info_no_rtti<fec::detail::Ldpc::Structure>);
 
+/**
+ *  Computes the syndrome given a sequence of parity bits.
+ *  \param  parity  Input iterator pointing to the first element of the parity sequence.
+ *  \param  syndrome[out] Output iterator pointing to the first
+ *    element of the computed syndrome. The output needs to be allocated.
+ */
+template <class InputIterator, class OutputIterator>
+void fec::detail::Ldpc::Structure::syndrome(InputIterator parity, OutputIterator syndrome) const
+{
+  for (auto parityEq = checks().begin(); parityEq < checks().end(); ++parityEq, ++syndrome) {
+    for (auto parityBit = parityEq->begin(); parityBit < parityEq->end(); ++parityBit) {
+      *syndrome ^= parity[*parityBit];
+    }
+  }
+}
+
+/**
+ *  Checks for the parity sequence consistency using its syndrome.
+ *  \param  parity  Input iterator pointing to the first element of the parity sequence.
+ *  \return True if the parity sequence is consistent. False otherwise.
+ */
+template <class InputIterator>
+bool fec::detail::Ldpc::Structure::check(InputIterator parity) const
+{
+  for (auto parityEq = checks().begin(); parityEq < checks().end(); ++parityEq) {
+    bool syndrome = false;
+    for (auto parityBit = parityEq->begin(); parityBit < parityEq->end(); ++parityBit) {
+      syndrome ^= bool(parity[*parityBit]);
+    }
+    if (syndrome != false) {
+      return false;
+    }
+  }
+  return true;
+}
+
+/**
+ *  Encodes a sequence of msg bits using the transformed ldpc matrix.
+ *  \param  msg Input iterator pointing to the first element of the msg bit sequence.
+ *  \param  parity[out] Output iterator pointing to the first
+ *    element of the computed parity sequence. The output needs to be allocated.
+ */
+template <class InputIterator, class OutputIterator>
+void fec::detail::Ldpc::Structure::encode(InputIterator msg, OutputIterator parity) const
+{
+  std::copy(msg, msg + msgSize(), parity);
+  std::fill(parity+msgSize(), parity+checks().cols(), 0);
+  parity += msgSize();
+  auto parityIt = parity;
+  for (auto row = DC_.begin(); row < DC_.end(); ++row, ++parityIt) {
+    for (auto elem = row->begin(); elem != row->end(); ++elem) {
+      *parityIt ^= msg[*elem];
+    }
+  }
+  for (auto row = B_.begin(); row < B_.end(); ++row, ++parityIt) {
+    for (auto elem = row->begin(); elem < row->end(); ++elem) {
+      *parityIt ^= parity[*elem];
+    }
+  }
+  parity += DC_.rows();
+  parityIt = parity;
+  for (auto row = A_.begin(); row < A_.end(); ++row, ++parityIt) {
+    for (auto elem = row->begin(); elem < row->end(); ++elem) {
+      *parityIt ^= msg[*elem];
+    }
+  }
+  parityIt = parity;
+  for (auto row = T_.begin(); row < T_.end(); ++row, ++parityIt) {
+    for (auto elem = row->begin()+1; elem < row->end(); ++elem) {
+      parity[*elem] ^= *parityIt;
+    }
+  }
+}
 
 template <typename Archive>
 void fec::detail::Ldpc::Structure::serialize(Archive & ar, const unsigned int version) {

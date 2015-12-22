@@ -146,9 +146,9 @@ bool parity(fec::BitField<T> a) {
   return x;
 }
 
-template <typename T>
-fec::BitField<T> sum(fec::BitField<T> a, typename std::vector<fec::BitField<T>>::const_iterator b, size_t size) {
-  fec::BitField<T> x = 0;
+template <class T, class InputIterator>
+typename InputIterator::value_type accumulate(fec::BitField<T> a, InputIterator b, size_t size) {
+  typename InputIterator::value_type x = 0;
   for (size_t i = 0; i < size; ++i) {
     if (a.test(i)) {
       x += b[i];

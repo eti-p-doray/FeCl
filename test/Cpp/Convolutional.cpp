@@ -41,7 +41,7 @@ void test_convo_soDecode_systOut(const fec::Codec& code, size_t n = 1)
   
   std::vector<double> msgOut;
   std::vector<double> systOut;
-  code.soDecode(fec::Codec::Input<double>().parity(parityIn), fec::Codec::Output<double>().msg(msgOut).syst(systOut));
+  code.soDecode(fec::Codec::Input<std::vector<double>>().parity(parityIn), fec::Codec::Output<std::vector<double>>().msg(msgOut).syst(systOut));
   
   for (size_t i = 0; i < msg.size(); ++i) {
     BOOST_REQUIRE(msgOut[i] == systOut[i]);
@@ -53,10 +53,8 @@ test_suite* test_convolutional(const fec::Convolutional::EncoderOptions& encoder
   test_suite* ts = BOOST_TEST_SUITE(name);
   
   auto structure = fec::detail::Convolutional::Structure(encoder, decoder);
+  auto codec = fec::Convolutional(encoder, decoder);
   
-  auto codec = fec::Convolutional(structure);
-  
-  ts->add( BOOST_TEST_CASE(std::bind(&test_encodeBlock, structure )));
   ts->add( BOOST_TEST_CASE(std::bind(&test_encode, codec, 1 )));
   ts->add( BOOST_TEST_CASE(std::bind(&test_encode, codec, 5 )));
   ts->add( BOOST_TEST_CASE(std::bind(&test_encode_badMsgSize, codec )));
@@ -79,7 +77,7 @@ test_suite* test_convolutional(const fec::Convolutional::EncoderOptions& encoder
   ts->add( BOOST_TEST_CASE(std::bind(&test_soDecode_badStateSize, codec )));
   ts->add( BOOST_TEST_CASE(std::bind(&test_soDecode_noParity, codec )));
   
-  ts->add( BOOST_TEST_CASE(std::bind(&test_saveLoad, fec::Convolutional(structure) )));
+  ts->add( BOOST_TEST_CASE(std::bind(&test_saveLoad, codec )));
   
   return ts;
 }

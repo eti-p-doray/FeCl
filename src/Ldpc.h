@@ -98,9 +98,6 @@ namespace fec {
     inline const detail::Ldpc::Structure& structure() const {return dynamic_cast<const detail::Ldpc::Structure&>(Codec::structure());}
     inline detail::Ldpc::Structure& structure() {return dynamic_cast<detail::Ldpc::Structure&>(Codec::structure());}
     
-    void decodeBlocks(detail::Codec::const_iterator<double> first, detail::Codec::const_iterator<double> last, detail::Codec::iterator<BitField<size_t>> output) const override;
-    void soDecodeBlocks(detail::Codec::const_iterator<double> first, detail::Codec::const_iterator<double> last, detail::Codec::iterator<double> output) const override;
-    
   private:
     Ldpc(const detail::Ldpc::Structure& structure, int workGroupSize = 8);
     

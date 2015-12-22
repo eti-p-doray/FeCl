@@ -30,161 +30,152 @@
 #include <boost/serialization/vector.hpp>
 
 namespace fec {
-
-/**
-  * This class represents a permutation vector.
-  * A permutation generates a sequence of output data where each element
-  * is picked at a specific index from the input sequence. 
-  * The index is defined by the index sequence given at the construction.
-  * The permutation can permute many independant sequences at once.
-  */
-class Permutation {
-  friend class boost::serialization::access;
-public:
-  Permutation() = default;
+  
   /**
-   * Permutation constructor.
-   *  The size of the input and output sequence is automatically detected 
-   *  from the given index sequence
-   *  \param  sequence  Index sequence specifying the source index of each output element.
+   * This class represents a permutation vector.
+   * A permutation generates a sequence of output data where each element
+   * is picked at a specific index from the input sequence.
+   * The index is defined by the index sequence given at the construction.
+   * The permutation can permute many independant sequences at once.
    */
-  Permutation(const std::vector<size_t>& sequence) {
-    if (sequence.size() == 0) {
-      return;
+  class Permutation {
+    friend class boost::serialization::access;
+  public:
+    Permutation() = default;
+    /**
+     * Permutation constructor.
+     *  The size of the input and output sequence is automatically detected
+     *  from the given index sequence
+     *  \param  sequence  Index sequence specifying the source index of each output element.
+     */
+    Permutation(const std::vector<size_t>& sequence) {
+      if (sequence.size() == 0) {
+        return;
+      }
+      sequence_ = sequence;
+      inputSize_ = *std::max_element(sequence_.begin(), sequence_.end()) + 1;
     }
-    sequence_ = sequence;
-    inputSize_ = *std::max_element(sequence_.begin(), sequence_.end()) + 1;
-  }
-  /**
-   * Permutation constructor.
-   *  You can specify a custom input and output seuqence size.
-   *  Be carefull specifying these size because an invalid index in the index sequence
-   *  will result in segfault.
-   *  \param  sequence  Index sequence specifying the source index of each output element.
-   *  \param  inputSize Length of the input sequence for interleaving.
-   */
-  Permutation(::std::vector<size_t> sequence, size_t inputSize) {
-    sequence_ = sequence;
-    inputSize_ = inputSize;
-  }
-  
-  size_t inputSize() const {return inputSize_;}
-  size_t outputSize() const {return sequence_.size();}
-  
-  size_t operator[] (size_t i) const {return sequence_[i];}
-  
-  template <typename T1, typename T2=T1> void permute(const std::vector<T1>& input, std::vector<T2>& output) const;
-  template <typename T1, typename T2=T1> void dePermute(const std::vector<T1>& input, std::vector<T2>& output) const;
-  
-  template <typename T> std::vector<T> permute(const std::vector<T>& input) const;
-  template <typename T> std::vector<T> dePermute(const std::vector<T>& input) const;
-  
-  template <typename T1, typename T2=T1>
-  void permuteBlocks(typename std::vector<T1>::const_iterator input, typename std::vector<T2>::iterator output, size_t n) const;
-  template <typename T1, typename T2=T1>
-  void dePermuteBlocks(typename std::vector<T1>::const_iterator input, typename std::vector<T2>::iterator output, size_t n) const;
-  
-  template <typename T1, typename T2=T1>
-  void permuteBlock(typename std::vector<T1>::const_iterator input, typename std::vector<T2>::iterator output) const;
-  template <typename T1, typename T2=T1>
-  void dePermuteBlock(typename std::vector<T1>::const_iterator input, typename std::vector<T2>::iterator output) const;
-  
-private:
-  template <typename Archive>
-  void serialize(Archive & ar, const unsigned int version) {
-    using namespace boost::serialization;
-    ar & BOOST_SERIALIZATION_NVP(sequence_);
-    ar & BOOST_SERIALIZATION_NVP(inputSize_);
-  }
-  
-  std::vector<size_t> sequence_;
-  size_t inputSize_ = 0;
-};
+    /**
+     * Permutation constructor.
+     *  You can specify a custom input and output seuqence size.
+     *  Be carefull specifying these size because an invalid index in the index sequence
+     *  will result in segfault.
+     *  \param  sequence  Index sequence specifying the source index of each output element.
+     *  \param  inputSize Length of the input sequence for interleaving.
+     */
+    Permutation(::std::vector<size_t> sequence, size_t inputSize) {
+      sequence_ = sequence;
+      inputSize_ = inputSize;
+    }
+
+    size_t inputSize() const {return inputSize_;}
+    size_t outputSize() const {return sequence_.size();}
+    
+    size_t operator[] (size_t i) const {return sequence_[i];}
+    
+    template <typename Vector> void permute(const Vector& input, Vector& output, size_t width = 1) const;
+    template <typename Vector> void dePermute(const Vector& input, Vector& output, size_t width = 1) const;
+    
+    template <typename Vector> Vector permute(const Vector& input, size_t width = 1) const;
+    template <typename Vector> Vector dePermute(const Vector& input, size_t width = 1) const;
+    
+    template <class InputIterator, class OutputIterator>
+    void permuteBlocks(InputIterator inputf, InputIterator inputl, OutputIterator output, size_t width = 1) const;
+    template <class InputIterator, class OutputIterator>
+    void dePermuteBlocks(InputIterator inputf, InputIterator inputl, OutputIterator output, size_t width = 1) const;
+    
+    template <class InputIterator, class OutputIterator>
+    void permuteBlock(InputIterator input, OutputIterator output, size_t width = 1) const;
+    template <class InputIterator, class OutputIterator>
+    void dePermuteBlock(InputIterator input, OutputIterator output, size_t width = 1) const;
+
+  private:
+    template <typename Archive>
+    void serialize(Archive & ar, const unsigned int version) {
+      using namespace boost::serialization;
+      ar & BOOST_SERIALIZATION_NVP(sequence_);
+      ar & BOOST_SERIALIZATION_NVP(inputSize_);
+    }
+    
+    std::vector<size_t> sequence_;
+    size_t inputSize_ = 0;
+  };
   
 }
 
-/*fec::Permutation range(size_t begin, size_t end)
-{
-  std::vector<size_t> perm;
-  for (size_t i = 0; i < end-begin; ++i) {
-    perm[i] = i+begin;
-  }
-  return fec::Permutation(perm);
-}*/
-
-template <typename T1, typename T2>
-void fec::Permutation::permute(const std::vector<T1>& input, std::vector<T2>& output) const
+template <typename Vector>
+void fec::Permutation::permute(const Vector& input, Vector& output, size_t width) const
 {
   output.resize(input.size() / inputSize() * outputSize());
   
   auto inputIt = input.begin();
   auto outputIt = output.begin();
   for (; inputIt < input.end(); inputIt += inputSize(), outputIt += outputSize()) {
-    permuteBlock<T1,T2>(inputIt, outputIt);
+    permuteBlock(inputIt, outputIt);
   }
 }
 
-template <typename T1, typename T2>
-void fec::Permutation::dePermute(const std::vector<T1>& input, std::vector<T2>& output) const
+template <typename Vector>
+void fec::Permutation::dePermute(const Vector& input, Vector& output, size_t width) const
 {
   output.resize(input.size() / outputSize() * inputSize());
   
   auto inputIt = input.begin();
   auto outputIt = output.begin();
   for (; inputIt < input.end(); inputIt += outputSize(), outputIt += inputSize()) {
-    dePermuteBlock<T1,T2>(inputIt, outputIt);
+    dePermuteBlock(inputIt, outputIt);
   }
 }
 
-template <typename T>
-std::vector<T> fec::Permutation::permute(const std::vector<T>& input) const
+template <typename Vector>
+Vector fec::Permutation::permute(const Vector& input, size_t width) const
 {
-  std::vector<T> output;
+  Vector output;
   permute(input, output);
   return output;
 }
 
-template <typename T>
-std::vector<T> fec::Permutation::dePermute(const std::vector<T>& input) const
+template <typename Vector>
+Vector fec::Permutation::dePermute(const Vector& input, size_t width) const
 {
-  std::vector<T> output;
-  dePermute<T>(input, output);
+  Vector output;
+  dePermute(input, output);
   return output;
 }
 
-template <typename T1, typename T2>
-void fec::Permutation::permuteBlocks(typename std::vector<T1>::const_iterator input, typename std::vector<T2>::iterator output, size_t n) const
+template <class InputIterator, class OutputIterator>
+void fec::Permutation::permuteBlocks(InputIterator inputf, InputIterator inputl, OutputIterator output, size_t width) const
 {
-  for (size_t i = 0; i < n; i++) {
-    permuteBlock<T1,T2>(input, output);
-    input += inputSize();
+  while (inputf != inputl) {
+    permuteBlock(inputf, output);
+    inputf += inputSize();
     output += outputSize();
   }
 }
 
-template <typename T1, typename T2>
-void fec::Permutation::dePermuteBlocks(typename std::vector<T1>::const_iterator input, typename std::vector<T2>::iterator output, size_t n) const
+template <class InputIterator, class OutputIterator>
+void fec::Permutation::dePermuteBlocks(InputIterator inputf, InputIterator inputl, OutputIterator output, size_t width) const
 {
-  for (size_t i = 0; i < n; i++) {
-    dePermuteBlock<T1,T2>(input, output);
-    input += outputSize();
-    output += inputSize();
+  while (inputf != inputl) {
+    dePermuteBlock(inputf, output);
+    inputf += inputSize();
+    output += outputSize();
   }
 }
 
-template <typename T1, typename T2>
-void fec::Permutation::permuteBlock(typename std::vector<T1>::const_iterator input, typename std::vector<T2>::iterator output) const
+template <class InputIterator, class OutputIterator>
+void fec::Permutation::permuteBlock(InputIterator input, OutputIterator output, size_t width) const
 {
-  for (size_t i = 0; i < sequence_.size(); i++) {
-    output[i] = input[sequence_[i]];
+  for (size_t i = 0; i < sequence_.size(); ++i) {
+    std::copy(input+sequence_[i]*width, input+(sequence_[i]+1)*width, output+i*width);
   }
 }
 
-template <typename T1, typename T2>
-void fec::Permutation::dePermuteBlock(typename std::vector<T1>::const_iterator input, typename std::vector<T2>::iterator output) const
+template <class InputIterator, class OutputIterator>
+void fec::Permutation::dePermuteBlock(InputIterator input, OutputIterator output, size_t width) const
 {
-  for (size_t i = 0; i < sequence_.size(); i++) {
-    output[sequence_[i]] = input[i];
+  for (size_t i = 0; i < sequence_.size(); ++i) {
+    std::copy(input+i*width, input+(i+1)*width, output+sequence_[i]*width);
   }
 }
 

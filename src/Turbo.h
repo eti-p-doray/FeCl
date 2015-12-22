@@ -103,9 +103,6 @@ namespace fec {
     inline const detail::Turbo::Structure& structure() const {return dynamic_cast<const detail::Turbo::Structure&>(Codec::structure());}
     inline detail::Turbo::Structure& structure() {return dynamic_cast<detail::Turbo::Structure&>(Codec::structure());}
     
-    virtual void decodeBlocks(detail::Codec::const_iterator<double> first, detail::Codec::const_iterator<double> last, detail::Codec::iterator<BitField<size_t>> output) const;
-    virtual void soDecodeBlocks(detail::Codec::const_iterator<double> first, detail::Codec::const_iterator<double> last, detail::Codec::iterator<double> output) const;
-    
   private:
     Turbo(const detail::Turbo::Structure& structure, int workGroupSize = 8);
     

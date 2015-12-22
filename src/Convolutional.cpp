@@ -20,8 +20,6 @@
  ******************************************************************************/
 
 #include "Convolutional.h"
-#include "detail/MapDecoder/MapDecoder.h"
-#include "detail/ViterbiDecoder/ViterbiDecoder.h"
 
 using namespace fec;
 
@@ -45,17 +43,4 @@ Codec(std::unique_ptr<detail::Convolutional::Structure>(new detail::Convolutiona
 const char * Convolutional::get_key() const
 {
   return boost::serialization::type_info_implementation<Convolutional>::type::get_const_instance().get_key();
-}
-
-
-void Convolutional::soDecodeBlocks(detail::Codec::const_iterator<double> first, detail::Codec::const_iterator<double> last, detail::Codec::iterator<double> output) const
-{
-  auto worker = detail::MapDecoder::create(structure());
-  worker->soDecodeBlocks(first, last, output);
-}
-
-void Convolutional::decodeBlocks(detail::Codec::const_iterator<double> first, detail::Codec::const_iterator<double> last, detail::Codec::iterator<BitField<size_t>> output) const
-{
-  auto worker = detail::ViterbiDecoder::create(structure());
-  worker->decodeBlocks(first.at(detail::Codec::Parity), last.at(detail::Codec::Parity), output.at(detail::Codec::Msg));
 }

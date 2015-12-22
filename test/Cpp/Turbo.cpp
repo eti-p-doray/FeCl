@@ -41,7 +41,7 @@ void test_turbo_soDecode_systOut(const fec::Turbo& code, size_t n = 1)
   
   std::vector<double> parityOut;
   std::vector<double> systOut;
-  code.soDecode(fec::Codec::Input<double>().parity(parityIn), fec::Codec::Output<double>().parity(parityOut).syst(systOut));
+  code.soDecode(fec::Codec::parity(parityIn), fec::Codec::parity(parityOut).syst(systOut));
   
   for (size_t i = 0; i < systOut.size(); ++i) {
     BOOST_REQUIRE(parityOut[i] == systOut[i]);
@@ -53,10 +53,9 @@ test_suite* test_turbo(const fec::Turbo::EncoderOptions& encoder, const fec::Tur
   test_suite* ts = BOOST_TEST_SUITE(name);
   
   auto structure = fec::detail::Turbo::Structure(encoder, decoder);
+  auto codec = fec::Turbo(encoder, decoder);
   
-  auto codec = fec::Turbo(structure);
-  
-  ts->add( BOOST_TEST_CASE(std::bind(&test_encodeBlock, structure )));
+  //ts->add( BOOST_TEST_CASE(std::bind(&test_encodeBlock, structure )));
   ts->add( BOOST_TEST_CASE(std::bind(&test_encode, codec, 1 )));
   ts->add( BOOST_TEST_CASE(std::bind(&test_encode, codec, 5 )));
   ts->add( BOOST_TEST_CASE(std::bind(&test_encode_badMsgSize, codec )));

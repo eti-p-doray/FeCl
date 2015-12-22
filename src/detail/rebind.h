@@ -19,44 +19,24 @@
  along with FeCl.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#ifndef FEC_TURBO_DECODER_IMPL_H
-#define FEC_TURBO_DECODER_IMPL_H
+#ifndef FEC_REBIND_H
+#define FEC_REBIND_H
 
-#include "TurboDecoder.h"
 
 namespace fec {
   
   namespace detail {
     
-    /**
-     *  This class contains the implementation of iterative decoder.
-     *  This algorithm is used for decoding in a TurboCodec.
-     */
+    template <class Container, class NewType>
+    struct rebind;
     
-    class TurboDecoderImpl : public TurboDecoder
+    template <class ValueType, class... Args, template <class...> class Container, class NewType>
+    struct rebind<Container<ValueType, Args...>, NewType>
     {
-    public:
-      TurboDecoderImpl(const Turbo::Structure& structure);
-      virtual ~TurboDecoderImpl() = default;
-      
-      void decodeBlock(std::vector<double>::const_iterator parity, std::vector<BitField<size_t>>::iterator msg) override;
-      void soDecodeBlock(Codec::const_iterator<double> input, Codec::iterator<double> output) override;
-      
-    protected:
-      TurboDecoderImpl() = default;
-      
-    private:
-      void aPosterioriUpdate();
-      
-      void customActivationUpdate(size_t i, size_t stage, bool outputParity);
-      
-      void serialTransferUpdate(size_t i);
-      void parallelTransferUpdate();
-      void customTransferUpdate(size_t stage, size_t i);
+      typedef Container<NewType, typename rebind<Args, NewType>::type...> type;
     };
     
   }
-  
 }
 
 #endif

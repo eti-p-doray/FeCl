@@ -160,8 +160,10 @@ namespace fec {
         
         double scalingFactor(size_t i, size_t j) const; /**< Access the scalingFactor value used in decoder. */
         
-        bool check(std::vector<BitField<size_t>>::const_iterator parity) const override;
-        void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const override;
+        template <class InputIterator>
+        bool check(InputIterator parity) const;
+        template <class InputIterator, class OutputIterator>
+        void encode(InputIterator msg, OutputIterator parity) const;
         
         Permutation puncturing(const PunctureOptions& options) const;
         
@@ -194,6 +196,51 @@ namespace fec {
 
 BOOST_CLASS_EXPORT_KEY(fec::detail::Turbo::Structure);
 BOOST_CLASS_TYPE_INFO(fec::detail::Turbo::Structure,extended_type_info_no_rtti<fec::detail::Turbo::Structure>);
+
+template <class InputIterator, class OutputIterator>
+void fec::detail::Turbo::Structure::encode(InputIterator msg, OutputIterator parity) const
+{
+  std::vector<BitField<size_t>> messageInterl;
+  std::copy(msg, msg + msgSize(), parity);
+  auto systTail = parity + msgSize();
+  parity += systSize();
+  for (size_t i = 0; i < constituentCount(); ++i) {
+    messageInterl.resize(constituent(i).msgSize());
+    interleaver(i).permuteBlock(msg, messageInterl.begin());
+    constituent(i).encode(messageInterl.begin(), parity, systTail);
+    systTail += constituent(i).tailSize();
+    parity += constituent(i).paritySize();
+  }
+}
+
+template <class InputIterator>
+bool fec::detail::Turbo::Structure::check(InputIterator parity) const
+{
+  std::vector<BitField<size_t>> messageInterl;
+  std::vector<BitField<size_t>> parityTest;
+  std::vector<BitField<size_t>> tailTest;
+  std::vector<BitField<size_t>>::const_iterator parityInIt;
+  parityInIt = parity;
+  auto tailIt = parityInIt + msgSize();
+  auto systIt = parityInIt;
+  parityInIt += systSize();
+  for (size_t i = 0; i < constituentCount(); ++i) {
+    messageInterl.resize(constituent(i).msgSize());
+    parityTest.resize(constituent(i).paritySize());
+    tailTest.resize(constituent(i).tailSize());
+    interleaver(i).permuteBlock(systIt, messageInterl.begin());
+    constituent(i).encode(messageInterl.begin(), parityTest.begin(), tailTest.begin());
+    if (!std::equal(parityTest.begin(), parityTest.end(), parityInIt)) {
+      return false;
+    }
+    if (!std::equal(tailTest.begin(), tailTest.end(), tailIt)) {
+      return false;
+    }
+    parityInIt += constituent(i).paritySize();
+    tailIt += constituent(i).tailSize();
+  }
+  return true;
+}
 
 
 template <typename Archive>

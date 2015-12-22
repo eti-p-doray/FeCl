@@ -85,7 +85,7 @@ void Modulation::Structure::demodulate(std::vector<double>::const_iterator symbo
     double max = 0;
     BitField<size_t> maxInput = 0;
     for (size_t j = 0; j < 1<<size(); ++j) {
-      double tmp = -sqDistance<FloatLlrMetrics>(symbol, constellation().begin() + j*dimension(), dimension());
+      double tmp = -sqDistance<double>(symbol, constellation().begin() + j*dimension(), dimension());
       if (tmp > max) {
         maxInput = j;
       }

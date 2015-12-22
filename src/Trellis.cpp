@@ -136,7 +136,7 @@ Trellis::Trellis(Options options)
           s[j] = state.test(stateIdx+j*options.width_[i], options.width_[i]);
         }
         BitField<size_t> in = input.test(inIdx, options.width_[i]);
-        in += sum(options.feedback_[i], s.begin(), options.constraintLengths_[i]-1);
+        in += accumulate(options.feedback_[i], s.begin(), options.constraintLengths_[i]-1);
         in %= 1<<options.width_[i];
         
         for (size_t j = 0; j < outputWidths.size(); j++) {
@@ -146,7 +146,7 @@ Trellis::Trellis(Options options)
           if (options.generator_[i][j].test(options.constraintLengths_[i]-1)) {
             out[j] += in;
           }
-          out[j] += sum(options.generator_[i][j], s.begin(), options.constraintLengths_[i]-1);
+          out[j] += accumulate(options.generator_[i][j], s.begin(), options.constraintLengths_[i]-1);
           out[j] %= 1<<options.width_[i];
         }
         if (options.feedback_[i].test(options.constraintLengths_[i]-1) != 1) {

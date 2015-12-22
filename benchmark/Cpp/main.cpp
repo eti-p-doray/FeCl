@@ -43,7 +43,7 @@ using namespace itpp;
 using namespace boost::property_tree;
 
 const size_t T = 32400;
-const size_t N = 128;
+const size_t N = 8;
 
 ptree speed_Convolutional(std::vector<double> snrdb)
 {
@@ -297,7 +297,7 @@ int main(int argc, const char * argv[]) {
   allResults.put("blocks", N);
 
   std::vector<double> snrdb;
-  for (double i = -2.8; i <= -1.0; i += 0.1) {
+  for (double i = -2.8; i <= -1.0; i += 0.5) {
     snrdb.push_back(i);
   }
   

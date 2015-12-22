@@ -43,10 +43,10 @@ namespace fec {
       void setMaxSize(int maxSize) {maxSize_ = maxSize;}
       int getMaxSize() const {return maxSize_;}
       
-      template <class InputIterator, class OutputIterator, class Functor>
-      void executeTask(InputIterator first, InputIterator last, OutputIterator output, Functor f);
-      template <class InputIterator, class OutputIterator, class Functor>
-      void addTask(InputIterator first, InputIterator last, OutputIterator output, Functor f);
+      template <class Function, class InputIterator, class OutputIterator>
+      void executeTask(Function&& f, InputIterator&& first, InputIterator&& last, OutputIterator&& output);
+      template <class Function, class InputIterator, class OutputIterator>
+      void addTask(Function&& f, InputIterator&& first, InputIterator&& last, OutputIterator&& output);
       
       inline void wait();
       
@@ -79,26 +79,23 @@ size_t fec::detail::WorkGroup::getStep(size_t blockCount) const
   return (blockCount+n-1)/n;
 }
 
-template <class InputIterator, class OutputIterator, class Functor>
-void fec::detail::WorkGroup::executeTask(InputIterator first, InputIterator last, OutputIterator output, Functor f)
+template <class Function, class InputIterator, class OutputIterator>
+void fec::detail::WorkGroup::executeTask(Function&& f, InputIterator&& first, InputIterator&& last, OutputIterator&& output)
 {
-  addTask(first, last, output, f);
+  addTask(std::forward<Function>(f), std::forward<InputIterator>(first), std::forward<InputIterator>(last), std::forward<OutputIterator>(output));
   wait();
 }
 
-template <class InputIterator, class OutputIterator, class Functor>
-void fec::detail::WorkGroup::addTask(InputIterator first, InputIterator last, OutputIterator output, Functor f)
+template <class Function, class InputIterator, class OutputIterator>
+void fec::detail::WorkGroup::addTask(Function&& f, InputIterator&& first, InputIterator&& last, OutputIterator&& output)
 {
   size_t blockCount = std::distance(first, last);
   size_t step = getStep(blockCount);
   for (int i = 0; i + step <= blockCount; i += step) {
-    group_.push_back(std::async(f, first, first+step, output));
-    
+    group_.push_back(std::async(std::forward<Function>(f), first, first+step, output));
     output += step; first += step;
   }
-  if (first != last) {
-    f(first, last, output);
-  }
+  f(first, last, output);
 }
 
 void fec::detail::WorkGroup::wait() {

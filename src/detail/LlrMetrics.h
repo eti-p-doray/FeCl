@@ -36,23 +36,17 @@ namespace fec {
   
   namespace detail {
     
-    class FloatLlrMetrics {
-    public:
-      using Type = double;
-      static inline Type max() {return std::numeric_limits<Type>::infinity();}
-    };
-    
     /**
      *  This class contains implementation of log sum operation.
      */
-    template <typename LlrMetrics>
+    template <class T>
     class LogSum {
     public:
       using isRecursive = std::false_type;
       
-      static inline typename LlrMetrics::Type prior(typename LlrMetrics::Type x) {return x;}
-      static inline typename LlrMetrics::Type max(typename LlrMetrics::Type a, typename LlrMetrics::Type b) {return std::max(a,b);}
-      static inline typename LlrMetrics::Type prior(typename LlrMetrics::Type x, typename LlrMetrics::Type max) {
+      static inline T prior(T x) {return x;}
+      static inline T max(T a, T b) {return std::max(a,b);}
+      static inline T prior(T x, T max) {
         if (x == max) {
           return 1.0;
         }
@@ -63,16 +57,15 @@ namespace fec {
        *  \param  a Left-hand operand.
        *  \param  b Right-hand operand.
        */
-      static inline typename LlrMetrics::Type sum(typename LlrMetrics::Type a, typename LlrMetrics::Type b) {return a+b;}
-      static inline typename LlrMetrics::Type post(typename LlrMetrics::Type x, typename LlrMetrics::Type max) {return std::log(x) + max;}
-      static inline typename LlrMetrics::Type post(typename LlrMetrics::Type x) {return x;}
-      static inline typename LlrMetrics::Type scale(typename LlrMetrics::Type x) {return x;}
+      static inline T sum(T a, T b) {return a+b;}
+      static inline T post(T x, T max) {return std::log(x) + max;}
+      static inline T post(T x) {return x;}
     };
     
     /**
      *  This class contains implementation of the max approximation for log sum operation.
      */
-    template <typename LlrMetrics>
+    template <class T>
     class MaxLogSum {
     public:
       using isRecursive = std::true_type;
@@ -82,19 +75,15 @@ namespace fec {
        *  \param  a Left-hand operand.
        *  \param  b Right-hand operand.
        */
-      static inline typename LlrMetrics::Type sum(typename LlrMetrics::Type a, typename LlrMetrics::Type b) {return std::max(a,b);}
-      static inline typename LlrMetrics::Type prior(typename LlrMetrics::Type x) {return x;}
-      static inline typename LlrMetrics::Type post(typename LlrMetrics::Type x) {return x;}
-      inline typename LlrMetrics::Type scale(typename LlrMetrics::Type x) const {return x*scalingFactor_;}
-      
-    private:
-      typename LlrMetrics::Type scalingFactor_ = 1.0;
+      static inline T sum(T a, T b) {return std::max(a,b);}
+      static inline T prior(T x) {return x;}
+      static inline T post(T x) {return x;}
     };
     
     /**
      *  This class contains implementation of the piece-wise linear approximation for log sum operation.
      */
-    template <typename LlrMetrics>
+    template <class T>
     class LinearLogSum {
     public:
       using isRecursive = std::true_type;
@@ -104,26 +93,26 @@ namespace fec {
        *  \param  a Left-hand operand.
        *  \param  b Right-hand operand.
        */
-      static inline typename LlrMetrics::Type sum(typename LlrMetrics::Type a, typename LlrMetrics::Type b) {
+      static inline T sum(T a, T b) {
         if (a == b) {
           return a;
         }
         return std::max(a,b) + log1pexpm(std::abs(a-b));
       }
-      static inline typename LlrMetrics::Type prior(typename LlrMetrics::Type x) {return x;}
-      static inline typename LlrMetrics::Type post(typename LlrMetrics::Type x) {return x;}
-      static inline typename LlrMetrics::Type scale(typename LlrMetrics::Type x) {return x;}
+      static inline T prior(T x) {return x;}
+      static inline T post(T x) {return x;}
+      static inline T scale(T x) {return x;}
       
     private:
-      static const Linearlog1pexpm<typename LlrMetrics::Type> log1pexpm;
+      static const Linearlog1pexpm<T> log1pexpm;
     };
     
-    template <typename LlrMetrics> const Linearlog1pexpm<typename LlrMetrics::Type> LinearLogSum<LlrMetrics>::log1pexpm = {};
+    template <class T> const Linearlog1pexpm<T> LinearLogSum<T>::log1pexpm = {};
     
     /**
      *  This class contains implementation of the box sum operation.
      */
-    template <typename LlrMetrics>
+    template <class T>
     class BoxSum {
     public:
       using isRecursive = std::true_type;
@@ -133,13 +122,12 @@ namespace fec {
        *  \param  a Left-hand operand.
        *  \param  b Right-hand operand.
        */
-      static inline typename LlrMetrics::Type sum(typename LlrMetrics::Type a, typename LlrMetrics::Type b) {return a*b;}
-      static inline typename LlrMetrics::Type prior(typename LlrMetrics::Type x) {return tanh(-x/2.0);}
-      static inline typename LlrMetrics::Type post(typename LlrMetrics::Type x) {return -std::log((1.0+x)/(1.0-x));}//{return -2.0*atanh(x);}
-      static inline typename LlrMetrics::Type scale(typename LlrMetrics::Type x) {return x;}
+      static inline T sum(T a, T b) {return a*b;}
+      static inline T prior(T x) {return tanh(-x/2.0);}
+      static inline T post(T x) {return -std::log((1.0+x)/(1.0-x));}//{return -2.0*atanh(x);}
     };
     
-    template <typename LlrMetrics>
+    template <class T>
     class LinearBoxSum {
     public:
       using isRecursive = std::true_type;
@@ -149,7 +137,7 @@ namespace fec {
        *  \param  a Left-hand operand.
        *  \param  b Right-hand operand.
        */
-      static inline typename LlrMetrics::Type sum(typename LlrMetrics::Type a, typename LlrMetrics::Type b) {
+      static inline T sum(T a, T b) {
         if (std::signbit(a) ^ std::signbit(b)) {
           return std::min(std::abs(a),std::abs(b)) - log1pexpm(std::abs(a+b)) + log1pexpm(std::abs(a-b));
         }
@@ -157,21 +145,20 @@ namespace fec {
           return -std::min(std::abs(a),std::abs(b)) - log1pexpm(std::abs(a+b)) + log1pexpm(std::abs(a-b));
         }
       }
-      static inline typename LlrMetrics::Type prior(typename LlrMetrics::Type x) {return x;}
-      static inline typename LlrMetrics::Type post(typename LlrMetrics::Type x) {return x;}
-      static inline typename LlrMetrics::Type scale(typename LlrMetrics::Type x) {return x;}
+      static inline T prior(T x) {return x;}
+      static inline T post(T x) {return x;}
       
     private:
-      static const Linearlog1pexpm<typename LlrMetrics::Type> log1pexpm;
+      static const Linearlog1pexpm<T> log1pexpm;
     };
     
-    template <typename LlrMetrics> const Linearlog1pexpm<typename LlrMetrics::Type> LinearBoxSum<LlrMetrics>::log1pexpm = {};
+    template <class T> const Linearlog1pexpm<T> LinearBoxSum<T>::log1pexpm = {};
     
     
     /**
      *  This class contains implementation of the min approximation for box sum operation.
      */
-    template <typename LlrMetrics>
+    template <class T>
     class MinBoxSum {
     public:
       using isRecursive = std::true_type;
@@ -181,7 +168,7 @@ namespace fec {
        *  \param  a Left-hand operand.
        *  \param  b Right-hand operand.
        */
-      static inline typename LlrMetrics::Type sum(typename LlrMetrics::Type a, typename LlrMetrics::Type b) {
+      static inline T sum(T a, T b) {
         if (std::signbit(a) ^ std::signbit(b)) {
           return std::min(fabs(a), fabs(b));
         }
@@ -189,34 +176,13 @@ namespace fec {
           return -std::min(fabs(a), fabs(b));
         }
       }
-      static inline typename LlrMetrics::Type prior(typename LlrMetrics::Type x) {return x;}
-      static inline typename LlrMetrics::Type post(typename LlrMetrics::Type x) {return x;}
-      
-    private:
+      static inline T prior(T x) {return x;}
+      static inline T post(T x) {return x;}
     };
     
-    /**
-     *  Computes the probability (L-value) of a sequence of input L-values
-     *  related to a sequence of bits.
-     *  The answer is defined as the correlations between the two inputs.
-     *  \param  a Sequence of bits as a BitField
-     *  \param  b Random access input iterator associated with the sequence of L-values
-     *  \return Correlation between the two inputs
-     */
-    template <class LlrMetrics>
-    inline typename LlrMetrics::Type correlation(const fec::BitField<size_t>& a, std::vector<double>::const_iterator b, size_t size) {
-      typename LlrMetrics::Type x = 0;
-      for (size_t i = 0; i < size; ++i) {
-        if (a.test(i)) {
-          x += typename LlrMetrics::Type(b[i]);
-        }
-      }
-      return x;
-    }
-    
-    template <class LlrMetrics>
-    inline typename LlrMetrics::Type sqDistance(std::vector<double>::const_iterator a, std::vector<double>::const_iterator b, size_t size) {
-      typename LlrMetrics::Type x = 0;
+    template <class InputIterator>
+    inline typename InputIterator::value_type sqDistance(InputIterator a, InputIterator b, size_t size) {
+      typename InputIterator::value_type x = 0;
       for (size_t i = 0; i < size; ++i) {
         x += std::pow(a[i] - b[i], 2);
       }

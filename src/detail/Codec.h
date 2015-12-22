@@ -26,10 +26,8 @@
 
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/unique_ptr.hpp>
-#include <boost/serialization/utility.hpp>
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/assume_abstract.hpp>
-#include <boost/serialization/type_info_implementation.hpp>
 #include <boost/serialization/extended_type_info_no_rtti.hpp>
 
 #include "../DecoderAlgorithm.h"
@@ -76,21 +74,6 @@ namespace fec {
         
         DecoderAlgorithm decoderAlgorithm() const {return decoderAlgorithm_;} /**< Access the algorithm used in decoder. */
         
-        /**
-         *  Encodes one block of msg bits.
-         *  \param  msg  Input iterator pointing to the first element in the msg bit sequence.
-         *  \param  parity[out] Output iterator pointing to the first element in the parity bit sequence.
-         *    The output neeeds to be pre-allocated.
-         */
-        virtual void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const = 0;
-        
-        /**
-         *  Checks the consistency of a parity sequence.
-         *  \param  parity  Input iterator pointing to the first element in the parity bit sequence.
-         *  \return  True if the sequence is consistent, false otherwise.
-         */
-        virtual bool check(std::vector<BitField<size_t>>::const_iterator parity) const = 0;
-        
       protected:
         DecoderAlgorithm decoderAlgorithm_; /**< Algorithm type used in decoder. */
         
@@ -123,9 +106,10 @@ namespace fec {
       };
       
       template <class T>
-      using const_iterator = MultiIterator<typename std::vector<T>::const_iterator, Field, Msg, Syst, Parity, State>;
-      template <class T>
-      using iterator = MultiIterator<typename std::vector<T>::iterator, Field, Msg, Syst, Parity, State>;
+      using ConstArguments = Arguments<typename std::add_const<T>::type>;
+      
+      template <class it>
+      using iterator = MultiIterator<it, Field, Msg, Syst, Parity, State>;
       
     }
     

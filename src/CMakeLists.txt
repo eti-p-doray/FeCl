@@ -8,16 +8,8 @@ set(SOURCES
   DvbS2.cpp
   detail/Codec.cpp
   detail/Convolutional.cpp
-  detail/MapDecoder/MapDecoder.cpp
-  detail/MapDecoder/MapDecoderImpl.cpp
-  detail/ViterbiDecoder/ViterbiDecoder.cpp
-  detail/ViterbiDecoder/ViterbiDecoderImpl.cpp
   detail/Turbo.cpp
-  detail/TurboDecoder/TurboDecoder.cpp
-  detail/TurboDecoder/TurboDecoderImpl.cpp
   detail/Ldpc.cpp
-  detail/BpDecoder/BpDecoder.cpp
-  detail/BpDecoder/BpDecoderImpl.cpp
 )
 
 add_library (core OBJECT ${SOURCES})

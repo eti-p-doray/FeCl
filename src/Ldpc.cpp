@@ -20,7 +20,6 @@
  ******************************************************************************/
 
 #include "Ldpc.h"
-#include "detail/BpDecoder/BpDecoder.h"
 
 using namespace fec;
 
@@ -44,18 +43,6 @@ Codec(std::unique_ptr<detail::Ldpc::Structure>(new detail::Ldpc::Structure(encod
 
 const char * Ldpc::get_key() const {
   return boost::serialization::type_info_implementation<Ldpc>::type::get_const_instance().get_key();
-}
-
-void Ldpc::soDecodeBlocks(detail::Codec::const_iterator<double> first, detail::Codec::const_iterator<double> last, detail::Codec::iterator<double> output) const
-{
-  auto worker = detail::BpDecoder::create(structure());
-  worker->soDecodeBlocks(first, last, output);
-}
-
-void Ldpc::decodeBlocks(detail::Codec::const_iterator<double> first, detail::Codec::const_iterator<double> last, detail::Codec::iterator<BitField<size_t>> output) const
-{
-  auto worker = detail::BpDecoder::create(structure());
-  worker->decodeBlocks(first.at(detail::Codec::Parity), last.at(detail::Codec::Parity), output.at(detail::Codec::Msg));
 }
 
 /**

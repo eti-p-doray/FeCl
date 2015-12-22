@@ -152,49 +152,6 @@ double Turbo::Structure::scalingFactor(size_t i, size_t j) const
   return scalingFactor_[j][i];
 }
 
-void Turbo::Structure::encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const
-{
-  std::vector<BitField<size_t>> messageInterl;
-  std::copy(msg, msg + msgSize(), parity);
-  auto systTail = parity + msgSize();
-  parity += systSize();
-  for (size_t i = 0; i < constituentCount(); ++i) {
-    messageInterl.resize(constituent(i).msgSize());
-    interleaver(i).permuteBlock<BitField<size_t>>(msg, messageInterl.begin());
-    constituent(i).encode(messageInterl.begin(), parity, systTail);
-    systTail += constituent(i).tailSize();
-    parity += constituent(i).paritySize();
-  }
-}
-
-bool Turbo::Structure::check(std::vector<BitField<size_t>>::const_iterator parity) const
-{
-  std::vector<BitField<size_t>> messageInterl;
-  std::vector<BitField<size_t>> parityTest;
-  std::vector<BitField<size_t>> tailTest;
-  std::vector<BitField<size_t>>::const_iterator parityInIt;
-  parityInIt = parity;
-  auto tailIt = parityInIt + msgSize();
-  auto systIt = parityInIt;
-  parityInIt += systSize();
-  for (size_t i = 0; i < constituentCount(); ++i) {
-    messageInterl.resize(constituent(i).msgSize());
-    parityTest.resize(constituent(i).paritySize());
-    tailTest.resize(constituent(i).tailSize());
-    interleaver(i).permuteBlock<BitField<size_t>,BitField<size_t>>(systIt, messageInterl.begin());
-    constituent(i).encode(messageInterl.begin(), parityTest.begin(), tailTest.begin());
-    if (!std::equal(parityTest.begin(), parityTest.end(), parityInIt)) {
-      return false;
-    }
-    if (!std::equal(tailTest.begin(), tailTest.end(), tailIt)) {
-      return false;
-    }
-    parityInIt += constituent(i).paritySize();
-    tailIt += constituent(i).tailSize();
-  }
-  return true;
-}
-
 fec::Permutation Turbo::Structure::puncturing(const PunctureOptions& options) const
 {
   std::vector<std::vector<bool>> mask_ = options.mask_;

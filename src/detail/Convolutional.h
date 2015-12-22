@@ -38,11 +38,15 @@ namespace fec {
       public:
         EncoderOptions(const Trellis& trellis, size_t length) {trellis_ = trellis; length_ = length;}
         EncoderOptions& termination(Trellis::Termination type) {termination_ = type; return *this;}
+        EncoderOptions& msgWidth(size_t width) {msgWidth_ = width; return *this;}
+        EncoderOptions& parityWidth(size_t width) {parityWidth_ = width; return *this;}
         
       private:
         Trellis trellis_;
         size_t length_;
         Trellis::Termination termination_ = Trellis::Truncate;
+        size_t msgWidth_ = 0;
+        size_t parityWidth_ = 0;
       };
       
       struct DecoderOptions {
@@ -111,9 +115,12 @@ namespace fec {
         double scalingFactor() const {return scalingFactor_;} /**< Access the scalingFactor value used in decoder. */
         void setScalingFactor(double factor) {scalingFactor_ = factor;} /**< Modify the scalingFactor value used in decoder. */
         
-        bool check(std::vector<BitField<size_t>>::const_iterator parity) const override;
-        void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity) const override;
-        void encode(std::vector<BitField<size_t>>::const_iterator msg, std::vector<BitField<size_t>>::iterator parity, std::vector<BitField<size_t>>::iterator tail) const;
+        template <class InputIterator>
+        bool check(InputIterator parity) const;
+        template <class InputIterator, class OutputIterator>
+        void encode(InputIterator msg, OutputIterator parity) const;
+        template <class InputIterator, class OutputIterator1, class OutputIterator2>
+        void encode(InputIterator msg, OutputIterator1 parity, OutputIterator2 tail) const;
         
       protected:
         void setEncoderOptions(const EncoderOptions& encoder);
@@ -139,6 +146,103 @@ namespace fec {
 BOOST_CLASS_TYPE_INFO(fec::detail::Convolutional::Structure,extended_type_info_no_rtti<fec::detail::Convolutional::Structure>);
 BOOST_CLASS_EXPORT_KEY(fec::detail::Convolutional::Structure);
 
+template <class InputIterator>
+bool fec::detail::Convolutional::Structure::check(InputIterator parity) const
+{
+  size_t state = 0;
+  for (int j = 0; j < length()+tailLength(); ++j) {
+    bool found = false;
+    for (BitField<size_t> input = 0; input < trellis().inputCount(); ++input) {
+      BitField<size_t> output = trellis().getOutput(state, input);
+      bool equal = true;
+      for (int k = 0; k < trellis().outputWidth(); ++k) {
+        if (output[k] != parity[k]) {
+          equal = false;
+          break;
+        }
+      }
+      if (equal == true) {
+        found = true;
+        state = trellis().getNextState(state, input);
+        break;
+      }
+    }
+    if (found == false) {
+      return false;
+    }
+    parity += trellis().outputWidth();
+  }
+  switch (termination()) {
+    case Trellis::Tail:
+      return (state == 0);
+      
+    default:
+    case Trellis::Truncate:
+      return true;
+  }
+}
+
+template <class InputIterator, class OutputIterator>
+void fec::detail::Convolutional::Structure::encode(InputIterator msg, OutputIterator parity) const
+{
+  std::vector<BitField<size_t>> tail(tailLength()*trellis().inputWidth());
+  encode(msg, parity, tail.begin());
+}
+
+template <class InputIterator, class OutputIterator1, class OutputIterator2>
+void fec::detail::Convolutional::Structure::encode(InputIterator msg, OutputIterator1 parity, OutputIterator2 tail) const
+{
+  size_t state = 0;
+  
+  for (int j = 0; j < length(); ++j) {
+    BitField<size_t> input = 0;
+    for (int k = 0; k < trellis().inputWidth(); k++) {
+      input.set(k, msg[k]);
+    }
+    msg += trellis().inputWidth();
+    
+    BitField<size_t> output = trellis().getOutput(state, input);
+    state = trellis().getNextState(state, input);
+    
+    for (int k = 0; k < trellis().outputWidth(); k++) {
+      parity[k] = output.test(k);
+    }
+    parity += trellis().outputWidth();
+  }
+  
+  switch (termination()) {
+    case Trellis::Tail:
+      for (int j = 0; j < tailLength(); ++j) {
+        int maxCount = -1;
+        BitField<size_t> bestInput = 0;
+        for (BitField<size_t> input = 0; input < trellis().inputCount(); ++input) {
+          BitField<size_t> nextState = trellis().getNextState(state, input);
+          int count = weigth(BitField<size_t>(state)) - weigth(nextState);
+          if (count > maxCount) {
+            maxCount = count;
+            bestInput = input;
+          }
+        }
+        BitField<size_t> nextState = trellis().getNextState(state, bestInput);
+        BitField<size_t> output = trellis().getOutput(state, bestInput);
+        for (int k = 0; k < trellis().outputWidth(); ++k) {
+          parity[k] = output.test(k);
+        }
+        for (int k = 0; k < trellis().inputWidth(); ++k) {
+          tail[k] = bestInput.test(k);
+        }
+        parity += trellis().outputWidth();
+        tail += trellis().inputWidth();
+        state = nextState;
+      }
+      break;
+      
+    default:
+    case Trellis::Truncate:
+      state = 0;
+      break;
+  }
+}
 
 template <typename Archive>
 void fec::detail::Convolutional::Structure::serialize(Archive & ar, const unsigned int version) {

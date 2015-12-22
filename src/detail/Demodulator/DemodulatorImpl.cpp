@@ -80,7 +80,7 @@ void DemodulatorImpl<LlrMetrics, LogSumAlg>::distanceUpdate(Modulation::const_it
   }
   if (input.count(Modulation::Word)) {
     for (BitField<size_t> j = 0; j < structure().constellation().size(); j += structure().dimension(), ++distance) {
-      *distance += correlation<LlrMetrics>(j, word, structure().dimension());
+      *distance += accumulate(j, word, structure().dimension());
     }
   }
 }
