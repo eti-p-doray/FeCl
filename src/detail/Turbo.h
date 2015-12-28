@@ -92,21 +92,6 @@ namespace fec {
         std::vector<std::vector<double>> scalingFactor_ = {{1.0}};
       };
       
-      /*struct Options : public EncoderOptions, DecoderOptions {
-        using EncoderOptions::EncoderOptions;
-        
-        Options& interleaver(const std::vector<Permutation>& interleaver) {EncoderOptions::interleaver(interleaver); return *this;}
-        Options& termination(Trellis::Termination type) {EncoderOptions::termination(type); return *this;}
-        Options& termination(std::vector<Trellis::Termination> type) {EncoderOptions::termination(type); return *this;}
-        
-        Options& iterations(size_t count) {DecoderOptions::iterations(count); return *this;}
-        Options& scheduling(SchedulingType type) {DecoderOptions::scheduling(type); return *this;}
-        Options& scheduling(const Scheduling& sched) {DecoderOptions::scheduling(sched); return *this;}
-        Options& algorithm(DecoderAlgorithm algorithm) {DecoderOptions::algorithm(algorithm); return *this;}
-        Options& scalingFactor(double factor) {DecoderOptions::scalingFactor(factor); return *this;}
-        Options& scalingFactor(const std::vector<std::vector<double>>& factor) {DecoderOptions::scalingFactor(factor); return *this;}
-      };*/
-      
       struct PunctureOptions {
         friend class Structure;
       public:
@@ -114,6 +99,8 @@ namespace fec {
         
         PunctureOptions& mask(std::vector<std::vector<bool>> mask) {mask_ = mask; return *this;}
         PunctureOptions& tailMask(std::vector<std::vector<bool>> mask) {tailMask_ = mask; return *this;}
+        PunctureOptions& index(std::vector<std::vector<size_t>> index);
+        PunctureOptions& tailIndex(std::vector<std::vector<size_t>> index);
         PunctureOptions& bitOrdering(BitOrdering ordering) {bitOrdering_ = ordering; return *this;}
         
       private:

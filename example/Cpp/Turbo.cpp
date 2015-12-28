@@ -56,7 +56,7 @@ int main( int argc, char* argv[] )
    A codec is created and ready to operate
    */
   Turbo codec = Turbo::EncoderOptions{Turbo::Lte3Gpp::trellis(), {{}, Turbo::Lte3Gpp::interleaver(512)}}.termination(Trellis::Truncate);
-  Permutation perm = codec.puncturing(Turbo::PunctureOptions{}.mask({{1, 1}, {1, 0}, {1, 0}}).bitOrdering(Group));
+  Permutation perm = codec.puncturing(Turbo::PunctureOptions{}.index({{0,1,2,3},{},{}}).mask({{1, 1}, {1, 0}, {1, 0}}).bitOrdering(Group));
   //! [Creating a Turbo code]
   
   Modulation mod = Modulation::ModOptions{Modulation::RectangularQam(16)};
