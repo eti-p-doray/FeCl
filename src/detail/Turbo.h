@@ -28,6 +28,7 @@
 #include "Convolutional.h"
 #include "../Permutation.h"
 #include "../SchedulingType.h"
+#include "../BitOrdering.h"
 
 namespace fec {
   
@@ -46,15 +47,6 @@ namespace fec {
         }
       };
       using Scheduling = std::vector<Stage>;
-      
-      /**
-       *  Ordering of parity bit in Turbo.
-       *  This defines the ordering of parity bits that are output from a Turbo permutation of a PuncturedTurbo Codec.
-       */
-      enum BitOrdering {
-        Alternate,/**< Systematic and parity bits are alternated */
-        Group,/**< Systematic bits are group together and parity bits from each constituents are grouped together. */
-      };
       
       struct EncoderOptions {
         friend class Structure;
@@ -99,6 +91,21 @@ namespace fec {
         DecoderAlgorithm algorithm_ = Linear;
         std::vector<std::vector<double>> scalingFactor_ = {{1.0}};
       };
+      
+      /*struct Options : public EncoderOptions, DecoderOptions {
+        using EncoderOptions::EncoderOptions;
+        
+        Options& interleaver(const std::vector<Permutation>& interleaver) {EncoderOptions::interleaver(interleaver); return *this;}
+        Options& termination(Trellis::Termination type) {EncoderOptions::termination(type); return *this;}
+        Options& termination(std::vector<Trellis::Termination> type) {EncoderOptions::termination(type); return *this;}
+        
+        Options& iterations(size_t count) {DecoderOptions::iterations(count); return *this;}
+        Options& scheduling(SchedulingType type) {DecoderOptions::scheduling(type); return *this;}
+        Options& scheduling(const Scheduling& sched) {DecoderOptions::scheduling(sched); return *this;}
+        Options& algorithm(DecoderAlgorithm algorithm) {DecoderOptions::algorithm(algorithm); return *this;}
+        Options& scalingFactor(double factor) {DecoderOptions::scalingFactor(factor); return *this;}
+        Options& scalingFactor(const std::vector<std::vector<double>>& factor) {DecoderOptions::scalingFactor(factor); return *this;}
+      };*/
       
       struct PunctureOptions {
         friend class Structure;
@@ -206,7 +213,7 @@ void fec::detail::Turbo::Structure::encode(InputIterator msg, OutputIterator par
   parity += systSize();
   for (size_t i = 0; i < constituentCount(); ++i) {
     messageInterl.resize(constituent(i).msgSize());
-    interleaver(i).permuteBlock(msg, messageInterl.begin());
+    interleaver(i).permuteBlock(msg, 1, messageInterl.begin());
     constituent(i).encode(messageInterl.begin(), parity, systTail);
     systTail += constituent(i).tailSize();
     parity += constituent(i).paritySize();
@@ -228,7 +235,7 @@ bool fec::detail::Turbo::Structure::check(InputIterator parity) const
     messageInterl.resize(constituent(i).msgSize());
     parityTest.resize(constituent(i).paritySize());
     tailTest.resize(constituent(i).tailSize());
-    interleaver(i).permuteBlock(systIt, messageInterl.begin());
+    interleaver(i).permuteBlock(systIt, 1, messageInterl.begin());
     constituent(i).encode(messageInterl.begin(), parityTest.begin(), tailTest.begin());
     if (!std::equal(parityTest.begin(), parityTest.end(), parityInIt)) {
       return false;

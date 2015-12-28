@@ -27,7 +27,10 @@
 #include <vector>
 
 #include "detail/Modulation.h"
+#include "detail/ModulationFunction.h"
+#include "detail/MultiIterator.h"
 #include "detail/WorkGroup.h"
+#include "detail/rebind.h"
 
 namespace fec {
 
@@ -49,6 +52,7 @@ namespace fec {
       operator std::vector<std::vector<double>>();
       
     private:
+      size_t order_;
       
     };
     
@@ -64,11 +68,15 @@ namespace fec {
     private:
       
     };
-    
-    template <class T, template <typename> class A = std::allocator>
-    using Input = detail::Modulation::Arguments<const std::vector<T,A<T>>>;
-    template <class T, template <typename> class A = std::allocator>
-    using Output = detail::Modulation::Arguments<std::vector<T,A<T>>>;
+
+    struct Input {
+      template <typename T> static detail::Modulation::ConstArguments<T> word(T& word) {return detail::Modulation::ConstArguments<T>{}.word(word);}
+      template <typename T> static detail::Modulation::ConstArguments<T> symbol(T& symbol) {return detail::Modulation::ConstArguments<T>{}.symbol(symbol);}
+    } Input;
+    struct Output {
+      template <typename T> static detail::Modulation::Arguments<T> word(T& word) {return detail::Modulation::Arguments<T>{}.word(word);}
+      template <typename T> static detail::Modulation::Arguments<T> symbol(T& symbol) {return detail::Modulation::Arguments<T>{}.symbol(symbol);}
+    } Output;
     
     using ModOptions = detail::Modulation::ModOptions;
     using DemodOptions = detail::Modulation::DemodOptions;
@@ -95,28 +103,31 @@ namespace fec {
     void setDemodOptions(const DemodOptions& demod);
     DemodOptions getDemodOptions() const;
     
-    template <template <typename> class A>
-    void modulate(const std::vector<BitField<size_t>,A<BitField<size_t>>>& word, std::vector<double,A<double>>& symbol) const;
-    template <template <typename> class A>
-    std::vector<double> modulate(const std::vector<BitField<size_t>,A<BitField<size_t>>>& msg) const;
+    template <class InputVector, class OutputVector>
+    void modulate(const InputVector& word, OutputVector& symbol) const;
+    template <class InputVector, class OutputVector = typename detail::rebind<InputVector, double>::type>
+    OutputVector modulate(const InputVector& msg) const;
     
-    template <template <typename> class A>
-    void demodulate(const std::vector<double,A<double>>& symbol, std::vector<BitField<size_t>,A<BitField<size_t>>>& word) const;
-    template <template <typename> class A>
-    std::vector<BitField<size_t>> demodulate(const std::vector<double,A<double>>& word) const;
+    template <class InputVector, class OutputVector>
+    void demodulate(const InputVector& symbol, OutputVector& word) const;
+    template <class InputVector, class OutputVector>
+    OutputVector demodulate(const InputVector& word) const;
     
-    template <class T, template <typename> class A>
-    void soDemodulate(detail::Modulation::Arguments<T> input, const std::vector<double>& variance, std::vector<double,A<double>>& word) const;
-    template <class T>
-    std::vector<double> soDemodulate(detail::Modulation::Arguments<T> input, const std::vector<double>& variance) const;
+    template <class InputVector1, class InputVector2, class OutputVector>
+    void soDemodulate(detail::Modulation::Arguments<const InputVector1> input, const InputVector2& variance, OutputVector& word) const;
+    template <class InputVector1, class InputVector2 = std::vector<double>, class OutputVector = InputVector1>
+    OutputVector soDemodulate(detail::Modulation::Arguments<const InputVector1> input, const InputVector2& variance) const;
 
   protected:
     inline const detail::Modulation::Structure& structure() const {return *structure_;}
     inline detail::Modulation::Structure& structure() {return *structure_;}
     
-    void modulateBlocks(detail::Modulation::const_iterator<BitField<size_t>> first, detail::Modulation::const_iterator<BitField<size_t>> last, detail::Modulation::iterator<double> output) const;
-    void demodulateBlocks(detail::Modulation::const_iterator<double> first, detail::Modulation::const_iterator<double> last, detail::Modulation::iterator<BitField<size_t>> output) const;
-    void soDemodulateBlocks(detail::Modulation::const_iterator<double> first, detail::Modulation::const_iterator<double> last, double variance, detail::Modulation::iterator<double> output) const;
+    template <class InputIterator, class OutputIterator>
+    void modulateBlocks(detail::Modulation::iterator<InputIterator> first, detail::Modulation::iterator<InputIterator> last, detail::Modulation::iterator<OutputIterator> output) const;
+    template <class InputIterator, class OutputIterator>
+    void demodulateBlocks(detail::Modulation::iterator<InputIterator> first, detail::Modulation::iterator<InputIterator> last, detail::Modulation::iterator<OutputIterator> output) const;
+    template <class InputIterator, class OutputIterator>
+    void soDemodulateBlocks(detail::Modulation::iterator<InputIterator> first, detail::Modulation::iterator<InputIterator> last, typename InputIterator::value_type variance, detail::Modulation::iterator<OutputIterator> output) const;
     
     std::unique_ptr<detail::Modulation::Structure> structure_;
     
@@ -145,10 +156,10 @@ BOOST_CLASS_TYPE_INFO(fec::Modulation,extended_type_info_no_rtti<fec::Modulation
  *  \tparam A Container allocator. The reason for different allocator is to allow
  *    the matlab API to use a custom mex allocator
  */
-template <template <typename> class A>
-std::vector<double> fec::Modulation::modulate(const std::vector<fec::BitField<size_t>,A<fec::BitField<size_t>>>& word) const
+template <class InputVector, class OutputVector>
+OutputVector fec::Modulation::modulate(const InputVector& word) const
 {
-  std::vector<double> symbol;
+  OutputVector symbol;
   modulate(word, symbol);
   return symbol;
 }
@@ -161,8 +172,8 @@ std::vector<double> fec::Modulation::modulate(const std::vector<fec::BitField<si
  *  \tparam A Container allocator. The reason for different allocator is to allow
  *    the matlab API to use a custom mex allocator
  */
-template <template <typename> class A>
-void fec::Modulation::modulate(const std::vector<BitField<size_t>,A<BitField<size_t>>>& word, std::vector<double,A<double>>& symbol) const
+template <class InputVector, class OutputVector>
+void fec::Modulation::modulate(const InputVector& word, OutputVector& symbol) const
 {
   uint64_t blockCount = word.size() / (wordSize());
   if (word.size() != blockCount * wordSize()) {
@@ -170,12 +181,12 @@ void fec::Modulation::modulate(const std::vector<BitField<size_t>,A<BitField<siz
   }
   symbol.resize(blockCount * symbolSize() * symbolWidth(), 0);
   
-  detail::Modulation::const_iterator<BitField<size_t>> begin{{detail::Modulation::Word, word.begin(), wordSize()}};
-  detail::Modulation::const_iterator<BitField<size_t>> end{{detail::Modulation::Word, word.end(), wordSize()}};
-  detail::Modulation::iterator<double> output{{detail::Modulation::Symbol, symbol.begin(), symbolSize()*symbolWidth()}};
+  detail::Modulation::iterator<typename InputVector::const_iterator> begin{{detail::Modulation::Word, word.begin(), wordSize()}};
+  detail::Modulation::iterator<typename InputVector::const_iterator> end{{detail::Modulation::Word, word.end(), wordSize()}};
+  detail::Modulation::iterator<typename OutputVector::iterator> output{{detail::Modulation::Symbol, symbol.begin(), symbolSize()*symbolWidth()}};
   
   detail::WorkGroup workGroup(workGroupSize_);
-  workGroup.executeTask(begin, end, output, std::bind(&Modulation::modulateBlocks, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+  workGroup.executeTask(std::bind(&Modulation::modulateBlocks<typename InputVector::const_iterator, typename OutputVector::iterator>, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3), begin, end, output);
 }
 
 /**
@@ -186,10 +197,10 @@ void fec::Modulation::modulate(const std::vector<BitField<size_t>,A<BitField<siz
  *  \tparam A Container allocator. The reason for different allocator is to allow
  *    the matlab API to use a custom mex allocator
  */
-template <template <typename> class A>
-std::vector<fec::BitField<size_t>> fec::Modulation::demodulate(const std::vector<double,A<double>>& symbol) const
+template <class InputVector, class OutputVector>
+OutputVector fec::Modulation::demodulate(const InputVector& symbol) const
 {
-  std::vector<BitField<size_t>> word;
+  OutputVector word;
   demodulate(symbol, word);
   return word;
 }
@@ -203,14 +214,14 @@ std::vector<fec::BitField<size_t>> fec::Modulation::demodulate(const std::vector
  *  \tparam A Container allocator. The reason for different allocator is to allow
  *    the matlab API to use a custom mex allocator
  */
-template <template <typename> class A>
-void fec::Modulation::demodulate(const std::vector<double,A<double>>& symbol, std::vector<BitField<size_t>,A<BitField<size_t>>>& word) const
+template <class InputVector, class OutputVector>
+void fec::Modulation::demodulate(const InputVector& symbol, OutputVector& word) const
 {
   size_t blockCount = symbol.size() / (symbolSize()*symbolWidth());
   
-  detail::Modulation::const_iterator<double> begin{{detail::Modulation::Symbol, symbol.begin(), symbolSize()*symbolWidth()}};
-  detail::Modulation::const_iterator<double> end{{detail::Modulation::Symbol, symbol.end(), symbolSize()*symbolWidth()}};
-  detail::Modulation::iterator<BitField<size_t>> outputIt;
+  detail::Modulation::iterator<typename InputVector::const_iterator> begin{{detail::Modulation::Symbol, symbol.begin(), symbolSize()*symbolWidth()}};
+  detail::Modulation::iterator<typename InputVector::const_iterator> end{{detail::Modulation::Symbol, symbol.end(), symbolSize()*symbolWidth()}};
+  detail::Modulation::iterator<typename OutputVector::iterator> outputIt;
   
   if (symbol.size() != blockCount * symbolSize()*symbolWidth()) {
     throw std::invalid_argument("Invalid size for symbol");
@@ -220,7 +231,7 @@ void fec::Modulation::demodulate(const std::vector<double,A<double>>& symbol, st
   outputIt.insert(detail::Modulation::Word, word.begin(), wordSize());
   
   detail::WorkGroup workGroup(workGroupSize_);
-  workGroup.executeTask(begin, end, outputIt, std::bind(&Modulation::demodulateBlocks, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+  workGroup.executeTask(std::bind(&Modulation::demodulateBlocks<typename InputVector::const_iterator, typename OutputVector::iterator>, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3), begin, end, outputIt);
 }
 
 /**
@@ -232,10 +243,10 @@ void fec::Modulation::demodulate(const std::vector<double,A<double>>& symbol, st
  *    the matlab API to use a custom mex allocator
  */
 
-template <class T>
-std::vector<double> fec::Modulation::soDemodulate(detail::Modulation::Arguments<T> input, const std::vector<double>& variance) const
+template <class InputVector1, class InputVector2, class OutputVector>
+OutputVector fec::Modulation::soDemodulate(detail::Modulation::Arguments<const InputVector1> input, const InputVector2& variance) const
 {
-  std::vector<double> word;
+  OutputVector word;
   soDemodulate(input, variance, word);
   return word;
 }
@@ -249,17 +260,17 @@ std::vector<double> fec::Modulation::soDemodulate(detail::Modulation::Arguments<
  *  \tparam A Container allocator. The reason for different allocator is to allow
  *    the matlab API to use a custom mex allocator
  */
-template <class T, template <typename> class A>
-void fec::Modulation::soDemodulate(detail::Modulation::Arguments<T> input, const std::vector<double>& variance, std::vector<double,A<double>>& word) const
+template <class InputVector1, class InputVector2, class OutputVector>
+void fec::Modulation::soDemodulate(detail::Modulation::Arguments<const InputVector1> input, const InputVector2& variance, OutputVector& word) const
 {
   if (!input.count(detail::Modulation::Symbol)) {
     throw std::invalid_argument("Input must contains symbol");
   }
   size_t blockCount = input.at(detail::Modulation::Symbol).size() / (symbolSize()*symbolWidth()*variance.size());
   
-  detail::Modulation::const_iterator<double> begin{{detail::Modulation::Symbol, input.at(detail::Modulation::Symbol).begin(), symbolSize()*symbolWidth()}};
-  detail::Modulation::const_iterator<double> end{{detail::Modulation::Symbol, input.at(detail::Modulation::Symbol).end(), symbolSize()*symbolWidth()}};
-  detail::Modulation::iterator<double> outputIt;
+  detail::Modulation::iterator<typename InputVector1::const_iterator> begin{{detail::Modulation::Symbol, input.at(detail::Modulation::Symbol).begin(), symbolSize()*symbolWidth()}};
+  detail::Modulation::iterator<typename InputVector1::const_iterator> end{{detail::Modulation::Symbol, input.at(detail::Modulation::Symbol).end(), symbolSize()*symbolWidth()}};
+  detail::Modulation::iterator<typename OutputVector::iterator> outputIt;
   
   if (input.at(detail::Modulation::Symbol).size() != blockCount * symbolSize()*symbolWidth() * variance.size()) {
     throw std::invalid_argument("Invalid size for symbol");
@@ -277,11 +288,32 @@ void fec::Modulation::soDemodulate(detail::Modulation::Arguments<T> input, const
   
   detail::WorkGroup workGroup(workGroupSize_);
   for (auto i : variance) {
-    workGroup.addTask(begin, end, outputIt, std::bind(&Modulation::soDemodulateBlocks, this, std::placeholders::_1, std::placeholders::_2, i, std::placeholders::_3));
+    workGroup.addTask(std::bind(&Modulation::soDemodulateBlocks<typename InputVector1::const_iterator, typename OutputVector::iterator>, this, std::placeholders::_1, std::placeholders::_2, i, std::placeholders::_3), begin, end, outputIt);
     begin += blockCount;
     outputIt += blockCount;
   }
   workGroup.wait();
+}
+
+template <class InputIterator, class OutputIterator>
+void fec::Modulation::modulateBlocks(detail::Modulation::iterator<InputIterator> wordf, detail::Modulation::iterator<InputIterator> wordl, detail::Modulation::iterator<OutputIterator> symbol) const
+{
+  auto modulate = detail::Modulation::ModulateFunction<InputIterator, OutputIterator>::create(structure());
+  (*modulate)(wordf, wordl, symbol);
+}
+
+template <class InputIterator, class OutputIterator>
+void fec::Modulation::demodulateBlocks(detail::Modulation::iterator<InputIterator> symbolf, detail::Modulation::iterator<InputIterator> symboll, detail::Modulation::iterator<OutputIterator> word) const
+{
+  auto demodulate = detail::Modulation::DemodulateFunction<InputIterator, OutputIterator>::create(structure());
+  (*demodulate)(symbolf, symboll, word);
+}
+
+template <class InputIterator, class OutputIterator>
+void fec::Modulation::soDemodulateBlocks(detail::Modulation::iterator<InputIterator> first, detail::Modulation::iterator<InputIterator> last, typename InputIterator::value_type variance, detail::Modulation::iterator<OutputIterator> output) const
+{
+  auto soDemodulate = detail::Modulation::SoDemodulateFunction<InputIterator, OutputIterator>::create(structure());
+  (*soDemodulate)(first, last, 1/(2*variance), output);
 }
 
 

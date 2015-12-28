@@ -29,6 +29,8 @@
 
 #include "operations.h"
 
+using namespace fec;
+
 int main( int argc, char* argv[] )
 {
   //! [Creating a Turbo code]
@@ -41,49 +43,36 @@ int main( int argc, char* argv[] )
    There is one output bits, with generator 17 (in octal) associated
    with the input bit.
    */
-  fec::Trellis trellis(fec::Trellis::Options({4}, {{017}}).feedback({015}).width({2}));
+  Trellis trellis(Trellis::Options({4}, {{017}}).feedback({015}).width({2}));
   //! [Creating a trellis]
-  
-  std::cout << trellis << std::endl;
-  
-  uint64_t seed = std::chrono::system_clock::now().time_since_epoch().count();
-  std::srand ( unsigned (seed ) );
-  std::vector<size_t> permIdx(2048);
-  for (size_t i = 0; i < permIdx.size(); ++i) {
-    permIdx[i] = i;
-  }
-  std::random_shuffle (permIdx.begin(), permIdx.end());
   
   /*
    The trellis and interleaver indices are used to create a code structure.
    */
-  auto encOptions = fec::Turbo::EncoderOptions(trellis, {{}, permIdx}).termination(fec::Trellis::Truncate);
-  auto decOptions = fec::Turbo::DecoderOptions({}).algorithm(fec::Approximate).iterations(10);
   //! [Creating a Turbo code structure]
   
-  
+  //auto bou = EncoderOptions(trellis, std::vector<Permutation>{{}, permIdx});
   /*
    A codec is created and ready to operate
    */
-  fec::Turbo codec(encOptions, decOptions);
+  Turbo codec = Turbo::EncoderOptions{Turbo::Lte3Gpp::trellis(), {{}, Turbo::Lte3Gpp::interleaver(512)}}.termination(Trellis::Truncate);
+  Permutation perm = codec.puncturing(Turbo::PunctureOptions{}.mask({{1, 1}, {1, 0}, {1, 0}}).bitOrdering(Group));
   //! [Creating a Turbo code]
   
-  auto modOptions = fec::Modulation::ModOptions({{-1.0, -1.0}, {-1.0, 1.0}, {1.0, -1.0}, {1.0, 1.0}});
-  //fec::Modulation mod({fec::Modulation::RectangularQam(16).avgPower(1.0)});
-  fec::Modulation mod(modOptions);
+  Modulation mod = Modulation::ModOptions{Modulation::RectangularQam(16)};
   
   double snrdB = 0.0;
   double snr = pow(10.0, snrdB/10.0);
   
   auto m = randomBits(codec.msgSize());
   
-  auto c = codec.encode(m);
+  auto c = perm.permute(codec.encode(m));
   auto x = mod.modulate(c);
   
   auto y = distort(x, snrdB, 2);
   
-  auto l = mod.soDemodulate(mod.symbol(y), {0.5/snr});
-  auto md = codec.decode(l);
+  auto l = mod.soDemodulate(Modulation::Input::symbol(y), {0.5/snr});
+  auto md = codec.decode(perm.ipermute(l));
   
   int errorCount = 0;
   for (size_t i = 0; i < m.size(); ++i) {

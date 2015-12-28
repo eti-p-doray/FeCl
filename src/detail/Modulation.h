@@ -104,8 +104,10 @@ namespace fec {
         DecoderAlgorithm decoderAlgorithm() const {return algorithm_;} /**< Access the algorithm used in decoder. */
         double scalingFactor() const {return scalingFactor_;}
         
-        void modulate(std::vector<BitField<size_t>>::const_iterator word, std::vector<double>::iterator symbol) const;
-        void demodulate(std::vector<double>::const_iterator symbol, std::vector<BitField<size_t>>::iterator word) const;
+        template <class InputIterator, class OutputIterator>
+        void modulate(InputIterator word, OutputIterator symbol) const;
+        template <class InputIterator, class OutputIterator>
+        void demodulate(InputIterator symbol, OutputIterator word) const;
 
       private:
         template <typename Archive>
@@ -146,9 +148,10 @@ namespace fec {
       };
       
       template <class T>
-      using const_iterator = MultiIterator<typename std::vector<T>::const_iterator, Field, Word, Symbol>;
-      template <class T>
-      using iterator = MultiIterator<typename std::vector<T>::iterator, Field, Word, Symbol>;
+      using ConstArguments = Arguments<typename std::add_const<T>::type>;
+      
+      template <class It>
+      using iterator = MultiIterator<It, Field, Word, Symbol>;
       
     }
     
@@ -159,6 +162,42 @@ namespace fec {
 BOOST_CLASS_TYPE_INFO(fec::detail::Modulation::Structure,extended_type_info_no_rtti<fec::detail::Modulation::Structure>);
 BOOST_CLASS_EXPORT_KEY(fec::detail::Modulation::Structure);
 
+template <class InputIterator, class OutputIterator>
+void fec::detail::Modulation::Structure::modulate(InputIterator word, OutputIterator symbol) const
+{
+  for (size_t i = 0; i < length(); ++i) {
+    BitField<size_t> input = 0;
+    for (int j = 0; j < size(); j++) {
+      input.set(j, word[j]);
+    }
+    input *= dimension();
+    for (int j = 0; j < dimension(); ++j) {
+      symbol[j] = constellation_[input+j];
+    }
+    word += size();
+    symbol += symbolWidth();
+  }
+}
+
+template <class InputIterator, class OutputIterator>
+void fec::detail::Modulation::Structure::demodulate(InputIterator symbol, OutputIterator word) const
+{
+  for (size_t i = 0; i < length(); ++i) {
+    typename InputIterator::value_type max = 0;
+    BitField<size_t> maxInput = 0;
+    for (size_t j = 0; j < 1<<size(); ++j) {
+      auto tmp = -sqDistance(symbol, constellation().begin() + j*dimension(), dimension());
+      if (tmp > max) {
+        maxInput = j;
+      }
+    }
+    for (int j = 0; j < size(); j++) {
+      word[j] = maxInput.test(j);
+    }
+    word += size();
+    symbol += symbolWidth();
+  }
+}
 
 template <typename Archive>
 void fec::detail::Modulation::Structure::serialize(Archive & ar, const unsigned int version) {

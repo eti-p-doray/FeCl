@@ -25,18 +25,18 @@ using namespace fec;
 
 BOOST_CLASS_EXPORT_IMPLEMENT(Convolutional);
 
-Convolutional::Convolutional(const detail::Convolutional::Structure& structure,  int workGroupSize) :
-Codec(std::unique_ptr<detail::Convolutional::Structure>(new detail::Convolutional::Structure(structure)), workGroupSize)
+Convolutional::Convolutional(const detail::Convolutional::Structure& structure) :
+Codec(std::unique_ptr<detail::Convolutional::Structure>(new detail::Convolutional::Structure(structure)))
 {
 }
 
-Convolutional::Convolutional(const EncoderOptions& encoder, const DecoderOptions& decoder, int workGroupSize) :
-Codec(std::unique_ptr<detail::Convolutional::Structure>(new detail::Convolutional::Structure(encoder, decoder)), workGroupSize)
+Convolutional::Convolutional(const EncoderOptions& encoder, const DecoderOptions& decoder) :
+Codec(std::unique_ptr<detail::Convolutional::Structure>(new detail::Convolutional::Structure(encoder, decoder)))
 {
 }
 
-Convolutional::Convolutional(const EncoderOptions& encoder, int workGroupSize) :
-Codec(std::unique_ptr<detail::Convolutional::Structure>(new detail::Convolutional::Structure(encoder)), workGroupSize)
+Convolutional::Convolutional(const EncoderOptions& encoder) :
+Codec(std::unique_ptr<detail::Convolutional::Structure>(new detail::Convolutional::Structure(encoder)))
 {
 }
 

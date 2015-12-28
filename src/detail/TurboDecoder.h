@@ -313,7 +313,7 @@ namespace fec {
         state += structure().constituent(j).systSize();
       }
       
-      structure().interleaver(i).permuteBlock(syst, stateTmp);
+      structure().interleaver(i).permuteBlock(syst, 1, stateTmp);
     }
     
     template <class T, template <class> class LogSumAlg>
@@ -353,7 +353,7 @@ namespace fec {
         state += structure().constituent(j).systSize();
       }
       
-      structure().interleaver(i).permuteBlock(syst, extrinsicConst);
+      structure().interleaver(i).permuteBlock(syst, 1, extrinsicConst);
     }
 
     

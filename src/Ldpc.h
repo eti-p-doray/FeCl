@@ -79,8 +79,8 @@ namespace fec {
     using PunctureOptions = detail::Ldpc::PunctureOptions;
     
     Ldpc() = default;
-    Ldpc(const EncoderOptions& encoder, const DecoderOptions& decoder, int workGroupSize = 8);
-    Ldpc(const EncoderOptions& encoder, int workGroupSize = 8);
+    Ldpc(const EncoderOptions& encoder, const DecoderOptions& decoder);
+    Ldpc(const EncoderOptions& encoder);
     Ldpc(const Ldpc& other) {*this = other;}
     virtual ~Ldpc() = default;
     Ldpc& operator=(const Ldpc& other) {Codec::operator=(other); structure_ = std::unique_ptr<detail::Ldpc::Structure>(new detail::Ldpc::Structure(other.structure())); return *this;}
@@ -93,13 +93,13 @@ namespace fec {
     Permutation puncturing(const PunctureOptions& options) {return structure().puncturing(options);}
     
   protected:
-    Ldpc(std::unique_ptr<detail::Ldpc::Structure>&& structure, int workGroupSize = 4) : Codec(std::move(structure), workGroupSize) {}
+    Ldpc(std::unique_ptr<detail::Ldpc::Structure>&& structure) : Codec(std::move(structure)) {}
     
     inline const detail::Ldpc::Structure& structure() const {return dynamic_cast<const detail::Ldpc::Structure&>(Codec::structure());}
     inline detail::Ldpc::Structure& structure() {return dynamic_cast<detail::Ldpc::Structure&>(Codec::structure());}
     
   private:
-    Ldpc(const detail::Ldpc::Structure& structure, int workGroupSize = 8);
+    Ldpc(const detail::Ldpc::Structure& structure);
     
     template <typename Archive>
     void serialize(Archive & ar, const unsigned int version);

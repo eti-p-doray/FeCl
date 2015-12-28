@@ -26,18 +26,18 @@ using namespace fec;
 BOOST_CLASS_EXPORT_IMPLEMENT(Ldpc);
 
 
-Ldpc::Ldpc(const detail::Ldpc::Structure& structure,  int workGroupSize) :
-Codec(std::unique_ptr<detail::Ldpc::Structure>(new detail::Ldpc::Structure(structure)), workGroupSize)
+Ldpc::Ldpc(const detail::Ldpc::Structure& structure) :
+Codec(std::unique_ptr<detail::Ldpc::Structure>(new detail::Ldpc::Structure(structure)))
 {
 }
 
-Ldpc::Ldpc(const EncoderOptions& encoder, const DecoderOptions& decoder, int workGroupSize) :
-Codec(std::unique_ptr<detail::Ldpc::Structure>(new detail::Ldpc::Structure(encoder, decoder)), workGroupSize)
+Ldpc::Ldpc(const EncoderOptions& encoder, const DecoderOptions& decoder) :
+Codec(std::unique_ptr<detail::Ldpc::Structure>(new detail::Ldpc::Structure(encoder, decoder)))
 {
 }
 
-Ldpc::Ldpc(const EncoderOptions& encoder, int workGroupSize) :
-Codec(std::unique_ptr<detail::Ldpc::Structure>(new detail::Ldpc::Structure(encoder)), workGroupSize)
+Ldpc::Ldpc(const EncoderOptions& encoder) :
+Codec(std::unique_ptr<detail::Ldpc::Structure>(new detail::Ldpc::Structure(encoder)))
 {
 }
 

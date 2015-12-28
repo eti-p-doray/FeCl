@@ -73,21 +73,21 @@ namespace fec {
     
     size_t operator[] (size_t i) const {return sequence_[i];}
     
-    template <typename Vector> void permute(const Vector& input, Vector& output, size_t width = 1) const;
-    template <typename Vector> void dePermute(const Vector& input, Vector& output, size_t width = 1) const;
+    template <typename Vector> void permute(const Vector& input, size_t width, Vector& output) const;
+    template <typename Vector> void dePermute(const Vector& input, size_t width, Vector& output) const;
     
     template <typename Vector> Vector permute(const Vector& input, size_t width = 1) const;
     template <typename Vector> Vector dePermute(const Vector& input, size_t width = 1) const;
     
     template <class InputIterator, class OutputIterator>
-    void permuteBlocks(InputIterator inputf, InputIterator inputl, OutputIterator output, size_t width = 1) const;
+    void permuteBlocks(InputIterator inputf, InputIterator inputl, size_t width, OutputIterator output) const;
     template <class InputIterator, class OutputIterator>
-    void dePermuteBlocks(InputIterator inputf, InputIterator inputl, OutputIterator output, size_t width = 1) const;
+    void dePermuteBlocks(InputIterator inputf, InputIterator inputl, size_t width, OutputIterator output) const;
     
     template <class InputIterator, class OutputIterator>
-    void permuteBlock(InputIterator input, OutputIterator output, size_t width = 1) const;
+    void permuteBlock(InputIterator input, size_t width, OutputIterator output) const;
     template <class InputIterator, class OutputIterator>
-    void dePermuteBlock(InputIterator input, OutputIterator output, size_t width = 1) const;
+    void dePermuteBlock(InputIterator input, size_t width, OutputIterator output) const;
 
   private:
     template <typename Archive>
@@ -104,7 +104,7 @@ namespace fec {
 }
 
 template <typename Vector>
-void fec::Permutation::permute(const Vector& input, Vector& output, size_t width) const
+void fec::Permutation::permute(const Vector& input, size_t width, Vector& output) const
 {
   output.resize(input.size() / inputSize() * outputSize());
   
@@ -116,7 +116,7 @@ void fec::Permutation::permute(const Vector& input, Vector& output, size_t width
 }
 
 template <typename Vector>
-void fec::Permutation::dePermute(const Vector& input, Vector& output, size_t width) const
+void fec::Permutation::dePermute(const Vector& input, size_t width, Vector& output) const
 {
   output.resize(input.size() / outputSize() * inputSize());
   
@@ -144,7 +144,7 @@ Vector fec::Permutation::dePermute(const Vector& input, size_t width) const
 }
 
 template <class InputIterator, class OutputIterator>
-void fec::Permutation::permuteBlocks(InputIterator inputf, InputIterator inputl, OutputIterator output, size_t width) const
+void fec::Permutation::permuteBlocks(InputIterator inputf, InputIterator inputl, size_t width, OutputIterator output) const
 {
   while (inputf != inputl) {
     permuteBlock(inputf, output);
@@ -154,7 +154,7 @@ void fec::Permutation::permuteBlocks(InputIterator inputf, InputIterator inputl,
 }
 
 template <class InputIterator, class OutputIterator>
-void fec::Permutation::dePermuteBlocks(InputIterator inputf, InputIterator inputl, OutputIterator output, size_t width) const
+void fec::Permutation::dePermuteBlocks(InputIterator inputf, InputIterator inputl, size_t width, OutputIterator output) const
 {
   while (inputf != inputl) {
     dePermuteBlock(inputf, output);
@@ -164,7 +164,7 @@ void fec::Permutation::dePermuteBlocks(InputIterator inputf, InputIterator input
 }
 
 template <class InputIterator, class OutputIterator>
-void fec::Permutation::permuteBlock(InputIterator input, OutputIterator output, size_t width) const
+void fec::Permutation::permuteBlock(InputIterator input, size_t width, OutputIterator output) const
 {
   for (size_t i = 0; i < sequence_.size(); ++i) {
     std::copy(input+sequence_[i]*width, input+(sequence_[i]+1)*width, output+i*width);
@@ -172,7 +172,7 @@ void fec::Permutation::permuteBlock(InputIterator input, OutputIterator output, 
 }
 
 template <class InputIterator, class OutputIterator>
-void fec::Permutation::dePermuteBlock(InputIterator input, OutputIterator output, size_t width) const
+void fec::Permutation::dePermuteBlock(InputIterator input, size_t width, OutputIterator output) const
 {
   for (size_t i = 0; i < sequence_.size(); ++i) {
     std::copy(input+i*width, input+(i+1)*width, output+sequence_[i]*width);

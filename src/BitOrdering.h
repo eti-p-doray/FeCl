@@ -19,29 +19,20 @@
  along with FeCl.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#include "Turbo.h"
+#ifndef FEC_BIT_ORDERING_H
+#define FEC_BIT_ORDERING_H
 
-using namespace fec;
+namespace fec {
 
-BOOST_CLASS_EXPORT_IMPLEMENT(Turbo);
-
-
-Turbo::Turbo(const detail::Turbo::Structure& structure) :
-Codec(std::unique_ptr<detail::Turbo::Structure>(new detail::Turbo::Structure(structure)))
-{
+  /**
+   *  Ordering of parity bit in Turbo.
+   *  This defines the ordering of parity bits that are output from a Turbo permutation of a PuncturedTurbo Codec.
+   */
+  enum BitOrdering {
+    Alternate,/**< Systematic and parity bits are alternated */
+    Group,/**< Systematic bits are group together and parity bits from each constituents are grouped together. */
+  };
+  
 }
 
-Turbo::Turbo(const EncoderOptions& encoder, const DecoderOptions& decoder) :
-Codec(std::unique_ptr<detail::Turbo::Structure>(new detail::Turbo::Structure(encoder, decoder)))
-{
-}
-
-Turbo::Turbo(const EncoderOptions& encoder) :
-Codec(std::unique_ptr<detail::Turbo::Structure>(new detail::Turbo::Structure(encoder)))
-{
-}
-
-const char * Turbo::get_key() const
-{
-  return boost::serialization::type_info_implementation<Turbo>::type::get_const_instance().get_key();
-}
+#endif

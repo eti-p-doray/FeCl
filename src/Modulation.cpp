@@ -20,7 +20,6 @@
 ******************************************************************************/
 
 #include "Modulation.h"
-#include "detail/Demodulator/Demodulator.h"
 
 using namespace fec;
 
@@ -43,26 +42,4 @@ Modulation::Modulation(const ModOptions& mod)
 
 const char * Modulation::get_key() const {
   return boost::serialization::type_info_implementation<Modulation>::type::get_const_instance().get_key();
-}
-
-void Modulation::modulateBlocks(detail::Modulation::const_iterator<BitField<size_t>> first, detail::Modulation::const_iterator<BitField<size_t>> last, detail::Modulation::iterator<double> output) const
-{
-  while (first != last) {
-    structure().modulate(first.at(detail::Modulation::Word), output.at(detail::Modulation::Symbol));
-    ++first; ++output;
-  }
-}
-
-void Modulation::demodulateBlocks(detail::Modulation::const_iterator<double> first, detail::Modulation::const_iterator<double> last, detail::Modulation::iterator<BitField<size_t>> output) const
-{
-  while (first != last) {
-    structure().demodulate(first.at(detail::Modulation::Symbol), output.at(detail::Modulation::Word));
-    ++first; ++output;
-  }
-}
-
-void Modulation::soDemodulateBlocks(detail::Modulation::const_iterator<double> first, detail::Modulation::const_iterator<double> last, double variance, detail::Modulation::iterator<double> output) const
-{
-  auto worker = detail::Demodulator::create(structure());
-  worker->soDemodulateBlocks(first, last, 1/(2*variance), output.at(fec::detail::Modulation::Word));
 }

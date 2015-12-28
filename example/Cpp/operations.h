@@ -83,7 +83,7 @@ int per(const fec::Codec& codec, double snrdb)
   auto msgDec = codec.decode(llr);
   
   std::vector<double> msgPost;
-  codec.soDecode(codec.parity(llr), codec.msg(msgPost));
+  codec.soDecode(codec.Input.parity(llr), codec.Output.msg(msgPost));
   
   
   int errorCount = 0;

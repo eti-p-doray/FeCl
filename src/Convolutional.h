@@ -58,8 +58,8 @@ namespace fec {
     using PunctureOptions = detail::Convolutional::PunctureOptions;
     
     Convolutional() = default;
-    Convolutional(const EncoderOptions& encoder, const DecoderOptions& decoder, int workGroupSize = 8);
-    Convolutional(const EncoderOptions& encoder, int workGroupSize = 8);
+    Convolutional(const EncoderOptions& encoder, const DecoderOptions& decoder);
+    Convolutional(const EncoderOptions& encoder);
     Convolutional(const Convolutional& other) {*this = other;}
     virtual ~Convolutional() = default;
     Convolutional& operator=(const Convolutional& other) {Codec::operator=(other); structure_ = std::unique_ptr<detail::Convolutional::Structure>(new detail::Convolutional::Structure(other.structure())); return *this;}
@@ -72,13 +72,13 @@ namespace fec {
     Permutation puncturing(const PunctureOptions& options) {return structure().puncturing(options);}
     
   protected:
-    Convolutional(std::unique_ptr<detail::Convolutional::Structure>&& structure, int workGroupSize = 4) : Codec(std::move(structure), workGroupSize) {}
+    Convolutional(std::unique_ptr<detail::Convolutional::Structure>&& structure) : Codec(std::move(structure)) {}
     
     inline const detail::Convolutional::Structure& structure() const {return dynamic_cast<const detail::Convolutional::Structure&>(Codec::structure());}
     inline detail::Convolutional::Structure& structure() {return dynamic_cast<detail::Convolutional::Structure&>(Codec::structure());}
     
   private:
-    Convolutional(const detail::Convolutional::Structure& structure, int workGroupSize = 8);
+    Convolutional(const detail::Convolutional::Structure& structure);
     
     template <typename Archive>
     void serialize(Archive & ar, const unsigned int version);

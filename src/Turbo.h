@@ -58,8 +58,7 @@ namespace fec {
   public:
     
     using Scheduling = detail::Turbo::Scheduling;
-    using BitOrdering = detail::Turbo::BitOrdering;
-    
+
     using EncoderOptions = detail::Turbo::EncoderOptions;
     using DecoderOptions = detail::Turbo::DecoderOptions;
     using PunctureOptions = detail::Turbo::PunctureOptions;
@@ -84,8 +83,8 @@ namespace fec {
     };
     
     Turbo() = default;
-    Turbo(const EncoderOptions& encoder, const DecoderOptions& decoder, int workGroupSize = 8);
-    Turbo(const EncoderOptions& encoder, int workGroupSize = 8);
+    Turbo(const EncoderOptions& encoder, const DecoderOptions& decoder);
+    Turbo(const EncoderOptions& encoder);
     Turbo(const Turbo& other) {*this = other;}
     virtual ~Turbo() = default;
     Turbo& operator=(const Turbo& other) {Codec::operator=(other); structure_ = std::unique_ptr<detail::Turbo::Structure>(new detail::Turbo::Structure(other.structure())); return *this;}
@@ -98,13 +97,13 @@ namespace fec {
     Permutation puncturing(const PunctureOptions& options) {return structure().puncturing(options);}
     
   protected:
-    Turbo(std::unique_ptr<detail::Turbo::Structure>&& structure, int workGroupSize = 4) : Codec(std::move(structure), workGroupSize) {}
+    Turbo(std::unique_ptr<detail::Turbo::Structure>&& structure) : Codec(std::move(structure)) {}
     
     inline const detail::Turbo::Structure& structure() const {return dynamic_cast<const detail::Turbo::Structure&>(Codec::structure());}
     inline detail::Turbo::Structure& structure() {return dynamic_cast<detail::Turbo::Structure&>(Codec::structure());}
     
   private:
-    Turbo(const detail::Turbo::Structure& structure, int workGroupSize = 8);
+    Turbo(const detail::Turbo::Structure& structure);
     
     template <typename Archive>
     void serialize(Archive & ar, const unsigned int version);
