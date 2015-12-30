@@ -146,23 +146,12 @@ bool parity(fec::BitField<T> a) {
   return x;
 }
 
-template <class T, class InputIterator>
-typename InputIterator::value_type accumulate(fec::BitField<T> a, InputIterator b, size_t size) {
-  typename InputIterator::value_type x = 0;
-  for (size_t i = 0; i < size; ++i) {
-    if (a.test(i)) {
-      x += b[i];
-    }
-  }
-  return x;
-}
-
 template <class T, class InputIterator, class OutputIterator>
-typename InputIterator::value_type accumulate(fec::BitField<T> a, size_t pSize, InputIterator b, size_t size) {
+typename InputIterator::value_type accumulate(fec::BitField<T> a, InputIterator b, size_t length, size_t width = 1) {
   typename InputIterator::value_type x = 0;
-  for (size_t i = 0; i < size; ++i, b += pSize) {
-    if (a.test(i, pSize)) {
-      x += b[a.test(i, pSize)-1];
+  for (size_t i = 0; i < length; ++i, b += width) {
+    if (a.test(i, width)) {
+      x += b[a.test(i, width)-1];
     }
   }
   return x;

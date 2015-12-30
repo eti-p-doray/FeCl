@@ -88,7 +88,7 @@ namespace fec {
         
         const char * get_key() const;
         
-        size_t wordWidth() const {return 1;} /**< Access the width of msg in each code bloc. */
+        size_t wordWidth() const {return width_;} /**< Access the width of msg in each code bloc. */
         size_t symbolWidth() const {return dimension();} /**< Access the width of systematics in each code bloc. */
         
         size_t wordSize() const {return length_*size_;} /**< Access the width of msg in each code bloc. */
@@ -101,9 +101,9 @@ namespace fec {
         size_t dimension() const {return dimension_;}
         size_t size() const {return size_;}
         size_t length() const {return length_;}
-        double avgPower() const {return avgPower_;}
-        double peakPower() const {return peakPower_;}
-        double minDistance() const {return minDistance_;}
+        double avgPower() const;
+        double peakPower() const;
+        double minDistance() const;
         DecoderAlgorithm decoderAlgorithm() const {return algorithm_;} /**< Access the algorithm used in decoder. */
         double scalingFactor() const {return scalingFactor_;}
         
@@ -122,6 +122,7 @@ namespace fec {
         size_t dimension_;
         size_t length_;
         size_t size_;
+        size_t width_;
         double scalingFactor_;
         DecoderAlgorithm algorithm_;
       };

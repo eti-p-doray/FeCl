@@ -50,11 +50,10 @@ int main( int argc, char* argv[] )
    */
   //! [Creating a Turbo code structure]
   
-  //auto bou = EncoderOptions(trellis, std::vector<Permutation>{{}, permIdx});
   /*
    A codec is created and ready to operate
    */
-  Turbo codec = Turbo::EncoderOptions{Turbo::Lte3Gpp::trellis(), {{}, Turbo::Lte3Gpp::interleaver(512)}}.termination(Trellis::Truncate);
+  Turbo codec = Turbo::EncoderOptions{Turbo::Lte3Gpp(512)};
   Permutation perm = codec.puncturing(Turbo::PunctureOptions{}.index({{0,1,2,3},{},{}}).mask({{1, 1}, {1, 0}, {1, 0}}).bitOrdering(Group));
   Modulation mod = Modulation::ModOptions{Modulation::RectangularQam(16)};
   //! [Creating a Turbo code]
@@ -62,12 +61,12 @@ int main( int argc, char* argv[] )
   double snrdB = 0.0;
   double snr = pow(10.0, snrdB/10.0);
   
-  auto m = randomBits(codec.msgSize());
-  auto c = perm.permute(codec.encode(m));
+  auto m = randomBits(codec.msgSize(), codec.msgCount());
+  auto c = perm.permute(codec.encode(m), 1);
   auto x = mod.modulate(c);
-  auto y = distort(x, snrdB, 2);
+  auto y = distort(x, snrdB, mod.symbolWidth());
   auto l = mod.soDemodulate(Modulation::Input::symbol(y), {0.5/snr});
-  auto md = codec.decode(perm.ipermute(l));
+  auto md = codec.decode(perm.depermute(l, codec.parityCount()-1));
   
   int errorCount = 0;
   for (size_t i = 0; i < m.size(); ++i) {
