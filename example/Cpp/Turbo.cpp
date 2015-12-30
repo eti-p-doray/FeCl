@@ -43,7 +43,6 @@ int main( int argc, char* argv[] )
    There is one output bits, with generator 17 (in octal) associated
    with the input bit.
    */
-  Trellis trellis(Trellis::Options({4}, {{017}}).feedback({015}).width({2}));
   //! [Creating a trellis]
   
   /*
@@ -57,20 +56,16 @@ int main( int argc, char* argv[] )
    */
   Turbo codec = Turbo::EncoderOptions{Turbo::Lte3Gpp::trellis(), {{}, Turbo::Lte3Gpp::interleaver(512)}}.termination(Trellis::Truncate);
   Permutation perm = codec.puncturing(Turbo::PunctureOptions{}.index({{0,1,2,3},{},{}}).mask({{1, 1}, {1, 0}, {1, 0}}).bitOrdering(Group));
-  //! [Creating a Turbo code]
-  
   Modulation mod = Modulation::ModOptions{Modulation::RectangularQam(16)};
+  //! [Creating a Turbo code]
   
   double snrdB = 0.0;
   double snr = pow(10.0, snrdB/10.0);
   
   auto m = randomBits(codec.msgSize());
-  
   auto c = perm.permute(codec.encode(m));
   auto x = mod.modulate(c);
-  
   auto y = distort(x, snrdB, 2);
-  
   auto l = mod.soDemodulate(Modulation::Input::symbol(y), {0.5/snr});
   auto md = codec.decode(perm.ipermute(l));
   

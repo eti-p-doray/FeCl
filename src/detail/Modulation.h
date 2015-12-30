@@ -51,13 +51,16 @@ namespace fec {
       public:
         ModOptions(const std::vector<std::vector<double>>& constellation) {constellation_ = constellation;}
         ModOptions& length(size_t length) {length_ = length; return *this;}
+        ModOptions& wordWidth(size_t width) {wordWidth_ = width; return *this;}
         
         inline const std::vector<std::vector<double>>& constellation() const {return constellation_;}
         inline const size_t length() const {return length_;}
+        inline const size_t wordWidth() const {return width_;}
         
       private:
         std::vector<std::vector<double>> constellation_;
         size_t length_ = 1;
+        size_t wordWidth_ = 1;
       };
       
       struct DemodOptions {
@@ -119,9 +122,6 @@ namespace fec {
         size_t dimension_;
         size_t length_;
         size_t size_;
-        double avgPower_;
-        double peakPower_;
-        double minDistance_;
         double scalingFactor_;
         DecoderAlgorithm algorithm_;
       };

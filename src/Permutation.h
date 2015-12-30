@@ -65,20 +65,20 @@ namespace fec {
     size_t operator[] (size_t i) const {return sequence_[i];}
     
     template <typename Vector> void permute(const Vector& input, size_t width, Vector& output) const;
-    template <typename Vector> void ipermute(const Vector& input, size_t width, Vector& output) const;
+    template <typename Vector> void depermute(const Vector& input, size_t width, Vector& output) const;
     
     template <typename Vector> Vector permute(const Vector& input, size_t width = 1) const;
-    template <typename Vector> Vector ipermute(const Vector& input, size_t width = 1) const;
+    template <typename Vector> Vector depermute(const Vector& input, size_t width = 1) const;
     
     template <class InputIterator, class OutputIterator>
     void permuteBlocks(InputIterator inputf, InputIterator inputl, size_t width, OutputIterator output) const;
     template <class InputIterator, class OutputIterator>
-    void ipermuteBlocks(InputIterator inputf, InputIterator inputl, size_t width, OutputIterator output) const;
+    void depermuteBlocks(InputIterator inputf, InputIterator inputl, size_t width, OutputIterator output) const;
     
     template <class InputIterator, class OutputIterator>
     void permuteBlock(InputIterator input, size_t width, OutputIterator output) const;
     template <class InputIterator, class OutputIterator>
-    void ipermuteBlock(InputIterator input, size_t width, OutputIterator output) const;
+    void depermuteBlock(InputIterator input, size_t width, OutputIterator output) const;
 
   private:
     template <typename Archive>

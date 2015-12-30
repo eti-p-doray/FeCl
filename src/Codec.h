@@ -67,6 +67,16 @@ namespace fec {
     virtual ~Codec() = default;
     virtual const char * get_key() const = 0; /**< Access the type info key. */
     
+    inline size_t msgCount() const {return 1<<structure().msgWidth();} /**< Access the size of the msg in each code bloc. */
+    inline size_t systCount() const {return 1<<structure().systWidth();} /**< Access the size of the msg in each code bloc. */
+    inline size_t parityCount() const {return 1<<structure().parityWidth();} /**< Access the size of the parity in each code bloc. */
+    inline size_t stateCount() const {return 1<<structure().stateWidth();} /**< Access the size of the extrinsic in each code bloc. */
+
+    inline size_t msgWidth() const {return structure().msgWidth();} /**< Access the size of the msg in each code bloc. */
+    inline size_t systWidth() const {return structure().systWidth();} /**< Access the size of the msg in each code bloc. */
+    inline size_t parityWidth() const {return structure().parityWidth();} /**< Access the size of the parity in each code bloc. */
+    inline size_t stateWidth() const {return structure().stateWidth();} /**< Access the size of the extrinsic in each code bloc. */
+
     inline size_t msgSize() const {return structure().msgSize();} /**< Access the size of the msg in each code bloc. */
     inline size_t systSize() const {return structure().systSize();} /**< Access the size of the msg in each code bloc. */
     inline size_t paritySize() const {return structure().paritySize();} /**< Access the size of the parity in each code bloc. */

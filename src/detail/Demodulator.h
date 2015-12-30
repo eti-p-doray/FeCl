@@ -59,11 +59,13 @@ namespace fec {
       void aPosterioriUpdate(Modulation::iterator<InputIterator> input, T k, OutputIterator output);/**< Final (msg) L-values calculation. */
       
       template <class U = typename LogSumAlg<T>::isRecursive, typename std::enable_if<U::value>::type* = nullptr>
-      T wordUpdateImpl(size_t j);/**< Forward metric calculation. */
+      void wordUpdateImpl(size_t j);/**< Forward metric calculation. */
       template <class U = typename LogSumAlg<T>::isRecursive, typename std::enable_if<!U::value>::type* = nullptr>
-      T wordUpdateImpl(size_t j);/**< Forward metric calculation. */
+      void wordUpdateImpl(size_t j);/**< Forward metric calculation. */
       
       std::vector<T> distance_;
+      std::vector<T> metric_;
+      std::vector<T> max_;
       
       LogSumAlg<T> logSum_;
       
@@ -122,48 +124,55 @@ namespace fec {
     
     template <class T, template <class> class LogSumAlg>
     template <class InputIterator, class OutputIterator>
-    void Demodulator<T, LogSumAlg>::aPosterioriUpdate(Modulation::iterator<InputIterator> input, T k, OutputIterator output)
+    void Demodulator<T, LogSumAlg>::aPosterioriUpdate(Modulation::iterator<InputIterator> input, T factor, OutputIterator output)
     {
       auto wordIn = input.at(Modulation::Word);
       auto wordOut = output;
       
-      for (size_t j = 0; j < structure().size(); ++j) {
-        T tmp = wordUpdateImpl(j);
+      for (size_t j = 0; j < structure().size(); j+=structure().wordWidth()) {
+        wordUpdateImpl(j);
         
         if (input.count(Modulation::Word)) {
-          wordOut[j] = k * structure().scalingFactor() * (tmp - wordIn[j]);
+          for (size_t k = 1; k < structure().wordWidth(); ++k) {
+            wordOut[k] = factor * structure().scalingFactor() * (metric_[k] - metric_[0] - wordIn[k]);
+          }
         }
         else {
-          wordOut[j] = k * structure().scalingFactor() * (tmp);
+          for (size_t k = 1; k < structure().wordWidth(); ++k) {
+            wordOut[k] = factor * structure().scalingFactor() * (metric_[k] - metric_[0]);
+          }
         }
+        wordIn += structure().wordWidth();
+        wordOut += structure().wordWidth();
       }
     }
     
     template <class T, template <class> class LogSumAlg>
     template <class U, typename std::enable_if<U::value>::type*>
-    T Demodulator<T, LogSumAlg>::wordUpdateImpl(size_t j)
+    void Demodulator<T, LogSumAlg>::wordUpdateImpl(size_t j)
     {
-      T metric[2] = {-std::numeric_limits<T>::infinity(), -std::numeric_limits<T>::infinity()};
+      std::fill(metric_.begin(), metric_.end(), -std::numeric_limits<T>::infinity());
       for (BitField<size_t> input = 0; input < distance_.size(); ++input) {
-        metric[input.test(j)] = logSum_.sum(metric[input.test(j)], distance_[input]);
+        metric_[input.test(j, structure.wordCount())] = logSum_.sum(metric_[input.test(j, structure.wordCount())], distance_[input]);
       }
-      return logSum_.post(metric[1]) - logSum_.post(metric[0]);
     }
     
     template <class T, template <class> class LogSumAlg>
     template <class U, typename std::enable_if<!U::value>::type*>
-    T Demodulator<T, LogSumAlg>::wordUpdateImpl(size_t j)
+    void Demodulator<T, LogSumAlg>::wordUpdateImpl(size_t j)
     {
-      T max[2] = {-std::numeric_limits<T>::infinity(), -std::numeric_limits<T>::infinity()};
-      T metric[2] = {T(0),T(0)};
+      std::fill(max_.begin(), max_.end(), -std::numeric_limits<T>::infinity());
+      std::fill(metric_.begin(), metric_.end(), T(0));
       
       for (BitField<size_t> input = 0; input < distance_.size(); ++input) {
-        max[input.test(j)] = logSum_.max(distance_[input], max[input.test(j)]);
+        max_[input.test(j, structure.wordCount())] = logSum_.max(distance_[input], max[input.test(j, structure.wordCount())]);
       }
       for (BitField<size_t> input = 0; input < distance_.size(); ++input) {
-        metric[input.test(j)] = logSum_.sum(logSum_.prior(distance_[input], max[input.test(j)]), metric[input.test(j)]);
+        metric_[input.test(j, structure.wordCount())] = logSum_.sum(logSum_.prior(distance_[input], max_[input.test(j, structure.wordCount())]), metric_[input.test(j, structure.wordCount())]);
       }
-      return logSum_.post(metric[1], max[1]) - logSum_.post(metric[0], max[0]);
+      for (size_t i = 0; i < structure().wordCount(); ++i) {
+        metric_[i] = logSum_.post(metric_[i], max_[i])
+      }
     }
     
   }

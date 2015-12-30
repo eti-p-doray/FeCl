@@ -157,6 +157,17 @@ typename InputIterator::value_type accumulate(fec::BitField<T> a, InputIterator 
   return x;
 }
 
+template <class T, class InputIterator, class OutputIterator>
+typename InputIterator::value_type accumulate(fec::BitField<T> a, size_t pSize, InputIterator b, size_t size) {
+  typename InputIterator::value_type x = 0;
+  for (size_t i = 0; i < size; ++i, b += pSize) {
+    if (a.test(i, pSize)) {
+      x += b[a.test(i, pSize)-1];
+    }
+  }
+  return x;
+}
+
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const fec::BitField<T>& a)
 {

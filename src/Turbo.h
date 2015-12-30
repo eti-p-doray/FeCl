@@ -68,6 +68,9 @@ namespace fec {
      */
     struct Lte3Gpp {
     public:
+      Lte3Gpp(size_t length);
+      operator EncoderOptions();
+
       /*
        *  Access an interleaver defined in the standard.
        *  \param  length  Lenght of the interleaver to be created.
