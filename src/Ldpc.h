@@ -60,23 +60,32 @@ namespace fec {
   {
     friend class boost::serialization::access;
   public:
+    
+    using EncoderOptions = detail::Ldpc::EncoderOptions;
+    using DecoderOptions = detail::Ldpc::DecoderOptions;
+    using PunctureOptions = detail::Ldpc::PunctureOptions;
+    
     struct Gallager {
       static SparseBitMatrix matrix(size_t n, size_t wc, size_t wr, uint64_t seed = 0);
     };
     struct DvbS2 {
     public:
+      DvbS2(size_t n, double rate) {n_ = n; rate_ = rate;}
+      operator EncoderOptions() const {return fec::Ldpc::EncoderOptions(matrix(n_, rate_));}
+      
       static SparseBitMatrix matrix(size_t n, double rate);
       
     private:
-      static const std::array<size_t, 2> length_;
-      static const std::vector<std::vector<double>> rate_;
-      static const std::vector<std::vector<size_t>> parameter_;
-      static const std::vector<std::vector<std::vector<std::vector<size_t>>>> index_;
+      struct Matrix {
+        static const std::array<size_t, 2> length_;
+        static const std::vector<std::vector<double>> rate_;
+        static const std::vector<std::vector<size_t>> parameter_;
+        static const std::vector<std::vector<std::vector<std::vector<size_t>>>> index_;
+      };
+      
+      size_t n_;
+      double rate_;
     };
-    
-    using EncoderOptions = detail::Ldpc::EncoderOptions;
-    using DecoderOptions = detail::Ldpc::DecoderOptions;
-    using PunctureOptions = detail::Ldpc::PunctureOptions;
     
     Ldpc() = default;
     Ldpc(const EncoderOptions& encoder, const DecoderOptions& decoder);

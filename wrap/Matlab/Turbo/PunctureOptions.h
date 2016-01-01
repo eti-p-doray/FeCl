@@ -42,7 +42,7 @@ public:
     fec::Turbo::PunctureOptions punctureOptions;
     punctureOptions.mask(mxArrayTo<std::vector<std::vector<bool>>>{msg()}("mask")(mxGetField(in, 0, "mask")));
     punctureOptions.tailMask(mxArrayTo<std::vector<std::vector<bool>>>{msg()}("tail mask")(mxGetField(in, 0, "tailMask")));
-    punctureOptions.bitOrdering(mxArrayTo<fec::Turbo::BitOrdering>{msg()}("bit ordering")(mxGetField(in, 0, "bitOrdering")));
+    punctureOptions.bitOrdering(mxArrayTo<fec::BitOrdering>{msg()}("bit ordering")(mxGetField(in, 0, "bitOrdering")));
     
     return punctureOptions;
   }

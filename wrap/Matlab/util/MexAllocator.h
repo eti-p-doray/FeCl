@@ -74,17 +74,4 @@ private:
   size_t size_ = 0;
 };    //    end of class Allocator
 
-template <typename T, class Enable = void>
-struct MexAllocatorHolder
-{
-  using type = std::allocator<T>;
-};
-
-template <typename T>
-struct MexAllocatorHolder<T, typename std::enable_if<std::is_convertible<typename std::vector<T, MexAllocator<T>>::iterator, typename std::vector<T>::iterator>::value>::type>
-{
-  using type = MexAllocator<T>;
-};
-
-
 #endif

@@ -53,16 +53,16 @@ int main( int argc, char* argv[] )
   /*
    A codec is created and ready to operate
    */
-  Turbo codec = Turbo::EncoderOptions{Turbo::Lte3Gpp(512)};
-  Permutation perm = codec.puncturing(Turbo::PunctureOptions{}.index({{0,1,2,3},{},{}}).mask({{1, 1}, {1, 0}, {1, 0}}).bitOrdering(Group));
-  Modulation mod = Modulation::ModOptions{Modulation::RectangularQam(16)};
+  Turbo codec(Turbo::Lte3Gpp(512));
+  Permutation perm = codec.puncturing(Turbo::PunctureOptions{}.mask({{1, 1}, {1, 0}, {1, 0}}).bitOrdering(Group));
+  Modulation mod(Modulation::RectangularQam(16));// = Modulation::ModOptions({{-1, -1}, {-1, 1}, {1, -1}, {1, 1}});//(Modulation::RectangularQam(16));
   //! [Creating a Turbo code]
   
-  double snrdB = 0.0;
+  double snrdB = -1.0;
   double snr = pow(10.0, snrdB/10.0);
   
-  auto m = randomBits(codec.msgSize(), codec.msgCount());
-  auto c = perm.permute(codec.encode(m), 1);
+  auto m = randomBits(codec.msgSize());
+  auto c = perm.permute(codec.encode(m));
   auto x = mod.modulate(c);
   auto y = distort(x, snrdB, mod.symbolWidth());
   auto l = mod.soDemodulate(Modulation::Input::symbol(y), {0.5/snr});

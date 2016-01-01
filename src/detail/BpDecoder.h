@@ -39,7 +39,7 @@ namespace fec {
      *  while allowing the compiler to inline implementation specific functions
      *  by using templates instead of polymorphism.
      */
-    template <class T, template <class> class BoxSumAlg>
+    template <DecoderAlgorithm algorithm, class T>
     class BpDecoder {
     public:
       BpDecoder(const Ldpc::Structure& structure);
@@ -65,13 +65,13 @@ namespace fec {
       std::vector<T> check_;
       std::vector<T> buffer_;
       
-      BoxSumAlg<T> boxSum_;
+      BoxSum<algorithm,T> boxSum_;
       
       Ldpc::Structure structure_;
     };
     
-    template <class T, template <class> class BoxSumAlg>
-    BpDecoder<T, BoxSumAlg>::BpDecoder(const Ldpc::Structure& structure) : structure_(structure)
+    template <DecoderAlgorithm algorithm, class T>
+    BpDecoder<algorithm, T>::BpDecoder(const Ldpc::Structure& structure) : structure_(structure)
     {
       hardParity_.resize(this->structure().checks().cols());
       parity_.resize(this->structure().checks().cols());
@@ -80,9 +80,9 @@ namespace fec {
       bit_.resize(this->structure().checks().cols());
     }
     
-    template <class T, template <class> class BoxSumAlg>
+    template <DecoderAlgorithm algorithm, class T>
     template <class InputIterator, class OutputIterator>
-    void BpDecoder<T, BoxSumAlg>::decode(InputIterator parity, OutputIterator msg)
+    void BpDecoder<algorithm, T>::decode(InputIterator parity, OutputIterator msg)
     {
       std::copy(parity, parity+structure().checks().cols(), parity_.begin());
       
@@ -116,9 +116,9 @@ namespace fec {
       }
     }
     
-    template <class T, template <class> class BoxSumAlg>
+    template <DecoderAlgorithm algorithm, class T>
     template <class InputIterator, class OutputIterator>
-    void BpDecoder<T, BoxSumAlg>::soDecode(Codec::iterator<InputIterator> input, Codec::iterator<OutputIterator> output)
+    void BpDecoder<algorithm, T>::soDecode(Codec::iterator<InputIterator> input, Codec::iterator<OutputIterator> output)
     {
       std::copy(input.at(Codec::Parity), input.at(Codec::Parity)+structure().checks().cols(), parity_.begin());
       if (input.count(Codec::Syst)) {
@@ -179,8 +179,8 @@ namespace fec {
       }
     }
     
-    template <class T, template <class> class BoxSumAlg>
-    void BpDecoder<T, BoxSumAlg>::checkUpdate(size_t i)
+    template <DecoderAlgorithm algorithm, class T>
+    void BpDecoder<algorithm, T>::checkUpdate(size_t i)
     {
       auto checkMetric = check_.begin();
       auto checkMetricTmp = buffer_.begin();
@@ -193,14 +193,14 @@ namespace fec {
         for (size_t j = 1; j < size-1; ++j) {
           checkMetricTmp[j] = boxSum_.prior(first[j]);
           first[j] = prod;
-          prod = boxSum_.sum(prod, checkMetricTmp[j]);
+          prod = boxSum_(prod, checkMetricTmp[j]);
         }
         checkMetricTmp[size-1] = boxSum_.prior(first[size-1]);
         first[size-1] = sf *  (boxSum_.post(prod));
         prod = checkMetricTmp[size-1];
         for (size_t j = size-2; j > 0; --j) {
-          first[j] = sf *  (boxSum_.post( boxSum_.sum(first[j], prod) ));
-          prod = boxSum_.sum(prod, checkMetricTmp[j]);
+          first[j] = sf *  (boxSum_.post( boxSum_(first[j], prod) ));
+          prod = boxSum_(prod, checkMetricTmp[j]);
         }
         *first = sf *  (boxSum_.post(prod));
         
@@ -208,8 +208,8 @@ namespace fec {
       }
     }
     
-    template <class T, template <class> class BoxSumAlg>
-    void BpDecoder<T, BoxSumAlg>::bitUpdate()
+    template <DecoderAlgorithm algorithm, class T>
+    void BpDecoder<algorithm, T>::bitUpdate()
     {
       std::fill(bit_.begin(), bit_.end(), 0);
       for (size_t i = 0; i < structure().checks().size(); ++i) {

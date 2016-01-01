@@ -172,7 +172,7 @@ namespace fec {
         virtual ~SoDecodeFunction() = default;
       };
       
-      template <class InputIterator, class OutputIterator, template <class> class Algorithm>
+      template <class InputIterator, class OutputIterator, DecoderAlgorithm algorithm>
       class SoDecodeFunctionImpl : public SoDecodeFunction<InputIterator, OutputIterator>
       {
       public:
@@ -183,7 +183,7 @@ namespace fec {
         
       private:
         SoDecodeFunctionImpl(const Structure& structure) : decoder_(structure) {}
-        MapDecoder<typename InputIterator::value_type, Algorithm> decoder_;
+        MapDecoder<algorithm, typename InputIterator::value_type> decoder_;
       };
       
     }
@@ -234,7 +234,7 @@ namespace fec {
         virtual ~SoDecodeFunction() = default;
       };
       
-      template <class InputIterator, class OutputIterator, template <class> class Algorithm>
+      template <class InputIterator, class OutputIterator, DecoderAlgorithm algorithm>
       class DecodeFunctionImpl : public DecodeFunction<InputIterator, OutputIterator>
       {
       public:
@@ -245,10 +245,10 @@ namespace fec {
         
       private:
         DecodeFunctionImpl(const Structure& structure) : decoder_(structure) {}
-        TurboDecoder<typename InputIterator::value_type, Algorithm> decoder_;
+        TurboDecoder<algorithm, typename InputIterator::value_type> decoder_;
       };
       
-      template <class InputIterator, class OutputIterator, template <class> class Algorithm>
+      template <class InputIterator, class OutputIterator, DecoderAlgorithm algorithm>
       class SoDecodeFunctionImpl : public SoDecodeFunction<InputIterator, OutputIterator>
       {
       public:
@@ -259,7 +259,7 @@ namespace fec {
         
       private:
         SoDecodeFunctionImpl(const Structure& structure) : decoder_(structure) {}
-        TurboDecoder<typename InputIterator::value_type, Algorithm> decoder_;
+        TurboDecoder<algorithm, typename InputIterator::value_type> decoder_;
       };
       
     }
@@ -310,7 +310,7 @@ namespace fec {
         virtual ~SoDecodeFunction() = default;
       };
       
-      template <class InputIterator, class OutputIterator, template <class> class Algorithm>
+      template <class InputIterator, class OutputIterator, DecoderAlgorithm algorithm>
       class DecodeFunctionImpl : public DecodeFunction<InputIterator, OutputIterator>
       {
       public:
@@ -321,10 +321,10 @@ namespace fec {
         
       private:
         DecodeFunctionImpl(const Structure& structure) : decoder_(structure) {}
-        BpDecoder<typename InputIterator::value_type, Algorithm> decoder_;
+        BpDecoder<algorithm, typename InputIterator::value_type> decoder_;
       };
       
-      template <class InputIterator, class OutputIterator, template <class> class Algorithm>
+      template <class InputIterator, class OutputIterator, DecoderAlgorithm algorithm>
       class SoDecodeFunctionImpl : public SoDecodeFunction<InputIterator, OutputIterator>
       {
       public:
@@ -335,7 +335,7 @@ namespace fec {
         
       private:
         SoDecodeFunctionImpl(const Structure& structure) : decoder_(structure) {}
-        BpDecoder<typename InputIterator::value_type, Algorithm> decoder_;
+        BpDecoder<algorithm, typename InputIterator::value_type> decoder_;
       };
       
     }
@@ -385,13 +385,13 @@ namespace fec {
       switch (structure.decoderAlgorithm()) {
         default:
         case Exact:
-          return DecodeFunctionImpl<InputIterator,OutputIterator,LogSum>::create(structure);
+          return DecodeFunctionImpl<InputIterator,OutputIterator,Exact>::create(structure);
           
         case Linear:
-          return DecodeFunctionImpl<InputIterator,OutputIterator,LinearLogSum>::create(structure);
+          return DecodeFunctionImpl<InputIterator,OutputIterator,Linear>::create(structure);
           
         case Approximate:
-          return DecodeFunctionImpl<InputIterator,OutputIterator,MaxLogSum>::create(structure);
+          return DecodeFunctionImpl<InputIterator,OutputIterator,Approximate>::create(structure);
       }
     }
     
@@ -401,13 +401,13 @@ namespace fec {
       switch (structure.decoderAlgorithm()) {
         default:
         case Exact:
-          return DecodeFunctionImpl<InputIterator,OutputIterator,BoxSum>::create(structure);
+          return DecodeFunctionImpl<InputIterator,OutputIterator,Exact>::create(structure);
           
         case Linear:
-          return DecodeFunctionImpl<InputIterator,OutputIterator,LinearBoxSum>::create(structure);
+          return DecodeFunctionImpl<InputIterator,OutputIterator,Linear>::create(structure);
           
         case Approximate:
-          return DecodeFunctionImpl<InputIterator,OutputIterator,MinBoxSum>::create(structure);
+          return DecodeFunctionImpl<InputIterator,OutputIterator,Approximate>::create(structure);
       }
     }
     
@@ -430,13 +430,13 @@ namespace fec {
       switch (structure.decoderAlgorithm()) {
         default:
         case Exact:
-          return SoDecodeFunctionImpl<InputIterator,OutputIterator,LogSum>::create(structure);
+          return SoDecodeFunctionImpl<InputIterator,OutputIterator,Exact>::create(structure);
           
         case Linear:
-          return SoDecodeFunctionImpl<InputIterator,OutputIterator,LinearLogSum>::create(structure);
+          return SoDecodeFunctionImpl<InputIterator,OutputIterator,Linear>::create(structure);
           
         case Approximate:
-          return SoDecodeFunctionImpl<InputIterator,OutputIterator,MaxLogSum>::create(structure);
+          return SoDecodeFunctionImpl<InputIterator,OutputIterator,Approximate>::create(structure);
       }
     }
     
@@ -446,13 +446,13 @@ namespace fec {
       switch (structure.decoderAlgorithm()) {
         default:
         case Exact:
-          return SoDecodeFunctionImpl<InputIterator,OutputIterator,LogSum>::create(structure);
+          return SoDecodeFunctionImpl<InputIterator,OutputIterator,Exact>::create(structure);
           
         case Linear:
-          return SoDecodeFunctionImpl<InputIterator,OutputIterator,LinearLogSum>::create(structure);
+          return SoDecodeFunctionImpl<InputIterator,OutputIterator,Linear>::create(structure);
           
         case Approximate:
-          return SoDecodeFunctionImpl<InputIterator,OutputIterator,MaxLogSum>::create(structure);
+          return SoDecodeFunctionImpl<InputIterator,OutputIterator,Approximate>::create(structure);
       }
     }
     
@@ -462,13 +462,13 @@ namespace fec {
       switch (structure.decoderAlgorithm()) {
         default:
         case Exact:
-          return SoDecodeFunctionImpl<InputIterator,OutputIterator,BoxSum>::create(structure);
+          return SoDecodeFunctionImpl<InputIterator,OutputIterator,Exact>::create(structure);
           
         case Linear:
-          return SoDecodeFunctionImpl<InputIterator,OutputIterator,LinearBoxSum>::create(structure);
+          return SoDecodeFunctionImpl<InputIterator,OutputIterator,Linear>::create(structure);
           
         case Approximate:
-          return SoDecodeFunctionImpl<InputIterator,OutputIterator,MinBoxSum>::create(structure);
+          return SoDecodeFunctionImpl<InputIterator,OutputIterator,Approximate>::create(structure);
       }
     }
     

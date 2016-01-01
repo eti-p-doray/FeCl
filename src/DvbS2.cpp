@@ -23,16 +23,16 @@
 
 using namespace fec;
 
-const std::array<size_t, 2> Ldpc::DvbS2::length_ = {64800, 16200};
-const std::vector<std::vector<double>> Ldpc::DvbS2::rate_ = {
+const std::array<size_t, 2> Ldpc::DvbS2::Matrix::length_ = {64800, 16200};
+const std::vector<std::vector<double>> Ldpc::DvbS2::Matrix::rate_ = {
   {1.0/4.0, 1.0/3.0, 2.0/5.0, 1.0/2.0, 3.0/5.0, 2.0/3.0, 3.0/4.0, 4.0/5.0, 5.0/6.0, 8.0/9.0, 9.0/10.0},
   {1.0/4.0, 1.0/3.0, 2.0/5.0, 1.0/2.0, 3.0/5.0, 2.0/3.0, 3.0/4.0, 4.0/5.0, 5.0/6.0, 8.0/9.0}};
 
-const std::vector<std::vector<size_t>> Ldpc::DvbS2::parameter_ = {
+const std::vector<std::vector<size_t>> Ldpc::DvbS2::Matrix::parameter_ = {
   {135, 120, 108, 90, 72, 60, 45, 36, 30, 20, 18},
   {36, 30, 27, 25, 18, 15, 12, 10, 8, 5}};
 
-const std::vector<std::vector<std::vector<std::vector<size_t>>>> Ldpc::DvbS2::index_ = {
+const std::vector<std::vector<std::vector<std::vector<size_t>>>> Ldpc::DvbS2::Matrix::index_ = {
   {
     {
       {23606, 36098, 1140, 28859, 18148, 18510, 6226, 540, 42014, 20879, 23802, 47088},
@@ -1595,33 +1595,33 @@ const std::vector<std::vector<std::vector<std::vector<size_t>>>> Ldpc::DvbS2::in
 SparseBitMatrix Ldpc::DvbS2::matrix(size_t n, double rate)
 {
   size_t lengthIdx = 0;
-  for (size_t i = 0; i < length_.size(); ++i) {
-    if (length_[i] == n) {
+  for (size_t i = 0; i < Matrix::length_.size(); ++i) {
+    if (Matrix::length_[i] == n) {
       lengthIdx = i;
       break;
     }
   }
-  if (n != length_[lengthIdx]) {
+  if (n != Matrix::length_[lengthIdx]) {
     throw std::invalid_argument("Invalid length");
   }
   size_t rateIdx = 0;
-  for (size_t i = 0; i < rate_[lengthIdx].size(); ++i) {
-    if (rate_[lengthIdx][i] == rate) {
+  for (size_t i = 0; i < Matrix::rate_[lengthIdx].size(); ++i) {
+    if (Matrix::rate_[lengthIdx][i] == rate) {
       rateIdx = i;
       break;
     }
   }
   
-  if (rate != rate_[lengthIdx][rateIdx]) {
+  if (rate != Matrix::rate_[lengthIdx][rateIdx]) {
     throw std::invalid_argument("Invalid rate");
   }
   
-  size_t q = parameter_[lengthIdx][rateIdx];
+  size_t q = Matrix::parameter_[lengthIdx][rateIdx];
   size_t k = q * 360;
   
   std::vector<size_t> rowSizes(n);
   for (size_t i = 0; i < k; ++i) {
-    rowSizes[i] = index_[lengthIdx][rateIdx][i/360].size();
+    rowSizes[i] = Matrix::index_[lengthIdx][rateIdx][i/360].size();
   }
   for (size_t i = n-k; i < n; ++i) {
     rowSizes[i] = 2;
@@ -1631,8 +1631,8 @@ SparseBitMatrix Ldpc::DvbS2::matrix(size_t n, double rate)
   SparseBitMatrix H(rowSizes, n-k);
   for (size_t i = 0; i < n-k; ++i) {
     auto row = H[i];
-    for (size_t j = 0; j < index_[lengthIdx][rateIdx][i/360].size(); ++j) {
-      size_t col = ( index_[lengthIdx][rateIdx][i/360][j]+(i%360)*q ) % H.cols();
+    for (size_t j = 0; j < Matrix::index_[lengthIdx][rateIdx][i/360].size(); ++j) {
+      size_t col = ( Matrix::index_[lengthIdx][rateIdx][i/360][j]+(i%360)*q ) % H.cols();
       row.set(col);
     }
   }

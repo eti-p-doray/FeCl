@@ -46,7 +46,7 @@ namespace fec {
         size_t length_;
         Trellis::Termination termination_ = Trellis::Truncate;
         size_t msgWidth_ = 0;
-        size_t parityWidth_ = 0;
+        size_t parityWidth_ = 1;
       };
       
       struct DecoderOptions {
@@ -132,6 +132,8 @@ namespace fec {
         Trellis trellis_;
         size_t length_;
         size_t tailLength_;
+        size_t msgWidth_ = 0;
+        size_t parityWidth_ = 1;
         Trellis::Termination termination_;
         double scalingFactor_;
       };

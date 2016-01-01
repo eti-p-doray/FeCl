@@ -56,7 +56,10 @@ ptree speed_Convolutional(std::vector<double> snrdb)
   
   fec::Trellis trellis({4}, {{017, 015}}, {017});
   auto encOpt = fec::Convolutional::EncoderOptions(trellis, T).termination(fec::Trellis::Truncate);
-  codecs.push_back(fec::Convolutional(encOpt,1));
+  codecs.push_back(fec::Convolutional(encOpt));
+  for (auto & i : codecs) {
+    i.setWorkGroupSize(1);
+  }
   
   itppCodecs.push_back(itpp::Convolutional_Code());
   ivec generator(2);
@@ -133,11 +136,15 @@ ptree speed_Turbo(std::vector<double> snrdb)
   
   auto encOpt = fec::Turbo::EncoderOptions(trellis, {{}, permIdx}).termination(fec::Trellis::Tail);
   auto decOpt = fec::Turbo::DecoderOptions().algorithm(fec::Exact).iterations(4).scheduling(fec::Serial);
-  codecs.push_back(fec::Turbo(encOpt, decOpt,1));
+  codecs.push_back(fec::Turbo(encOpt, decOpt));
   decOpt.algorithm(fec::Linear);
-  codecs.push_back(fec::Turbo(encOpt, decOpt,1));
+  codecs.push_back(fec::Turbo(encOpt, decOpt));
   decOpt.algorithm(fec::Approximate);
-  codecs.push_back(fec::Turbo(encOpt, decOpt,1));
+  codecs.push_back(fec::Turbo(encOpt, decOpt));
+  
+  for (auto & i : codecs) {
+    i.setWorkGroupSize(1);
+  }
   
   auto punc = codecs[0].puncturing(fec::Turbo::PunctureOptions({}).mask({{1,1}, {1,0}, {1,0}}));
   
@@ -167,7 +174,7 @@ ptree speed_Turbo(std::vector<double> snrdb)
     std::vector<BitField<size_t>> parity = codecs[0].encode(msg[i]);
     llr[i] = distort(parity, snrdb[i]);
     llr[i] = punc.permute(llr[i]);
-    llr[i] = punc.dePermute(llr[i]);
+    llr[i] = punc.depermute(llr[i]);
     
     itppLlr[i].resize(N);
     for (int j = 0; j < N; ++j) {
@@ -220,11 +227,15 @@ ptree speed_Ldpc(std::vector<double> snrdb)
   
   auto encOpt = fec::Ldpc::EncoderOptions(checkMatrix);
   auto decOpt = fec::Ldpc::DecoderOptions().algorithm(fec::Exact).iterations(20);
-  codecs.push_back(fec::Ldpc(encOpt, decOpt,1));
+  codecs.push_back(fec::Ldpc(encOpt, decOpt));
   decOpt.algorithm(fec::Linear);
-  codecs.push_back(fec::Ldpc(encOpt, decOpt,1));
+  codecs.push_back(fec::Ldpc(encOpt, decOpt));
   decOpt.algorithm(fec::Approximate);
-  codecs.push_back(fec::Ldpc(encOpt, decOpt,1));
+  codecs.push_back(fec::Ldpc(encOpt, decOpt));
+  
+  for (auto & i : codecs) {
+    i.setWorkGroupSize(1);
+  }
   
   itpp::LDPC_Parity_Irregular itppCheckMatrix;
   itppCheckMatrix.initialize(64800-T, 64800);

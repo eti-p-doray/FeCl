@@ -41,7 +41,7 @@ void test_turbo_soDecode_systOut(const fec::Turbo& code, size_t n = 1)
   
   std::vector<double> parityOut;
   std::vector<double> systOut;
-  code.soDecode(fec::Codec::parity(parityIn), fec::Codec::parity(parityOut).syst(systOut));
+  code.soDecode(fec::Codec::Input::parity(parityIn), fec::Codec::Output::parity(parityOut).syst(systOut));
   
   for (size_t i = 0; i < systOut.size(); ++i) {
     BOOST_REQUIRE(parityOut[i] == systOut[i]);

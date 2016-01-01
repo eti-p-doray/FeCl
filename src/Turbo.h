@@ -68,8 +68,8 @@ namespace fec {
      */
     struct Lte3Gpp {
     public:
-      Lte3Gpp(size_t length);
-      operator EncoderOptions();
+      Lte3Gpp(size_t length) {length_ = length;}
+      operator EncoderOptions() const {return fec::Turbo::EncoderOptions(trellis(), {{},interleaver(length_)});}
 
       /*
        *  Access an interleaver defined in the standard.
@@ -80,9 +80,13 @@ namespace fec {
       static Trellis trellis() {return Trellis({4}, {{13}}, {15});}
       
     private:
-      static const std::array<size_t, 188> length_;
-      static const std::array<double, 188> rate_;
-      static const std::vector<std::vector<size_t>> parameter_;
+      struct Interleaver {
+        static const std::array<size_t, 188> length_;
+        static const std::array<double, 188> rate_;
+        static const std::vector<std::vector<size_t>> parameter_;
+      };
+      
+      size_t length_;
     };
     
     Turbo() = default;

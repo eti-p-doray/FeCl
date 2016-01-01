@@ -34,6 +34,8 @@
 #include <boost/serialization/extended_type_info_no_rtti.hpp>
 
 #include "MultiIterator.h"
+#include "../DecoderAlgorithm.h"
+#include "../BitField.h"
 
 namespace fec {
   
@@ -55,7 +57,7 @@ namespace fec {
         
         inline const std::vector<std::vector<double>>& constellation() const {return constellation_;}
         inline const size_t length() const {return length_;}
-        inline const size_t wordWidth() const {return width_;}
+        inline const size_t wordWidth() const {return wordWidth_;}
         
       private:
         std::vector<std::vector<double>> constellation_;
@@ -87,6 +89,8 @@ namespace fec {
         ~Structure() = default;
         
         const char * get_key() const;
+        
+        size_t wordCount() const {return 1<<width_;}
         
         size_t wordWidth() const {return width_;} /**< Access the width of msg in each code bloc. */
         size_t symbolWidth() const {return dimension();} /**< Access the width of systematics in each code bloc. */
@@ -205,9 +209,6 @@ void fec::detail::Modulation::Structure::serialize(Archive & ar, const unsigned 
   using namespace boost::serialization;
   ar & BOOST_SERIALIZATION_NVP(constellation_);
   ar & BOOST_SERIALIZATION_NVP(dimension_);
-  ar & BOOST_SERIALIZATION_NVP(avgPower_);
-  ar & BOOST_SERIALIZATION_NVP(peakPower_);
-  ar & BOOST_SERIALIZATION_NVP(minDistance_);
   ar & BOOST_SERIALIZATION_NVP(scalingFactor_);
   ar & BOOST_SERIALIZATION_NVP(algorithm_);
 }

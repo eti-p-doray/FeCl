@@ -25,9 +25,6 @@
 #include <array>
 #include <tuple>
 
-#include "../BitField.h"
-#include "../DecoderAlgorithm.h"
-
 namespace fec {
   
   /**

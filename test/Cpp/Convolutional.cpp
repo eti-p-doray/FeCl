@@ -41,7 +41,7 @@ void test_convo_soDecode_systOut(const fec::Codec& code, size_t n = 1)
   
   std::vector<double> msgOut;
   std::vector<double> systOut;
-  code.soDecode(fec::Codec::Input<std::vector<double>>().parity(parityIn), fec::Codec::Output<std::vector<double>>().msg(msgOut).syst(systOut));
+  code.soDecode(fec::Codec::Input::parity(parityIn), fec::Codec::Output::msg(msgOut).syst(systOut));
   
   for (size_t i = 0; i < msg.size(); ++i) {
     BOOST_REQUIRE(msgOut[i] == systOut[i]);

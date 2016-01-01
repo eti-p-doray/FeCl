@@ -40,7 +40,7 @@ namespace fec {
      *  while allowing the compiler to inline implementation specific functions
      *  by using templates instead of polymorphism.
      */
-    template <class T, template <class> class LogSumAlg>
+    template <DecoderAlgorithm algorithm, class T>
     class MapDecoder
     {
     public:
@@ -63,24 +63,24 @@ namespace fec {
       template <class InputIterator, class OutputIterator>
       void aPosterioriUpdate(Codec::iterator<InputIterator> input, Codec::iterator<OutputIterator> output);/**< Final (msg) L-values calculation. */
       
-      template <class U = typename LogSumAlg<T>::isRecursive, typename std::enable_if<U::value>::type* = nullptr>
+      template <class U = typename LogSum<algorithm,T>::isRecursive, typename std::enable_if<U::value>::type* = nullptr>
       void forwardUpdateImpl(typename std::vector<T>::iterator forwardMetric, typename std::vector<T>::const_iterator branchMetric);/**< Forward metric calculation. */
-      template <class U = typename LogSumAlg<T>::isRecursive, typename std::enable_if<!U::value>::type* = nullptr>
+      template <class U = typename LogSum<algorithm,T>::isRecursive, typename std::enable_if<!U::value>::type* = nullptr>
       void forwardUpdateImpl(typename std::vector<T>::iterator forwardMetric, typename std::vector<T>::const_iterator branchMetric);/**< Forward metric calculation. */
       
-      template <class U = typename LogSumAlg<T>::isRecursive, typename std::enable_if<U::value>::type* = nullptr>
+      template <class U = typename LogSum<algorithm,T>::isRecursive, typename std::enable_if<U::value>::type* = nullptr>
       void backwardUpdateImpl(typename std::vector<T>::iterator backwardMetric, typename std::vector<T>::const_iterator branchMetric);/**< Forward metric calculation. */
-      template <class U = typename LogSumAlg<T>::isRecursive, typename std::enable_if<!U::value>::type* = nullptr>
+      template <class U = typename LogSum<algorithm,T>::isRecursive, typename std::enable_if<!U::value>::type* = nullptr>
       void backwardUpdateImpl(typename std::vector<T>::iterator backwardMetric, typename std::vector<T>::const_iterator branchMetric);/**< Forward metric calculation. */
       
-      template <class U = typename LogSumAlg<T>::isRecursive, typename std::enable_if<U::value>::type* = nullptr>
+      template <class U = typename LogSum<algorithm,T>::isRecursive, typename std::enable_if<U::value>::type* = nullptr>
       T msgUpdateImpl(typename std::vector<T>::iterator branchMetric, size_t j);/**< Forward metric calculation. */
-      template <class U = typename LogSumAlg<T>::isRecursive, typename std::enable_if<!U::value>::type* = nullptr>
+      template <class U = typename LogSum<algorithm,T>::isRecursive, typename std::enable_if<!U::value>::type* = nullptr>
       T msgUpdateImpl(typename std::vector<T>::iterator branchMetric, size_t j);/**< Forward metric calculation. */
       
-      template <class U = typename LogSumAlg<T>::isRecursive, typename std::enable_if<U::value>::type* = nullptr>
+      template <class U = typename LogSum<algorithm,T>::isRecursive, typename std::enable_if<U::value>::type* = nullptr>
       T parityUpdateImpl(typename std::vector<T>::iterator branchMetric, size_t j);/**< Forward metric calculation. */
-      template <class U = typename LogSumAlg<T>::isRecursive, typename std::enable_if<!U::value>::type* = nullptr>
+      template <class U = typename LogSum<algorithm,T>::isRecursive, typename std::enable_if<!U::value>::type* = nullptr>
       T parityUpdateImpl(typename std::vector<T>::iterator branchMetric, size_t j);/**< Forward metric calculation. */
       
       std::vector<T> buffer_;
@@ -89,7 +89,7 @@ namespace fec {
       std::vector<T> forward_;/**< Forward metric buffer (alpha) */
       std::vector<T> backward_;/**< Backard metric buffer (beta) */
       
-      LogSumAlg<T> logSum_;
+      LogSum<algorithm,T> logSum_;
       
       Convolutional::Structure structure_;
     };
@@ -99,15 +99,15 @@ namespace fec {
      *  Allocates metric buffers based on the given code structure.
      *  \param  codeStructure Convolutional code structure describing the code
      */
-    template <class T, template <class> class LogSumAlg>
-    MapDecoder<T, LogSumAlg>::MapDecoder(const Convolutional::Structure& structure) : structure_(structure)
+    template <DecoderAlgorithm algorithm, class T>
+    MapDecoder<algorithm, T>::MapDecoder(const Convolutional::Structure& structure) : structure_(structure)
     {
       branch_.resize((this->structure().length()+this->structure().tailLength())*this->structure().trellis().inputCount()*this->structure().trellis().stateCount());
       forward_.resize((this->structure().length()+this->structure().tailLength())*this->structure().trellis().stateCount());
       backward_.resize((this->structure().length()+this->structure().tailLength())*this->structure().trellis().stateCount());
       
       buffer_.resize(std::max(this->structure().trellis().outputCount(), this->structure().trellis().inputCount()));
-      if (!LogSumAlg<T>::isRecursive::value) {
+      if (!LogSum<algorithm,T>::isRecursive::value) {
         buffer_.resize(this->structure().trellis().stateCount()*(this->structure().trellis().inputCount()+1));
       }
     }
@@ -121,9 +121,9 @@ namespace fec {
      *    in the a posteriori information L-value sequence.
      *    Output needs to be pre-allocated.
      */
-    template <class T, template <class> class LogSumAlg>
+    template <DecoderAlgorithm algorithm, class T>
     template <class InputIterator, class OutputIterator>
-    void MapDecoder<T, LogSumAlg>::soDecode(Codec::iterator<InputIterator> input, Codec::iterator<OutputIterator> output)
+    void MapDecoder<algorithm, T>::soDecode(Codec::iterator<InputIterator> input, Codec::iterator<OutputIterator> output)
     {
       branchUpdate(input);
       forwardUpdate();
@@ -131,16 +131,16 @@ namespace fec {
       aPosterioriUpdate(input, output);
     }
     
-    template <class T, template <class> class LogSumAlg>
+    template <DecoderAlgorithm algorithm, class T>
     template <class InputIterator>
-    void MapDecoder<T, LogSumAlg>::branchUpdate(Codec::iterator<InputIterator> input)
+    void MapDecoder<algorithm, T>::branchUpdate(Codec::iterator<InputIterator> input)
     {
       auto parity = input.at(Codec::Parity);
       auto syst = input.at(Codec::Syst);
       auto branch = branch_.begin();
       for (size_t i = 0; i < structure().length() + structure().tailLength(); ++i) {
         for (BitField<size_t> j = 0; j < structure().trellis().outputCount(); ++j) {
-          buffer_[j] = accumulate(j, parity, structure().trellis().outputWidth());
+          buffer_[j] = mergeMetrics(parity, 1, structure().trellis().outputWidth(), j);
         }
         auto branchTmp = branch;
         for (auto output = structure().trellis().beginOutput(); output < structure().trellis().endOutput();) {
@@ -154,7 +154,7 @@ namespace fec {
         if (input.count(Codec::Syst)) {
           branch = branchTmp;
           for (BitField<size_t> j = 0; j < structure().trellis().inputCount(); ++j) {
-            buffer_[j] = accumulate(j, syst, structure().trellis().inputWidth());
+            buffer_[j] = mergeMetrics(syst, 1, structure().trellis().inputWidth(), j);
           }
           for (size_t j = 0; j < structure().trellis().stateCount(); ++j) {
             for (size_t k = 0; k < structure().trellis().inputCount(); ++k) {
@@ -168,8 +168,8 @@ namespace fec {
       }
     }
     
-    template <class T, template <class> class LogSumAlg>
-    void MapDecoder<T, LogSumAlg>::forwardUpdate()
+    template <DecoderAlgorithm algorithm, class T>
+    void MapDecoder<algorithm, T>::forwardUpdate()
     {
       auto forward = forward_.begin();
       auto branch = branch_.cbegin();
@@ -183,7 +183,7 @@ namespace fec {
         branch += structure().trellis().tableSize();
         T max = -std::numeric_limits<T>::infinity();
         for (BitField<size_t> j = 0; j < structure().trellis().stateCount(); ++j) {
-          forward[j] = logSum_.post(forward[j]);
+          forward[j] = forward[j];
           max = std::max(forward[j], max);
         }
         for (BitField<size_t> j = 0; j < structure().trellis().stateCount(); ++j) {
@@ -192,8 +192,8 @@ namespace fec {
       }
     }
     
-    template <class T, template <class> class LogSumAlg>
-    void MapDecoder<T, LogSumAlg>::backwardUpdate()
+    template <DecoderAlgorithm algorithm, class T>
+    void MapDecoder<algorithm, T>::backwardUpdate()
     {
       auto backward = backward_.end()-structure().trellis().stateCount();
       switch (structure().termination()) {
@@ -204,7 +204,7 @@ namespace fec {
           
         default:
         case Trellis::Truncate:
-          std::fill(backward, backward + structure().trellis().stateCount(), 0.0);
+          std::fill(backward, backward + structure().trellis().stateCount(), T(0));
           break;
       }
       backward -= structure().trellis().stateCount();
@@ -214,7 +214,6 @@ namespace fec {
         backwardUpdateImpl(backward, branch);
         T max = -std::numeric_limits<T>::infinity();
         for (BitField<size_t> j = 0; j < structure().trellis().stateCount(); ++j) {
-          backward[j] = logSum_.post(backward[j]);
           max = std::max(backward[j], max);
         }
         for (BitField<size_t> j = 0; j < structure().trellis().stateCount(); ++j) {
@@ -225,9 +224,9 @@ namespace fec {
       }
     }
     
-    template <class T, template <class> class LogSumAlg>
+    template <DecoderAlgorithm algorithm, class T>
     template <class InputIterator, class OutputIterator>
-    void MapDecoder<T, LogSumAlg>::aPosterioriUpdate(Codec::iterator<InputIterator> input, Codec::iterator<OutputIterator> output)
+    void MapDecoder<algorithm, T>::aPosterioriUpdate(Codec::iterator<InputIterator> input, Codec::iterator<OutputIterator> output)
     {
       auto systOut = output.at(Codec::Syst);
       auto systIn = input.at(Codec::Syst);
@@ -242,7 +241,7 @@ namespace fec {
         
         for (auto state = structure().trellis().beginState(); state < structure().trellis().endState(); ) {
           for (BitField<size_t> input = 0; input < structure().trellis().inputCount(); ++input) {
-            branch[input] = logSum_.prior(branch[input] + *forward + backward[size_t(state[input])]);
+            branch[input] = branch[input] + *forward + backward[size_t(state[input])];
           }
           state += structure().trellis().inputCount();
           branch += structure().trellis().inputCount();
@@ -288,26 +287,26 @@ namespace fec {
       }
     }
     
-    template <class T, template <class> class LogSumAlg>
+    template <DecoderAlgorithm algorithm, class T>
     template <class U, typename std::enable_if<U::value>::type*>
-    void MapDecoder<T, LogSumAlg>::forwardUpdateImpl(typename std::vector<T>::iterator forward, typename std::vector<T>::const_iterator branch)
+    void MapDecoder<algorithm, T>::forwardUpdateImpl(typename std::vector<T>::iterator forward, typename std::vector<T>::const_iterator branch)
     {
-      std::fill(forward + structure().trellis().stateCount(), forward + 2*structure().trellis().stateCount(), logSum_.prior(-std::numeric_limits<T>::infinity()));
+      std::fill(forward + structure().trellis().stateCount(), forward + 2*structure().trellis().stateCount(), -std::numeric_limits<T>::infinity());
       auto state = structure().trellis().beginState();
       for (BitField<size_t> j = 0; j < structure().trellis().stateCount(); ++j) {
         for (BitField<size_t> k = 0; k < structure().trellis().inputCount(); ++k) {
           auto & forwardMetricRef = forward[structure().trellis().stateCount() + size_t(state[k])];
           forwardMetricRef =
-          logSum_.sum(forwardMetricRef, logSum_.prior(forward[j] + branch[k]));
+          logSum_(forwardMetricRef, forward[j] + branch[k]);
         }
         branch += structure().trellis().inputCount();
         state += structure().trellis().inputCount();
       }
     }
     
-    template <class T, template <class> class LogSumAlg>
+    template <DecoderAlgorithm algorithm, class T>
     template <class U, typename std::enable_if<!U::value>::type*>
-    void MapDecoder<T, LogSumAlg>::forwardUpdateImpl(typename std::vector<T>::iterator forward, typename std::vector<T>::const_iterator branch)
+    void MapDecoder<algorithm, T>::forwardUpdateImpl(typename std::vector<T>::iterator forward, typename std::vector<T>::const_iterator branch)
     {
       auto state = structure().trellis().beginState();
       auto buffer = buffer_.begin();
@@ -316,7 +315,7 @@ namespace fec {
       for (BitField<size_t> j = 0; j < structure().trellis().stateCount(); ++j) {
         for (BitField<size_t> k = 0; k < structure().trellis().inputCount(); ++k) {
           buffer[k] = forward[j] + branch[k];
-          maxMetric[size_t(state[k])] = logSum_.max(buffer[k], maxMetric[size_t(state[k])]);
+          maxMetric[size_t(state[k])] = std::max(buffer[k], maxMetric[size_t(state[k])]);
         }
         branch += structure().trellis().inputCount();
         buffer += structure().trellis().inputCount();
@@ -329,7 +328,7 @@ namespace fec {
       for (BitField<size_t> j = 0; j < structure().trellis().stateCount(); ++j) {
         for (BitField<size_t> k = 0; k < structure().trellis().inputCount(); ++k) {
           buffer[k] = logSum_.prior(buffer[k], maxMetric[size_t(state[k])]);
-          forward[size_t(state[k])] = logSum_.sum(buffer[k], forward[size_t(state[k])]);
+          forward[size_t(state[k])] = logSum_(buffer[k], forward[size_t(state[k])]);
         }
         buffer += structure().trellis().inputCount();
         state += structure().trellis().inputCount();
@@ -339,28 +338,25 @@ namespace fec {
       }
     }
     
-    template <class T, template <class> class LogSumAlg>
+    template <DecoderAlgorithm algorithm, class T>
     template <class U, typename std::enable_if<U::value>::type*>
-    void MapDecoder<T, LogSumAlg>::backwardUpdateImpl(typename std::vector<T>::iterator backward, typename std::vector<T>::const_iterator branch)
+    void MapDecoder<algorithm, T>::backwardUpdateImpl(typename std::vector<T>::iterator backward, typename std::vector<T>::const_iterator branch)
     {
-      std::fill(backward, backward + structure().trellis().stateCount(), logSum_.prior(-std::numeric_limits<T>::infinity()));
+      std::fill(backward, backward + structure().trellis().stateCount(), -std::numeric_limits<T>::infinity());
       auto state = structure().trellis().beginState();
       for (BitField<size_t> j = 0; j < structure().trellis().stateCount(); ++j) {
         for (BitField<size_t> k = 0; k < structure().trellis().inputCount(); ++k) {
           backward[j] =
-          logSum_.sum(
-                      backward[j],
-                      logSum_.prior(backward[size_t(state[k])+structure().trellis().stateCount()] + branch[k])
-                      );
+          logSum_(backward[j], backward[size_t(state[k])+structure().trellis().stateCount()] + branch[k]);
         }
         branch += structure().trellis().inputCount();
         state += structure().trellis().inputCount();
       }
     }
     
-    template <class T, template <class> class LogSumAlg>
+    template <DecoderAlgorithm algorithm, class T>
     template <class U, typename std::enable_if<!U::value>::type*>
-    void MapDecoder<T, LogSumAlg>::backwardUpdateImpl(typename std::vector<T>::iterator backward, typename std::vector<T>::const_iterator branch)
+    void MapDecoder<algorithm, T>::backwardUpdateImpl(typename std::vector<T>::iterator backward, typename std::vector<T>::const_iterator branch)
     {
       auto state = structure().trellis().beginState();
       auto buffer = buffer_.begin();
@@ -369,11 +365,11 @@ namespace fec {
         T max = -std::numeric_limits<T>::infinity();
         for (BitField<size_t> k = 0; k < structure().trellis().inputCount(); ++k) {
           buffer[k] = backward[size_t(state[k])+structure().trellis().stateCount()] + branch[k];
-          max = logSum_.max(buffer[k], max);
+          max = std::max(buffer[k], max);
         }
         for (BitField<size_t> k = 0; k < structure().trellis().inputCount(); ++k) {
           buffer[k] = logSum_.prior(buffer[k], max);
-          backward[j] = logSum_.sum(buffer[k], backward[j]);
+          backward[j] = logSum_(buffer[k], backward[j]);
         }
         backward[j] = logSum_.post(backward[j], max);
         branch += structure().trellis().inputCount();
@@ -382,70 +378,68 @@ namespace fec {
       }
     }
     
-    template <class T, template <class> class LogSumAlg>
+    template <DecoderAlgorithm algorithm, class T>
     template <class U, typename std::enable_if<U::value>::type*>
-    T MapDecoder<T, LogSumAlg>::msgUpdateImpl(typename std::vector<T>::iterator branch, size_t j)
+    T MapDecoder<algorithm, T>::msgUpdateImpl(typename std::vector<T>::iterator branch, size_t j)
     {
-      T metric[2] = {logSum_.prior(-std::numeric_limits<T>::infinity()), logSum_.prior(-std::numeric_limits<T>::infinity())};
+      T metric[2] = {-std::numeric_limits<T>::infinity(), -std::numeric_limits<T>::infinity()};
       for (size_t k = 0; k < structure().trellis().stateCount(); ++k) {
         for (BitField<size_t> input = 0; input < structure().trellis().inputCount(); ++input) {
-          metric[input.test(j)] = logSum_.sum(metric[input.test(j)], branch[input]);
+          metric[input.test(j)] = logSum_(metric[input.test(j)], branch[input]);
         }
         branch += structure().trellis().inputCount();
       }
-      return logSum_.post(metric[1]) - logSum_.post(metric[0]);
+      return metric[1] - metric[0];
     }
     
-    template <class T, template <class> class LogSumAlg>
+    template <DecoderAlgorithm algorithm, class T>
     template <class U, typename std::enable_if<U::value>::type*>
-    T MapDecoder<T, LogSumAlg>::parityUpdateImpl(typename std::vector<T>::iterator branch, size_t j)
+    T MapDecoder<algorithm, T>::parityUpdateImpl(typename std::vector<T>::iterator branch, size_t j)
     {
-      T metric[2] = {logSum_.prior(-std::numeric_limits<T>::infinity()), logSum_.prior(-std::numeric_limits<T>::infinity())};
+      T metric[2] = {-std::numeric_limits<T>::infinity(), -std::numeric_limits<T>::infinity()};
       for (auto output = structure().trellis().beginOutput(); output < structure().trellis().endOutput();) {
         for (BitField<size_t> input = 0; input < structure().trellis().inputCount(); ++input) {
-          metric[output[input].test(j)] = logSum_.sum(metric[output[input].test(j)], branch[input]);
+          metric[output[input].test(j)] = logSum_(metric[output[input].test(j)], branch[input]);
         }
         branch += structure().trellis().inputCount();
         output += structure().trellis().inputCount();
       }
-      return logSum_.post(metric[1]) - logSum_.post(metric[0]);
+      return metric[1] - metric[0];
     }
     
-    template <class T, template <class> class LogSumAlg>
+    template <DecoderAlgorithm algorithm, class T>
     template <class U, typename std::enable_if<!U::value>::type*>
-    T MapDecoder<T, LogSumAlg>::msgUpdateImpl(typename std::vector<T>::iterator branch, size_t j)
+    T MapDecoder<algorithm, T>::msgUpdateImpl(typename std::vector<T>::iterator branch, size_t j)
     {
-      T max[2] = {T(-std::numeric_limits<T>::infinity()), T(-std::numeric_limits<T>::infinity())};
-      T metric[2] = {
-        T(0),
-        T(0)};
+      T max[2] = {-std::numeric_limits<T>::infinity(), -std::numeric_limits<T>::infinity()};
+      T metric[2] = {T(0),T(0)};
       auto branchTmp = branch;
       for (size_t k = 0; k < structure().trellis().stateCount(); ++k) {
         for (BitField<size_t> input = 0; input < structure().trellis().inputCount(); ++input) {
-          max[input.test(j)] = logSum_.max(branch[input], max[input.test(j)]);
+          max[input.test(j)] = std::max(branch[input], max[input.test(j)]);
         }
         branch += structure().trellis().inputCount();
       }
       branch = branchTmp;
       for (size_t k = 0; k < structure().trellis().stateCount(); ++k) {
         for (BitField<size_t> input = 0; input < structure().trellis().inputCount(); ++input) {
-          metric[input.test(j)] = logSum_.sum(logSum_.prior(branch[input], max[input.test(j)]), metric[input.test(j)]);
+          metric[input.test(j)] = logSum_(logSum_.prior(branch[input], max[input.test(j)]), metric[input.test(j)]);
         }
         branch += structure().trellis().inputCount();
       }
       return logSum_.post(metric[1], max[1]) - logSum_.post(metric[0], max[0]);
     }
     
-    template <class T, template <class> class LogSumAlg>
+    template <DecoderAlgorithm algorithm, class T>
     template <class U, typename std::enable_if<!U::value>::type*>
-    T MapDecoder<T, LogSumAlg>::parityUpdateImpl(typename std::vector<T>::iterator branch, size_t j)
+    T MapDecoder<algorithm, T>::parityUpdateImpl(typename std::vector<T>::iterator branch, size_t j)
     {
       T max[2] = {-std::numeric_limits<T>::infinity(), -std::numeric_limits<T>::infinity()};
       T metric[2] = {T(0), T(0)};
       auto branchTmp = branch;
       for (auto output = structure().trellis().beginOutput(); output < structure().trellis().endOutput();) {
         for (BitField<size_t> input = 0; input < structure().trellis().inputCount(); ++input) {
-          max[output[input].test(j)] = logSum_.max(branch[input], max[output[input].test(j)]);
+          max[output[input].test(j)] = std::max(branch[input], max[output[input].test(j)]);
         }
         branch += structure().trellis().inputCount();
         output += structure().trellis().inputCount();
@@ -453,7 +447,7 @@ namespace fec {
       branch = branchTmp;
       for (auto output = structure().trellis().beginOutput(); output < structure().trellis().endOutput();) {
         for (BitField<size_t> input = 0; input < structure().trellis().inputCount(); ++input) {
-          metric[output[input].test(j)] = logSum_.sum(logSum_.prior(branch[input], max[output[input].test(j)]), metric[output[input].test(j)]);
+          metric[output[input].test(j)] = logSum_(logSum_.prior(branch[input], max[output[input].test(j)]), metric[output[input].test(j)]);
         }
         branch += structure().trellis().inputCount();
         output += structure().trellis().inputCount();

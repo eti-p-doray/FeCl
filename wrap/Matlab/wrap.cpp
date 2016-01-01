@@ -47,7 +47,7 @@ class MatlabWrap {
 public:
   template <typename T> using wrapTo = mxArrayTo<T>;
   template <typename... Args> static auto toWrap(Args&&... args) -> decltype(toMxArray(std::forward<Args>(args)...)) {return toMxArray(std::forward<Args>(args)...);}
-  template <typename T> using Allocator = typename MexAllocatorHolder<T>::type;
+  template <typename T> using Allocator = MexAllocator<T>;
   template <typename T> using Handle = MexHandle<T>;
   using InArgList = MexArgList<const mxArray*>;
   using OutArgList = MexArgList<mxArray*>;

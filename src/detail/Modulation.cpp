@@ -39,11 +39,16 @@ Modulation::Structure::Structure(const ModOptions& mod)
 
 void Modulation::Structure::setModOptions(const ModOptions& mod)
 {
+  width_ = mod.wordWidth();
   size_ = std::log2(mod.constellation_.size());
   length_ = mod.length();
   if (mod.constellation_.size() != 1<<size()) {
-    throw std::invalid_argument("wrong sive for constellation");
+    throw std::invalid_argument("invalid size for constellation");
   }
+  if (size_ % width_ != 0) {
+    throw std::invalid_argument("invalid width");
+  }
+  size_ /= width_;
   
   dimension_ = mod.constellation_[0].size();
   constellation_.resize(dimension()*mod.constellation_.size());

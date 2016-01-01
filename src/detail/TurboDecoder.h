@@ -32,7 +32,7 @@ namespace fec {
      *  This class contains the implementation of iterative decoder.
      *  This algorithm is used for decoding in a TurboCodec.
      */
-    template <class T, template <class> class LogSumAlg>
+    template <DecoderAlgorithm algorithm, class T>
     class TurboDecoder
     {
     public:
@@ -57,7 +57,7 @@ namespace fec {
       void parallelTransferUpdate();
       void customTransferUpdate(size_t stage, size_t i);
       
-      std::vector<MapDecoder<T,LogSumAlg>> code_;
+      std::vector<MapDecoder<algorithm,T>> code_;
       
       std::vector<T> state_;
       std::vector<T> stateBuffer_;
@@ -67,11 +67,11 @@ namespace fec {
       Turbo::Structure structure_;
     };
     
-    template <class T, template <class> class LogSumAlg>
-    TurboDecoder<T, LogSumAlg>::TurboDecoder(const Turbo::Structure& structure) : structure_(structure)
+    template <DecoderAlgorithm algorithm, class T>
+    TurboDecoder<algorithm, T>::TurboDecoder(const Turbo::Structure& structure) : structure_(structure)
     {
       for (size_t i = 0; i < this->structure().constituentCount(); ++i) {
-        code_.push_back(MapDecoder<T,LogSumAlg>(this->structure().constituent(i)));
+        code_.push_back(MapDecoder<algorithm,T>(this->structure().constituent(i)));
       }
       state_.resize(this->structure().stateSize());
       stateBuffer_.resize(this->structure().stateSize());;
@@ -79,9 +79,9 @@ namespace fec {
       parityOut_.resize(this->structure().paritySize());
     }
     
-    template <class T, template <class> class LogSumAlg>
+    template <DecoderAlgorithm algorithm, class T>
     template <class InputIterator, class OutputIterator>
-    void TurboDecoder<T,LogSumAlg>::decode(InputIterator parity, OutputIterator msg)
+    void TurboDecoder<algorithm, T>::decode(InputIterator parity, OutputIterator msg)
     {
       std::copy(parity, parity + structure().paritySize(), parityIn_.begin());
       std::fill(state_.begin(), state_.end(), 0);
@@ -124,9 +124,9 @@ namespace fec {
       }
     }
     
-    template <class T, template <class> class LogSumAlg>
+    template <DecoderAlgorithm algorithm, class T>
     template <class InputIterator, class OutputIterator>
-    void TurboDecoder<T,LogSumAlg>::soDecode(Codec::iterator<InputIterator> input, Codec::iterator<OutputIterator> output)
+    void TurboDecoder<algorithm, T>::soDecode(Codec::iterator<InputIterator> input, Codec::iterator<OutputIterator> output)
     {
       std::copy(input.at(Codec::Parity), input.at(Codec::Parity) + structure().paritySize(), parityIn_.begin());
       if (input.count(Codec::Syst)) {
@@ -205,8 +205,8 @@ namespace fec {
       }
     }
     
-    template <class T, template <class> class LogSumAlg>
-    void TurboDecoder<T,LogSumAlg>::aPosterioriUpdate()
+    template <DecoderAlgorithm algorithm, class T>
+    void TurboDecoder<algorithm, T>::aPosterioriUpdate()
     {
       auto state = state_.begin();
       auto tail = parityOut_.begin() + structure().msgSize();
@@ -224,8 +224,8 @@ namespace fec {
       }
     }
     
-    template <class T, template <class> class LogSumAlg>
-    void TurboDecoder<T,LogSumAlg>::customActivationUpdate(size_t i, size_t stage, bool outputParity)
+    template <DecoderAlgorithm algorithm, class T>
+    void TurboDecoder<algorithm, T>::customActivationUpdate(size_t i, size_t stage, bool outputParity)
     {
       auto parityIn = parityIn_.begin() + structure().systSize();
       auto parityOut = parityOut_.begin() + structure().systSize();
@@ -253,8 +253,8 @@ namespace fec {
       }
     }
     
-    template <class T, template <class> class LogSumAlg>
-    void TurboDecoder<T,LogSumAlg>::parallelTransferUpdate()
+    template <DecoderAlgorithm algorithm, class T>
+    void TurboDecoder<algorithm, T>::parallelTransferUpdate()
     {
       auto state = state_.begin();
       auto stateTmp = stateBuffer_.begin();
@@ -288,8 +288,8 @@ namespace fec {
       }
     }
     
-    template <class T, template <class> class LogSumAlg>
-    void TurboDecoder<T,LogSumAlg>::serialTransferUpdate(size_t i)
+    template <DecoderAlgorithm algorithm, class T>
+    void TurboDecoder<algorithm, T>::serialTransferUpdate(size_t i)
     {
       auto state = state_.begin();
       auto systTail = parityIn_.begin() + structure().msgSize();
@@ -316,8 +316,8 @@ namespace fec {
       structure().interleaver(i).permuteBlock(syst, 1, stateTmp);
     }
     
-    template <class T, template <class> class LogSumAlg>
-    void TurboDecoder<T,LogSumAlg>::customTransferUpdate(size_t stage, size_t src)
+    template <DecoderAlgorithm algorithm, class T>
+    void TurboDecoder<algorithm, T>::customTransferUpdate(size_t stage, size_t src)
     {
       size_t i = structure().scheduling()[stage].activation[src];
       auto state = state_.begin();

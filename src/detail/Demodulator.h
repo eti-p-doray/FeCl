@@ -40,7 +40,7 @@ namespace fec {
      *  while allowing the compiler to inline implementation specific functions
      *  by using templates instead of polymorphism.
      */
-    template <class T, template <class> class LogSumAlg>
+    template <DecoderAlgorithm algorithm, class T>
     class Demodulator
     {
     public:
@@ -58,16 +58,16 @@ namespace fec {
       template <class InputIterator, class OutputIterator>
       void aPosterioriUpdate(Modulation::iterator<InputIterator> input, T k, OutputIterator output);/**< Final (msg) L-values calculation. */
       
-      template <class U = typename LogSumAlg<T>::isRecursive, typename std::enable_if<U::value>::type* = nullptr>
+      template <class U = typename LogSum<algorithm,T>::isRecursive, typename std::enable_if<U::value>::type* = nullptr>
       void wordUpdateImpl(size_t j);/**< Forward metric calculation. */
-      template <class U = typename LogSumAlg<T>::isRecursive, typename std::enable_if<!U::value>::type* = nullptr>
+      template <class U = typename LogSum<algorithm,T>::isRecursive, typename std::enable_if<!U::value>::type* = nullptr>
       void wordUpdateImpl(size_t j);/**< Forward metric calculation. */
       
       std::vector<T> distance_;
       std::vector<T> metric_;
       std::vector<T> max_;
       
-      LogSumAlg<T> logSum_;
+      LogSum<algorithm,T> logSum_;
       
       Modulation::Structure structure_;
     };
@@ -77,10 +77,14 @@ namespace fec {
      *  Allocates metric buffers based on the given code structure.
      *  \param  codeStructure Convolutional code structure describing the code
      */
-    template <class T, template <class> class LogSumAlg>
-    Demodulator<T, LogSumAlg>::Demodulator(const Modulation::Structure& structure) : structure_(structure)
+    template <DecoderAlgorithm algorithm, class T>
+    Demodulator<algorithm, T>::Demodulator(const Modulation::Structure& structure) : structure_(structure)
     {
       distance_.resize(this->structure().constellation().size() / this->structure().dimension());
+      metric_.resize(this->structure().wordCount());
+      if (!LogSum<algorithm,T>::isRecursive::value) {
+        max_.resize(this->structure().wordCount());
+      }
     }
     
     /**
@@ -92,22 +96,22 @@ namespace fec {
      *    in the a posteriori information L-value sequence.
      *    Output needs to be pre-allocated.
      */
-    template <class T, template <class> class LogSumAlg>
+    template <DecoderAlgorithm algorithm, class T>
     template <class InputIterator, class OutputIterator>
-    void Demodulator<T, LogSumAlg>::soDemodulate(Modulation::iterator<InputIterator> input, T k, OutputIterator word)
+    void Demodulator<algorithm, T>::soDemodulate(Modulation::iterator<InputIterator> input, T k, OutputIterator word)
     {
       for (size_t i = 0; i < structure().length(); ++i) {
         distanceUpdate(input);
         aPosterioriUpdate(input, k, word);
         input.at(Modulation::Symbol) += structure().symbolWidth();
-        input.at(Modulation::Word) += structure().size();
-        word += structure().size();
+        input.at(Modulation::Word) += structure().size()*(structure().wordCount()-1);
+        word += structure().size()*(structure().wordCount()-1);
       }
     }
     
-    template <class T, template <class> class LogSumAlg>
+    template <DecoderAlgorithm algorithm, class T>
     template <class InputIterator>
-    void Demodulator<T, LogSumAlg>::distanceUpdate(Modulation::iterator<InputIterator> input)
+    void Demodulator<algorithm, T>::distanceUpdate(Modulation::iterator<InputIterator> input)
     {
       auto symbol = input.at(Modulation::Symbol);
       auto word = input.at(Modulation::Word);
@@ -117,61 +121,61 @@ namespace fec {
       }
       if (input.count(Modulation::Word)) {
         for (BitField<size_t> j = 0; j < structure().constellation().size(); j += structure().dimension(), ++distance) {
-          *distance += accumulate(j, word, structure().dimension());
+          *distance += mergeMetrics(word, 1, structure().dimension(), j);
         }
       }
     }
     
-    template <class T, template <class> class LogSumAlg>
+    template <DecoderAlgorithm algorithm, class T>
     template <class InputIterator, class OutputIterator>
-    void Demodulator<T, LogSumAlg>::aPosterioriUpdate(Modulation::iterator<InputIterator> input, T factor, OutputIterator output)
+    void Demodulator<algorithm, T>::aPosterioriUpdate(Modulation::iterator<InputIterator> input, T factor, OutputIterator word)
     {
       auto wordIn = input.at(Modulation::Word);
-      auto wordOut = output;
+      auto wordOut = word;
       
-      for (size_t j = 0; j < structure().size(); j+=structure().wordWidth()) {
-        wordUpdateImpl(j);
+      for (size_t i = 0; i < structure().size(); i+=structure().wordWidth()) {
+        wordUpdateImpl(i);
         
         if (input.count(Modulation::Word)) {
-          for (size_t k = 1; k < structure().wordWidth(); ++k) {
-            wordOut[k] = factor * structure().scalingFactor() * (metric_[k] - metric_[0] - wordIn[k]);
+          for (size_t j = 1; j < structure().wordCount(); ++j) {
+            wordOut[j-1] = factor * structure().scalingFactor() * (metric_[j] - metric_[0] - wordIn[j-1]);
           }
         }
         else {
-          for (size_t k = 1; k < structure().wordWidth(); ++k) {
-            wordOut[k] = factor * structure().scalingFactor() * (metric_[k] - metric_[0]);
+          for (size_t j = 1; j < structure().wordCount(); ++j) {
+            wordOut[j-1] = factor * structure().scalingFactor() * (metric_[j] - metric_[0]);
           }
         }
-        wordIn += structure().wordWidth();
-        wordOut += structure().wordWidth();
+        wordIn += structure().wordCount()-1;
+        wordOut += structure().wordCount()-1;
       }
     }
     
-    template <class T, template <class> class LogSumAlg>
+    template <DecoderAlgorithm algorithm, class T>
     template <class U, typename std::enable_if<U::value>::type*>
-    void Demodulator<T, LogSumAlg>::wordUpdateImpl(size_t j)
+    void Demodulator<algorithm, T>::wordUpdateImpl(size_t j)
     {
       std::fill(metric_.begin(), metric_.end(), -std::numeric_limits<T>::infinity());
       for (BitField<size_t> input = 0; input < distance_.size(); ++input) {
-        metric_[input.test(j, structure.wordCount())] = logSum_.sum(metric_[input.test(j, structure.wordCount())], distance_[input]);
+        metric_[input.test(j, structure().wordWidth())] = logSum_(metric_[input.test(j, structure().wordWidth())], distance_[input]);
       }
     }
     
-    template <class T, template <class> class LogSumAlg>
+    template <DecoderAlgorithm algorithm, class T>
     template <class U, typename std::enable_if<!U::value>::type*>
-    void Demodulator<T, LogSumAlg>::wordUpdateImpl(size_t j)
+    void Demodulator<algorithm, T>::wordUpdateImpl(size_t j)
     {
       std::fill(max_.begin(), max_.end(), -std::numeric_limits<T>::infinity());
       std::fill(metric_.begin(), metric_.end(), T(0));
       
       for (BitField<size_t> input = 0; input < distance_.size(); ++input) {
-        max_[input.test(j, structure.wordCount())] = logSum_.max(distance_[input], max[input.test(j, structure.wordCount())]);
+        max_[input.test(j, structure().wordWidth())] = std::max(distance_[input], max_[input.test(j, structure().wordWidth())]);
       }
       for (BitField<size_t> input = 0; input < distance_.size(); ++input) {
-        metric_[input.test(j, structure.wordCount())] = logSum_.sum(logSum_.prior(distance_[input], max_[input.test(j, structure.wordCount())]), metric_[input.test(j, structure.wordCount())]);
+        metric_[input.test(j, structure().wordWidth())] = logSum_(logSum_.prior(distance_[input], max_[input.test(j, structure().wordWidth())]), metric_[input.test(j, structure().wordWidth())]);
       }
       for (size_t i = 0; i < structure().wordCount(); ++i) {
-        metric_[i] = logSum_.post(metric_[i], max_[i])
+        metric_[i] = logSum_.post(metric_[i], max_[i]);
       }
     }
     

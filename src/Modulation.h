@@ -42,6 +42,9 @@ namespace fec {
       Custom,
     };
     
+    using ModOptions = detail::Modulation::ModOptions;
+    using DemodOptions = detail::Modulation::DemodOptions;
+    
     struct RectangularQam {
     public:
       RectangularQam(size_t order);
@@ -49,7 +52,9 @@ namespace fec {
       RectangularQam& phaseOffset(double offset);
       RectangularQam& symbolMapping(SymbolMapping mapping);
       
-      operator std::vector<std::vector<double>>();
+      operator ModOptions();
+      
+      std::vector<std::vector<double>> constellation();
       
     private:
       size_t order_;
@@ -77,9 +82,6 @@ namespace fec {
       template <typename T> static detail::Modulation::Arguments<T> word(T& word) {return detail::Modulation::Arguments<T>{}.word(word);}
       template <typename T> static detail::Modulation::Arguments<T> symbol(T& symbol) {return detail::Modulation::Arguments<T>{}.symbol(symbol);}
     } Output;
-    
-    using ModOptions = detail::Modulation::ModOptions;
-    using DemodOptions = detail::Modulation::DemodOptions;
     
     template <typename T>
     static detail::Modulation::Arguments<T> word(T& word) {return detail::Modulation::Arguments<T>{}.word(word);}
@@ -278,15 +280,15 @@ void fec::Modulation::soDemodulate(detail::Modulation::Arguments<const InputVect
     throw std::invalid_argument("Invalid size for symbol");
   }
   if (input.count(detail::Modulation::Word)) {
-    begin.insert(detail::Modulation::Word, input.at(detail::Modulation::Word).begin(), wordSize());
-    end.insert(detail::Modulation::Word, input.at(detail::Modulation::Word).end(), wordSize());
-    if (input.at(detail::Modulation::Word).size() != blockCount * wordSize()) {
+    begin.insert(detail::Modulation::Word, input.at(detail::Modulation::Word).begin(), wordSize()*(structure().wordCount()-1));
+    end.insert(detail::Modulation::Word, input.at(detail::Modulation::Word).end(), wordSize()*(structure().wordCount()-1));
+    if (input.at(detail::Modulation::Word).size() != blockCount * wordSize()*(structure().wordCount()-1)) {
       throw std::invalid_argument("Invalid size for word");
     }
   }
   
-  word.resize(variance.size() * blockCount * wordSize());
-  outputIt.insert(detail::Modulation::Word, word.begin(), wordSize());
+  word.resize(variance.size() * blockCount * wordSize()*(structure().wordCount()-1));
+  outputIt.insert(detail::Modulation::Word, word.begin(), wordSize()*(structure().wordCount()-1));
   
   detail::WorkGroup workGroup(workGroupSize_);
   for (auto i : variance) {

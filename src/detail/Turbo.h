@@ -51,7 +51,7 @@ namespace fec {
       struct EncoderOptions {
         friend class Structure;
       public:
-        EncoderOptions(const std::vector<Trellis>& trellis, const std::vector<std::vector<size_t>>& interleaver) {trellis_ = trellis; interleaver_ = interleaver;}
+        EncoderOptions(const std::vector<Trellis>& trellis, const std::vector<Permutation>& interleaver) {trellis_ = trellis; interleaver_ = interleaver;}
         EncoderOptions(const Trellis& trellis, const std::vector<Permutation>& interleaver) {trellis_ = {trellis}; interleaver_ = interleaver;}
         EncoderOptions& interleaver(const std::vector<Permutation>& interleaver) {interleaver_ = interleaver; return *this;}
         EncoderOptions& termination(Trellis::Termination type) {termination_ = {type}; return *this;}
@@ -59,7 +59,7 @@ namespace fec {
         
       private:
         std::vector<Trellis> trellis_;
-        std::vector<std::vector<size_t>> interleaver_;
+        std::vector<Permutation> interleaver_;
         std::vector<Trellis::Termination> termination_ = std::vector<Trellis::Termination>(1,Trellis::Tail);
       };
       
