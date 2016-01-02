@@ -51,26 +51,29 @@ namespace fec {
     friend class boost::serialization::access;
   public:
     
+    template <class T> using Arguments = detail::Codec::Arguments<T>;
+    template <class T> using ConstArguments = detail::Codec::ConstArguments<T>;
+    
     struct Input {
-      template <typename T> static detail::Codec::ConstArguments<T> msg(T& msg) {return detail::Codec::ConstArguments<T>{}.msg(msg);}
-      template <typename T> static detail::Codec::ConstArguments<T> syst(T& syst) {return detail::Codec::ConstArguments<T>{}.syst(syst);}
-      template <typename T> static detail::Codec::ConstArguments<T> parity(T& parity) {return detail::Codec::ConstArguments<T>{}.parity(parity);}
-      template <typename T> static detail::Codec::ConstArguments<T> state(T& state) {return detail::Codec::ConstArguments<T>{}.state(state);}
+      template <typename T> static ConstArguments<T> msg(T& msg) {return ConstArguments<T>{}.msg(msg);}
+      template <typename T> static ConstArguments<T> syst(T& syst) {return ConstArguments<T>{}.syst(syst);}
+      template <typename T> static ConstArguments<T> parity(T& parity) {return ConstArguments<T>{}.parity(parity);}
+      template <typename T> static ConstArguments<T> state(T& state) {return ConstArguments<T>{}.state(state);}
     } Input;
     struct Output {
-      template <typename T> static detail::Codec::Arguments<T> msg(T& msg) {return detail::Codec::Arguments<T>{}.msg(msg);}
-      template <typename T> static detail::Codec::Arguments<T> syst(T& syst) {return detail::Codec::Arguments<T>{}.syst(syst);}
-      template <typename T> static detail::Codec::Arguments<T> parity(T& parity) {return detail::Codec::Arguments<T>{}.parity(parity);}
-      template <typename T> static detail::Codec::Arguments<T> state(T& state) {return detail::Codec::Arguments<T>{}.state(state);}
+      template <typename T> static Arguments<T> msg(T& msg) {return Arguments<T>{}.msg(msg);}
+      template <typename T> static Arguments<T> syst(T& syst) {return Arguments<T>{}.syst(syst);}
+      template <typename T> static Arguments<T> parity(T& parity) {return Arguments<T>{}.parity(parity);}
+      template <typename T> static Arguments<T> state(T& state) {return Arguments<T>{}.state(state);}
     } Output;
     
     virtual ~Codec() = default;
     virtual const char * get_key() const = 0; /**< Access the type info key. */
     
-    inline size_t msgCount() const {return 1<<structure().msgWidth();} /**< Access the size of the msg in each code bloc. */
-    inline size_t systCount() const {return 1<<structure().systWidth();} /**< Access the size of the msg in each code bloc. */
-    inline size_t parityCount() const {return 1<<structure().parityWidth();} /**< Access the size of the parity in each code bloc. */
-    inline size_t stateCount() const {return 1<<structure().stateWidth();} /**< Access the size of the extrinsic in each code bloc. */
+    inline size_t msgCount() const {return structure().msgCount();} /**< Access the size of the msg in each code bloc. */
+    inline size_t systCount() const {return structure().systCount();} /**< Access the size of the msg in each code bloc. */
+    inline size_t parityCount() const {return structure().parityCount();} /**< Access the size of the parity in each code bloc. */
+    inline size_t stateCount() const {return structure().stateCount();} /**< Access the size of the extrinsic in each code bloc. */
 
     inline size_t msgWidth() const {return structure().msgWidth();} /**< Access the size of the msg in each code bloc. */
     inline size_t systWidth() const {return structure().systWidth();} /**< Access the size of the msg in each code bloc. */
@@ -97,9 +100,13 @@ namespace fec {
     void decode(const InputVector& parity, OutputVector& msg) const;
     template <class InputVector, class OutputVector = typename detail::rebind<InputVector, BitField<size_t>>::type>
     OutputVector decode(const InputVector& parity) const;
+    template <class InputVector, class OutputVector>
+    void decode(Arguments<const InputVector> input, OutputVector& msg) const;
+    template <class InputVector, class OutputVector = typename detail::rebind<InputVector, BitField<size_t>>::type>
+    OutputVector decode(Arguments<const InputVector> input) const;
     
     template <class Vector>
-    void soDecode(detail::Codec::Arguments<const Vector> input, detail::Codec::Arguments<Vector> output) const;
+    void soDecode(Arguments<const Vector> input, Arguments<Vector> output) const;
     
   protected:
     Codec() = default;
@@ -220,15 +227,15 @@ OutputVector fec::Codec::decode(const InputVector& parity) const
 template <class InputVector, class OutputVector>
 void fec::Codec::decode(const InputVector& parity, OutputVector& msg) const
 {
-  size_t blockCount = parity.size() / paritySize();
-  if (parity.size() != blockCount * paritySize()) {
+  size_t blockCount = parity.size() / (paritySize()*(parityCount()-1));
+  if (parity.size() != blockCount * paritySize()*(parityCount()-1)) {
     throw std::invalid_argument("Invalid size for parity");
   }
   
   msg.resize(blockCount * msgSize());
   
-  detail::Codec::iterator<typename InputVector::const_iterator> begin{{detail::Codec::Parity, parity.begin(), paritySize()}};
-  detail::Codec::iterator<typename InputVector::const_iterator> end{{detail::Codec::Parity, parity.end(), paritySize()}};
+  detail::Codec::iterator<typename InputVector::const_iterator> begin{{detail::Codec::Parity, parity.begin(), paritySize() * (parityCount()-1)}};
+  detail::Codec::iterator<typename InputVector::const_iterator> end{{detail::Codec::Parity, parity.end(), paritySize() * (parityCount()-1)}};
   detail::Codec::iterator<typename OutputVector::iterator> output{{detail::Codec::Msg, msg.begin(), msgSize()}};
   
   detail::WorkGroup workGroup(workGroupSize_);
@@ -245,7 +252,7 @@ void fec::Codec::decode(const InputVector& parity, OutputVector& msg) const
  *    the matlab API to use a custom mex allocator
  */
 template <class Vector>
-void fec::Codec::soDecode(detail::Codec::Arguments<const Vector> input, detail::Codec::Arguments<Vector> output) const
+void fec::Codec::soDecode(Arguments<const Vector> input, Arguments<Vector> output) const
 {
   if (!input.count(detail::Codec::Parity)) {
     throw std::invalid_argument("Input must contains parity");
@@ -253,45 +260,45 @@ void fec::Codec::soDecode(detail::Codec::Arguments<const Vector> input, detail::
   if (input.count(detail::Codec::Msg)) {
     throw std::invalid_argument("Input should not contain msg");
   }
-  size_t blockCount = input.at(detail::Codec::Parity).size() / paritySize();
+  size_t blockCount = input.at(detail::Codec::Parity).size() / (paritySize() * (parityCount()-1));
 
-  detail::Codec::iterator<typename Vector::const_iterator> begin{{detail::Codec::Parity, input.at(detail::Codec::Parity).begin(), paritySize()}};
-  detail::Codec::iterator<typename Vector::const_iterator> end{{detail::Codec::Parity, input.at(detail::Codec::Parity).end(), paritySize()}};
+  detail::Codec::iterator<typename Vector::const_iterator> begin{{detail::Codec::Parity, input.at(detail::Codec::Parity).begin(), paritySize() * (parityCount()-1)}};
+  detail::Codec::iterator<typename Vector::const_iterator> end{{detail::Codec::Parity, input.at(detail::Codec::Parity).end(), paritySize() * (parityCount()-1)}};
   detail::Codec::iterator<typename Vector::iterator> outputIt;
   
-  if (input.at(detail::Codec::Parity).size() != blockCount * paritySize()) {
+  if (input.at(detail::Codec::Parity).size() != blockCount * paritySize() * (parityCount()-1)) {
     throw std::invalid_argument("Invalid size for parity");
   }
   if (input.count(detail::Codec::Syst)) {
-    begin.insert(detail::Codec::Syst, input.at(detail::Codec::Syst).begin(), systSize());
-    end.insert(detail::Codec::Syst, input.at(detail::Codec::Syst).end(), systSize());
-    if (input.at(detail::Codec::Syst).size() != blockCount * systSize()) {
+    begin.insert(detail::Codec::Syst, input.at(detail::Codec::Syst).begin(), systSize() * (systCount()-1));
+    end.insert(detail::Codec::Syst, input.at(detail::Codec::Syst).end(), systSize() * (systCount()-1));
+    if (input.at(detail::Codec::Syst).size() != blockCount * systSize() * (systCount()-1)) {
       throw std::invalid_argument("Invalid size for syst");
     }
   }
   if (input.count(detail::Codec::State)) {
-    begin.insert(detail::Codec::State, input.at(detail::Codec::State).begin(), stateSize());
-    end.insert(detail::Codec::State, input.at(detail::Codec::State).end(), stateSize());
-    if (input.at(detail::Codec::State).size() != blockCount * stateSize()) {
+    begin.insert(detail::Codec::State, input.at(detail::Codec::State).begin(), stateSize() * (stateCount()-1));
+    end.insert(detail::Codec::State, input.at(detail::Codec::State).end(), stateSize() * (stateCount()-1));
+    if (input.at(detail::Codec::State).size() != blockCount * stateSize() * (stateCount()-1)) {
       throw std::invalid_argument("Invalid size for state");
     }
   }
   
   if (output.count(detail::Codec::Parity)) {
-    output.at(detail::Codec::Parity).resize(blockCount * paritySize());
-    outputIt.insert(detail::Codec::Parity, output.at(detail::Codec::Parity).begin(), paritySize());
+    output.at(detail::Codec::Parity).resize(blockCount * paritySize() * (parityCount()-1));
+    outputIt.insert(detail::Codec::Parity, output.at(detail::Codec::Parity).begin(), paritySize() * (parityCount()-1));
   }
   if (output.count(detail::Codec::Syst)) {
-    output.at(detail::Codec::Syst).resize(blockCount * systSize());
-    outputIt.insert(detail::Codec::Syst, output.at(detail::Codec::Syst).begin(), systSize());
+    output.at(detail::Codec::Syst).resize(blockCount * systSize() * (systCount()-1));
+    outputIt.insert(detail::Codec::Syst, output.at(detail::Codec::Syst).begin(), systSize() * (systCount()-1));
   }
   if (output.count(detail::Codec::State)) {
-    output.at(detail::Codec::State).resize(blockCount * stateSize());
-    outputIt.insert(detail::Codec::State, output.at(detail::Codec::State).begin(), stateSize());
+    output.at(detail::Codec::State).resize(blockCount * stateSize() * (stateCount()-1));
+    outputIt.insert(detail::Codec::State, output.at(detail::Codec::State).begin(), stateSize() * (stateCount()-1));
   }
   if (output.count(detail::Codec::Msg)) {
-    output.at(detail::Codec::Msg).resize(blockCount * msgSize());
-    outputIt.insert(detail::Codec::Msg, output.at(detail::Codec::Msg).begin(), msgSize());
+    output.at(detail::Codec::Msg).resize(blockCount * msgSize() * (msgCount()-1));
+    outputIt.insert(detail::Codec::Msg, output.at(detail::Codec::Msg).begin(), msgSize() * (msgCount()-1));
   }
   
   detail::WorkGroup workGroup(workGroupSize_);

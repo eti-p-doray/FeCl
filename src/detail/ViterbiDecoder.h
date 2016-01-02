@@ -69,7 +69,7 @@ namespace fec {
      */
     template <class T>
     template <class InputIterator, class OutputIterator>
-    void ViterbiDecoder<T>::decode(InputIterator parityIn, OutputIterator messageOut)
+    void ViterbiDecoder<T>::decode(InputIterator parity, OutputIterator msg)
     {
       previousPath_[0] = 0;
       std::fill(previousPath_.begin()+1, previousPath_.end(), -std::numeric_limits<T>::infinity());
@@ -80,9 +80,15 @@ namespace fec {
         std::fill(nextPath_.begin(), nextPath_.end(), -std::numeric_limits<T>::infinity());
         
         for (BitField<size_t> j = 0; j < structure().trellis().outputCount(); ++j) {
-          branch_[j] = accumulate(j, parityIn, structure().trellis().outputWidth());
+          branch_[j] = mergeMetrics(parity, structure().parityWidth(), structure().trellis().outputWidth(), j);
         }
-        parityIn += structure().trellis().outputWidth();
+        parity += structure().outputLength();
+        /*
+        for (BitField<size_t> j = 0; j < structure().trellis().inputCount(); ++j) {
+          branch_[j] = mergeMetrics(msg, structure().msgWidth(), structure().trellis().inputWidth(), j);
+        }
+        msg += structure().inputLength();
+        */
         
         auto previousPath = previousPath_.begin();
         auto state = structure().trellis().beginState();
@@ -134,13 +140,13 @@ namespace fec {
           break;
       }
       
-      messageOut += (structure().length() - 1) * structure().trellis().inputWidth();
-      for (int64_t i = structure().length() + structure().tailSize() - 1; i >= 0; --i) {
+      msg += (structure().length() - 1) * structure().inputLength();
+      for (int64_t i = structure().length() + structure().tailLength() - 1; i >= 0; --i) {
         if (i < structure().length()) {
-          for (BitField<size_t> j = 0; j < structure().trellis().inputWidth(); ++j) {
-            messageOut[j] = inputTraceBack[bestState].test(j);
+          for (BitField<size_t> j = 0; j < structure().trellis().inputWidth(); j += structure().msgWidth()) {
+            msg[j] = inputTraceBack[bestState].test(j, structure().msgWidth());
           }
-          messageOut -= structure().trellis().inputWidth();
+          msg -= structure().inputLength();
         }
         bestState = stateTraceBack[bestState];
         stateTraceBack -= structure().trellis().stateCount();
@@ -158,8 +164,8 @@ namespace fec {
     {
       nextPath_.resize(structure.trellis().stateCount());
       previousPath_.resize(structure.trellis().stateCount());
-      stateTraceBack_.resize((structure.length()+structure.tailSize())*structure.trellis().stateCount());
-      inputTraceBack_.resize((structure.length()+structure.tailSize())*structure.trellis().stateCount());
+      stateTraceBack_.resize((structure.length()+structure.tailLength())*structure.trellis().stateCount());
+      inputTraceBack_.resize((structure.length()+structure.tailLength())*structure.trellis().stateCount());
       branch_.resize(structure.trellis().outputCount());
     }
     

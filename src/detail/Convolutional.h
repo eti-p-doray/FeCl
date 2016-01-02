@@ -96,19 +96,21 @@ namespace fec {
         DecoderOptions getDecoderOptions() const;
         Permutation puncturing(const PunctureOptions& options) const;
         
-        size_t msgWidth() const override {return 1;} /**< Access the width of msg in each code bloc. */
-        size_t systWidth() const override {return 1;} /**< Access the width of systematics in each code bloc. */
-        size_t parityWidth() const override {return 1;} /**< Access the width of parities in each code bloc. */
+        size_t msgWidth() const override {return inputWidth_;} /**< Access the width of msg in each code bloc. */
+        size_t systWidth() const override {return inputWidth_;} /**< Access the width of systematics in each code bloc. */
+        size_t parityWidth() const override {return outputWidth_;} /**< Access the width of parities in each code bloc. */
         size_t stateWidth() const override {return 1;} /**< Access the width of state information in each code bloc. */
         
-        size_t msgSize() const override {return trellis().inputWidth()*length();} /**< Access the size of msg in each code bloc. */
-        size_t systSize() const override {return trellis().inputWidth()*(length()+tailLength());} /**< Access the size of systematics in each code bloc. */
-        size_t paritySize() const override {return trellis().outputWidth()*(length()+tailLength());} /**< Access the size of parities in each code bloc. */
+        size_t msgSize() const override {return inputLength()*length();} /**< Access the size of msg in each code bloc. */
+        size_t systSize() const override {return inputLength()*(length()+tailLength());} /**< Access the size of systematics in each code bloc. */
+        size_t paritySize() const override {return outputLength()*(length()+tailLength());} /**< Access the size of parities in each code bloc. */
         size_t stateSize() const override {return 0;} /**< Access the size of state information in each code bloc. */
         
         inline size_t length() const {return length_;}
         inline size_t tailLength() const {return tailLength_;}
-        inline size_t tailSize() const {return tailLength_ * trellis().inputWidth();}
+        inline size_t tailSize() const {return tailLength_ * inputLength();}
+        inline size_t inputLength() const {return inputLength_;}
+        inline size_t outputLength() const {return outputLength_;}
         inline Trellis::Termination termination() const {return termination_;}
         inline const Trellis& trellis() const {return trellis_;}
         
@@ -132,8 +134,10 @@ namespace fec {
         Trellis trellis_;
         size_t length_;
         size_t tailLength_;
-        size_t msgWidth_ = 0;
-        size_t parityWidth_ = 1;
+        size_t inputWidth_;
+        size_t outputWidth_;
+        size_t inputLength_;
+        size_t outputLength_;
         Trellis::Termination termination_;
         double scalingFactor_;
       };
@@ -157,8 +161,8 @@ bool fec::detail::Convolutional::Structure::check(InputIterator parity) const
     for (BitField<size_t> input = 0; input < trellis().inputCount(); ++input) {
       BitField<size_t> output = trellis().getOutput(state, input);
       bool equal = true;
-      for (int k = 0; k < trellis().outputWidth(); ++k) {
-        if (output[k] != parity[k]) {
+      for (size_t k = 0; k < trellis().outputWidth(); k+=parityWidth()) {
+        if (output.test(k, parityWidth()) != parity[k]) {
           equal = false;
           break;
         }
@@ -172,7 +176,7 @@ bool fec::detail::Convolutional::Structure::check(InputIterator parity) const
     if (found == false) {
       return false;
     }
-    parity += trellis().outputWidth();
+    parity += outputLength();
   }
   switch (termination()) {
     case Trellis::Tail:
@@ -187,7 +191,7 @@ bool fec::detail::Convolutional::Structure::check(InputIterator parity) const
 template <class InputIterator, class OutputIterator>
 void fec::detail::Convolutional::Structure::encode(InputIterator msg, OutputIterator parity) const
 {
-  std::vector<BitField<size_t>> tail(tailLength()*trellis().inputWidth());
+  std::vector<BitField<size_t>> tail(tailSize());
   encode(msg, parity, tail.begin());
 }
 
@@ -196,20 +200,20 @@ void fec::detail::Convolutional::Structure::encode(InputIterator msg, OutputIter
 {
   size_t state = 0;
   
-  for (int j = 0; j < length(); ++j) {
+  for (size_t j = 0; j < length(); ++j) {
     BitField<size_t> input = 0;
-    for (int k = 0; k < trellis().inputWidth(); k++) {
-      input.set(k, msg[k]);
+    for (size_t k = 0; k < trellis().inputWidth(); k += msgWidth()) {
+      input.set(k, msg[k], msgWidth());
     }
-    msg += trellis().inputWidth();
+    msg += inputLength();
     
     BitField<size_t> output = trellis().getOutput(state, input);
     state = trellis().getNextState(state, input);
     
-    for (int k = 0; k < trellis().outputWidth(); k++) {
-      parity[k] = output.test(k);
+    for (size_t k = 0; k < trellis().outputWidth(); k += parityWidth()) {
+      parity[k] = output.test(k, parityWidth());
     }
-    parity += trellis().outputWidth();
+    parity += outputLength();
   }
   
   switch (termination()) {
@@ -227,14 +231,14 @@ void fec::detail::Convolutional::Structure::encode(InputIterator msg, OutputIter
         }
         BitField<size_t> nextState = trellis().getNextState(state, bestInput);
         BitField<size_t> output = trellis().getOutput(state, bestInput);
-        for (int k = 0; k < trellis().outputWidth(); ++k) {
-          parity[k] = output.test(k);
+        for (int k = 0; k < trellis().outputWidth(); k += parityWidth()) {
+          parity[k] = output.test(k, parityWidth());
         }
-        for (int k = 0; k < trellis().inputWidth(); ++k) {
-          tail[k] = bestInput.test(k);
+        for (int k = 0; k < trellis().inputWidth(); k += msgWidth()) {
+          tail[k] = bestInput.test(k, msgWidth());
         }
-        parity += trellis().outputWidth();
-        tail += trellis().inputWidth();
+        parity += outputLength();
+        tail += inputLength();
         state = nextState;
       }
       break;
@@ -251,9 +255,13 @@ void fec::detail::Convolutional::Structure::serialize(Archive & ar, const unsign
   using namespace boost::serialization;
   ar & ::BOOST_SERIALIZATION_BASE_OBJECT_NVP(Codec::Structure);
   ar & ::BOOST_SERIALIZATION_NVP(trellis_);
-  ar & ::BOOST_SERIALIZATION_NVP(termination_);
-  ar & ::BOOST_SERIALIZATION_NVP(tailLength_);
   ar & ::BOOST_SERIALIZATION_NVP(length_);
+  ar & ::BOOST_SERIALIZATION_NVP(tailLength_);
+  ar & ::BOOST_SERIALIZATION_NVP(inputWidth_);
+  ar & ::BOOST_SERIALIZATION_NVP(outputWidth_);
+  ar & ::BOOST_SERIALIZATION_NVP(inputLength_);
+  ar & ::BOOST_SERIALIZATION_NVP(outputLength_);
+  ar & ::BOOST_SERIALIZATION_NVP(termination_);
   ar & ::BOOST_SERIALIZATION_NVP(scalingFactor_);
 }
 

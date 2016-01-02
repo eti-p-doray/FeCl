@@ -47,10 +47,23 @@ void Convolutional::Structure::setEncoderOptions(const EncoderOptions& encoder)
   trellis_ = encoder.trellis_;
   length_ = encoder.length_;
   termination_ = encoder.termination_;
+  inputWidth_ = encoder.msgWidth_;
+  if (inputWidth_ == 0) {
+    inputWidth_ = trellis().inputWidth();
+  }
+  if (trellis().inputWidth() % inputWidth_ != 0) {
+    throw std::invalid_argument("invalid msg width");
+  }
+  outputWidth_ = encoder.parityWidth_;
+  if (trellis().outputWidth() % outputWidth_ != 0) {
+    throw std::invalid_argument("invalid parity width");
+  }
+  inputLength_ = trellis().inputWidth() / msgWidth();
+  outputLength_ = trellis().outputWidth() / parityWidth();
   
   switch (termination_) {
     case Trellis::Tail:
-      tailLength_ = trellis_.stateWidth();
+      tailLength_ = trellis_.longestState();
       break;
       
     default:
@@ -75,13 +88,13 @@ fec::Permutation Convolutional::Structure::puncturing(const PunctureOptions& opt
 {
   std::vector<size_t> perms;
   size_t systIdx = 0;
-  for (size_t i = 0; i < length() * trellis().outputWidth(); ++i) {
+  for (size_t i = 0; i < length() * outputLength(); ++i) {
     if (options.mask_.size() == 0 || options.mask_[i % options.mask_.size()]) {
       perms.push_back(systIdx);
     }
     ++systIdx;
   }
-  for (size_t i = 0; i < tailLength()*trellis().outputWidth(); ++i) {
+  for (size_t i = 0; i < tailLength()*outputLength(); ++i) {
     if ((options.tailMask_.size() == 0 && (options.mask_.size() == 0 || options.mask_[i % options.mask_.size()])) ||
         (options.tailMask_.size() != 0 && (options.tailMask_[systIdx % options.tailMask_.size()]))) {
       perms.push_back(systIdx);

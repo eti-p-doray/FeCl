@@ -62,6 +62,11 @@ namespace fec {
         
         virtual const char * get_key() const = 0; /**< Access the type info key. */
        
+        inline size_t msgCount() const {return 1<<msgWidth();} /**< Access the size of msg in each code bloc. */
+        inline size_t systCount() const {return 1<<systWidth();} /**< Access the size of systematics in each code bloc. */
+        inline size_t parityCount() const {return 1<<parityWidth();} /**< Access the size of parities in each code bloc. */
+        inline size_t stateCount() const {return 1<<stateWidth();} /**< Access the size of state information in each code bloc. */
+        
         virtual size_t msgWidth() const = 0; /**< Access the size of msg in each code bloc. */
         virtual size_t systWidth() const = 0; /**< Access the size of systematics in each code bloc. */
         virtual size_t parityWidth() const = 0; /**< Access the size of parities in each code bloc. */

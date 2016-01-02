@@ -78,7 +78,7 @@ public:
   
   Trellis() = default;
   Trellis(Options options);
-  Trellis(const std::vector<BitField<size_t>>& nextState, const std::vector<BitField<size_t>>& output, size_t inputWidth, size_t outputWidth, size_t stateWidth);
+  Trellis(const std::vector<BitField<size_t>>& nextState, const std::vector<BitField<size_t>>& output, size_t inputWidth, size_t outputWidth, size_t stateWidth, size_t longestState);
   Trellis(const std::vector<size_t>& constraintLengths, const std::vector<std::vector<BitField<size_t>>>& generator, std::vector<BitField<size_t>> feedback = {});
   
   Trellis(const Trellis&) = default;
@@ -90,11 +90,12 @@ public:
    *  \return State size
    */
   inline size_t stateWidth() const {return stateWidth_;}
+  inline size_t longestState() const {return longestState_;}
   /**
    *  Access the number of possible states (2^stateSize) of the trellis.
    *  \return State count
    */
-  inline size_t stateCount() const {return stateCount_;}
+  inline size_t stateCount() const {return 1<<stateWidth_;}
   /**
    *  Access the number of input bits per branch.
    *  \return Input size
@@ -104,7 +105,7 @@ public:
    *  Access the number of possible configuration of input bits per branch (2^inputSize).
    *  \return Input count
    */
-  inline size_t inputCount() const {return inputCount_;}
+  inline size_t inputCount() const {return 1<<inputWidth_;}
   /**
    *  Access the number of output symbols per branch.
    *  \return Output size
@@ -114,7 +115,7 @@ public:
    *  Access the number of possible configuration of output symbols per branch (2^outputSize).
    *  \return Output count
    */
-  inline size_t outputCount() const {return outputCount_;}
+  inline size_t outputCount() const {return 1<<outputWidth_;}
   /**
    *  Access the size of the state and output table.
    *  This is equal to inputCount * stateCount
@@ -177,9 +178,7 @@ private:
     ar & ::BOOST_SERIALIZATION_NVP(stateWidth_);
     ar & ::BOOST_SERIALIZATION_NVP(inputWidth_);
     ar & ::BOOST_SERIALIZATION_NVP(outputWidth_);
-    ar & ::BOOST_SERIALIZATION_NVP(stateCount_);
-    ar & ::BOOST_SERIALIZATION_NVP(inputCount_);
-    ar & ::BOOST_SERIALIZATION_NVP(outputCount_);
+    ar & ::BOOST_SERIALIZATION_NVP(longestState_);
     ar & ::BOOST_SERIALIZATION_NVP(nextState_);
     ar & ::BOOST_SERIALIZATION_NVP(output_);
   }
@@ -187,10 +186,7 @@ private:
   size_t stateWidth_;
   size_t inputWidth_;
   size_t outputWidth_;
-  
-  size_t stateCount_;
-  size_t inputCount_;
-  size_t outputCount_;
+  size_t longestState_;
   
   std::vector<BitField<size_t> > nextState_;
   std::vector<BitField<size_t> > output_;

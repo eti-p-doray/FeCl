@@ -33,15 +33,12 @@ using namespace fec;
  *  \param  outputSize  Number of output symbol for each branch
  *  \param  stateSize Number of bits (registers) in the state
  */
-Trellis::Trellis(const std::vector<BitField<size_t>>& nextState, const std::vector<BitField<size_t>>& output, size_t inputWidth, size_t outputWidth, size_t stateWidth)
+Trellis::Trellis(const std::vector<BitField<size_t>>& nextState, const std::vector<BitField<size_t>>& output, size_t inputWidth, size_t outputWidth, size_t stateWidth, size_t longestState)
 {
   stateWidth_ = stateWidth;
   outputWidth_ = outputWidth;
   inputWidth_ = inputWidth;
-  
-  stateCount_ = 1<<stateWidth_;
-  outputCount_ = 1<<outputWidth_;
-  inputCount_ = 1<<inputWidth_;
+  longestState_ = longestState;
   
   nextState_.resize(inputCount()*stateCount());
   output_.resize(inputCount()*stateCount());
@@ -106,19 +103,19 @@ Trellis::Trellis(Options options)
     outputWidth_ += i;
   }
   
-  outputCount_ = 1<<outputWidth_;
-  inputCount_ = 1<<inputWidth_;
-  
   for (size_t i = 0; i < options.generator_.size(); i++) {
     if (outputWidths.size() != options.generator_[i].size()) {
       throw std::invalid_argument("Invalid number of generators");
     }
   }
   stateWidth_ = 0;
+  longestState_ = 0;
   for (size_t i = 0; i < options.constraintLengths_.size(); i++) {
     stateWidth_ += (options.constraintLengths_[i] - 1) * options.width_[i];
+    if (options.constraintLengths_[i] - 1 > longestState_) {
+      longestState_ = options.constraintLengths_[i] - 1;
+    }
   }
-  stateCount_ = 1<<stateWidth_;
   nextState_.resize(stateCount()*inputCount());
   output_.resize(stateCount()*inputCount());
   

@@ -91,6 +91,7 @@ namespace fec {
         const char * get_key() const;
         
         size_t wordCount() const {return 1<<width_;}
+        size_t symbolCount() const {return 1<<dimension();}
         
         size_t wordWidth() const {return width_;} /**< Access the width of msg in each code bloc. */
         size_t symbolWidth() const {return dimension();} /**< Access the width of systematics in each code bloc. */
@@ -172,8 +173,8 @@ void fec::detail::Modulation::Structure::modulate(InputIterator word, OutputIter
 {
   for (size_t i = 0; i < length(); ++i) {
     BitField<size_t> input = 0;
-    for (int j = 0; j < size(); j++) {
-      input.set(j, word[j]);
+    for (int j = 0; j < size(); j+=wordWidth()) {
+      input.set(j, word[j], wordWidth());
     }
     input *= dimension();
     for (int j = 0; j < dimension(); ++j) {
@@ -196,8 +197,8 @@ void fec::detail::Modulation::Structure::demodulate(InputIterator symbol, Output
         maxInput = j;
       }
     }
-    for (int j = 0; j < size(); j++) {
-      word[j] = maxInput.test(j);
+    for (int j = 0; j < size(); j+=wordWidth()) {
+      word[j] = maxInput.test(j, wordWidth());
     }
     word += size();
     symbol += symbolWidth();
@@ -209,6 +210,9 @@ void fec::detail::Modulation::Structure::serialize(Archive & ar, const unsigned 
   using namespace boost::serialization;
   ar & BOOST_SERIALIZATION_NVP(constellation_);
   ar & BOOST_SERIALIZATION_NVP(dimension_);
+  ar & BOOST_SERIALIZATION_NVP(length_);
+  ar & BOOST_SERIALIZATION_NVP(size_);
+  ar & BOOST_SERIALIZATION_NVP(width_);
   ar & BOOST_SERIALIZATION_NVP(scalingFactor_);
   ar & BOOST_SERIALIZATION_NVP(algorithm_);
 }

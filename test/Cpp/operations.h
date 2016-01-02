@@ -144,9 +144,11 @@ void test_soDecode(const fec::Codec& code, double snr, size_t n = 1)
   std::vector<fec::BitField<size_t>> msgDec;
   code.decode(parityIn, msgDec);
   
-  BOOST_REQUIRE(msgOut.size() == code.msgSize()*n);
-  for (size_t i = 0; i < msg.size(); ++i) {
-    BOOST_REQUIRE(msgDec[i] == (msgOut[i]>0));
+  BOOST_REQUIRE(msgOut.size() == code.msgSize()*(code.msgCount()-1));
+  auto msgOutIt = msgOut.begin();
+  for (size_t i = 0; i < msg.size(); ++i, msgOutIt += (code.msgCount()-1)) {
+    auto it = std::max_element(msgOutIt, msgOutIt + (code.msgCount()-1));
+    BOOST_REQUIRE(msgDec[i] == (*it > 0 ? it - msgOutIt + 1 : 0));
   }
 }
 

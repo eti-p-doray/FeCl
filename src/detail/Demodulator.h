@@ -80,7 +80,7 @@ namespace fec {
     template <DecoderAlgorithm algorithm, class T>
     Demodulator<algorithm, T>::Demodulator(const Modulation::Structure& structure) : structure_(structure)
     {
-      distance_.resize(this->structure().constellation().size() / this->structure().dimension());
+      distance_.resize(this->structure().symbolCount());
       metric_.resize(this->structure().wordCount());
       if (!LogSum<algorithm,T>::isRecursive::value) {
         max_.resize(this->structure().wordCount());
@@ -119,9 +119,10 @@ namespace fec {
       for (auto j = structure().constellation().begin(); j != structure().constellation().end(); j += structure().dimension(), ++distance) {
         *distance = -sqDistance(symbol, j, structure().dimension());
       }
+      distance = distance_.begin();
       if (input.count(Modulation::Word)) {
-        for (BitField<size_t> j = 0; j < structure().constellation().size(); j += structure().dimension(), ++distance) {
-          *distance += mergeMetrics(word, 1, structure().dimension(), j);
+        for (BitField<size_t> j = 0; j < structure().symbolCount(); ++j, ++distance) {
+          *distance += mergeMetrics(word, structure().wordWidth(), structure().dimension(), j);
         }
       }
     }

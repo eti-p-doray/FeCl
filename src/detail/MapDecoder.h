@@ -74,17 +74,16 @@ namespace fec {
       void backwardUpdateImpl(typename std::vector<T>::iterator backwardMetric, typename std::vector<T>::const_iterator branchMetric);/**< Forward metric calculation. */
       
       template <class U = typename LogSum<algorithm,T>::isRecursive, typename std::enable_if<U::value>::type* = nullptr>
-      T msgUpdateImpl(typename std::vector<T>::iterator branchMetric, size_t j);/**< Forward metric calculation. */
+      void msgUpdateImpl(typename std::vector<T>::iterator branchMetric, size_t j);/**< Forward metric calculation. */
       template <class U = typename LogSum<algorithm,T>::isRecursive, typename std::enable_if<!U::value>::type* = nullptr>
-      T msgUpdateImpl(typename std::vector<T>::iterator branchMetric, size_t j);/**< Forward metric calculation. */
+      void msgUpdateImpl(typename std::vector<T>::iterator branchMetric, size_t j);/**< Forward metric calculation. */
       
       template <class U = typename LogSum<algorithm,T>::isRecursive, typename std::enable_if<U::value>::type* = nullptr>
-      T parityUpdateImpl(typename std::vector<T>::iterator branchMetric, size_t j);/**< Forward metric calculation. */
+      void parityUpdateImpl(typename std::vector<T>::iterator branchMetric, size_t j);/**< Forward metric calculation. */
       template <class U = typename LogSum<algorithm,T>::isRecursive, typename std::enable_if<!U::value>::type* = nullptr>
-      T parityUpdateImpl(typename std::vector<T>::iterator branchMetric, size_t j);/**< Forward metric calculation. */
+      void parityUpdateImpl(typename std::vector<T>::iterator branchMetric, size_t j);/**< Forward metric calculation. */
       
       std::vector<T> buffer_;
-      
       std::vector<T> branch_;/**< Branch metric buffer (gamma) */
       std::vector<T> forward_;/**< Forward metric buffer (alpha) */
       std::vector<T> backward_;/**< Backard metric buffer (beta) */
@@ -108,7 +107,8 @@ namespace fec {
       
       buffer_.resize(std::max(this->structure().trellis().outputCount(), this->structure().trellis().inputCount()));
       if (!LogSum<algorithm,T>::isRecursive::value) {
-        buffer_.resize(this->structure().trellis().stateCount()*(this->structure().trellis().inputCount()+1));
+        buffer_.resize(std::max(buffer_.size(), this->structure().trellis().stateCount()*(this->structure().trellis().inputCount()+1)));
+        buffer_.resize(std::max(buffer_.size(), 2*std::max(this->structure().msgCount(), this->structure().parityCount())));
       }
     }
     
@@ -140,7 +140,7 @@ namespace fec {
       auto branch = branch_.begin();
       for (size_t i = 0; i < structure().length() + structure().tailLength(); ++i) {
         for (BitField<size_t> j = 0; j < structure().trellis().outputCount(); ++j) {
-          buffer_[j] = mergeMetrics(parity, 1, structure().trellis().outputWidth(), j);
+          buffer_[j] = mergeMetrics(parity, structure().parityWidth(), structure().trellis().outputWidth(), j);
         }
         auto branchTmp = branch;
         for (auto output = structure().trellis().beginOutput(); output < structure().trellis().endOutput();) {
@@ -154,7 +154,7 @@ namespace fec {
         if (input.count(Codec::Syst)) {
           branch = branchTmp;
           for (BitField<size_t> j = 0; j < structure().trellis().inputCount(); ++j) {
-            buffer_[j] = mergeMetrics(syst, 1, structure().trellis().inputWidth(), j);
+            buffer_[j] = mergeMetrics(syst, structure().systWidth(), structure().trellis().inputWidth(), j);
           }
           for (size_t j = 0; j < structure().trellis().stateCount(); ++j) {
             for (size_t k = 0; k < structure().trellis().inputCount(); ++k) {
@@ -163,8 +163,8 @@ namespace fec {
             branch += structure().trellis().inputCount();
           }
         }
-        parity += structure().trellis().outputWidth();
-        syst += structure().trellis().inputWidth();
+        parity += structure().outputLength();
+        syst += structure().inputLength();
       }
     }
     
@@ -249,40 +249,50 @@ namespace fec {
         }
         
         if (output.count(Codec::Syst) || (output.count(Codec::Msg) && i < structure().length())) {
-          for (size_t j = 0; j < structure().trellis().inputWidth(); ++j) {
+          for (size_t j = 0; j < structure().trellis().inputWidth(); j += structure().msgWidth()) {
             branch = branch_.begin() + i * structure().trellis().tableSize();
-            T tmp = msgUpdateImpl(branch, j);
+            msgUpdateImpl(branch, j);
             
             if (output.count(Codec::Syst)) {
               if (input.count(Codec::Syst)) {
-                systOut[j] = structure().scalingFactor() * (tmp - systIn[j]);
+                for (size_t k = 1; k < structure().systCount(); ++k) {
+                  systOut[k-1] = structure().scalingFactor() * (buffer_[k] - buffer_[0] - systIn[k-1]);
+                }
               }
               else {
-                systOut[j] = structure().scalingFactor() * (tmp);
+                for (size_t k = 1; k < structure().systCount(); ++k) {
+                  systOut[k-1] = structure().scalingFactor() * (buffer_[k] - buffer_[0]);
+                }
               }
             }
             if (output.count(Codec::Msg) && i < structure().length()) {
-              msgOut[j] = structure().scalingFactor() * (tmp);
+              for (size_t k = 1; k < structure().msgCount(); ++k) {
+                msgOut[k-1] = structure().scalingFactor() * (buffer_[k] - buffer_[0]);
+              }
             }
+            systIn += structure().systCount()-1;
+            systOut += structure().systCount()-1;
+            msgOut += structure().msgCount()-1;
           }
-          systIn += structure().trellis().inputWidth();
-          systOut += structure().trellis().inputWidth();
-          msgOut += structure().trellis().inputWidth();
         }
         if (output.count(Codec::Parity)) {
-          for (size_t j = 0; j < structure().trellis().outputWidth(); ++j) {
+          for (size_t j = 0; j < structure().trellis().outputWidth(); j += structure().parityWidth()) {
             branch = branch_.begin() + i * structure().trellis().tableSize();
-            T tmp = parityUpdateImpl(branch, j);
+            parityUpdateImpl(branch, j);
             
             if (input.count(Codec::Parity)) {
-              parityOut[j] = structure().scalingFactor() * (tmp - parityIn[j]);
+              for (size_t k = 1; k < structure().parityCount(); ++k) {
+                parityOut[k-1] = structure().scalingFactor() * (buffer_[k] - buffer_[0] - parityIn[k-1]);
+              }
             }
             else {
-              parityOut[j] = structure().scalingFactor() * (tmp);
+              for (size_t k = 1; k < structure().parityCount(); ++k) {
+                parityOut[k-1] = structure().scalingFactor() * (buffer_[k] - buffer_[0]);
+              }
             }
+            parityIn += structure().parityCount()-1;
+            parityOut += structure().parityCount()-1;
           }
-          parityIn += structure().trellis().outputWidth();
-          parityOut += structure().trellis().outputWidth();
         }
       }
     }
@@ -380,66 +390,72 @@ namespace fec {
     
     template <DecoderAlgorithm algorithm, class T>
     template <class U, typename std::enable_if<U::value>::type*>
-    T MapDecoder<algorithm, T>::msgUpdateImpl(typename std::vector<T>::iterator branch, size_t j)
+    void MapDecoder<algorithm, T>::msgUpdateImpl(typename std::vector<T>::iterator branch, size_t j)
     {
-      T metric[2] = {-std::numeric_limits<T>::infinity(), -std::numeric_limits<T>::infinity()};
+      auto metric = buffer_.begin();
+      std::fill(metric, metric + structure().systCount(), -std::numeric_limits<T>::infinity());
       for (size_t k = 0; k < structure().trellis().stateCount(); ++k) {
         for (BitField<size_t> input = 0; input < structure().trellis().inputCount(); ++input) {
-          metric[input.test(j)] = logSum_(metric[input.test(j)], branch[input]);
+          metric[input.test(j, structure().systWidth())] = logSum_(metric[input.test(j, structure().systWidth())], branch[input]);
         }
         branch += structure().trellis().inputCount();
       }
-      return metric[1] - metric[0];
     }
     
     template <DecoderAlgorithm algorithm, class T>
     template <class U, typename std::enable_if<U::value>::type*>
-    T MapDecoder<algorithm, T>::parityUpdateImpl(typename std::vector<T>::iterator branch, size_t j)
+    void MapDecoder<algorithm, T>::parityUpdateImpl(typename std::vector<T>::iterator branch, size_t j)
     {
-      T metric[2] = {-std::numeric_limits<T>::infinity(), -std::numeric_limits<T>::infinity()};
+      auto metric = buffer_.begin();
+      std::fill(metric, metric + structure().parityCount(), -std::numeric_limits<T>::infinity());
       for (auto output = structure().trellis().beginOutput(); output < structure().trellis().endOutput();) {
         for (BitField<size_t> input = 0; input < structure().trellis().inputCount(); ++input) {
-          metric[output[input].test(j)] = logSum_(metric[output[input].test(j)], branch[input]);
+          metric[output[input].test(j, structure().parityWidth())] = logSum_(metric[output[input].test(j, structure().parityWidth())], branch[input]);
         }
         branch += structure().trellis().inputCount();
         output += structure().trellis().inputCount();
       }
-      return metric[1] - metric[0];
     }
     
     template <DecoderAlgorithm algorithm, class T>
     template <class U, typename std::enable_if<!U::value>::type*>
-    T MapDecoder<algorithm, T>::msgUpdateImpl(typename std::vector<T>::iterator branch, size_t j)
+    void MapDecoder<algorithm, T>::msgUpdateImpl(typename std::vector<T>::iterator branch, size_t j)
     {
-      T max[2] = {-std::numeric_limits<T>::infinity(), -std::numeric_limits<T>::infinity()};
-      T metric[2] = {T(0),T(0)};
+      auto metric = buffer_.begin();
+      auto max = metric + structure().systCount();
+      std::fill(max, max + structure().systCount(), -std::numeric_limits<T>::infinity());
+      std::fill(metric, metric + structure().systCount(), T(0));
       auto branchTmp = branch;
       for (size_t k = 0; k < structure().trellis().stateCount(); ++k) {
         for (BitField<size_t> input = 0; input < structure().trellis().inputCount(); ++input) {
-          max[input.test(j)] = std::max(branch[input], max[input.test(j)]);
+          max[input.test(j, structure().systWidth())] = std::max(branch[input], max[input.test(j, structure().systWidth())]);
         }
         branch += structure().trellis().inputCount();
       }
       branch = branchTmp;
       for (size_t k = 0; k < structure().trellis().stateCount(); ++k) {
         for (BitField<size_t> input = 0; input < structure().trellis().inputCount(); ++input) {
-          metric[input.test(j)] = logSum_(logSum_.prior(branch[input], max[input.test(j)]), metric[input.test(j)]);
+          metric[input.test(j, structure().systWidth())] = logSum_(logSum_.prior(branch[input], max[input.test(j, structure().systWidth())]), metric[input.test(j, structure().systWidth())]);
         }
         branch += structure().trellis().inputCount();
       }
-      return logSum_.post(metric[1], max[1]) - logSum_.post(metric[0], max[0]);
+      for (size_t i = 0; i < structure().systCount(); ++i) {
+        metric[i] = logSum_.post(metric[i], max[i]);
+      }
     }
     
     template <DecoderAlgorithm algorithm, class T>
     template <class U, typename std::enable_if<!U::value>::type*>
-    T MapDecoder<algorithm, T>::parityUpdateImpl(typename std::vector<T>::iterator branch, size_t j)
+    void MapDecoder<algorithm, T>::parityUpdateImpl(typename std::vector<T>::iterator branch, size_t j)
     {
-      T max[2] = {-std::numeric_limits<T>::infinity(), -std::numeric_limits<T>::infinity()};
-      T metric[2] = {T(0), T(0)};
+      auto metric = buffer_.begin();
+      auto max = metric + structure().parityCount();
+      std::fill(max, max + structure().parityCount(), -std::numeric_limits<T>::infinity());
+      std::fill(metric, metric + structure().parityCount(), T(0));
       auto branchTmp = branch;
       for (auto output = structure().trellis().beginOutput(); output < structure().trellis().endOutput();) {
         for (BitField<size_t> input = 0; input < structure().trellis().inputCount(); ++input) {
-          max[output[input].test(j)] = std::max(branch[input], max[output[input].test(j)]);
+          max[output[input].test(j, structure().parityWidth())] = std::max(branch[input], max[output[input].test(j, structure().parityWidth())]);
         }
         branch += structure().trellis().inputCount();
         output += structure().trellis().inputCount();
@@ -447,12 +463,14 @@ namespace fec {
       branch = branchTmp;
       for (auto output = structure().trellis().beginOutput(); output < structure().trellis().endOutput();) {
         for (BitField<size_t> input = 0; input < structure().trellis().inputCount(); ++input) {
-          metric[output[input].test(j)] = logSum_(logSum_.prior(branch[input], max[output[input].test(j)]), metric[output[input].test(j)]);
+          metric[output[input].test(j, structure().parityWidth())] = logSum_(logSum_.prior(branch[input], max[output[input].test(j, structure().systWidth())]), metric[output[input].test(j, structure().parityWidth())]);
         }
         branch += structure().trellis().inputCount();
         output += structure().trellis().inputCount();
       }
-      return logSum_.post(metric[1], max[1]) - logSum_.post(metric[0], max[0]);
+      for (size_t i = 0; i < structure().parityCount(); ++i) {
+        metric[i] = logSum_.post(metric[i], max[i]);
+      }
     }
     
   }

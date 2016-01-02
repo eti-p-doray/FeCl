@@ -96,7 +96,7 @@ namespace fec {
     
     const char * get_key() const;
     
-    size_t wordCount() const {return 1<<structure().wordWidth();} /**< Access the width of msg in each code bloc. */
+    size_t wordCount() const {return structure().wordCount();} /**< Access the width of msg in each code bloc. */
 
     size_t wordWidth() const {return structure().wordWidth();} /**< Access the width of msg in each code bloc. */
     size_t symbolWidth() const {return structure().symbolWidth();} /**< Access the width of systematics in each code bloc. */

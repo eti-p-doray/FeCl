@@ -107,5 +107,11 @@ test_suite* init_unit_test_suite( int argc, char* argv[] )
   encoder.termination(fec::Trellis::Tail);
   framework::master_test_suite().add(test_convolutional(encoder, decoder, {}, 5.0, "2 inputs + tail"));
   
+  encoder.msgWidth(1);
+  framework::master_test_suite().add(test_convolutional(encoder, decoder, {}, 6.0, "2 inputs + tail"));
+  
+  encoder.parityWidth(3);
+  framework::master_test_suite().add(test_convolutional(encoder, decoder, {}, 6.0, "2 inputs + tail"));
+  
   return 0;
 }

@@ -197,7 +197,7 @@ namespace fec {
     T splitMetrics(LogSum<algorithm,T> op, InputIterator metric, size_t inputWidth, size_t outputWidth, size_t i, size_t j) {
       auto x = -std::numeric_limits<T>::infinity();
       for (BitField<size_t> k = 1; k < (1<<inputWidth); ++k) {
-        if (k.test(j, outputWidth) == i) {
+        if (k.test(i, outputWidth) == j) {
           x = op(x, metric[k]);
         }
       }
@@ -208,13 +208,13 @@ namespace fec {
     T splitMetrics(LogSum<algorithm,T> op, InputIterator metric, size_t inputWidth, size_t outputWidth, size_t i, size_t j) {
       auto max = -std::numeric_limits<T>::infinity();
       for (BitField<size_t> k = 1; k < (2<<inputWidth); ++k) {
-        if (k.test(i, outputWidth) == j) {
+        if (k.test(j, outputWidth) == i) {
           max = std::max(max, metric[k]);
         }
       }
       T x = {};
       for (BitField<size_t> k = 1; k < (2<<inputWidth); ++k) {
-        if (k.test(i, outputWidth) == j) {
+        if (k.test(j, outputWidth) == i) {
           x = op(x, op.prior(metric[k], max));
         }
       }
