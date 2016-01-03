@@ -29,9 +29,10 @@
 
 #include "Codec.h"
 
+template <int width>
 std::vector<fec::BitField<size_t>> randomBits(size_t n) {
   uint64_t seed = std::chrono::system_clock::now().time_since_epoch().count();
-  std::independent_bits_engine<std::mt19937,1,std::uint_fast64_t> bitGenerator((uint32_t(seed)));
+  std::independent_bits_engine<std::mt19937,width,std::uint_fast64_t> bitGenerator((uint32_t(seed)));
   std::vector<fec::BitField<size_t>> msg(n);
   for (size_t i = 0; i < msg.size(); i++) {
     msg[i] = bitGenerator();
@@ -75,7 +76,7 @@ std::vector<double> distort(const std::vector<double>& input, double snrdb, int 
 
 int per(const fec::Codec& codec, double snrdb)
 {
-  auto msg = randomBits(codec.msgSize());
+  auto msg = randomBits<1>(codec.msgSize());
   auto parity = codec.encode(msg);
   
   auto llr = distort(parity, snrdb);

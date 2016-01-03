@@ -97,9 +97,9 @@ namespace fec {
     Vector encode(const Vector& message) const;
     
     template <class InputVector, class OutputVector>
-    void decode(const InputVector& parity, OutputVector& msg) const;
+    void decode(const InputVector& parity, OutputVector& msg) const {decode(Input::parity(parity), msg);}
     template <class InputVector, class OutputVector = typename detail::rebind<InputVector, BitField<size_t>>::type>
-    OutputVector decode(const InputVector& parity) const;
+    OutputVector decode(const InputVector& parity) const {return decode(Input::parity(parity));}
     template <class InputVector, class OutputVector>
     void decode(Arguments<const InputVector> input, OutputVector& msg) const;
     template <class InputVector, class OutputVector = typename detail::rebind<InputVector, BitField<size_t>>::type>
@@ -207,10 +207,10 @@ void fec::Codec::encode(const Vector& msg, Vector& parity) const
  *    the matlab API to use a custom mex allocator
  */
 template <class InputVector, class OutputVector>
-OutputVector fec::Codec::decode(const InputVector& parity) const
+OutputVector fec::Codec::decode(Arguments<const InputVector> input) const
 {
   OutputVector message;
-  decode(parity, message);
+  decode(input, message);
   return message;
 }
 
@@ -225,18 +225,36 @@ OutputVector fec::Codec::decode(const InputVector& parity) const
  *    the matlab API to use a custom mex allocator
  */
 template <class InputVector, class OutputVector>
-void fec::Codec::decode(const InputVector& parity, OutputVector& msg) const
+void fec::Codec::decode(Arguments<const InputVector> input, OutputVector& msg) const
 {
-  size_t blockCount = parity.size() / (paritySize()*(parityCount()-1));
-  if (parity.size() != blockCount * paritySize()*(parityCount()-1)) {
-    throw std::invalid_argument("Invalid size for parity");
+  if (!input.count(detail::Codec::Parity)) {
+    throw std::invalid_argument("Input must contains parity");
   }
+  size_t blockCount = input.at(detail::Codec::Parity).size() / (paritySize() * (parityCount()-1));
   
   msg.resize(blockCount * msgSize());
   
-  detail::Codec::iterator<typename InputVector::const_iterator> begin{{detail::Codec::Parity, parity.begin(), paritySize() * (parityCount()-1)}};
-  detail::Codec::iterator<typename InputVector::const_iterator> end{{detail::Codec::Parity, parity.end(), paritySize() * (parityCount()-1)}};
+  detail::Codec::iterator<typename InputVector::const_iterator> begin{{detail::Codec::Parity, input.at(detail::Codec::Parity).begin(), paritySize() * (parityCount()-1)}};
+  detail::Codec::iterator<typename InputVector::const_iterator> end{{detail::Codec::Parity, input.at(detail::Codec::Parity).end(), paritySize() * (parityCount()-1)}};
   detail::Codec::iterator<typename OutputVector::iterator> output{{detail::Codec::Msg, msg.begin(), msgSize()}};
+  
+  if (input.at(detail::Codec::Parity).size() != blockCount * paritySize() * (parityCount()-1)) {
+    throw std::invalid_argument("Invalid size for parity");
+  }
+  if (input.count(detail::Codec::Syst)) {
+    begin.insert(detail::Codec::Syst, input.at(detail::Codec::Syst).begin(), systSize() * (systCount()-1));
+    end.insert(detail::Codec::Syst, input.at(detail::Codec::Syst).end(), systSize() * (systCount()-1));
+    if (input.at(detail::Codec::Syst).size() != blockCount * systSize() * (systCount()-1)) {
+      throw std::invalid_argument("Invalid size for syst");
+    }
+  }
+  if (input.count(detail::Codec::State)) {
+    begin.insert(detail::Codec::State, input.at(detail::Codec::State).begin(), stateSize() * (stateCount()-1));
+    end.insert(detail::Codec::State, input.at(detail::Codec::State).end(), stateSize() * (stateCount()-1));
+    if (input.at(detail::Codec::State).size() != blockCount * stateSize() * (stateCount()-1)) {
+      throw std::invalid_argument("Invalid size for state");
+    }
+  }
   
   detail::WorkGroup workGroup(workGroupSize_);
   workGroup.executeTask(std::bind(&Codec::decodeBlocks<typename InputVector::const_iterator, typename OutputVector::iterator>, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3), begin, end, output);

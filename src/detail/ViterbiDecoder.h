@@ -45,7 +45,7 @@ namespace fec {
       ~ViterbiDecoder() = default;
       
       template <class InputIterator, class OutputIterator>
-      void decode(InputIterator parity, OutputIterator msg);
+      void decode(Codec::iterator<InputIterator> input, OutputIterator msg);
       
     private:
       inline const Convolutional::Structure& structure() const {return structure_;}
@@ -69,12 +69,14 @@ namespace fec {
      */
     template <class T>
     template <class InputIterator, class OutputIterator>
-    void ViterbiDecoder<T>::decode(InputIterator parity, OutputIterator msg)
+    void ViterbiDecoder<T>::decode(Codec::iterator<InputIterator> input, OutputIterator msg)
     {
       previousPath_[0] = 0;
       std::fill(previousPath_.begin()+1, previousPath_.end(), -std::numeric_limits<T>::infinity());
       auto stateTraceBack = stateTraceBack_.begin();
       auto inputTraceBack = inputTraceBack_.begin();
+      auto parity = input.at(Codec::Parity);
+      auto syst = input.at(Codec::Syst);
       
       for (size_t i = 0; i < structure().length() + structure().tailSize(); ++i) {
         std::fill(nextPath_.begin(), nextPath_.end(), -std::numeric_limits<T>::infinity());
@@ -82,13 +84,13 @@ namespace fec {
         for (BitField<size_t> j = 0; j < structure().trellis().outputCount(); ++j) {
           branch_[j] = mergeMetrics(parity, structure().parityWidth(), structure().trellis().outputWidth(), j);
         }
-        parity += structure().outputLength();
-        /*
-        for (BitField<size_t> j = 0; j < structure().trellis().inputCount(); ++j) {
-          branch_[j] = mergeMetrics(msg, structure().msgWidth(), structure().trellis().inputWidth(), j);
+        if (input.count(Codec::Syst)) {
+          for (BitField<size_t> j = 0; j < structure().trellis().inputCount(); ++j) {
+            branch_[j] = mergeMetrics(syst, structure().systWidth(), structure().trellis().inputWidth(), j);
+          }
         }
-        msg += structure().inputLength();
-        */
+        parity += structure().outputLength();
+        syst += structure().inputLength();
         
         auto previousPath = previousPath_.begin();
         auto state = structure().trellis().beginState();

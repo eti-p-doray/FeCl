@@ -67,7 +67,7 @@ namespace fec {
         virtual ~DemodulateFunction() = default;
         
         void operator() (iterator<InputIterator> symbolf, iterator<InputIterator> symboll, iterator<OutputIterator> word);
-        void operator() (iterator<InputIterator> symbol, iterator<OutputIterator> word) {structure_.demodulate(symbol.at(Modulation::Symbol), word.at(Modulation::Word));}
+        void operator() (iterator<InputIterator> symbol, iterator<OutputIterator> word) {structure_.demodulate(symbol, word.at(Modulation::Word));}
         
       private:
         DemodulateFunction(const Structure& structure) : structure_(structure) {}

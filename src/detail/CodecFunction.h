@@ -157,7 +157,7 @@ namespace fec {
         static std::unique_ptr<DecodeFunction> create(const Structure& structure) {return std::unique_ptr<DecodeFunction>(new DecodeFunction(structure));}
         virtual ~DecodeFunction() = default;
         
-        void operator() (Codec::iterator<InputIterator> parity, Codec::iterator<OutputIterator> msg) override {decoder_.decode(parity.at(Codec::Parity), msg.at(Codec::Msg));}
+        void operator() (Codec::iterator<InputIterator> parity, Codec::iterator<OutputIterator> msg) override {decoder_.decode(parity, msg.at(Codec::Msg));}
         
       private:
         DecodeFunction(const Structure&  structure) : decoder_(structure) {}
@@ -241,7 +241,7 @@ namespace fec {
         static std::unique_ptr<DecodeFunctionImpl> create(const Structure& structure) {return std::unique_ptr<DecodeFunctionImpl>(new DecodeFunctionImpl(structure));}
         virtual ~DecodeFunctionImpl() = default;
         
-        void operator() (Codec::iterator<InputIterator> parity, Codec::iterator<OutputIterator> msg) override {decoder_.decode(parity.at(Codec::Parity), msg.at(Codec::Msg));}
+        void operator() (Codec::iterator<InputIterator> parity, Codec::iterator<OutputIterator> msg) override {decoder_.decode(parity, msg.at(Codec::Msg));}
         
       private:
         DecodeFunctionImpl(const Structure& structure) : decoder_(structure) {}
@@ -317,7 +317,7 @@ namespace fec {
         static std::unique_ptr<DecodeFunctionImpl> create(const Structure& structure) {return std::unique_ptr<DecodeFunctionImpl>(new DecodeFunctionImpl(structure));}
         virtual ~DecodeFunctionImpl() = default;
         
-        void operator() (Codec::iterator<InputIterator> parity, Codec::iterator<OutputIterator> msg) override {decoder_.decode(parity.at(Codec::Parity), msg.at(Codec::Msg));}
+        void operator() (Codec::iterator<InputIterator> parity, Codec::iterator<OutputIterator> msg) override {decoder_.decode(parity, msg.at(Codec::Msg));}
         
       private:
         DecodeFunctionImpl(const Structure& structure) : decoder_(structure) {}

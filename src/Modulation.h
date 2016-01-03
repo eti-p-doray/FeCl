@@ -73,20 +73,18 @@ namespace fec {
     private:
       
     };
+    
+    template <class T> using Arguments = detail::Modulation::Arguments<T>;
+    template <class T> using ConstArguments = detail::Modulation::ConstArguments<T>;
 
     struct Input {
-      template <typename T> static detail::Modulation::ConstArguments<T> word(T& word) {return detail::Modulation::ConstArguments<T>{}.word(word);}
-      template <typename T> static detail::Modulation::ConstArguments<T> symbol(T& symbol) {return detail::Modulation::ConstArguments<T>{}.symbol(symbol);}
+      template <typename T> static ConstArguments<T> word(T& word) {return ConstArguments<T>{}.word(word);}
+      template <typename T> static ConstArguments<T> symbol(T& symbol) {return ConstArguments<T>{}.symbol(symbol);}
     } Input;
     struct Output {
-      template <typename T> static detail::Modulation::Arguments<T> word(T& word) {return detail::Modulation::Arguments<T>{}.word(word);}
-      template <typename T> static detail::Modulation::Arguments<T> symbol(T& symbol) {return detail::Modulation::Arguments<T>{}.symbol(symbol);}
+      template <typename T> static Arguments<T> word(T& word) {return Arguments<T>{}.word(word);}
+      template <typename T> static Arguments<T> symbol(T& symbol) {return Arguments<T>{}.symbol(symbol);}
     } Output;
-    
-    template <typename T>
-    static detail::Modulation::Arguments<T> word(T& word) {return detail::Modulation::Arguments<T>{}.word(word);}
-    template <typename T>
-    static detail::Modulation::Arguments<T> symbol(T& symbol) {return detail::Modulation::Arguments<T>{}.symbol(symbol);}
     
     Modulation(const ModOptions&);
     Modulation(const ModOptions&, const DemodOptions&);
@@ -113,14 +111,22 @@ namespace fec {
     OutputVector modulate(const InputVector& msg) const;
     
     template <class InputVector, class OutputVector>
-    void demodulate(const InputVector& symbol, OutputVector& word) const;
+    void demodulate(const InputVector& symbol, OutputVector& word) const {demodulate(Input::symbol(symbol), word);}
     template <class InputVector, class OutputVector>
-    OutputVector demodulate(const InputVector& word) const;
+    OutputVector demodulate(const InputVector& symbol) const {return demodulate(Input::symbol(symbol));}
+    template <class InputVector, class OutputVector>
+    void demodulate(Arguments<const InputVector> input, OutputVector& word) const;
+    template <class InputVector, class OutputVector>
+    OutputVector demodulate(Arguments<const InputVector> word) const;
     
     template <class InputVector1, class InputVector2, class OutputVector>
-    void soDemodulate(detail::Modulation::Arguments<const InputVector1> input, const InputVector2& variance, OutputVector& word) const;
+    void soDemodulate(const InputVector1& symbol, const InputVector2& variance, OutputVector& word) const {soDemodulate(Input::symbol(symbol), variance, word);}
     template <class InputVector1, class InputVector2 = std::vector<double>, class OutputVector = InputVector1>
-    OutputVector soDemodulate(detail::Modulation::Arguments<const InputVector1> input, const InputVector2& variance) const;
+    OutputVector soDemodulate(const InputVector1& symbol, const InputVector2& variance) const {return soDemodulate(Input::symbol(symbol), variance);}
+    template <class InputVector1, class InputVector2, class OutputVector>
+    void soDemodulate(Arguments<const InputVector1> input, const InputVector2& variance, OutputVector& word) const;
+    template <class InputVector1, class InputVector2 = std::vector<double>, class OutputVector = InputVector1>
+    OutputVector soDemodulate(Arguments<const InputVector1> input, const InputVector2& variance) const;
 
   protected:
     inline const detail::Modulation::Structure& structure() const {return *structure_;}
@@ -202,7 +208,7 @@ void fec::Modulation::modulate(const InputVector& word, OutputVector& symbol) co
  *    the matlab API to use a custom mex allocator
  */
 template <class InputVector, class OutputVector>
-OutputVector fec::Modulation::demodulate(const InputVector& symbol) const
+OutputVector fec::Modulation::demodulate(Arguments<const InputVector> symbol) const
 {
   OutputVector word;
   demodulate(symbol, word);
@@ -219,16 +225,26 @@ OutputVector fec::Modulation::demodulate(const InputVector& symbol) const
  *    the matlab API to use a custom mex allocator
  */
 template <class InputVector, class OutputVector>
-void fec::Modulation::demodulate(const InputVector& symbol, OutputVector& word) const
+void fec::Modulation::demodulate(Arguments<const InputVector> input, OutputVector& word) const
 {
-  size_t blockCount = symbol.size() / (symbolSize()*symbolWidth());
+  if (!input.count(detail::Modulation::Symbol)) {
+    throw std::invalid_argument("Input must contains symbol");
+  }
+  size_t blockCount = input.at(detail::Modulation::Symbol).size() / (symbolSize()*symbolWidth());
   
-  detail::Modulation::iterator<typename InputVector::const_iterator> begin{{detail::Modulation::Symbol, symbol.begin(), symbolSize()*symbolWidth()}};
-  detail::Modulation::iterator<typename InputVector::const_iterator> end{{detail::Modulation::Symbol, symbol.end(), symbolSize()*symbolWidth()}};
+  detail::Modulation::iterator<typename InputVector::const_iterator> begin{{detail::Modulation::Symbol, input.at(detail::Modulation::Symbol).begin(), symbolSize()*symbolWidth()}};
+  detail::Modulation::iterator<typename InputVector::const_iterator> end{{detail::Modulation::Symbol, input.at(detail::Modulation::Symbol).end(), symbolSize()*symbolWidth()}};
   detail::Modulation::iterator<typename OutputVector::iterator> outputIt;
   
-  if (symbol.size() != blockCount * symbolSize()*symbolWidth()) {
+  if (input.at(detail::Modulation::Symbol).size() != blockCount * symbolSize()*symbolWidth()) {
     throw std::invalid_argument("Invalid size for symbol");
+  }
+  if (input.count(detail::Modulation::Word)) {
+    begin.insert(detail::Modulation::Word, input.at(detail::Modulation::Word).begin(), wordSize()*(structure().wordCount()-1));
+    end.insert(detail::Modulation::Word, input.at(detail::Modulation::Word).end(), wordSize()*(structure().wordCount()-1));
+    if (input.at(detail::Modulation::Word).size() != blockCount * wordSize()*(structure().wordCount()-1)) {
+      throw std::invalid_argument("Invalid size for word");
+    }
   }
   
   word.resize(blockCount * wordSize());
@@ -248,7 +264,7 @@ void fec::Modulation::demodulate(const InputVector& symbol, OutputVector& word) 
  */
 
 template <class InputVector1, class InputVector2, class OutputVector>
-OutputVector fec::Modulation::soDemodulate(detail::Modulation::Arguments<const InputVector1> input, const InputVector2& variance) const
+OutputVector fec::Modulation::soDemodulate(Arguments<const InputVector1> input, const InputVector2& variance) const
 {
   OutputVector word;
   soDemodulate(input, variance, word);

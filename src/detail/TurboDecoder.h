@@ -41,7 +41,7 @@ namespace fec {
       virtual ~TurboDecoder() = default;
       
       template <class InputIterator, class OutputIterator>
-      void decode(InputIterator parity, OutputIterator msg);
+      void decode(Codec::iterator<InputIterator> input, OutputIterator msg);
       
       template <class InputIterator, class OutputIterator>
       void soDecode(Codec::iterator<InputIterator> input, Codec::iterator<OutputIterator> output);
@@ -49,10 +49,11 @@ namespace fec {
     private:
       inline const Turbo::Structure& structure() const {return structure_;}
       
+      template <class InputIterator, class OutputIterator>
+      void decodeImpl(Codec::iterator<InputIterator> input, Codec::iterator<OutputIterator> output);
+      
       void aPosterioriUpdate();
-      
       void customActivationUpdate(size_t i, size_t stage, bool outputParity);
-      
       void serialTransferUpdate(size_t i);
       void parallelTransferUpdate();
       void customTransferUpdate(size_t stage, size_t i);
@@ -81,52 +82,42 @@ namespace fec {
     
     template <DecoderAlgorithm algorithm, class T>
     template <class InputIterator, class OutputIterator>
-    void TurboDecoder<algorithm, T>::decode(InputIterator parity, OutputIterator msg)
+    void TurboDecoder<algorithm, T>::decode(Codec::iterator<InputIterator> input, OutputIterator msg)
     {
-      std::copy(parity, parity + structure().paritySize(), parityIn_.begin());
-      std::fill(state_.begin(), state_.end(), 0);
-      for (size_t i = 0; i < structure().iterations(); ++i) {
-        if (structure().schedulingType() == Parallel) {
-          parallelTransferUpdate();
-        }
-        
-        if (structure().schedulingType() == Custom) {
-          for (size_t j = 0; j < structure().scheduling().size(); ++j) {
-            stateBuffer_ = state_;
-            for (size_t k = 0; k < structure().scheduling()[j].transfer.size(); ++k) {
-              customTransferUpdate(j, k);
-            }
-            std::swap(stateBuffer_, state_);
-            customActivationUpdate(i, j, false);
-          }
-        } else {
-          auto parityIn = parityIn_.begin() + structure().systSize();
-          auto state = state_.begin();
-          for (size_t j = 0; j < structure().constituentCount(); ++j) {
-            if (structure().schedulingType() == Serial) {
-              serialTransferUpdate(j);
-            }
-            code_[j].setScalingFactor(structure().scalingFactor(i, j));
-            auto inputTmp = Codec::iterator<typename std::vector<T>::const_iterator>{{Codec::Parity, parityIn, 1}, {Codec::Syst, state, 1}};
-            auto outputTmp = Codec::iterator<typename std::vector<T>::iterator>{{Codec::Syst, state, 1}};
-            code_[j].soDecode(inputTmp, outputTmp);
-            
-            state += structure().constituent(j).systSize();
-            parityIn += structure().constituent(j).paritySize();
-          }
-        }
-      }
-      std::copy(parityIn_.begin(), parityIn_.begin()+structure().msgSize(), parityOut_.begin());
-      aPosterioriUpdate();
+      Codec::iterator<OutputIterator> output{};
+      decodeImpl(input, output);
       
       for (size_t i = 0; i < structure().msgSize(); ++i) {
-        msg[i] = parityOut_[i] > 0;
+        msg[i] = (parityIn_[i] + parityOut_[i]) > 0;
       }
     }
     
     template <DecoderAlgorithm algorithm, class T>
     template <class InputIterator, class OutputIterator>
     void TurboDecoder<algorithm, T>::soDecode(Codec::iterator<InputIterator> input, Codec::iterator<OutputIterator> output)
+    {
+      decodeImpl(input, output);
+      
+      if (output.count(Codec::Syst)) {
+        std::copy(parityOut_.begin(), parityOut_.begin()+structure().systSize(), output.at(Codec::Syst));
+      }
+      if (output.count(Codec::Parity)) {
+        std::copy(parityOut_.begin(), parityOut_.end(), output.at(Codec::Parity));
+      }
+      if (output.count(Codec::State)) {
+        std::copy(state_.begin(), state_.end(), output.at(Codec::State));
+      }
+      if (output.count(Codec::Msg)) {
+        auto msg = output.at(Codec::Msg);
+        for (size_t i = 0; i < structure().msgSize(); ++i) {
+          msg[i] = parityIn_[i] + parityOut_[i];
+        }
+      }
+    }
+    
+    template <DecoderAlgorithm algorithm, class T>
+    template <class InputIterator, class OutputIterator>
+    void TurboDecoder<algorithm, T>::decodeImpl(Codec::iterator<InputIterator> input, Codec::iterator<OutputIterator> output)
     {
       std::copy(input.at(Codec::Parity), input.at(Codec::Parity) + structure().paritySize(), parityIn_.begin());
       if (input.count(Codec::Syst)) {
@@ -138,8 +129,7 @@ namespace fec {
       
       if (input.count(Codec::State)) {
         std::copy(input.at(Codec::State), input.at(Codec::State)+structure().stateSize(), state_.begin());
-      }
-      else {
+      } else {
         std::fill(state_.begin(), state_.end(), 0);
       }
       
@@ -187,22 +177,6 @@ namespace fec {
       }
       std::fill(parityOut_.begin(), parityOut_.begin() + structure().systSize(), 0);
       aPosterioriUpdate();
-      
-      if (output.count(Codec::Syst)) {
-        std::copy(parityOut_.begin(), parityOut_.begin()+structure().systSize(), output.at(Codec::Syst));
-      }
-      if (output.count(Codec::Parity)) {
-        std::copy(parityOut_.begin(), parityOut_.end(), output.at(Codec::Parity));
-      }
-      if (output.count(Codec::State)) {
-        std::copy(state_.begin(), state_.end(), output.at(Codec::State));
-      }
-      if (output.count(Codec::Msg)) {
-        auto msg = output.at(Codec::Msg);
-        for (size_t i = 0; i < structure().msgSize(); ++i) {
-          msg[i] = parityIn_[i] + parityOut_[i];
-        }
-      }
     }
     
     template <DecoderAlgorithm algorithm, class T>

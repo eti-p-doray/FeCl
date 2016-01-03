@@ -61,11 +61,11 @@ int main( int argc, char* argv[] )
   double snrdB = -1.0;
   double snr = pow(10.0, snrdB/10.0);
   
-  auto m = randomBits(codec.msgSize());
+  auto m = randomBits<1>(codec.msgSize());
   auto c = perm.permute(codec.encode(m));
   auto x = mod.modulate(c);
   auto y = distort(x, snrdB, mod.symbolWidth());
-  auto l = mod.soDemodulate(Modulation::Input::symbol(y), {0.5/snr});
+  auto l = mod.soDemodulate(y, {0.5/snr});
   auto md = codec.decode(perm.depermute(l, codec.parityCount()-1));
   
   int errorCount = 0;

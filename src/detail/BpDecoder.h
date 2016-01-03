@@ -47,13 +47,16 @@ namespace fec {
       ~BpDecoder() = default;
       
       template <class InputIterator, class OutputIterator>
-      void decode(InputIterator parity, OutputIterator msg);
+      void decode(Codec::iterator<InputIterator> parity, OutputIterator msg);
       
       template <class InputIterator, class OutputIterator>
       void soDecode(Codec::iterator<InputIterator> input, Codec::iterator<OutputIterator> output);
       
     private:
       inline const Ldpc::Structure& structure() const {return structure_;} /**< Access the code structure */
+      
+      template <class InputIterator, class OutputIterator>
+      void decodeImpl(Codec::iterator<InputIterator> input, Codec::iterator<OutputIterator> output);
       
       void checkUpdate(size_t i);
       void bitUpdate();
@@ -82,43 +85,41 @@ namespace fec {
     
     template <DecoderAlgorithm algorithm, class T>
     template <class InputIterator, class OutputIterator>
-    void BpDecoder<algorithm, T>::decode(InputIterator parity, OutputIterator msg)
+    void BpDecoder<algorithm, T>::decode(Codec::iterator<InputIterator> input, OutputIterator msg)
     {
-      std::copy(parity, parity+structure().checks().cols(), parity_.begin());
-      
-      if (structure().iterations() > 0) {
-        for (size_t i = 0; i < structure().checks().size(); ++i) {
-          check_[i] = parity_[structure().checks().at(i)];
-        }
-      }
-      
-      bool success = false;
-      for (int64_t i = 0; i < structure().iterations() - 1; ++i) {
-        checkUpdate(i);
-        bitUpdate();
-        
-        for (size_t j = 0; j < structure().checks().cols(); ++j) {
-          hardParity_[j] = (bit_[j] >= 0.0);
-        }
-        if (structure().check(hardParity_.begin())) {
-          success = true;
-          break;
-        }
-      }
-      checkUpdate(structure().iterations()-1);
-      
-      std::copy(parity_.begin(), parity_.end(), bit_.begin());
-      for (size_t i = 0; i < structure().checks().size(); ++i) {
-        bit_[structure().checks().at(i)] += check_[i];
-      }
+      Codec::iterator<OutputIterator> output{};
+      decodeImpl(input, output);
       for (size_t i = 0; i < structure().msgSize(); ++i) {
-        msg[i] = bit_[i] >= 0;
+        msg[i] = (parity_[i] + bit_[i] >= 0);
       }
     }
     
     template <DecoderAlgorithm algorithm, class T>
     template <class InputIterator, class OutputIterator>
     void BpDecoder<algorithm, T>::soDecode(Codec::iterator<InputIterator> input, Codec::iterator<OutputIterator> output)
+    {
+      decodeImpl(input, output);
+      
+      if (output.count(Codec::Syst)) {
+        std::copy(bit_.begin(), bit_.begin()+structure().systSize(), output.at(Codec::Syst));
+      }
+      if (output.count(Codec::Parity)) {
+        std::copy(bit_.begin(), bit_.begin()+structure().checks().cols(), output.at(Codec::Parity));
+      }
+      if (output.count(Codec::State)) {
+        std::copy(check_.begin(), check_.end(), output.at(Codec::State));
+      }
+      if (output.count(Codec::Msg)) {
+        auto msg = output.at(Codec::Msg);
+        for (size_t i = 0; i < structure().msgSize(); ++i) {
+          msg[i] = parity_[i] + bit_[i];
+        }
+      }
+    }
+    
+    template <DecoderAlgorithm algorithm, class T>
+    template <class InputIterator, class OutputIterator>
+    void BpDecoder<algorithm, T>::decodeImpl(Codec::iterator<InputIterator> input, Codec::iterator<OutputIterator> output)
     {
       std::copy(input.at(Codec::Parity), input.at(Codec::Parity)+structure().checks().cols(), parity_.begin());
       if (input.count(Codec::Syst)) {
@@ -160,22 +161,6 @@ namespace fec {
       std::fill(bit_.begin(), bit_.end(), 0);
       for (size_t i = 0; i < structure().checks().size(); ++i) {
         bit_[structure().checks().at(i)] += check_[i];
-      }
-      
-      if (output.count(Codec::Syst)) {
-        std::copy(bit_.begin(), bit_.begin()+structure().systSize(), output.at(Codec::Syst));
-      }
-      if (output.count(Codec::Parity)) {
-        std::copy(bit_.begin(), bit_.begin()+structure().checks().cols(), output.at(Codec::Parity));
-      }
-      if (output.count(Codec::State)) {
-        std::copy(check_.begin(), check_.end(), output.at(Codec::State));
-      }
-      if (output.count(Codec::Msg)) {
-        auto msg = output.at(Codec::Msg);
-        for (size_t i = 0; i < structure().msgSize(); ++i) {
-          msg[i] = parity_[i] + bit_[i];
-        }
       }
     }
     

@@ -48,6 +48,9 @@ namespace fec {
         Symbol,
       };
       
+      template <class It>
+      using iterator = MultiIterator<It, Field, Word, Symbol>;
+      
       struct ModOptions {
         friend class Structure;
       public:
@@ -115,7 +118,7 @@ namespace fec {
         template <class InputIterator, class OutputIterator>
         void modulate(InputIterator word, OutputIterator symbol) const;
         template <class InputIterator, class OutputIterator>
-        void demodulate(InputIterator symbol, OutputIterator word) const;
+        void demodulate(iterator<InputIterator> symbol, OutputIterator word) const;
 
       private:
         template <typename Archive>
@@ -156,9 +159,6 @@ namespace fec {
       template <class T>
       using ConstArguments = Arguments<typename std::add_const<T>::type>;
       
-      template <class It>
-      using iterator = MultiIterator<It, Field, Word, Symbol>;
-      
     }
     
   }
@@ -186,13 +186,18 @@ void fec::detail::Modulation::Structure::modulate(InputIterator word, OutputIter
 }
 
 template <class InputIterator, class OutputIterator>
-void fec::detail::Modulation::Structure::demodulate(InputIterator symbol, OutputIterator word) const
+void fec::detail::Modulation::Structure::demodulate(iterator<InputIterator> input, OutputIterator word) const
 {
+  auto symbol = input.at(Symbol);
+  auto wordIn = input.at(Word);
   for (size_t i = 0; i < length(); ++i) {
     typename InputIterator::value_type max = 0;
     BitField<size_t> maxInput = 0;
-    for (size_t j = 0; j < 1<<size(); ++j) {
+    for (size_t j = 0; j < symbolCount(); ++j) {
       auto tmp = -sqDistance(symbol, constellation().begin() + j*dimension(), dimension());
+      if (input.count(Modulation::Word)) {
+        tmp += mergeMetrics(word, wordWidth(), dimension(), j);
+      }
       if (tmp > max) {
         maxInput = j;
       }
@@ -200,7 +205,8 @@ void fec::detail::Modulation::Structure::demodulate(InputIterator symbol, Output
     for (int j = 0; j < size(); j+=wordWidth()) {
       word[j] = maxInput.test(j, wordWidth());
     }
-    word += size();
+    word += size()*(wordCount()-1);
+    wordIn += size()*(wordCount()-1);
     symbol += symbolWidth();
   }
 }
