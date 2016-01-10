@@ -45,12 +45,12 @@ namespace fec {
       {
         friend class Structure;
       public:
-        EncoderOptions(const SparseBitMatrix& checkMatrix) {checkMatrix_ = checkMatrix;}
+        EncoderOptions(const SparseBitMatrix<size_t>& checkMatrix) {checkMatrix_ = checkMatrix;}
         
-        inline const SparseBitMatrix& checkMatrix() const {return checkMatrix_;}
+        inline const SparseBitMatrix<size_t>& checkMatrix() const {return checkMatrix_;}
         
       private:
-        SparseBitMatrix checkMatrix_;
+        SparseBitMatrix<size_t> checkMatrix_;
       };
       
       struct DecoderOptions {
@@ -117,7 +117,7 @@ namespace fec {
         size_t paritySize() const override {return H_.cols();} /**< Access the size of parities in each code bloc. */
         size_t stateSize() const override {return H_.size();} /**< Access the size of state information in each code bloc. */
         
-        inline const SparseBitMatrix& checks() const {return H_;}
+        inline const SparseBitMatrix<size_t>& checks() const {return H_;}
         inline size_t iterations() const {return iterations_;}
         double scalingFactor(size_t i, size_t j) const; /**< Access the scalingFactor value used in decoder. */
         
@@ -134,15 +134,15 @@ namespace fec {
         
         void setEncoderOptions(const EncoderOptions& encoder);
         
-        void computeGeneratorMatrix(SparseBitMatrix H);
+        void computeGeneratorMatrix(SparseBitMatrix<size_t> H);
         std::vector<std::vector<double>> scalingMapToVector(const std::unordered_map<size_t,std::vector<double>>& map) const;
         std::unordered_map<size_t,std::vector<double>> scalingVectorToMap(const std::vector<std::vector<double>>& map) const;
         
-        SparseBitMatrix H_;
-        SparseBitMatrix DC_;
-        SparseBitMatrix T_;
-        SparseBitMatrix A_;
-        SparseBitMatrix B_;
+        SparseBitMatrix<size_t> H_;
+        SparseBitMatrix<size_t> DC_;
+        SparseBitMatrix<size_t> T_;
+        SparseBitMatrix<size_t> A_;
+        SparseBitMatrix<size_t> B_;
         
         size_t msgSize_;
         
@@ -186,7 +186,7 @@ bool fec::detail::Ldpc::Structure::check(InputIterator parity) const
   for (auto parityEq = checks().begin(); parityEq < checks().end(); ++parityEq) {
     bool syndrome = false;
     for (auto parityBit = parityEq->begin(); parityBit < parityEq->end(); ++parityBit) {
-      syndrome ^= bool(parity[*parityBit]);
+      syndrome ^= bool(parity[parityBit->first]);
     }
     if (syndrome != false) {
       return false;
@@ -210,25 +210,25 @@ void fec::detail::Ldpc::Structure::encode(InputIterator msg, OutputIterator pari
   auto parityIt = parity;
   for (auto row = DC_.begin(); row < DC_.end(); ++row, ++parityIt) {
     for (auto elem = row->begin(); elem != row->end(); ++elem) {
-      *parityIt ^= msg[*elem];
+      *parityIt ^= msg[elem->first];
     }
   }
   for (auto row = B_.begin(); row < B_.end(); ++row, ++parityIt) {
     for (auto elem = row->begin(); elem < row->end(); ++elem) {
-      *parityIt ^= parity[*elem];
+      *parityIt ^= parity[elem->first];
     }
   }
   parity += DC_.rows();
   parityIt = parity;
   for (auto row = A_.begin(); row < A_.end(); ++row, ++parityIt) {
     for (auto elem = row->begin(); elem < row->end(); ++elem) {
-      *parityIt ^= msg[*elem];
+      *parityIt ^= msg[elem->first];
     }
   }
   parityIt = parity;
   for (auto row = T_.begin(); row < T_.end(); ++row, ++parityIt) {
     for (auto elem = row->begin()+1; elem < row->end(); ++elem) {
-      parity[*elem] ^= *parityIt;
+      parity[elem->first] ^= *parityIt;
     }
   }
 }

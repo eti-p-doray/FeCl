@@ -66,14 +66,14 @@ namespace fec {
     using PunctureOptions = detail::Ldpc::PunctureOptions;
     
     struct Gallager {
-      static SparseBitMatrix matrix(size_t n, size_t wc, size_t wr, uint64_t seed = 0);
+      static SparseBitMatrix<size_t> matrix(size_t n, size_t wc, size_t wr, uint64_t seed = 0);
     };
     struct DvbS2 {
     public:
       DvbS2(size_t n, double rate) {n_ = n; rate_ = rate;}
       operator EncoderOptions() const {return fec::Ldpc::EncoderOptions(matrix(n_, rate_));}
       
-      static SparseBitMatrix matrix(size_t n, double rate);
+      static SparseBitMatrix<size_t> matrix(size_t n, double rate);
       
     private:
       struct Matrix {

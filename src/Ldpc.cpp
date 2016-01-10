@@ -61,9 +61,9 @@ const char * Ldpc::get_key() const {
  *  \param  wc Number of branch connected to every check nodes.
  *  \param  wr Number of branch connected to every bit nodes
  */
-SparseBitMatrix Ldpc::Gallager::matrix(size_t n, size_t wc, size_t wr, uint64_t seed)
+SparseBitMatrix<size_t> Ldpc::Gallager::matrix(size_t n, size_t wc, size_t wr, uint64_t seed)
 {
-  SparseBitMatrix H(n/wr * wc, n, wr);
+  SparseBitMatrix<size_t> H(n/wr * wc, n, wr);
   
   size_t elem = 0;
   auto row = H.begin();

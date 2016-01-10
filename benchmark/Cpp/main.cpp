@@ -242,7 +242,7 @@ ptree speed_Ldpc(std::vector<double> snrdb)
   auto row =  checkMatrix.begin();
   for (size_t i = 0; i < checkMatrix.rows(); ++i, ++row) {
     for (auto elem = row->begin(); elem < row->end(); ++elem) {
-      itppCheckMatrix.set(i, *elem, 1);
+      itppCheckMatrix.set(i, elem->first, 1);
     }
   }
   itppCodecs.push_back(std::unique_ptr<itpp::LDPC_Code>(new itpp::LDPC_Code(&itppCheckMatrix)));

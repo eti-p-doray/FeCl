@@ -138,7 +138,7 @@ namespace fec {
         }
         else {
           for (size_t i = 0; i < structure().checks().size(); ++i) {
-            check_[i] = parity_[structure().checks().at(i)];
+            check_[i] = parity_[structure().checks().at(i).first];
           }
         }
       }
@@ -160,7 +160,7 @@ namespace fec {
       
       std::fill(bit_.begin(), bit_.end(), 0);
       for (size_t i = 0; i < structure().checks().size(); ++i) {
-        bit_[structure().checks().at(i)] += check_[i];
+        bit_[structure().checks().at(i).first] += check_[i];
       }
     }
     
@@ -199,15 +199,15 @@ namespace fec {
       std::fill(bit_.begin(), bit_.end(), 0);
       for (size_t i = 0; i < structure().checks().size(); ++i) {
         buffer_[i] = check_[i];
-        check_[i] = bit_[structure().checks().at(i)];
-        bit_[structure().checks().at(i)] += buffer_[i];
+        check_[i] = bit_[structure().checks().at(i).first];
+        bit_[structure().checks().at(i).first] += buffer_[i];
       }
       
       std::copy(parity_.begin(), parity_.begin() + bit_.size(), bit_.begin());
       
       for (int64_t i = structure().checks().size() - 1; i >= 0; --i) {
-        check_[i] += bit_[structure().checks().at(i)];
-        bit_[structure().checks().at(i)] += buffer_[i];
+        check_[i] += bit_[structure().checks().at(i).first];
+        bit_[structure().checks().at(i).first] += buffer_[i];
       }
     }
     

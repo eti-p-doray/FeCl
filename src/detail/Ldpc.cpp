@@ -138,9 +138,13 @@ double Ldpc::Structure::scalingFactor(size_t i, size_t j) const
  *  The matrix is transformed in a partial triangular shape.
  *  \param  H The original ldpc matrix
  */
-void Ldpc::Structure::computeGeneratorMatrix(SparseBitMatrix H)
+void Ldpc::Structure::computeGeneratorMatrix(SparseBitMatrix<size_t> H)
 {
-  std::vector<size_t> colSizes;
+  size_t gap = H.isALT();
+  if (gap < H.rows()/2) {
+    gap = H.makeALT();
+  }
+  /*std::vector<size_t> colSizes;
   size_t maxRow = H.rows();
   size_t tSize = 0;
   
@@ -193,9 +197,9 @@ void Ldpc::Structure::computeGeneratorMatrix(SparseBitMatrix H)
         }
       }
     }
-  }
+  }*/
   
-  BitMatrix CDE = H({tSize, H.rows()}, {0, H.cols()});
+  /*BitMatrix CDE = H({tSize, H.rows()}, {0, H.cols()});
   
   for (int64_t i = tSize-1; i >= 0; --i) {
     for (auto row = CDE.begin(); row < CDE.end(); ++row) {
@@ -252,7 +256,7 @@ void Ldpc::Structure::computeGeneratorMatrix(SparseBitMatrix H)
   DC_ = CDE({0, CDE.cols()-msgSize()-tSize}, {0, msgSize()});
   A_ = H_({0, tSize}, {0, msgSize()});
   B_ = H_({0, tSize}, {msgSize(), msgSize()+DC_.rows()});
-  T_ = H_({0, tSize}, {H.cols()-tSize, H.cols()}).transpose();
+  T_ = H_({0, tSize}, {H.cols()-tSize, H.cols()}).transpose();*/
 }
 
 fec::Permutation Ldpc::Structure::puncturing(const PunctureOptions& options) const

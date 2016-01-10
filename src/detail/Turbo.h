@@ -56,11 +56,15 @@ namespace fec {
         EncoderOptions& interleaver(const std::vector<Permutation>& interleaver) {interleaver_ = interleaver; return *this;}
         EncoderOptions& termination(Trellis::Termination type) {termination_ = {type}; return *this;}
         EncoderOptions& termination(std::vector<Trellis::Termination> type) {termination_ = type; return *this;}
+        EncoderOptions& msgWidth(size_t width) {msgWidth_ = width; return *this;}
+        EncoderOptions& parityWidth(size_t width) {parityWidth_ = width; return *this;}
         
       private:
         std::vector<Trellis> trellis_;
         std::vector<Permutation> interleaver_;
         std::vector<Trellis::Termination> termination_ = std::vector<Trellis::Termination>(1,Trellis::Tail);
+        size_t msgWidth_ = 0;
+        size_t parityWidth_ = 0;
       };
       
       /**

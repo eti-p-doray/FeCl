@@ -1592,7 +1592,7 @@ const std::vector<std::vector<std::vector<std::vector<size_t>>>> Ldpc::DvbS2::Ma
   }
 };
 
-SparseBitMatrix Ldpc::DvbS2::matrix(size_t n, double rate)
+SparseBitMatrix<size_t> Ldpc::DvbS2::matrix(size_t n, double rate)
 {
   size_t lengthIdx = 0;
   for (size_t i = 0; i < Matrix::length_.size(); ++i) {
@@ -1628,7 +1628,7 @@ SparseBitMatrix Ldpc::DvbS2::matrix(size_t n, double rate)
   }
   rowSizes[n-1] = 1;
   
-  SparseBitMatrix H(rowSizes, n-k);
+  SparseBitMatrix<size_t> H(rowSizes, n-k);
   for (size_t i = 0; i < n-k; ++i) {
     auto row = H[i];
     for (size_t j = 0; j < Matrix::index_[lengthIdx][rateIdx][i/360].size(); ++j) {
