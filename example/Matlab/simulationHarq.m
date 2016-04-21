@@ -1,194 +1,145 @@
 function simulationHarq
     trellis = poly2trellis(4, 15, 17);
-    constituentsLength = {128, 192};
-    for i = 1:length(constituentsLength)
-      interl{2*i-1} = 1:constituentsLength{i};
-      interl{2*i} = fec.Turbo.Lte3Gpp.interleaver(constituentsLength{i});
-    end
+    msgSize = 128;
+
+    interl{1} = [];
+    interl{2} = fec.Turbo.Lte3Gpp.interleaver(msgSize);
+      
     codec = fec.Turbo(trellis, interl, 'termination', 'Truncate');
 
-    snrdb = -5.0:1.0:2.0;
-    snrdbTot = -5.0:1.0:2.0;
-
-    snr = cell(2,1);
-    for i = 1:length(snrdb)
-        snr{1}(i) = 10.0 ^ (snrdb(i) / 10.0);
-        for j = 1:length(snrdbTot)
-            snr{2}(i,j) = 10.0 ^ (snrdbTot(j) / 10.0) - snr{1}(i);
+    snrdb1 = -0.0:1.0:10.0;
+    snrdb2 = -0.0:1.0:10.0;
+    snr = zeros(2, length(snrdb1), length(snrdb2));
+    for i = 1:length(snrdb1)
+        for j = 1:length(snrdb2)
+            snr(1, i, j) = 10.0 ^ (snrdb1(i) / 10.0);
+            snr(2, i, j) = 10.0 ^ (snrdb2(j) / 10.0);
         end
     end
+    snr = reshape(snr, 2, []);
 
-    parityPerm{1} = codec.puncturing('mask', {1:constituentsLength{2}<=constituentsLength{1}, [1 0], [1 0], 0, 0});
-    parityPerm{2} = codec.puncturing('mask', {1, 0, 0, [1 0], [1 0]});
+    parityPerm{1} = codec.puncturing('mask', [1 1; 1 0; 1 0]);
+    parityPerm{2} = codec.puncturing('mask', [1 1; 0 1; 0 1]);
 
-    msgPerm{1} = fec.Permutation(1:128);
-    msgPerm{2} = fec.Permutation(1:192);
+    msgPerm{1} = fec.Permutation(1:msgSize);
+    msgPerm{2} = fec.Permutation(1:msgSize);
     
-    [per, perCum] = harqPer(codec, msgPerm, parityPerm, snr, 64, 8);
-    save('data')
+    result = harqPer(codec, msgPerm, parityPerm, snr, 64, 8);
+    save('result', 'result', 'snr')
 end
 
 
 
-%> This function computes the PER (probability of error) curve for multiple transmissions
-%>   with differents snr.
+%%> This function computes the PER (probability of error) curve for multiple transmissions
+%>   with differents snr. 16 QAM modulation is used.
 %>
 %>  @param  code  fec Code used for encoding and decoding
-%>  @param  msgPerm Cell array of array of index denoting bits of interest for the
+%>  @param  mIdx Cell array of array of index denoting bits of interest for the
 %>       packet. This is used when multiple transmissions do not have the same R
 %>       (such as in joint encoding)
-%>  @param  parityPerm  Cell array of array of index denoting the parity bits sent
+%>  @param  cIdx  Cell array of array of index denoting the c bits sent
 %>       a each transmission. This is used when multiple transmission do not
 %>       send the same bits (such as in incrementl redundency)
-%>  @param  snr Array of snr. The structure of snr is a kx1 cell array where k is the number of transmission.
-%>       The i-th cell element is a i dimensional array with snr used for the i-th transmission.
+%>  @param  snr This is a nxk array or function.
+%>       For each n experiment, k transmissions will be executed with the corresponding snr.
 %>       Example: for 2 transmission
 %>
-%>         | {1} |   {2}   | -> This is the transmission index
-%>         | snr | snr snr | -> this represents two transmissions with the same snr1
-%>         | snr | snr snr |
+%>         | snr11 | snr12 | -> first transmission
+%>         | snr21 | snr22 | -> second transmission
+%>          1st exp 2nd exp
 %>
-%>  @param  N  Number of experiments in one bloc. A bloc is computed at once.
+%>  @param  N  Number of realisation in one bloc. A bloc is computed at once.
 %>        Once the number of error reach N in an experiment (for a specific sequence of snr), this experiment stops.
 %>  @param  M Number a bloc. Each bloc are computed sequentially.
+%>  @param result Previous results obtained with the same setup. If
+%>       available, new results will be combined.
 %>
-%>  @param[out]  per  Array of PER values. The structure is a kxk cell array where k is the number of transmission.
-%>       The (i,j)-th cell element is a i-dimensional array with PER values for the i-th transmission
-%>       about the j-th packet (only for joint codind, ignore j if not used)
-%>       Refer to the snr structure.
-%>  @param[out] perCum  Array of cummulative PER values (pr{Nack}).
-%>       The structure is the same as per.
+%>  @param[out] result Struture contaning results data. The field of this struture are defined as follow.
+%>          experiments  Array of the number of realisation executed. This is a nxk array.
+%>          per  Array of PER values. This is a nxk array.
+%>          perCum  Array of cummulative PER values (pr{Nack}). This is a nxk array.
 %>
-function [per, perCum] = harqPer(codec, msgPerm, parityPerm, snr, N, M)
-
-    % The msg is randomly generated
-    msg = uint64(randi([0 1],codec.msgSize,N));
-    % The code parities are generated
-    parity = double(codec.encode(msg));
-    
-    % A recursive function is used to compute de PER curve
-    [per, perCum] = harqPerImpl(length(msgPerm), codec, msgPerm, parityPerm, snr, msg, parity, M);
-end
-
-function [per, perCum] = harqPerImpl(transCount, codec, msgPerm, parityPerm, snr, msg, parity, M)
-% This function computes the PER curve for multiple transmission
-%   with different snr for a given code
-%
-% Inputs
-%   tr - The transmission number at which the function is currently
-%       exploring. This is the depth of the recursion.
-%   transCount - The total number of transmission
-%   code - fec Code used for encoding and decoding
-%   msgPerm - Cell array of array of index denoting bits of interest for the
-%       packet. This is used when multiple transmissions do not have the same R
-%       (such as in joint encoding)
-%   parityPerm - Cell array of array of index denoting the parity bits sent
-%       a each transmission. This is used when multiple transmission do not
-%       send the same bits (such as in incrementl redundency)
-%   snr - Array of snr. See harqPer.
-%   msg - Message used for experiment.
-%   parity - Parity code associated with the msg.
-%   M - Number a bloc. Each bloc are comouted sequentially.
-%
-% Outputs
-%   per - Array of PER values. See harqPer.
-%   perCum - Array of cummulative PER values.(pr{Nack}). See harqPer.
-%
-
-    %par for parallel. If we are using the parallel toolbox, array being accessed in parallel
-    %must be cell arrays
-    perPar = cell(size(snr{transCount}));
-    snrPar = cell(size(snr{transCount}));
-    perCumPar = cell(size(snr{transCount}));
-    expCountPar = cell(numel(snr{transCount}));
-    for i = 1:numel(snr{transCount})
-        snrPar{i} = zeros(transCount,1);
-        for k = 1:transCount
-            snrPar{i}(k) = snr{k}(mod(i-1,numel(snr{k}))+1);
-        end
+function result = harqPer(codec, mIdx, cIdx, snr, N, M, result)
+    if (nargin <= 6 || isempty(result))
+        result.experiments = zeros(1, size(snr, 2));
+        result.per = zeros(length(mIdx),size(snr, 2));
+        result.perCum = zeros(length(mIdx),size(snr, 2));
     end
-  
-    parfor i = 1:numel(snr{transCount})
-    %We iterate through all levels of snr in parallel
-        disp(i);
+    transmissions = length(mIdx);
 
-        perPar{i} = zeros(transCount,transCount);
-        perCumPar{i} = zeros(transCount,transCount);
+    hMod = comm.RectangularQAMModulator('ModulationOrder',16,'BitInput',true, 'NormalizationMethod', 'Average power');
+    hDemod = comm.RectangularQAMDemodulator('ModulationOrder',16,'BitOutput',true, 'DecisionMethod', 'Approximate log-likelihood ratio', 'VarianceSource', 'Input port','NormalizationMethod', 'Average power');
+    for i = 1:size(snr, 2)
+        needToProcess = true;
+        for j = 1:i-1
+           if (all(snr(:,i) >= snr(:,j)) && all(result.per(end,j) == 0))
+               needToProcess = false;
+           end
+        end
+        if (~needToProcess)
+            perCum(:,i) = 0;
+            per(:,i) = 0;
+            continue;
+        end
 
-        expCountPar{i} = 0;
-        while ((expCountPar{i} < M) && (perCumPar{i}(transCount,transCount) < size(msg,2)))
+        %i
+        while ((result.experiments(i) < M*N) && (result.perCum(end,i) < N))
+            
+            % The m is randomly generated
+            m = uint64(randi([0 1],codec.msgSize,N));
+            % The code parities are generated
+            c = double(codec.encode(m));
             % We execute a maximum number of M bloc of experiment.
             % If the number of error found exceeds N, the experiments stop
             % (we have enough error)
-            expCountPar{i} = expCountPar{i}+1;
-            errorCum = cell(transCount,1);
-            llr = zeros(size(parity));
+            result.experiments(i) = result.experiments(i)+N;
+            errorCum = ones(1,N);
+            llr = zeros(size(c));
 
-            for k = 1:transCount
+            if (~iscell(cIdx))
+                ci = cell(N,1);
+                for k = 1:N
+                    ci{k} = cIdx(k);
+                end
+            else
+                for k = 1:N
+                    ci{k} = cIdx;
+                end
+            end
+            
+            for k = 1:transmissions
             %We iterate over all tranmissions. k is the transmission number.
                 %The cell array contains an array for each packet
-                %containing Logicals denoting if each parity bloc
+                %containing Logicals denoting if each c bloc
                 %contains an error at the k-th transmission.
-                errorCum{k} = ones(1,size(msg,2));
-                if (snrPar{i}(k) < 0 || isnan(snrPar{i}(k)))
+                if (snr(k,i) < 0 || isnan(snr(k,i)))
                 %If the snr is not a valid value, PER will be NaN.
-                    for l = 1:k
-                        perCumPar{i}(k,l) = NaN;
-                        perPar{i}(k,l) = NaN;
-                    end
+                    perCum(k,i) = NaN;
+                    per(k,i) = NaN;
                     continue;
                 end
-        
-                %We are using bpsk modulation and only sending
-                %parityPerm{k} at this transmission.
-                symbol = (-2*parityPerm{k}.permute(double(parity))+1)*sqrt(2*snrPar{i}(k));
-                signal = symbol + randn(size(symbol));
-                % The L-values are addup with the previous one to
-                % accumulate the information. This is equivalent to
-                % maximum ration combining
-                llr = llr + parityPerm{k}.dePermute(-4.0 * sqrt(snrPar{i}(k)) * signal / sqrt(2.0));
-
-                %The msg is decoded.
-                msgDec = codec.decode(llr);
-
-                for l = 1:k
-                %We iterate over all packets assigning the pER count
-                    errorCum{l} = errorCum{l} & (sum(msgPerm{l}.permute(msgDec ~= msg))~=0);
-                    for h = l+1:transCount
-                        errorCum{h} = errorCum{l};
+          
+                
+                for l = 1:N
+                    parity = ci{l}{k}.permute(c(:,l));
+                    x = hMod.step(parity);
+                    if (snr(k,i) > 0)
+                        y = x + complex(randn(size(x)),randn(size(x))) / sqrt(2*snr(k,i));
+                        llr(:,l) = llr(:,l) - ci{l}{k}.dePermute(hDemod.step(y, 1/(2*snr(k,i))));
                     end
-                    perCumPar{i}(k,l) = perCumPar{i}(k,l) + sum(errorCum{l});
-                    perPar{i}(k,l) = perPar{i}(k,l) + sum(sum(msgPerm{l}.permute(msgDec ~= msg))~=0);
                 end
+                if (isempty(mIdx{k}.sequence))
+                    continue;
+                end
+                
+                %The m is decoded.
+                mDec = codec.decode(llr);
+               
+                errorCum = errorCum & (sum(mIdx{k}.permute(mDec ~= m))~=0);
+                result.perCum(k,i) = result.perCum(k,i) + sum(errorCum);
+                result.per(k,i) = result.per(k,i) + sum(sum(mIdx{k}.permute(mDec ~= m))~=0);
+                
             end
-        end
-    end
-
-    per = cell(transCount,transCount);
-    perCum = cell(transCount,transCount);
-    expCount = cell(transCount,transCount);
-    for j = 1:transCount
-        for k = 1:j
-            per{j,k} = zeros(size(snr{j}));
-            perCum{j,k} = zeros(size(snr{j}));
-            expCount{j,k} = zeros(size(snr{j}));
-        end
-    end
-    for i = 1:numel(snr{transCount})
-        for j = 1:transCount
-            for k = 1:j
-                per{j,k}(mod(i-1,numel(snr{j}))+1) = per{j,k}(mod(i-1,numel(snr{j}))+1) + perPar{i}(j,k);
-                perCum{j,k}(mod(i-1,numel(snr{j}))+1) = perCum{j,k}(mod(i-1,numel(snr{j}))+1) + perCumPar{i}(j,k);
-                expCount{j,k}(mod(i-1,numel(snr{j}))+1) = expCount{j,k}(mod(i-1,numel(snr{j}))+1) + expCountPar{i};
-            end
-        end
-    end
-
-    % The error count is divided by the total number of experiments.
-    for j = 1:transCount
-        for k = 1:j
-            per{j,k} = per{j,k} ./ (expCount{j,k} * size(msg,2));
-            perCum{j,k} = perCum{j,k} ./ (expCount{j,k} * size(msg,2));
         end
     end
 end
